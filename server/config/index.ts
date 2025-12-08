@@ -5,4 +5,5 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
   jwtExpiresIn: '7d',
   nodeEnv: process.env.NODE_ENV || 'development',
+  bubbleApiToken: process.env.BUBBLE_API_TOKEN || '',
 };

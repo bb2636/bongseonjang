@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SIGNUP_MESSAGES, SIGNUP_VALIDATION } from '../constants';
+import { sendVerificationCode, verifyCode } from '../../../../services/emailVerificationService';
 
 interface SignupEmailState {
   email: string;
@@ -123,13 +124,14 @@ export function useSignupEmail() {
 
     setIsVerifying(true);
     try {
-      console.log('Send verification code to:', formData.email);
+      await sendVerificationCode(formData.email);
       setFormData(prev => ({ ...prev, isCodeSent: true }));
       setTimer(TIMER_DURATION);
       setShowSnackbar(true);
       setTimeout(() => setShowSnackbar(false), 3000);
     } catch (error) {
       console.error('Email verification failed:', error);
+      alert(error instanceof Error ? error.message : '이메일 전송에 실패했습니다');
     } finally {
       setIsVerifying(false);
     }
@@ -142,13 +144,14 @@ export function useSignupEmail() {
 
     setIsVerifying(true);
     try {
-      console.log('Resend verification code to:', formData.email);
+      await sendVerificationCode(formData.email);
       setTimer(TIMER_DURATION);
       setFormData(prev => ({ ...prev, verificationCode: '' }));
       setShowSnackbar(true);
       setTimeout(() => setShowSnackbar(false), 3000);
     } catch (error) {
       console.error('Resend code failed:', error);
+      alert(error instanceof Error ? error.message : '이메일 전송에 실패했습니다');
     } finally {
       setIsVerifying(false);
     }
@@ -163,14 +166,19 @@ export function useSignupEmail() {
 
     setIsConfirming(true);
     try {
-      console.log('Confirm code:', formData.verificationCode);
-      setFormData(prev => ({ ...prev, isEmailVerified: true }));
+      const result = await verifyCode(formData.email, formData.verificationCode);
+      if (result.success) {
+        setFormData(prev => ({ ...prev, isEmailVerified: true }));
+      } else {
+        alert(result.message);
+      }
     } catch (error) {
       console.error('Code confirmation failed:', error);
+      alert(error instanceof Error ? error.message : '인증에 실패했습니다');
     } finally {
       setIsConfirming(false);
     }
-  }, [formData.verificationCode, isCodeValid]);
+  }, [formData.email, formData.verificationCode, isCodeValid]);
 
   const onSubmit = useCallback(async () => {
     setTouched({ email: true, verificationCode: true });
