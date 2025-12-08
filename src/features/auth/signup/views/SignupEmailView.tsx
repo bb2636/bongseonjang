@@ -675,7 +675,7 @@ const VerifiedButton = styled.div`
   padding: 8px 14px;
   width: 100%;
   height: 44px;
-  background: #22C55E;
+  background: rgba(12, 12, 12, 0.08);
   border-radius: 4px;
 
   font-family: var(--font-family-base);
@@ -683,7 +683,7 @@ const VerifiedButton = styled.div`
   font-size: 16px;
   line-height: 128%;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: rgba(12, 12, 12, 0.3);
 `;
 
 const FieldErrorMessage = styled.span`
