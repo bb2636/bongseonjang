@@ -1,55 +1,80 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SIGNUP_MESSAGES } from '../constants';
+import { SIGNUP_MESSAGES, SIGNUP_VALIDATION } from '../constants';
 
-interface SignupNameState {
-  name: string;
+interface SignupEmailState {
+  email: string;
+  isEmailVerified: boolean;
 }
 
-interface SignupNameErrors {
-  name: string | null;
+interface SignupEmailErrors {
+  email: string | null;
 }
 
 interface TouchedFields {
-  name: boolean;
+  email: boolean;
 }
 
-export function useSignupName() {
+export function useSignupEmail() {
   const navigate = useNavigate();
   
-  const [formData, setFormData] = useState<SignupNameState>({
-    name: '',
+  const [formData, setFormData] = useState<SignupEmailState>({
+    email: '',
+    isEmailVerified: false,
   });
   
   const [touched, setTouched] = useState<TouchedFields>({
-    name: false,
+    email: false,
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  const validateName = useCallback((value: string): string | null => {
+  const validateEmail = useCallback((value: string): string | null => {
     if (!value.trim()) {
-      return SIGNUP_MESSAGES.NAME_REQUIRED;
+      return SIGNUP_MESSAGES.REQUIRED;
+    }
+    if (!SIGNUP_VALIDATION.EMAIL_REGEX.test(value)) {
+      return SIGNUP_MESSAGES.EMAIL_INVALID;
     }
     return null;
   }, []);
 
-  const errors: SignupNameErrors = {
-    name: touched.name ? validateName(formData.name) : null,
+  const errors: SignupEmailErrors = {
+    email: touched.email ? validateEmail(formData.email) : null,
   };
 
-  const isValid = !validateName(formData.name);
+  const isEmailValid = !validateEmail(formData.email);
+  const isValid = isEmailValid && formData.isEmailVerified;
 
-  const onNameChange = useCallback((value: string) => {
-    setFormData(prev => ({ ...prev, name: value }));
+  const onEmailChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, email: value, isEmailVerified: false }));
   }, []);
 
-  const onNameBlur = useCallback(() => {
-    setTouched(prev => ({ ...prev, name: true }));
+  const onEmailBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, email: true }));
   }, []);
+
+  const onVerifyEmail = useCallback(async () => {
+    setTouched({ email: true });
+    
+    if (!isEmailValid) {
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      console.log('Verify email:', formData.email);
+      setFormData(prev => ({ ...prev, isEmailVerified: true }));
+    } catch (error) {
+      console.error('Email verification failed:', error);
+    } finally {
+      setIsVerifying(false);
+    }
+  }, [formData.email, isEmailValid]);
 
   const onSubmit = useCallback(async () => {
-    setTouched({ name: true });
+    setTouched({ email: true });
 
     if (!isValid) {
       return;
@@ -57,7 +82,7 @@ export function useSignupName() {
 
     setIsLoading(true);
     try {
-      console.log('Signup name:', formData);
+      console.log('Signup email:', formData);
     } catch (error) {
       console.error('Signup failed:', error);
     } finally {
@@ -70,13 +95,17 @@ export function useSignupName() {
   }, [navigate]);
 
   return {
-    signupName: {
-      name: formData.name,
+    signupEmail: {
+      email: formData.email,
+      isEmailVerified: formData.isEmailVerified,
       isLoading,
+      isVerifying,
+      isEmailValid,
       isValid,
       errors,
-      onNameChange,
-      onNameBlur,
+      onEmailChange,
+      onEmailBlur,
+      onVerifyEmail,
       onSubmit,
       onBack,
     },
