@@ -121,6 +121,35 @@ src/
   - keepPreviousData로 페이지네이션 시 UI 깜빡임 방지
   - Query Key에 사용자 ID 포함하여 캐시 누수 방지
 - **기능별 상태**: Custom Hook으로 캡슐화
+- **멀티 스텝 폼**: Context Provider + Step별 Hook 분리
+
+### Multi-Step Form Hook Pattern (회원가입 예시)
+```
+features/signup/hooks/
+├── useSignupFormState.tsx    # Context/Provider - 공유 상태 + sessionStorage
+├── useSignupEmailStep.ts     # Step 1: 이메일 인증 로직
+├── useSignupPasswordStep.ts  # Step 2: 비밀번호 설정 로직
+├── useSignupProfileStep.ts   # Step 3: 프로필/약관 로직
+└── useSignupPage.ts          # 통합 Hook - currentStep 결정
+```
+
+**사용 패턴:**
+```typescript
+// Page에서 Provider로 감싸기
+function SignupEmailPage() {
+  return (
+    <SignupFormProvider>
+      <SignupEmailPageContent />
+    </SignupFormProvider>
+  );
+}
+
+// Content에서 통합 Hook 사용
+function SignupEmailPageContent() {
+  const { currentStep, emailStep, passwordStep, profileStep, onBack } = useSignupPage();
+  return <SignupEmailView {...} />;
+}
+```
 
 ### React Query 패턴
 ```typescript
