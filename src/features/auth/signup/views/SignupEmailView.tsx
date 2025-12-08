@@ -92,9 +92,9 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                   <Label>이메일</Label>
                   <VerifiedInputBox>
                     <VerifiedInputText>{signupEmail.email}</VerifiedInputText>
-                    <VerifiedBadge>인증완료</VerifiedBadge>
                   </VerifiedInputBox>
                 </TextField>
+                <VerifiedButton>이메일 인증 완료</VerifiedButton>
               </VerifiedEmailSection>
 
               <PasswordSection>
@@ -125,10 +125,10 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                         </svg>
                       )}
                     </VisibilityToggle>
-                    {signupEmail.errors.password && (
-                      <ErrorMessage>{signupEmail.errors.password}</ErrorMessage>
-                    )}
                   </PasswordInputBox>
+                  {signupEmail.errors.password && (
+                    <FieldErrorMessage>{signupEmail.errors.password}</FieldErrorMessage>
+                  )}
                 </TextField>
 
                 <TextField>
@@ -158,10 +158,10 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                         </svg>
                       )}
                     </VisibilityToggle>
-                    {signupEmail.errors.passwordConfirm && (
-                      <ErrorMessage>{signupEmail.errors.passwordConfirm}</ErrorMessage>
-                    )}
                   </PasswordInputBox>
+                  {signupEmail.errors.passwordConfirm && (
+                    <FieldErrorMessage>{signupEmail.errors.passwordConfirm}</FieldErrorMessage>
+                  )}
                 </TextField>
               </PasswordSection>
             </>
@@ -644,12 +644,12 @@ const VerifiedEmailSection = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  gap: 8px;
 `;
 
 const VerifiedInputBox = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
   padding: 4px 16px;
   width: 100%;
@@ -660,20 +660,40 @@ const VerifiedInputBox = styled.div`
 
 const VerifiedInputText = styled.span`
   font-family: var(--font-family-base);
-  font-weight: 500;
+  font-weight: 400;
   font-size: 14px;
   line-height: 128%;
   letter-spacing: -0.01em;
   color: #101112;
 `;
 
-const VerifiedBadge = styled.span`
+const VerifiedButton = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  width: 100%;
+  height: 44px;
+  background: #22C55E;
+  border-radius: 4px;
+
   font-family: var(--font-family-base);
   font-weight: 600;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+`;
+
+const FieldErrorMessage = styled.span`
+  padding: 0 4px;
+  font-family: var(--font-family-base);
+  font-weight: 400;
   font-size: 12px;
   line-height: 128%;
   letter-spacing: -0.01em;
-  color: var(--color-primary);
+  color: #ff4b3f;
 `;
 
 const PasswordSection = styled.div`
