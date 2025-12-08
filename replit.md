@@ -152,8 +152,9 @@ function SignupEmailPageContent() {
 ```
 
 ### React Query 패턴
+
+**조회 (useQuery):**
 ```typescript
-// 조회 Hook 예시
 export function useDataList(userId: string) {
   return useQuery({
     queryKey: ['dataList', userId],
@@ -162,8 +163,11 @@ export function useDataList(userId: string) {
     enabled: !!userId,
   });
 }
+```
 
-// 뮤테이션 Hook 예시
+**뮤테이션 (useMutation) - 기본 패턴:**
+```typescript
+// 독립적인 뮤테이션 (캐시 무효화 필요 시)
 export function useCreateData() {
   const queryClient = useQueryClient();
   
@@ -175,6 +179,53 @@ export function useCreateData() {
   });
 }
 ```
+
+**뮤테이션 (useMutation) - Hook 내부 통합 패턴:**
+- 모든 API 호출은 useMutation으로 관리
+- useState로 isLoading 관리 금지 → mutation.isPending 사용
+- try/catch/finally 대신 onSuccess/onError 콜백 사용
+
+```typescript
+// Hook 내부에서 useMutation 정의 (useSignupProfileStep 예시)
+export function useSignupProfileStep() {
+  const navigate = useNavigate();
+  const { formData, updateFormData, clearFormDataFromStorage } = useSignupFormState();
+
+  // 회원가입 뮤테이션
+  const signupMutation = useMutation({
+    mutationFn: () => authService.signup({
+      email: formData.email,
+      password: formData.password,
+      name: formData.name,
+      phone: formData.phone,
+      // ... 전체 데이터 전달
+    }),
+    onSuccess: () => {
+      clearFormDataFromStorage();
+      navigate('/signup/complete');
+    },
+    onError: (error: Error) => {
+      console.error('Signup failed:', error);
+    },
+  });
+
+  // 제출 핸들러 - async 불필요, mutation.mutate() 호출
+  const onSubmit = useCallback(() => {
+    if (!isValid || signupMutation.isPending) return;
+    signupMutation.mutate();
+  }, [isValid, signupMutation]);
+
+  return {
+    isLoading: signupMutation.isPending,  // isPending으로 로딩 상태 전달
+    onSubmit,
+  };
+}
+```
+
+**뮤테이션 적용 현황:**
+- `useEmailLogin`: 이메일 로그인
+- `useSignupEmailStep`: 이메일 인증 요청, 인증 코드 확인
+- `useSignupProfileStep`: 회원가입 제출, 추천인 ID 확인
 
 ### Backend Architecture (Clean Architecture with TypeORM)
 백엔드는 Clean Architecture를 따르며, 레이어 간 단방향 의존성 유지:
