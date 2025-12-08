@@ -300,12 +300,64 @@ server/
 ├── controller/          # 컨트롤러
 ├── application/         # 애플리케이션 서비스
 ├── domain/              # 도메인 서비스
-├── repository/          # 리포지토리
+├── repository/          # 리포지토리 (인터페이스 + 구현체)
 ├── entity/              # TypeORM 엔티티
-├── config/              # 설정 (database, etc.)
+├── config/              # 설정 (database, repositories)
 ├── scheduler/           # 스케줄러 (cron jobs)
 └── index.ts             # 서버 엔트리
 ```
+
+### Repository Pattern (Mock/Real 스위칭)
+목 데이터와 실제 DB 구현체를 쉽게 전환할 수 있는 구조:
+
+**파일 구조:**
+```
+server/repository/
+├── ReferralRepository.ts        # 인터페이스 정의
+├── MockReferralRepository.ts    # 목 구현체 (개발용)
+└── TypeORMReferralRepository.ts # 실제 구현체 (프로덕션용)
+
+server/config/
+└── repositories.ts              # 구현체 선택 설정
+```
+
+**인터페이스 정의:**
+```typescript
+// repository/ReferralRepository.ts
+export interface ReferralRepository {
+  verifyById(referralId: string): Promise<VerifyReferralResult>;
+}
+```
+
+**구현체 선택:**
+```typescript
+// config/repositories.ts
+const config = {
+  referral: 'mock',  // 'mock' | 'real'
+};
+
+export const repositories = {
+  referral: config.referral === 'real' 
+    ? new TypeORMReferralRepository() 
+    : new MockReferralRepository(),
+};
+```
+
+**ApplicationService에서 사용:**
+```typescript
+export class ReferralApplicationService {
+  constructor(private referralRepository: ReferralRepository) {}
+  
+  async verifyReferralId(referralId: string) {
+    return this.referralRepository.verifyById(referralId);
+  }
+}
+```
+
+**점진적 전환 방법:**
+1. 새 기능 추가 시 인터페이스 + Mock 구현체 먼저 생성
+2. 프론트엔드 개발 완료 후 TypeORM 구현체 작성
+3. config에서 'mock' → 'real'로 변경
 
 ## UI/UX Patterns
 - CSS 변수를 통한 일관된 테마
