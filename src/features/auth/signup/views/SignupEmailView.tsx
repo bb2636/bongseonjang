@@ -2,6 +2,7 @@ import { ChangeEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { AlertModal } from "@components";
 import ReferralResultModal from "../../../../components/ReferralResultModal";
+import AgreementSection from "../components/AgreementSection";
 
 interface SignupEmailViewProps {
   signupEmail: {
@@ -23,6 +24,9 @@ interface SignupEmailViewProps {
     gender: 'male' | 'female' | '';
     referralId: string;
     isReferralIdVerified: boolean;
+    isOver14: boolean;
+    termsAgreed: boolean;
+    privacyAgreed: boolean;
     isReferralVerifying: boolean;
     isLoading: boolean;
     isVerifying: boolean;
@@ -36,6 +40,7 @@ interface SignupEmailViewProps {
     isBirthDateValid: boolean;
     isGenderValid: boolean;
     isReferralIdValid: boolean;
+    isAgreementValid: boolean;
     isValid: boolean;
     errors: {
       email: string | null;
@@ -84,6 +89,12 @@ interface SignupEmailViewProps {
     onResendCode: () => void;
     onConfirmCode: () => void;
     onCloseErrorModal: () => void;
+    onOver14Change: (value: boolean) => void;
+    onTermsAgreedChange: (value: boolean) => void;
+    onPrivacyAgreedChange: (value: boolean) => void;
+    onAllAgreeChange: (value: boolean) => void;
+    onTermsDetailClick: () => void;
+    onPrivacyDetailClick: () => void;
     onSubmit: () => void;
     onBack: () => void;
   };
@@ -287,6 +298,18 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                     </BlackVerifyButton>
                   </VerifyInputRow>
                 </TextField>
+
+                <AgreementSection
+                  isOver14={signupEmail.isOver14}
+                  termsAgreed={signupEmail.termsAgreed}
+                  privacyAgreed={signupEmail.privacyAgreed}
+                  onOver14Change={signupEmail.onOver14Change}
+                  onTermsAgreedChange={signupEmail.onTermsAgreedChange}
+                  onPrivacyAgreedChange={signupEmail.onPrivacyAgreedChange}
+                  onAllAgreeChange={signupEmail.onAllAgreeChange}
+                  onTermsDetailClick={signupEmail.onTermsDetailClick}
+                  onPrivacyDetailClick={signupEmail.onPrivacyDetailClick}
+                />
               </FullSignupForm>
             </>
           ) : signupEmail.isEmailVerified ? (

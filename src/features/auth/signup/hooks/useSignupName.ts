@@ -23,6 +23,9 @@ interface SignupEmailState {
   gender: 'male' | 'female' | '';
   referralId: string;
   isReferralIdVerified: boolean;
+  isOver14: boolean;
+  termsAgreed: boolean;
+  privacyAgreed: boolean;
 }
 
 interface SignupEmailErrors {
@@ -73,6 +76,9 @@ export function useSignupEmail() {
     gender: '',
     referralId: '',
     isReferralIdVerified: false,
+    isOver14: false,
+    termsAgreed: false,
+    privacyAgreed: false,
   });
   
   const [touched, setTouched] = useState<TouchedFields>({
@@ -228,7 +234,8 @@ export function useSignupEmail() {
   const isBirthDateValid = !validateBirthDate(formData.birthYear, formData.birthMonth, formData.birthDay);
   const isGenderValid = !validateGender(formData.gender);
   const isReferralIdValid = !validateReferralId(formData.referralId);
-  const isValid = isEmailValid && formData.isEmailVerified && isPasswordValid && isPasswordConfirmValid && formData.isPasswordSet && isNameValid && isPhoneValid && isBirthDateValid && isGenderValid && isReferralIdValid;
+  const isAgreementValid = formData.isOver14 && formData.termsAgreed && formData.privacyAgreed;
+  const isValid = isEmailValid && formData.isEmailVerified && isPasswordValid && isPasswordConfirmValid && formData.isPasswordSet && isNameValid && isPhoneValid && isBirthDateValid && isGenderValid && isReferralIdValid && isAgreementValid;
 
   const onEmailChange = useCallback((value: string) => {
     setFormData(prev => ({ 
@@ -329,8 +336,6 @@ export function useSignupEmail() {
 
   const onReferralIdChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, referralId: value, isReferralIdVerified: false }));
-    setReferralSuccessMessage('');
-    setReferralErrorMessage('');
   }, []);
 
   const onReferralIdBlur = useCallback(() => {
@@ -371,6 +376,35 @@ export function useSignupEmail() {
     setShowReferralModal(false);
     setReferralModalMessage('');
   }, []);
+
+  const onOver14Change = useCallback((value: boolean) => {
+    setFormData(prev => ({ ...prev, isOver14: value }));
+  }, []);
+
+  const onTermsAgreedChange = useCallback((value: boolean) => {
+    setFormData(prev => ({ ...prev, termsAgreed: value }));
+  }, []);
+
+  const onPrivacyAgreedChange = useCallback((value: boolean) => {
+    setFormData(prev => ({ ...prev, privacyAgreed: value }));
+  }, []);
+
+  const onAllAgreeChange = useCallback((value: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      isOver14: value,
+      termsAgreed: value,
+      privacyAgreed: value,
+    }));
+  }, []);
+
+  const onTermsDetailClick = useCallback(() => {
+    navigate('/terms');
+  }, [navigate]);
+
+  const onPrivacyDetailClick = useCallback(() => {
+    navigate('/privacy');
+  }, [navigate]);
 
   const onPasswordNext = useCallback(() => {
     setTouched(prev => ({ ...prev, password: true, passwordConfirm: true }));
@@ -493,6 +527,9 @@ export function useSignupEmail() {
       gender: formData.gender,
       referralId: formData.referralId,
       isReferralIdVerified: formData.isReferralIdVerified,
+      isOver14: formData.isOver14,
+      termsAgreed: formData.termsAgreed,
+      privacyAgreed: formData.privacyAgreed,
       isReferralVerifying,
       isLoading,
       isVerifying,
@@ -506,6 +543,7 @@ export function useSignupEmail() {
       isBirthDateValid,
       isGenderValid,
       isReferralIdValid,
+      isAgreementValid,
       isValid,
       errors,
       showSnackbar,
@@ -544,6 +582,12 @@ export function useSignupEmail() {
       onResendCode,
       onConfirmCode,
       onCloseErrorModal,
+      onOver14Change,
+      onTermsAgreedChange,
+      onPrivacyAgreedChange,
+      onAllAgreeChange,
+      onTermsDetailClick,
+      onPrivacyDetailClick,
       onSubmit,
       onBack,
     },
