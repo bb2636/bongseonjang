@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SIGNUP_MESSAGES, SIGNUP_VALIDATION } from '../constants';
 import { sendVerificationCode, verifyCode } from '../../../../services/emailVerificationService';
+import { verifyReferralId } from '../../../../services/referralService';
 
 interface SignupEmailState {
   email: string;
@@ -89,9 +90,12 @@ export function useSignupEmail() {
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isReferralVerifying, setIsReferralVerifying] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState('');
+  const [referralSuccessMessage, setReferralSuccessMessage] = useState('');
+  const [referralErrorMessage, setReferralErrorMessage] = useState('');
   const [timer, setTimer] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -325,16 +329,41 @@ export function useSignupEmail() {
 
   const onReferralIdChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, referralId: value, isReferralIdVerified: false }));
+    setReferralSuccessMessage('');
+    setReferralErrorMessage('');
   }, []);
 
   const onReferralIdBlur = useCallback(() => {
     setTouched(prev => ({ ...prev, referralId: true }));
   }, []);
 
-  const onReferralIdVerify = useCallback(() => {
+  const onReferralIdVerify = useCallback(async () => {
     setTouched(prev => ({ ...prev, referralId: true }));
-    if (formData.referralId.length >= 3) {
-      setFormData(prev => ({ ...prev, isReferralIdVerified: true }));
+    setReferralSuccessMessage('');
+    setReferralErrorMessage('');
+    
+    if (formData.referralId.length < 3) {
+      setReferralErrorMessage('최소 3자 이상 입력해주세요');
+      return;
+    }
+
+    setIsReferralVerifying(true);
+    try {
+      const result = await verifyReferralId(formData.referralId);
+      if (result.exists) {
+        setFormData(prev => ({ ...prev, isReferralIdVerified: true }));
+        setReferralSuccessMessage(result.message);
+        setReferralErrorMessage('');
+      } else {
+        setFormData(prev => ({ ...prev, isReferralIdVerified: false }));
+        setReferralErrorMessage(result.message);
+        setReferralSuccessMessage('');
+      }
+    } catch (error) {
+      setReferralErrorMessage('추천인 확인에 실패했습니다');
+      setFormData(prev => ({ ...prev, isReferralIdVerified: false }));
+    } finally {
+      setIsReferralVerifying(false);
     }
   }, [formData.referralId]);
 
@@ -459,6 +488,9 @@ export function useSignupEmail() {
       gender: formData.gender,
       referralId: formData.referralId,
       isReferralIdVerified: formData.isReferralIdVerified,
+      isReferralVerifying,
+      referralSuccessMessage,
+      referralErrorMessage,
       isLoading,
       isVerifying,
       isConfirming,

@@ -22,6 +22,9 @@ interface SignupEmailViewProps {
     gender: 'male' | 'female' | '';
     referralId: string;
     isReferralIdVerified: boolean;
+    isReferralVerifying: boolean;
+    referralSuccessMessage: string;
+    referralErrorMessage: string;
     isLoading: boolean;
     isVerifying: boolean;
     isConfirming: boolean;
@@ -251,7 +254,10 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                 <TextField>
                   <Label>추천인 아이디(선택)</Label>
                   <VerifyInputRow>
-                    <VerifyInputBoxWithError $hasError={!!signupEmail.errors.referralId}>
+                    <VerifyInputBoxWithError 
+                      $hasError={!!signupEmail.errors.referralId || !!signupEmail.referralErrorMessage}
+                      $hasSuccess={!!signupEmail.referralSuccessMessage}
+                    >
                       <FormInput
                         type="text"
                         placeholder="최소 3자 이상 입력하세요"
@@ -261,11 +267,22 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                         }
                         onBlur={signupEmail.onReferralIdBlur}
                       />
-                      {signupEmail.errors.referralId && (
+                      {signupEmail.errors.referralId && !signupEmail.referralErrorMessage && !signupEmail.referralSuccessMessage && (
                         <ErrorMessage>{signupEmail.errors.referralId}</ErrorMessage>
                       )}
+                      {signupEmail.referralErrorMessage && (
+                        <ErrorMessage>{signupEmail.referralErrorMessage}</ErrorMessage>
+                      )}
+                      {signupEmail.referralSuccessMessage && (
+                        <SuccessMessage>{signupEmail.referralSuccessMessage}</SuccessMessage>
+                      )}
                     </VerifyInputBoxWithError>
-                    <BlackVerifyButton onClick={signupEmail.onReferralIdVerify}>아이디 확인</BlackVerifyButton>
+                    <BlackVerifyButton 
+                      onClick={signupEmail.onReferralIdVerify}
+                      disabled={signupEmail.isReferralVerifying}
+                    >
+                      {signupEmail.isReferralVerifying ? '확인 중...' : '아이디 확인'}
+                    </BlackVerifyButton>
                   </VerifyInputRow>
                 </TextField>
               </FullSignupForm>
@@ -645,6 +662,15 @@ const ErrorMessage = styled.span`
   line-height: 128%;
   letter-spacing: -0.01em;
   color: #ff4b3f;
+`;
+
+const SuccessMessage = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #3B9BD5;
 `;
 
 const VerifyButton = styled.button<{ $isActive?: boolean }>`
@@ -1107,7 +1133,7 @@ const VerifyInputBox = styled.div<{ $hasError?: boolean }>`
   border-radius: 4px;
 `;
 
-const VerifyInputBoxWithError = styled.div<{ $hasError?: boolean }>`
+const VerifyInputBoxWithError = styled.div<{ $hasError?: boolean; $hasSuccess?: boolean }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -1115,9 +1141,13 @@ const VerifyInputBoxWithError = styled.div<{ $hasError?: boolean }>`
   padding: 10px 16px;
   gap: 4px;
   flex: 1;
-  min-height: ${(props) => (props.$hasError ? "65px" : "48px")};
-  background: ${(props) => (props.$hasError ? "#ffffff" : "transparent")};
-  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "rgba(12, 12, 12, 0.12)")};
+  min-height: ${(props) => (props.$hasError || props.$hasSuccess ? "65px" : "48px")};
+  background: ${(props) => (props.$hasError || props.$hasSuccess ? "#ffffff" : "transparent")};
+  border: 1px solid ${(props) => {
+    if (props.$hasError) return "#FF4B3F";
+    if (props.$hasSuccess) return "#3B9BD5";
+    return "rgba(12, 12, 12, 0.12)";
+  }};
   border-radius: 4px;
   transition:
     border-color var(--transition-fast),
