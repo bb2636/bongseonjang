@@ -1,13 +1,22 @@
 import { Routes, Route } from 'react-router-dom';
 import { MainLayout } from './layouts';
 import HomePage from './features/home/pages/HomePage';
+import { LoginPage } from './features/auth';
 
 export default function App() {
   return (
-    <MainLayout>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-    </MainLayout>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/*"
+        element={
+          <MainLayout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+            </Routes>
+          </MainLayout>
+        }
+      />
+    </Routes>
   );
 }

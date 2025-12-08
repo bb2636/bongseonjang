@@ -22,7 +22,7 @@ const GlobalStyles = createGlobalStyle`
     --color-background-secondary: #f8f9fa;
     --color-border: #dee2e6;
     
-    --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-family-base: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     --font-size-base: 16px;
     --font-size-small: 14px;
     --font-size-large: 18px;
