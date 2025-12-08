@@ -1,5 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import successImage from '@assets/image/sucess.svg';
 
 const fadeIn = keyframes`
   from {
@@ -64,80 +65,10 @@ const Content = styled.div`
   animation: ${fadeIn} 0.6s ease-out;
 `;
 
-const MascotContainer = styled.div`
-  width: 100px;
-  height: 108px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const MascotImage = styled.img`
+  width: 100.05px;
+  height: 108.33px;
   margin-bottom: 29px;
-`;
-
-const MascotIcon = styled.div`
-  position: relative;
-  width: 84px;
-  height: 87px;
-`;
-
-const MascotBody = styled.div`
-  width: 84px;
-  height: 87px;
-  background: #F5F5F5;
-  border-radius: 50%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const MascotEar = styled.div<{ $isLeft?: boolean }>`
-  position: absolute;
-  width: 18px;
-  height: 25px;
-  background: #F5F5F5;
-  border-radius: 50%;
-  top: 27px;
-  ${props => props.$isLeft ? 'left: -7px;' : 'right: -7px;'}
-`;
-
-const MascotFace = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-`;
-
-const MascotEyes = styled.div`
-  display: flex;
-  gap: 16px;
-`;
-
-const MascotEye = styled.div`
-  width: 6px;
-  height: 6px;
-  background: #3B9BD5;
-  border-radius: 50%;
-`;
-
-const MascotMouth = styled.div`
-  width: 12px;
-  height: 6px;
-  border: 2px solid #3B9BD5;
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-`;
-
-const MascotCheeks = styled.div`
-  display: flex;
-  gap: 30px;
-  margin-top: -4px;
-`;
-
-const MascotCheek = styled.div`
-  width: 8px;
-  height: 4px;
-  background: rgba(59, 155, 213, 0.3);
-  border-radius: 4px;
 `;
 
 const MessageContainer = styled.div`
@@ -238,25 +169,7 @@ export default function SignupCompletePage() {
       </ConfettiContainer>
 
       <Content>
-        <MascotContainer>
-          <MascotIcon>
-            <MascotEar $isLeft />
-            <MascotEar />
-            <MascotBody>
-              <MascotFace>
-                <MascotEyes>
-                  <MascotEye />
-                  <MascotEye />
-                </MascotEyes>
-                <MascotCheeks>
-                  <MascotCheek />
-                  <MascotCheek />
-                </MascotCheeks>
-                <MascotMouth />
-              </MascotFace>
-            </MascotBody>
-          </MascotIcon>
-        </MascotContainer>
+        <MascotImage src={successImage} alt="회원가입 완료" />
 
         <MessageContainer>
           <Title>회원가입 완료!</Title>
