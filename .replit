@@ -19,11 +19,7 @@ localPort = 3001
 externalPort = 3001
 
 [[ports]]
-localPort = 5001
-externalPort = 3000
-
-[[ports]]
-localPort = 35037
+localPort = 40605
 externalPort = 80
 
 [[ports]]
@@ -65,10 +61,10 @@ waitForPort = 5000
 name = "Backend server"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev:backend"
 waitForPort = 3001
-
-[workflows.workflow.metadata]
-outputType = "console"

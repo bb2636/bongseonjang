@@ -1,5 +1,6 @@
 import { ChangeEvent } from "react";
 import styled, { keyframes } from "styled-components";
+import { AlertModal } from "@components";
 
 interface SignupEmailViewProps {
   signupEmail: {
@@ -18,6 +19,8 @@ interface SignupEmailViewProps {
       verificationCode: string | null;
     };
     showSnackbar: boolean;
+    showErrorModal: boolean;
+    errorModalMessage: string;
     timer: string;
     isTimerActive: boolean;
     onEmailChange: (value: string) => void;
@@ -27,6 +30,7 @@ interface SignupEmailViewProps {
     onVerifyEmail: () => void;
     onResendCode: () => void;
     onConfirmCode: () => void;
+    onCloseErrorModal: () => void;
     onSubmit: () => void;
     onBack: () => void;
   };
@@ -35,6 +39,12 @@ interface SignupEmailViewProps {
 export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
   return (
     <Container>
+      <AlertModal
+        isOpen={signupEmail.showErrorModal}
+        title={signupEmail.errorModalMessage}
+        onConfirm={signupEmail.onCloseErrorModal}
+      />
+
       {signupEmail.showSnackbar && (
         <Snackbar>
           <SnackbarText>작성하신 이메일로 인증코드를 보냈어요</SnackbarText>

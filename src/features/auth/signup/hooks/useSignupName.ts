@@ -41,6 +41,8 @@ export function useSignupEmail() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState('');
   const [timer, setTimer] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -170,15 +172,22 @@ export function useSignupEmail() {
       if (result.success) {
         setFormData(prev => ({ ...prev, isEmailVerified: true }));
       } else {
-        alert(result.message);
+        setErrorModalMessage('이메일 인증코드가 틀립니다');
+        setShowErrorModal(true);
       }
     } catch (error) {
       console.error('Code confirmation failed:', error);
-      alert(error instanceof Error ? error.message : '인증에 실패했습니다');
+      setErrorModalMessage('인증에 실패했습니다');
+      setShowErrorModal(true);
     } finally {
       setIsConfirming(false);
     }
   }, [formData.email, formData.verificationCode, isCodeValid]);
+
+  const onCloseErrorModal = useCallback(() => {
+    setShowErrorModal(false);
+    setErrorModalMessage('');
+  }, []);
 
   const onSubmit = useCallback(async () => {
     setTouched({ email: true, verificationCode: true });
@@ -215,6 +224,8 @@ export function useSignupEmail() {
       isValid,
       errors,
       showSnackbar,
+      showErrorModal,
+      errorModalMessage,
       timer: formatTimer(timer),
       isTimerActive: timer > 0,
       onEmailChange,
@@ -224,6 +235,7 @@ export function useSignupEmail() {
       onVerifyEmail,
       onResendCode,
       onConfirmCode,
+      onCloseErrorModal,
       onSubmit,
       onBack,
     },
