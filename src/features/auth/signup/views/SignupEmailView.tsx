@@ -24,8 +24,6 @@ interface SignupEmailViewProps {
     referralId: string;
     isReferralIdVerified: boolean;
     isReferralVerifying: boolean;
-    referralSuccessMessage: string;
-    referralErrorMessage: string;
     isLoading: boolean;
     isVerifying: boolean;
     isConfirming: boolean;

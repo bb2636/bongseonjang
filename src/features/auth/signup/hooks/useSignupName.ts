@@ -94,8 +94,6 @@ export function useSignupEmail() {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState('');
-  const [referralSuccessMessage, setReferralSuccessMessage] = useState('');
-  const [referralErrorMessage, setReferralErrorMessage] = useState('');
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralModalMessage, setReferralModalMessage] = useState('');
   const [timer, setTimer] = useState(0);
@@ -341,8 +339,6 @@ export function useSignupEmail() {
 
   const onReferralIdVerify = useCallback(async () => {
     setTouched(prev => ({ ...prev, referralId: true }));
-    setReferralSuccessMessage('');
-    setReferralErrorMessage('');
     
     if (formData.referralId.length < 3) {
       setReferralModalMessage('최소 3자 이상 입력해주세요');
@@ -498,8 +494,6 @@ export function useSignupEmail() {
       referralId: formData.referralId,
       isReferralIdVerified: formData.isReferralIdVerified,
       isReferralVerifying,
-      referralSuccessMessage,
-      referralErrorMessage,
       isLoading,
       isVerifying,
       isConfirming,
