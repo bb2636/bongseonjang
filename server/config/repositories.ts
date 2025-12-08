@@ -22,30 +22,37 @@ type RepositoryFactory<T> = {
   [REPOSITORY_TYPE.REAL]: () => T;
 };
 
-const repositoryMap: {
+interface RepositoryMap {
   referral: RepositoryFactory<ReferralRepository>;
-} = {
+}
+
+const repositoryMap: RepositoryMap = {
   referral: {
     [REPOSITORY_TYPE.MOCK]: () => new MockReferralRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMReferralRepository(),
   },
 };
 
-let referralRepositoryInstance: ReferralRepository | null = null;
+const instances = new Map<keyof RepositoryConfig, unknown>();
 
-export function getReferralRepository(): ReferralRepository {
-  if (!referralRepositoryInstance) {
-    referralRepositoryInstance = repositoryMap.referral[config.referral]();
+function createRepository<T>(name: keyof RepositoryConfig): T {
+  const cached = instances.get(name);
+  if (cached) {
+    return cached as T;
   }
-  return referralRepositoryInstance;
+
+  const factory = repositoryMap[name][config[name]];
+  const instance = factory();
+  instances.set(name, instance);
+  return instance as T;
 }
 
 export function resetRepositories(): void {
-  referralRepositoryInstance = null;
+  instances.clear();
 }
 
 export const repositories = {
   get referral(): ReferralRepository {
-    return getReferralRepository();
+    return createRepository<ReferralRepository>('referral');
   },
 };
