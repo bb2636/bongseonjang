@@ -1,103 +1,85 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GUEST_ORDER_MESSAGES, GUEST_ORDER_VALIDATION } from '../constants';
+import { GUEST_ORDER_MESSAGES } from '../constants';
 
 interface GuestOrderLookupState {
-  name: string;
+  ordererName: string;
   orderNumber: string;
-  phone: string;
+  orderPassword: string;
 }
 
 interface GuestOrderLookupErrors {
-  name: string | null;
+  ordererName: string | null;
   orderNumber: string | null;
-  phone: string | null;
+  orderPassword: string | null;
 }
 
 interface TouchedFields {
-  name: boolean;
+  ordererName: boolean;
   orderNumber: boolean;
-  phone: boolean;
+  orderPassword: boolean;
 }
 
 export function useGuestOrderLookup() {
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState<GuestOrderLookupState>({
-    name: '',
+    ordererName: '',
     orderNumber: '',
-    phone: '',
+    orderPassword: '',
   });
   
   const [touched, setTouched] = useState<TouchedFields>({
-    name: false,
+    ordererName: false,
     orderNumber: false,
-    phone: false,
+    orderPassword: false,
   });
   
   const [isLoading, setIsLoading] = useState(false);
 
-  const validateName = useCallback((value: string): string | null => {
+  const validateRequired = useCallback((value: string): string | null => {
     if (!value.trim()) {
-      return GUEST_ORDER_MESSAGES.NAME_REQUIRED;
-    }
-    return null;
-  }, []);
-
-  const validateOrderNumber = useCallback((value: string): string | null => {
-    if (!value.trim()) {
-      return GUEST_ORDER_MESSAGES.ORDER_NUMBER_REQUIRED;
-    }
-    return null;
-  }, []);
-
-  const validatePhone = useCallback((value: string): string | null => {
-    if (!value.trim()) {
-      return GUEST_ORDER_MESSAGES.PHONE_REQUIRED;
-    }
-    const normalizedPhone = value.replace(/-/g, '');
-    if (!GUEST_ORDER_VALIDATION.PHONE_REGEX.test(normalizedPhone)) {
-      return GUEST_ORDER_MESSAGES.PHONE_INVALID;
+      return GUEST_ORDER_MESSAGES.REQUIRED;
     }
     return null;
   }, []);
 
   const errors: GuestOrderLookupErrors = {
-    name: touched.name ? validateName(formData.name) : null,
-    orderNumber: touched.orderNumber ? validateOrderNumber(formData.orderNumber) : null,
-    phone: touched.phone ? validatePhone(formData.phone) : null,
+    ordererName: touched.ordererName ? validateRequired(formData.ordererName) : null,
+    orderNumber: touched.orderNumber ? validateRequired(formData.orderNumber) : null,
+    orderPassword: touched.orderPassword ? validateRequired(formData.orderPassword) : null,
   };
 
-  const isValid = !validateName(formData.name) && 
-                  !validateOrderNumber(formData.orderNumber) && 
-                  !validatePhone(formData.phone);
+  const isValid = !validateRequired(formData.ordererName) && 
+                  !validateRequired(formData.orderNumber) && 
+                  !validateRequired(formData.orderPassword);
 
-  const onNameChange = useCallback((value: string) => {
-    setFormData(prev => ({ ...prev, name: value }));
+  const onOrdererNameChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, ordererName: value }));
   }, []);
 
   const onOrderNumberChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, orderNumber: value }));
   }, []);
 
-  const onPhoneChange = useCallback((value: string) => {
-    setFormData(prev => ({ ...prev, phone: value }));
+  const onOrderPasswordChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, orderPassword: value }));
   }, []);
 
-  const onNameBlur = useCallback(() => {
-    setTouched(prev => ({ ...prev, name: true }));
+  const onOrdererNameBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, ordererName: true }));
   }, []);
 
   const onOrderNumberBlur = useCallback(() => {
     setTouched(prev => ({ ...prev, orderNumber: true }));
   }, []);
 
-  const onPhoneBlur = useCallback(() => {
-    setTouched(prev => ({ ...prev, phone: true }));
+  const onOrderPasswordBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, orderPassword: true }));
   }, []);
 
   const onSubmit = useCallback(async () => {
-    setTouched({ name: true, orderNumber: true, phone: true });
+    setTouched({ ordererName: true, orderNumber: true, orderPassword: true });
 
     if (!isValid) {
       return;
@@ -119,18 +101,18 @@ export function useGuestOrderLookup() {
 
   return {
     guestOrderLookup: {
-      name: formData.name,
+      ordererName: formData.ordererName,
       orderNumber: formData.orderNumber,
-      phone: formData.phone,
+      orderPassword: formData.orderPassword,
       isLoading,
       isValid,
       errors,
-      onNameChange,
+      onOrdererNameChange,
       onOrderNumberChange,
-      onPhoneChange,
-      onNameBlur,
+      onOrderPasswordChange,
+      onOrdererNameBlur,
       onOrderNumberBlur,
-      onPhoneBlur,
+      onOrderPasswordBlur,
       onSubmit,
       onBack,
     },

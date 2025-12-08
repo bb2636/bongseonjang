@@ -1,41 +1,33 @@
 import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
-interface GuestOrderLookupViewProps {
-  guestOrderLookup: {
-    ordererName: string;
-    orderNumber: string;
-    orderPassword: string;
+interface SignupNameViewProps {
+  signupName: {
+    name: string;
     isLoading: boolean;
     isValid: boolean;
     errors: {
-      ordererName: string | null;
-      orderNumber: string | null;
-      orderPassword: string | null;
+      name: string | null;
     };
-    onOrdererNameChange: (value: string) => void;
-    onOrderNumberChange: (value: string) => void;
-    onOrderPasswordChange: (value: string) => void;
-    onOrdererNameBlur: () => void;
-    onOrderNumberBlur: () => void;
-    onOrderPasswordBlur: () => void;
+    onNameChange: (value: string) => void;
+    onNameBlur: () => void;
     onSubmit: () => void;
     onBack: () => void;
   };
 }
 
-export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLookupViewProps) {
+export default function SignupNameView({ signupName }: SignupNameViewProps) {
   return (
     <Container>
       <Header>
-        <BackButton onClick={guestOrderLookup.onBack} aria-label="뒤로가기">
+        <BackButton onClick={signupName.onBack} aria-label="뒤로가기">
           <BackIcon>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M15 18L9 12L15 6" stroke="#101112" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </BackIcon>
         </BackButton>
-        <HeaderTitle>비회원 주문 조회하기</HeaderTitle>
+        <HeaderTitle>이메일로 회원가입</HeaderTitle>
         <HeaderSpacer />
       </Header>
 
@@ -43,54 +35,18 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
         <FormSection>
           <InputGroup>
             <TextField>
-              <Label>주문자명</Label>
-              <InputBox $hasError={!!guestOrderLookup.errors.ordererName}>
+              <Label>성함</Label>
+              <InputBox $hasError={!!signupName.errors.name}>
                 <InputRow>
                   <Input
                     type="text"
-                    placeholder="주문자명"
-                    value={guestOrderLookup.ordererName}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrdererNameChange(e.target.value)}
-                    onBlur={guestOrderLookup.onOrdererNameBlur}
+                    placeholder="성함"
+                    value={signupName.name}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => signupName.onNameChange(e.target.value)}
+                    onBlur={signupName.onNameBlur}
                   />
-                  {guestOrderLookup.errors.ordererName && (
-                    <ErrorMessage>{guestOrderLookup.errors.ordererName}</ErrorMessage>
-                  )}
-                </InputRow>
-              </InputBox>
-            </TextField>
-
-            <TextField>
-              <Label>주문번호</Label>
-              <InputBox $hasError={!!guestOrderLookup.errors.orderNumber}>
-                <InputRow>
-                  <Input
-                    type="text"
-                    placeholder="주문번호"
-                    value={guestOrderLookup.orderNumber}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderNumberChange(e.target.value)}
-                    onBlur={guestOrderLookup.onOrderNumberBlur}
-                  />
-                  {guestOrderLookup.errors.orderNumber && (
-                    <ErrorMessage>{guestOrderLookup.errors.orderNumber}</ErrorMessage>
-                  )}
-                </InputRow>
-              </InputBox>
-            </TextField>
-
-            <TextField>
-              <Label>주문 비밀번호</Label>
-              <InputBox $hasError={!!guestOrderLookup.errors.orderPassword}>
-                <InputRow>
-                  <Input
-                    type="password"
-                    placeholder="주문 비밀번호"
-                    value={guestOrderLookup.orderPassword}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderPasswordChange(e.target.value)}
-                    onBlur={guestOrderLookup.onOrderPasswordBlur}
-                  />
-                  {guestOrderLookup.errors.orderPassword && (
-                    <ErrorMessage>{guestOrderLookup.errors.orderPassword}</ErrorMessage>
+                  {signupName.errors.name && (
+                    <ErrorMessage>{signupName.errors.name}</ErrorMessage>
                   )}
                 </InputRow>
               </InputBox>
@@ -98,10 +54,11 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
           </InputGroup>
 
           <SubmitButton 
-            onClick={guestOrderLookup.onSubmit}
-            disabled={guestOrderLookup.isLoading}
+            onClick={signupName.onSubmit}
+            disabled={!signupName.isValid || signupName.isLoading}
+            $isActive={signupName.isValid}
           >
-            {guestOrderLookup.isLoading ? '조회 중...' : '주문조회'}
+            {signupName.isLoading ? '처리 중...' : '다음'}
           </SubmitButton>
         </FormSection>
       </Content>
@@ -171,7 +128,7 @@ const FormSection = styled.div`
   align-items: flex-start;
   width: 100%;
   max-width: 343px;
-  gap: 24px;
+  gap: 8px;
 `;
 
 const InputGroup = styled.div`
@@ -250,33 +207,32 @@ const ErrorMessage = styled.span`
   color: #FF4B3F;
 `;
 
-const SubmitButton = styled.button`
+const SubmitButton = styled.button<{ $isActive?: boolean }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   padding: 8px 14px;
   width: 100%;
-  height: 50px;
-  background: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  height: 44px;
+  background: ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.1)'};
+  border: 1px solid ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.08)'};
   border-radius: 4px;
-  cursor: pointer;
-  transition: opacity var(--transition-fast);
+  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
+  transition: background var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
 
   font-family: var(--font-family-base);
   font-weight: 600;
   font-size: 16px;
   line-height: 128%;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: ${props => props.$isActive ? '#ffffff' : 'rgba(12, 12, 12, 0.3)'};
 
   &:hover:not(:disabled) {
-    opacity: 0.9;
+    opacity: ${props => props.$isActive ? 0.9 : 1};
   }
 
   &:disabled {
-    opacity: 0.7;
     cursor: not-allowed;
   }
 `;
