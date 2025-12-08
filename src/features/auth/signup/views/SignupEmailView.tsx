@@ -1,20 +1,32 @@
 import { ChangeEvent } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 interface SignupEmailViewProps {
   signupEmail: {
     email: string;
+    verificationCode: string;
+    isCodeSent: boolean;
     isEmailVerified: boolean;
     isLoading: boolean;
     isVerifying: boolean;
+    isConfirming: boolean;
     isEmailValid: boolean;
+    isCodeValid: boolean;
     isValid: boolean;
     errors: {
       email: string | null;
+      verificationCode: string | null;
     };
+    showSnackbar: boolean;
+    timer: string;
+    isTimerActive: boolean;
     onEmailChange: (value: string) => void;
+    onCodeChange: (value: string) => void;
     onEmailBlur: () => void;
+    onCodeBlur: () => void;
     onVerifyEmail: () => void;
+    onResendCode: () => void;
+    onConfirmCode: () => void;
     onSubmit: () => void;
     onBack: () => void;
   };
@@ -23,6 +35,12 @@ interface SignupEmailViewProps {
 export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
   return (
     <Container>
+      {signupEmail.showSnackbar && (
+        <Snackbar>
+          <SnackbarText>작성하신 이메일로 인증코드를 보냈어요</SnackbarText>
+        </Snackbar>
+      )}
+
       <Header>
         <BackButton onClick={signupEmail.onBack} aria-label="뒤로가기">
           <BackIcon>
@@ -57,11 +75,50 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
 
           <VerifyButton 
             onClick={signupEmail.onVerifyEmail}
-            disabled={signupEmail.isVerifying || !signupEmail.email.trim()}
-            $isActive={signupEmail.email.trim().length > 0}
+            disabled={signupEmail.isVerifying || !signupEmail.email.trim() || signupEmail.isCodeSent}
+            $isActive={signupEmail.email.trim().length > 0 && !signupEmail.isCodeSent}
           >
             {signupEmail.isVerifying ? '인증 중...' : '이메일 인증하기'}
           </VerifyButton>
+
+          {signupEmail.isCodeSent && (
+            <VerificationSection>
+              <TextField>
+                <Label>이메일 인증코드</Label>
+                <CodeInputBox $hasError={!!signupEmail.errors.verificationCode}>
+                  <CodeInputRow>
+                    <CodeInput
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="인증코드 6자리"
+                      value={signupEmail.verificationCode}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => signupEmail.onCodeChange(e.target.value.replace(/[^0-9]/g, ''))}
+                      onBlur={signupEmail.onCodeBlur}
+                      maxLength={6}
+                    />
+                    <TimerText>{signupEmail.timer}</TimerText>
+                    <ConfirmButton
+                      onClick={signupEmail.onConfirmCode}
+                      disabled={signupEmail.isConfirming || signupEmail.verificationCode.length !== 6}
+                      $isActive={signupEmail.verificationCode.length === 6}
+                    >
+                      {signupEmail.isConfirming ? '확인 중' : '확인'}
+                    </ConfirmButton>
+                  </CodeInputRow>
+                  {signupEmail.errors.verificationCode && (
+                    <ErrorMessage>{signupEmail.errors.verificationCode}</ErrorMessage>
+                  )}
+                </CodeInputBox>
+              </TextField>
+
+              <ResendLink>
+                인증코드를 받지 못하셨나요? 
+                <ResendButton onClick={signupEmail.onResendCode}>
+                  인증코드 재전송하기
+                </ResendButton>
+              </ResendLink>
+            </VerificationSection>
+          )}
         </FormSection>
       </Content>
 
@@ -78,12 +135,47 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
   );
 }
 
+const slideDown = keyframes`
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background: #ffffff;
   font-family: var(--font-family-base);
+  position: relative;
+`;
+
+const Snackbar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: var(--color-primary);
+  animation: ${slideDown} 0.3s ease-out;
+`;
+
+const SnackbarText = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #ffffff;
 `;
 
 const Header = styled.header`
@@ -236,6 +328,122 @@ const VerifyButton = styled.button<{ $isActive?: boolean }>`
 
   &:disabled {
     cursor: not-allowed;
+  }
+`;
+
+const VerificationSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+`;
+
+const CodeInputBox = styled.div<{ $hasError?: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 16px;
+  gap: 4px;
+  width: 100%;
+  min-height: 48px;
+  background: ${props => props.$hasError ? '#ffffff' : 'rgba(12, 12, 12, 0.06)'};
+  border: 1px solid ${props => props.$hasError ? '#FF4B3F' : 'transparent'};
+  border-radius: 4px;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+`;
+
+const CodeInputRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+`;
+
+const CodeInput = styled.input`
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #101112;
+  padding: 0;
+
+  &::placeholder {
+    color: rgba(12, 12, 12, 0.3);
+  }
+`;
+
+const TimerText = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.5);
+  flex-shrink: 0;
+`;
+
+const ConfirmButton = styled.button<{ $isActive?: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 12px;
+  height: 28px;
+  background: ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.1)'};
+  border: none;
+  border-radius: 4px;
+  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+  flex-shrink: 0;
+
+  font-family: var(--font-family-base);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: ${props => props.$isActive ? '#ffffff' : 'rgba(12, 12, 12, 0.3)'};
+
+  &:hover:not(:disabled) {
+    opacity: ${props => props.$isActive ? 0.9 : 1};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+const ResendLink = styled.p`
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.5);
+  margin: 0;
+`;
+
+const ResendButton = styled.button`
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-left: 4px;
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: var(--color-primary);
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
   }
 `;
 
