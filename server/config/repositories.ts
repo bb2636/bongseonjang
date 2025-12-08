@@ -1,6 +1,6 @@
-import { MockReferralRepository } from '../repository/MockReferralRepository';
-import { TypeORMReferralRepository } from '../repository/TypeORMReferralRepository';
-import type { ReferralRepository } from '../repository/ReferralRepository';
+import { MockReferralRepository } from '../features/referral/repository/MockReferralRepository';
+import { TypeORMReferralRepository } from '../features/referral/repository/TypeORMReferralRepository';
+import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',

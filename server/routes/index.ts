@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import authRoutes from './authRoutes';
-import emailVerificationRoutes from './emailVerificationRoutes';
-import referralRoutes from './referralRoutes';
+import { authRoutes } from '../features/auth';
+import { emailVerificationRoutes } from '../features/emailVerification';
+import { referralRoutes } from '../features/referral';
 
 const router = Router();
 
