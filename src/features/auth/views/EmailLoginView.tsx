@@ -7,8 +7,14 @@ interface EmailLoginViewProps {
     password: string;
     isLoading: boolean;
     isValid: boolean;
+    errors: {
+      email: string | null;
+      password: string | null;
+    };
     onEmailChange: (value: string) => void;
     onPasswordChange: (value: string) => void;
+    onEmailBlur: () => void;
+    onPasswordBlur: () => void;
     onSubmit: () => void;
     onForgotPassword: () => void;
     onBack: () => void;
@@ -41,24 +47,29 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
           <InputGroup>
             <TextField>
               <Label>이메일</Label>
-              <InputWrapper>
+              <InputWrapper $hasError={!!emailLogin.errors.email}>
                 <Input
                   type="email"
                   placeholder="이메일을 입력해주세요."
                   value={emailLogin.email}
                   onChange={(e) => emailLogin.onEmailChange(e.target.value)}
+                  onBlur={emailLogin.onEmailBlur}
                 />
               </InputWrapper>
+              {emailLogin.errors.email && (
+                <ErrorMessage>{emailLogin.errors.email}</ErrorMessage>
+              )}
             </TextField>
 
             <TextField>
               <Label>비밀번호</Label>
-              <InputWrapper>
+              <InputWrapper $hasError={!!emailLogin.errors.password}>
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="비밀번호를 입력해주세요."
                   value={emailLogin.password}
                   onChange={(e) => emailLogin.onPasswordChange(e.target.value)}
+                  onBlur={emailLogin.onPasswordBlur}
                 />
                 <VisibilityButton 
                   type="button"
@@ -79,12 +90,15 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
                   )}
                 </VisibilityButton>
               </InputWrapper>
+              {emailLogin.errors.password && (
+                <ErrorMessage>{emailLogin.errors.password}</ErrorMessage>
+              )}
             </TextField>
           </InputGroup>
 
           <SubmitButton 
             onClick={emailLogin.onSubmit}
-            disabled={!emailLogin.isValid || emailLogin.isLoading}
+            disabled={emailLogin.isLoading}
             $isActive={emailLogin.isValid}
           >
             {emailLogin.isLoading ? '로그인 중...' : '로그인'}
@@ -188,7 +202,7 @@ const Label = styled.label`
   color: #0C0C0C;
 `;
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div<{ $hasError?: boolean }>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -196,8 +210,10 @@ const InputWrapper = styled.div`
   padding: 4px 16px;
   width: 100%;
   height: 48px;
-  background: rgba(12, 12, 12, 0.06);
+  background: ${props => props.$hasError ? '#ffffff' : 'rgba(12, 12, 12, 0.06)'};
+  border: 1px solid ${props => props.$hasError ? '#FF4B3F' : 'transparent'};
   border-radius: 4px;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 `;
 
 const Input = styled.input`
@@ -228,6 +244,16 @@ const VisibilityButton = styled.button`
   border: none;
   cursor: pointer;
   padding: 0;
+`;
+
+const ErrorMessage = styled.span`
+  padding: 0 4px;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 140%;
+  letter-spacing: -0.01em;
+  color: #FF4B3F;
 `;
 
 const SubmitButton = styled.button<{ $isActive: boolean }>`
