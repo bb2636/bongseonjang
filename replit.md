@@ -98,6 +98,43 @@ feat: 간단한 제목
 - **Page**: Hook 호출 후 View에 namespace props 전달
 - **View**: 받은 namespace props로 UI 렌더링
 
+**필수 규칙 (반드시 준수):**
+- **Page에서 UI 렌더링 금지** - Page는 Hook 호출 + View에 props 전달만 담당
+- **모든 페이지는 반드시 Hook + View 분리** - 단순한 페이지도 예외 없음
+- **Page 파일에 CSS import 금지** - CSS는 View에서만 import
+- **View는 순수 프레젠테이션** - useNavigate 등 로직은 Hook에서 처리
+
+**올바른 예시:**
+```typescript
+// pages/TermsPage.tsx - Hook 호출 + View 전달만
+export default function TermsPage() {
+  const terms = useTermsPage();
+  return <TermsView terms={terms} />;
+}
+
+// hooks/useTermsPage.ts - 모든 로직 캡슐화
+export function useTermsPage() {
+  const navigate = useNavigate();
+  const onBack = useCallback(() => navigate('/signup/email'), [navigate]);
+  return { onBack };
+}
+
+// views/TermsView.tsx - UI 렌더링만
+export default function TermsView({ terms }: TermsViewProps) {
+  return <button onClick={terms.onBack}>뒤로</button>;
+}
+```
+
+**잘못된 예시 (금지):**
+```typescript
+// Page에서 직접 UI 렌더링 - 절대 금지!
+export default function TermsPage() {
+  const navigate = useNavigate();
+  const handleBack = () => navigate('/signup/email');
+  return <div><button onClick={handleBack}>뒤로</button></div>;
+}
+```
+
 ### Frontend Folder Structure
 ```
 src/
