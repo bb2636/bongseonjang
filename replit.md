@@ -18,6 +18,12 @@
 - 의미 있는 공백 유지
 - 부정 조건 최소화 (불가피할 경우 `isInvalid` 같은 메서드로 추출)
 
+### Styling Rules
+- **Vanilla CSS만 사용** (styled-components, emotion, tailwind 등 CSS-in-JS 라이브러리 사용 금지)
+- CSS 변수를 통한 테마 관리 (colors, spacing, typography)
+- 컴포넌트별 CSS 파일 분리 (예: `Component.tsx` + `Component.css`)
+- BEM 네이밍 또는 feature 기반 클래스 네이밍 사용
+
 ### Method Principles
 - 하나의 메서드는 하나의 책임만
 - 리턴 타입 명확히 정의
