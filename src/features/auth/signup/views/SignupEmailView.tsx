@@ -135,9 +135,9 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
   );
 }
 
-const slideDown = keyframes`
+const slideUp = keyframes`
   from {
-    transform: translateY(-100%);
+    transform: translateY(100%);
     opacity: 0;
   }
   to {
@@ -157,16 +157,17 @@ const Container = styled.div`
 
 const Snackbar = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  bottom: 120px;
+  left: 16px;
+  right: 16px;
   z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 16px;
+  padding: 14px 16px;
   background: var(--color-primary);
-  animation: ${slideDown} 0.3s ease-out;
+  border-radius: 8px;
+  animation: ${slideUp} 0.3s ease-out;
 `;
 
 const SnackbarText = styled.span`
