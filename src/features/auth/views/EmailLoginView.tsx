@@ -1,0 +1,276 @@
+import { useState } from 'react';
+import styled from 'styled-components';
+
+interface EmailLoginViewProps {
+  emailLogin: {
+    email: string;
+    password: string;
+    isLoading: boolean;
+    isValid: boolean;
+    onEmailChange: (value: string) => void;
+    onPasswordChange: (value: string) => void;
+    onSubmit: () => void;
+    onForgotPassword: () => void;
+    onBack: () => void;
+  };
+}
+
+export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(prev => !prev);
+  };
+
+  return (
+    <Container>
+      <Header>
+        <BackButton onClick={emailLogin.onBack} aria-label="뒤로가기">
+          <BackIcon>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18L9 12L15 6" stroke="#101112" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </BackIcon>
+        </BackButton>
+        <HeaderTitle>이메일로 로그인</HeaderTitle>
+        <HeaderSpacer />
+      </Header>
+
+      <Content>
+        <FormSection>
+          <InputGroup>
+            <TextField>
+              <Label>이메일</Label>
+              <InputWrapper>
+                <Input
+                  type="email"
+                  placeholder="이메일을 입력해주세요."
+                  value={emailLogin.email}
+                  onChange={(e) => emailLogin.onEmailChange(e.target.value)}
+                />
+              </InputWrapper>
+            </TextField>
+
+            <TextField>
+              <Label>비밀번호</Label>
+              <InputWrapper>
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="비밀번호를 입력해주세요."
+                  value={emailLogin.password}
+                  onChange={(e) => emailLogin.onPasswordChange(e.target.value)}
+                />
+                <VisibilityButton 
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                >
+                  {showPassword ? (
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                      <path d="M11 4.5C6 4.5 2 11 2 11C2 11 6 17.5 11 17.5C16 17.5 20 11 20 11C20 11 16 4.5 11 4.5Z" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="11" cy="11" r="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5"/>
+                    </svg>
+                  ) : (
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                      <path d="M11 4.5C6 4.5 2 11 2 11C2 11 6 17.5 11 17.5C16 17.5 20 11 20 11C20 11 16 4.5 11 4.5Z" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="11" cy="11" r="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5"/>
+                      <line x1="4" y1="4" x2="18" y2="18" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  )}
+                </VisibilityButton>
+              </InputWrapper>
+            </TextField>
+          </InputGroup>
+
+          <SubmitButton 
+            onClick={emailLogin.onSubmit}
+            disabled={!emailLogin.isValid || emailLogin.isLoading}
+            $isActive={emailLogin.isValid}
+          >
+            {emailLogin.isLoading ? '로그인 중...' : '로그인'}
+          </SubmitButton>
+        </FormSection>
+
+        <ForgotPasswordLink onClick={emailLogin.onForgotPassword}>
+          비밀번호를 잊어버렸어요
+        </ForgotPasswordLink>
+      </Content>
+    </Container>
+  );
+}
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: var(--font-family-base);
+`;
+
+const Header = styled.header`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 8px;
+  height: 48px;
+`;
+
+const BackButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+`;
+
+const BackIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const HeaderTitle = styled.h1`
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+`;
+
+const HeaderSpacer = styled.div`
+  width: 42px;
+  height: 42px;
+`;
+
+const Content = styled.main`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 33px 16px 0;
+  gap: 16px;
+`;
+
+const FormSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 343px;
+  gap: 32px;
+`;
+
+const InputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+`;
+
+const TextField = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 8px;
+`;
+
+const Label = styled.label`
+  padding: 0 4px;
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 16px;
+  width: 100%;
+  height: 48px;
+  background: rgba(12, 12, 12, 0.06);
+  border-radius: 4px;
+`;
+
+const Input = styled.input`
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+
+  &::placeholder {
+    color: rgba(12, 12, 12, 0.3);
+  }
+`;
+
+const VisibilityButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+`;
+
+const SubmitButton = styled.button<{ $isActive: boolean }>`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  width: 100%;
+  height: 50px;
+  background: ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.1)'};
+  border: 1px solid ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.08)'};
+  border-radius: 4px;
+  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+
+  font-family: var(--font-family-base);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: ${props => props.$isActive ? '#ffffff' : 'rgba(12, 12, 12, 0.3)'};
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+`;
+
+const ForgotPasswordLink = styled.button`
+  padding: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+  text-decoration: underline;
+  color: rgba(12, 12, 12, 0.7);
+
+  &:hover {
+    color: rgba(12, 12, 12, 0.9);
+  }
+`;
