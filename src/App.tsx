@@ -1,9 +1,13 @@
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import { MainLayout } from './layouts';
+import HomePage from './features/home/pages/HomePage';
 
 export default function App() {
   return (
-    <main>
-      React ⚛️ + Vite ⚡ + Replit 🌀
-    </main>
-  )
+    <MainLayout>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+      </Routes>
+    </MainLayout>
+  );
 }
