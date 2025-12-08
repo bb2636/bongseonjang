@@ -137,11 +137,11 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
 
 const slideUp = keyframes`
   from {
-    transform: translateY(100%);
+    transform: translateX(-50%) translateY(100%);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
     opacity: 1;
   }
 `;
@@ -172,7 +172,7 @@ const Snackbar = styled.div`
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
   border-radius: 40px;
-  animation: ${slideUp} 0.3s ease-out;
+  animation: ${slideUp} 0.3s ease-out forwards;
 `;
 
 const SnackbarText = styled.span`
