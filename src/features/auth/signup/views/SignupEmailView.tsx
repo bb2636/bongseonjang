@@ -1,6 +1,7 @@
 import { ChangeEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { AlertModal } from "@components";
+import ReferralResultModal from "../../../../components/ReferralResultModal";
 
 interface SignupEmailViewProps {
   signupEmail: {
@@ -77,6 +78,9 @@ interface SignupEmailViewProps {
     onReferralIdChange: (value: string) => void;
     onReferralIdBlur: () => void;
     onReferralIdVerify: () => void;
+    onCloseReferralModal: () => void;
+    showReferralModal: boolean;
+    referralModalMessage: string;
     onPasswordNext: () => void;
     onVerifyEmail: () => void;
     onResendCode: () => void;
@@ -94,6 +98,12 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
         isOpen={signupEmail.showErrorModal}
         title={signupEmail.errorModalMessage}
         onConfirm={signupEmail.onCloseErrorModal}
+      />
+      
+      <ReferralResultModal
+        isOpen={signupEmail.showReferralModal}
+        message={signupEmail.referralModalMessage}
+        onConfirm={signupEmail.onCloseReferralModal}
       />
 
       {signupEmail.showSnackbar && (
@@ -255,8 +265,8 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                   <Label>추천인 아이디(선택)</Label>
                   <VerifyInputRow>
                     <VerifyInputBoxWithError 
-                      $hasError={!!signupEmail.errors.referralId || !!signupEmail.referralErrorMessage}
-                      $hasSuccess={!!signupEmail.referralSuccessMessage}
+                      $hasError={!!signupEmail.errors.referralId}
+                      $hasSuccess={signupEmail.isReferralIdVerified}
                     >
                       <FormInput
                         type="text"
@@ -267,14 +277,8 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                         }
                         onBlur={signupEmail.onReferralIdBlur}
                       />
-                      {signupEmail.errors.referralId && !signupEmail.referralErrorMessage && !signupEmail.referralSuccessMessage && (
+                      {signupEmail.errors.referralId && (
                         <ErrorMessage>{signupEmail.errors.referralId}</ErrorMessage>
-                      )}
-                      {signupEmail.referralErrorMessage && (
-                        <ErrorMessage>{signupEmail.referralErrorMessage}</ErrorMessage>
-                      )}
-                      {signupEmail.referralSuccessMessage && (
-                        <SuccessMessage>{signupEmail.referralSuccessMessage}</SuccessMessage>
                       )}
                     </VerifyInputBoxWithError>
                     <BlackVerifyButton 

@@ -96,6 +96,8 @@ export function useSignupEmail() {
   const [errorModalMessage, setErrorModalMessage] = useState('');
   const [referralSuccessMessage, setReferralSuccessMessage] = useState('');
   const [referralErrorMessage, setReferralErrorMessage] = useState('');
+  const [showReferralModal, setShowReferralModal] = useState(false);
+  const [referralModalMessage, setReferralModalMessage] = useState('');
   const [timer, setTimer] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -343,7 +345,8 @@ export function useSignupEmail() {
     setReferralErrorMessage('');
     
     if (formData.referralId.length < 3) {
-      setReferralErrorMessage('최소 3자 이상 입력해주세요');
+      setReferralModalMessage('최소 3자 이상 입력해주세요');
+      setShowReferralModal(true);
       return;
     }
 
@@ -352,20 +355,26 @@ export function useSignupEmail() {
       const result = await verifyReferralId(formData.referralId);
       if (result.exists) {
         setFormData(prev => ({ ...prev, isReferralIdVerified: true }));
-        setReferralSuccessMessage(result.message);
-        setReferralErrorMessage('');
+        setReferralModalMessage('추천인 아이디가 확인되었습니다');
+        setShowReferralModal(true);
       } else {
         setFormData(prev => ({ ...prev, isReferralIdVerified: false }));
-        setReferralErrorMessage(result.message);
-        setReferralSuccessMessage('');
+        setReferralModalMessage('입력하신 아이디를 확인해주세요');
+        setShowReferralModal(true);
       }
     } catch (error) {
-      setReferralErrorMessage('추천인 확인에 실패했습니다');
+      setReferralModalMessage('추천인 확인에 실패했습니다');
+      setShowReferralModal(true);
       setFormData(prev => ({ ...prev, isReferralIdVerified: false }));
     } finally {
       setIsReferralVerifying(false);
     }
   }, [formData.referralId]);
+
+  const onCloseReferralModal = useCallback(() => {
+    setShowReferralModal(false);
+    setReferralModalMessage('');
+  }, []);
 
   const onPasswordNext = useCallback(() => {
     setTouched(prev => ({ ...prev, password: true, passwordConfirm: true }));
@@ -533,6 +542,9 @@ export function useSignupEmail() {
       onReferralIdChange,
       onReferralIdBlur,
       onReferralIdVerify,
+      onCloseReferralModal,
+      showReferralModal,
+      referralModalMessage,
       onPasswordNext,
       onVerifyEmail,
       onResendCode,
