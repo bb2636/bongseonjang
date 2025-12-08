@@ -1,5 +1,5 @@
-import { ChangeEvent } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { ChangeEvent } from "react";
+import styled, { keyframes } from "styled-components";
 
 interface SignupEmailViewProps {
   signupEmail: {
@@ -45,7 +45,13 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
         <BackButton onClick={signupEmail.onBack} aria-label="뒤로가기">
           <BackIcon>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M15 18L9 12L15 6" stroke="#101112" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path
+                d="M15 18L9 12L15 6"
+                stroke="#101112"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </BackIcon>
         </BackButton>
@@ -63,7 +69,9 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                   type="email"
                   placeholder="이메일"
                   value={signupEmail.email}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => signupEmail.onEmailChange(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    signupEmail.onEmailChange(e.target.value)
+                  }
                   onBlur={signupEmail.onEmailBlur}
                 />
                 {signupEmail.errors.email && (
@@ -73,12 +81,18 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
             </TextField>
           </InputGroup>
 
-          <VerifyButton 
+          <VerifyButton
             onClick={signupEmail.onVerifyEmail}
-            disabled={signupEmail.isVerifying || !signupEmail.email.trim() || signupEmail.isCodeSent}
-            $isActive={signupEmail.email.trim().length > 0 && !signupEmail.isCodeSent}
+            disabled={
+              signupEmail.isVerifying ||
+              !signupEmail.email.trim() ||
+              signupEmail.isCodeSent
+            }
+            $isActive={
+              signupEmail.email.trim().length > 0 && !signupEmail.isCodeSent
+            }
           >
-            {signupEmail.isVerifying ? '인증 중...' : '이메일 인증하기'}
+            {signupEmail.isVerifying ? "인증 중..." : "이메일 인증하기"}
           </VerifyButton>
 
           {signupEmail.isCodeSent && (
@@ -92,27 +106,36 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
                       inputMode="numeric"
                       placeholder="인증코드 6자리"
                       value={signupEmail.verificationCode}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => signupEmail.onCodeChange(e.target.value.replace(/[^0-9]/g, ''))}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        signupEmail.onCodeChange(
+                          e.target.value.replace(/[^0-9]/g, ""),
+                        )
+                      }
                       onBlur={signupEmail.onCodeBlur}
                       maxLength={6}
                     />
                     <TimerText>{signupEmail.timer}</TimerText>
                     <ConfirmButton
                       onClick={signupEmail.onConfirmCode}
-                      disabled={signupEmail.isConfirming || signupEmail.verificationCode.length !== 6}
+                      disabled={
+                        signupEmail.isConfirming ||
+                        signupEmail.verificationCode.length !== 6
+                      }
                       $isActive={signupEmail.verificationCode.length === 6}
                     >
-                      {signupEmail.isConfirming ? '확인 중' : '확인'}
+                      {signupEmail.isConfirming ? "확인 중" : "확인"}
                     </ConfirmButton>
                   </CodeInputRow>
                   {signupEmail.errors.verificationCode && (
-                    <ErrorMessage>{signupEmail.errors.verificationCode}</ErrorMessage>
+                    <ErrorMessage>
+                      {signupEmail.errors.verificationCode}
+                    </ErrorMessage>
                   )}
                 </CodeInputBox>
               </TextField>
 
               <ResendLink>
-                인증코드를 받지 못하셨나요? 
+                인증코드를 받지 못하셨나요?
                 <ResendButton onClick={signupEmail.onResendCode}>
                   인증코드 재전송하기
                 </ResendButton>
@@ -123,12 +146,12 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
       </Content>
 
       <Footer>
-        <SubmitButton 
+        <SubmitButton
           onClick={signupEmail.onSubmit}
           disabled={!signupEmail.isValid || signupEmail.isLoading}
           $isActive={signupEmail.isValid}
         >
-          {signupEmail.isLoading ? '처리 중...' : '다음'}
+          {signupEmail.isLoading ? "처리 중..." : "다음"}
         </SubmitButton>
       </Footer>
     </Container>
@@ -181,7 +204,7 @@ const SnackbarText = styled.span`
   font-size: 14px;
   line-height: 128%;
   letter-spacing: -0.01em;
-  color: #FDFDFD;
+  color: #fdfdfd;
 `;
 
 const Header = styled.header`
@@ -216,7 +239,7 @@ const HeaderTitle = styled.h1`
   font-size: 16px;
   line-height: 128%;
   letter-spacing: -0.02em;
-  color: #0C0C0C;
+  color: #0c0c0c;
 `;
 
 const HeaderSpacer = styled.div`
@@ -263,7 +286,7 @@ const Label = styled.label`
   font-size: 14px;
   line-height: 128%;
   letter-spacing: -0.01em;
-  color: #0C0C0C;
+  color: #0c0c0c;
 `;
 
 const InputBox = styled.div<{ $hasError?: boolean }>`
@@ -274,10 +297,13 @@ const InputBox = styled.div<{ $hasError?: boolean }>`
   gap: 4px;
   width: 100%;
   min-height: 48px;
-  background: ${props => props.$hasError ? '#ffffff' : 'rgba(12, 12, 12, 0.06)'};
-  border: 1px solid ${props => props.$hasError ? '#FF4B3F' : 'transparent'};
+  background: ${(props) =>
+    props.$hasError ? "#ffffff" : "rgba(12, 12, 12, 0.06)"};
+  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "transparent")};
   border-radius: 4px;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
 `;
 
 const Input = styled.input`
@@ -304,7 +330,7 @@ const ErrorMessage = styled.span`
   font-size: 12px;
   line-height: 128%;
   letter-spacing: -0.01em;
-  color: #FF4B3F;
+  color: #ff4b3f;
 `;
 
 const VerifyButton = styled.button<{ $isActive?: boolean }>`
@@ -316,20 +342,25 @@ const VerifyButton = styled.button<{ $isActive?: boolean }>`
   width: 100%;
   height: 44px;
   background: #ffffff;
-  border: 1px solid ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.08)'};
+  border: 1px solid
+    ${(props) =>
+      props.$isActive ? "var(--color-primary)" : "rgba(12, 12, 12, 0.08)"};
   border-radius: 4px;
-  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
-  transition: border-color var(--transition-fast), opacity var(--transition-fast);
+  cursor: ${(props) => (props.$isActive ? "pointer" : "not-allowed")};
+  transition:
+    border-color var(--transition-fast),
+    opacity var(--transition-fast);
 
   font-family: var(--font-family-base);
   font-weight: 600;
   font-size: 16px;
   line-height: 128%;
   letter-spacing: -0.02em;
-  color: ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.3)'};
+  color: ${(props) =>
+    props.$isActive ? "var(--color-primary)" : "rgba(12, 12, 12, 0.3)"};
 
   &:hover:not(:disabled) {
-    opacity: ${props => props.$isActive ? 0.8 : 1};
+    opacity: ${(props) => (props.$isActive ? 0.8 : 1)};
   }
 
   &:disabled {
@@ -352,10 +383,13 @@ const CodeInputBox = styled.div<{ $hasError?: boolean }>`
   gap: 4px;
   width: 100%;
   min-height: 48px;
-  background: ${props => props.$hasError ? '#ffffff' : 'rgba(12, 12, 12, 0.06)'};
-  border: 1px solid ${props => props.$hasError ? '#FF4B3F' : 'transparent'};
+  background: ${(props) =>
+    props.$hasError ? "#ffffff" : "rgba(12, 12, 12, 0.06)"};
+  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "transparent")};
   border-radius: 4px;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
 `;
 
 const CodeInputRow = styled.div`
@@ -401,11 +435,14 @@ const ConfirmButton = styled.button<{ $isActive?: boolean }>`
   align-items: center;
   padding: 6px 12px;
   height: 28px;
-  background: ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.1)'};
+  background: ${(props) =>
+    props.$isActive ? "var(--color-primary)" : "rgba(12, 12, 12, 0.1)"};
   border: none;
   border-radius: 4px;
-  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
-  transition: background var(--transition-fast), opacity var(--transition-fast);
+  cursor: ${(props) => (props.$isActive ? "pointer" : "not-allowed")};
+  transition:
+    background var(--transition-fast),
+    opacity var(--transition-fast);
   flex-shrink: 0;
 
   font-family: var(--font-family-base);
@@ -413,10 +450,10 @@ const ConfirmButton = styled.button<{ $isActive?: boolean }>`
   font-size: 12px;
   line-height: 128%;
   letter-spacing: -0.01em;
-  color: ${props => props.$isActive ? '#ffffff' : 'rgba(12, 12, 12, 0.3)'};
+  color: ${(props) => (props.$isActive ? "#ffffff" : "rgba(12, 12, 12, 0.3)")};
 
   &:hover:not(:disabled) {
-    opacity: ${props => props.$isActive ? 0.9 : 1};
+    opacity: ${(props) => (props.$isActive ? 0.9 : 1)};
   }
 
   &:disabled {
@@ -444,7 +481,6 @@ const ResendButton = styled.button`
   font-size: 13px;
   line-height: 128%;
   letter-spacing: -0.01em;
-  color: var(--color-primary);
   text-decoration: underline;
   cursor: pointer;
 
@@ -468,21 +504,27 @@ const SubmitButton = styled.button<{ $isActive?: boolean }>`
   max-width: 343px;
   height: 44px;
   margin: 0 auto;
-  background: ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.1)'};
-  border: 1px solid ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.08)'};
+  background: ${(props) =>
+    props.$isActive ? "var(--color-primary)" : "rgba(12, 12, 12, 0.1)"};
+  border: 1px solid
+    ${(props) =>
+      props.$isActive ? "var(--color-primary)" : "rgba(12, 12, 12, 0.08)"};
   border-radius: 4px;
-  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
-  transition: background var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
+  cursor: ${(props) => (props.$isActive ? "pointer" : "not-allowed")};
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    opacity var(--transition-fast);
 
   font-family: var(--font-family-base);
   font-weight: 600;
   font-size: 16px;
   line-height: 128%;
   letter-spacing: -0.02em;
-  color: ${props => props.$isActive ? '#ffffff' : 'rgba(12, 12, 12, 0.3)'};
+  color: ${(props) => (props.$isActive ? "#ffffff" : "rgba(12, 12, 12, 0.3)")};
 
   &:hover:not(:disabled) {
-    opacity: ${props => props.$isActive ? 0.9 : 1};
+    opacity: ${(props) => (props.$isActive ? 0.9 : 1)};
   }
 
   &:disabled {
