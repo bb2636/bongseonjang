@@ -112,7 +112,55 @@ feat: 간단한 제목
 `server/` 아래에 `routes/`, `middleware/`, `controller/`, `application/`, `domain/`, `repository/`, `entity/`, `config/`, `scheduler/` 등의 폴더를 가집니다.
 
 ### Repository Pattern (Mock/Real 스위칭)
-Repository 패턴을 통해 목 데이터와 실제 DB 구현체를 쉽게 전환할 수 있습니다. `repository/` 폴더에 인터페이스와 Mock/TypeORM 구현체를 정의하고, `config/repositories.ts`에서 사용할 구현체를 설정합니다. ApplicationService는 Repository 인터페이스를 통해 데이터에 접근합니다.
+목 데이터와 실제 DB 구현체를 쉽게 전환할 수 있는 Generic Factory + Map 캐싱 패턴:
+
+**파일 구조:**
+```
+server/repository/
+├── ReferralRepository.ts        # 인터페이스 정의
+├── MockReferralRepository.ts    # 목 구현체 (개발용)
+└── TypeORMReferralRepository.ts # 실제 구현체 (프로덕션용)
+
+server/config/
+└── repositories.ts              # 구현체 선택 설정
+```
+
+**핵심 구조:**
+```typescript
+export const REPOSITORY_TYPE = { MOCK: 'mock', REAL: 'real' } as const;
+
+const config: RepositoryConfig = { referral: REPOSITORY_TYPE.MOCK };
+
+const repositoryMap: RepositoryMap = {
+  referral: {
+    [REPOSITORY_TYPE.MOCK]: () => new MockReferralRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMReferralRepository(),
+  },
+};
+
+const instances = new Map<keyof RepositoryConfig, unknown>();
+
+function createRepository<T>(name: keyof RepositoryConfig): T {
+  const cached = instances.get(name);
+  if (cached) return cached as T;
+  const instance = repositoryMap[name][config[name]]();
+  instances.set(name, instance);
+  return instance as T;
+}
+
+export const repositories = {
+  get referral() { return createRepository<ReferralRepository>('referral'); },
+};
+```
+
+**새 Repository 추가 (2곳만 수정):**
+1. `repository/` 폴더에 인터페이스 + Mock/TypeORM 구현체 생성
+2. `config/repositories.ts`에서:
+   - `RepositoryConfig` + `RepositoryMap` 인터페이스에 항목 추가
+   - `config` + `repositoryMap` 객체에 값 추가
+   - `repositories` 객체에 getter 추가
+
+**Mock/Real 전환:** `config` 객체에서 `REPOSITORY_TYPE.MOCK` ↔ `REPOSITORY_TYPE.REAL` 변경
 
 ## UI/UX Patterns
 - **CSS 변수**: 일관된 테마 적용.
