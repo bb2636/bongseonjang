@@ -1,6 +1,12 @@
 run = "npm run dev"
 modules = ["nodejs-20"]
-hidden = [".config", "tsconfig.json", "tsconfig.node.json", "vite.config.js", ".gitignore"]
+hidden = [
+  ".config",
+  "tsconfig.json",
+  "tsconfig.node.json",
+  "vite.config.js",
+  ".gitignore",
+]
 entrypoint = "src/App.tsx"
 
 [nix]
@@ -27,7 +33,7 @@ localPort = 5001
 externalPort = 3000
 
 [[ports]]
-localPort = 41573
+localPort = 5000
 externalPort = 80
 
 [agent]
