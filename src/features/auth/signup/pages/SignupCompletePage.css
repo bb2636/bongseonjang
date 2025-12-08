@@ -1,0 +1,132 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-100%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.signup-complete-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  background: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+}
+
+.signup-complete-confetti-container {
+  position: absolute;
+  width: 352px;
+  height: 316px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 92px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.signup-complete-confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  animation: confettiFall 3s ease-in-out infinite;
+  border-radius: 2px;
+}
+
+.signup-complete-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 278px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.signup-complete-mascot-image {
+  width: 100.05px;
+  height: 108.33px;
+  margin-bottom: 29px;
+}
+
+.signup-complete-message-container {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.signup-complete-title {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 128%;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+  margin: 0 0 8px 0;
+}
+
+.signup-complete-subtitle {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  text-align: center;
+  color: rgba(12, 12, 12, 0.6);
+  margin: 0;
+}
+
+.signup-complete-button-container {
+  position: fixed;
+  bottom: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 343px;
+}
+
+.signup-complete-login-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  gap: 6px;
+  width: 100%;
+  height: 50px;
+  background: #3B9BD5;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.signup-complete-login-button:hover {
+  background: #2A8BC5;
+}
+
+.signup-complete-login-button:active {
+  background: #1A7BB5;
+}
+
+.signup-complete-button-text {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+}
