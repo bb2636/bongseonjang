@@ -1,22 +1,9 @@
-interface VerifyReferralResult {
-  exists: boolean;
-  message: string;
-}
-
-const MOCK_EXISTING_EMAIL = "test@test.com";
+import { ReferralRepository, VerifyReferralResult } from '../repository/ReferralRepository';
 
 export class ReferralApplicationService {
-  async verifyReferralId(referralId: string): Promise<VerifyReferralResult> {
-    if (referralId === MOCK_EXISTING_EMAIL) {
-      return {
-        exists: true,
-        message: '추천인 아이디가 확인되었습니다.',
-      };
-    }
+  constructor(private referralRepository: ReferralRepository) {}
 
-    return {
-      exists: false,
-      message: '입력하신 아이디를 확인해주세요',
-    };
+  async verifyReferralId(referralId: string): Promise<VerifyReferralResult> {
+    return this.referralRepository.verifyByEmail(referralId);
   }
 }

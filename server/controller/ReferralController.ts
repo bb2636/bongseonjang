@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { ReferralApplicationService } from '../application/ReferralApplicationService';
+import { repositories } from '../config/repositories';
 
-const referralService = new ReferralApplicationService();
+const referralService = new ReferralApplicationService(repositories.referral);
 
 export class ReferralController {
   async verifyReferralId(req: Request, res: Response): Promise<void> {

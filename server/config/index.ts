@@ -1,4 +1,5 @@
 export { AppDataSource, initializeDatabase } from './database';
+export { repositories } from './repositories';
 
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
