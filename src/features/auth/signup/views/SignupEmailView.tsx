@@ -8,15 +8,23 @@ interface SignupEmailViewProps {
     verificationCode: string;
     isCodeSent: boolean;
     isEmailVerified: boolean;
+    password: string;
+    passwordConfirm: string;
+    showPassword: boolean;
+    showPasswordConfirm: boolean;
     isLoading: boolean;
     isVerifying: boolean;
     isConfirming: boolean;
     isEmailValid: boolean;
     isCodeValid: boolean;
+    isPasswordValid: boolean;
+    isPasswordConfirmValid: boolean;
     isValid: boolean;
     errors: {
       email: string | null;
       verificationCode: string | null;
+      password: string | null;
+      passwordConfirm: string | null;
     };
     showSnackbar: boolean;
     showErrorModal: boolean;
@@ -27,6 +35,12 @@ interface SignupEmailViewProps {
     onCodeChange: (value: string) => void;
     onEmailBlur: () => void;
     onCodeBlur: () => void;
+    onPasswordChange: (value: string) => void;
+    onPasswordConfirmChange: (value: string) => void;
+    onPasswordBlur: () => void;
+    onPasswordConfirmBlur: () => void;
+    onTogglePasswordVisibility: () => void;
+    onTogglePasswordConfirmVisibility: () => void;
     onVerifyEmail: () => void;
     onResendCode: () => void;
     onConfirmCode: () => void;
@@ -71,86 +85,170 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
 
       <Content>
         <FormSection>
-          <InputGroup>
-            <TextField>
-              <Label>이메일</Label>
-              <InputBox $hasError={!!signupEmail.errors.email}>
-                <Input
-                  type="email"
-                  placeholder="이메일"
-                  value={signupEmail.email}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    signupEmail.onEmailChange(e.target.value)
-                  }
-                  onBlur={signupEmail.onEmailBlur}
-                />
-                {signupEmail.errors.email && (
-                  <ErrorMessage>{signupEmail.errors.email}</ErrorMessage>
-                )}
-              </InputBox>
-            </TextField>
-          </InputGroup>
+          {signupEmail.isEmailVerified ? (
+            <>
+              <VerifiedEmailSection>
+                <TextField>
+                  <Label>이메일</Label>
+                  <VerifiedInputBox>
+                    <VerifiedInputText>{signupEmail.email}</VerifiedInputText>
+                    <VerifiedBadge>인증완료</VerifiedBadge>
+                  </VerifiedInputBox>
+                </TextField>
+              </VerifiedEmailSection>
 
-          <VerifyButton
-            onClick={signupEmail.onVerifyEmail}
-            disabled={
-              signupEmail.isVerifying ||
-              !signupEmail.email.trim() ||
-              signupEmail.isCodeSent
-            }
-            $isActive={
-              signupEmail.email.trim().length > 0 && !signupEmail.isCodeSent
-            }
-          >
-            {signupEmail.isVerifying ? "인증 중..." : "이메일 인증하기"}
-          </VerifyButton>
-
-          {signupEmail.isCodeSent && (
-            <VerificationSection>
-              <TextField>
-                <Label>이메일 인증코드</Label>
-                <CodeInputBox $hasError={!!signupEmail.errors.verificationCode}>
-                  <CodeInputRow>
-                    <CodeInput
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="인증코드 6자리"
-                      value={signupEmail.verificationCode}
+              <PasswordSection>
+                <TextField>
+                  <Label>비밀번호</Label>
+                  <PasswordInputBox $hasError={!!signupEmail.errors.password}>
+                    <PasswordInput
+                      type={signupEmail.showPassword ? "text" : "password"}
+                      placeholder="비밀번호"
+                      value={signupEmail.password}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        signupEmail.onCodeChange(
-                          e.target.value.replace(/[^0-9]/g, ""),
-                        )
+                        signupEmail.onPasswordChange(e.target.value)
                       }
-                      onBlur={signupEmail.onCodeBlur}
-                      maxLength={6}
+                      onBlur={signupEmail.onPasswordBlur}
                     />
-                    <TimerText>{signupEmail.timer}</TimerText>
-                    <ConfirmButton
-                      onClick={signupEmail.onConfirmCode}
-                      disabled={
-                        signupEmail.isConfirming ||
-                        signupEmail.verificationCode.length !== 6
-                      }
-                      $isActive={signupEmail.verificationCode.length === 6}
+                    <VisibilityToggle
+                      type="button"
+                      onClick={signupEmail.onTogglePasswordVisibility}
+                      aria-label={signupEmail.showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
                     >
-                      {signupEmail.isConfirming ? "확인 중" : "확인"}
-                    </ConfirmButton>
-                  </CodeInputRow>
-                  {signupEmail.errors.verificationCode && (
-                    <ErrorMessage>
-                      {signupEmail.errors.verificationCode}
-                    </ErrorMessage>
-                  )}
-                </CodeInputBox>
-              </TextField>
+                      {signupEmail.showPassword ? (
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                          <path d="M11 4.5C6 4.5 2.73 7.61 1 11C2.73 14.39 6 17.5 11 17.5C16 17.5 19.27 14.39 21 11C19.27 7.61 16 4.5 11 4.5ZM11 15C8.79 15 7 13.21 7 11C7 8.79 8.79 7 11 7C13.21 7 15 8.79 15 11C15 13.21 13.21 15 11 15ZM11 9C9.9 9 9 9.9 9 11C9 12.1 9.9 13 11 13C12.1 13 13 12.1 13 11C13 9.9 12.1 9 11 9Z" fill="rgba(12, 12, 12, 0.4)"/>
+                        </svg>
+                      ) : (
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                          <path d="M11 6C13.76 6 16 8.24 16 11C16 11.65 15.87 12.26 15.64 12.83L18.56 15.75C20.07 14.49 21.26 12.86 21.99 11C20.26 6.61 15.99 3.5 10.99 3.5C9.59 3.5 8.25 3.75 7.01 4.2L9.17 6.36C9.74 6.13 10.35 6 11 6ZM1 2.27L3.74 5.01C2.06 6.3 0.74 8.07 0 10.99C1.73 15.38 6 18.5 11 18.5C12.55 18.5 14.03 18.2 15.38 17.66L18.73 21L20 19.73L2.27 1L1 2.27ZM6.53 7.8L8.08 9.35C8.03 9.56 8 9.78 8 10C8 11.66 9.34 13 11 13C11.22 13 11.44 12.97 11.65 12.92L13.2 14.47C12.53 14.8 11.79 15 11 15C8.24 15 6 12.76 6 10C6 9.21 6.2 8.47 6.53 7.8ZM10.84 7.02L13.99 10.17L14.01 10.01C14.01 8.35 12.67 7.01 11.01 7.01L10.84 7.02Z" fill="rgba(12, 12, 12, 0.4)"/>
+                        </svg>
+                      )}
+                    </VisibilityToggle>
+                    {signupEmail.errors.password && (
+                      <ErrorMessage>{signupEmail.errors.password}</ErrorMessage>
+                    )}
+                  </PasswordInputBox>
+                </TextField>
 
-              <ResendLink>
-                인증코드를 받지 못하셨나요?
-                <ResendButton onClick={signupEmail.onResendCode}>
-                  인증코드 재전송하기
-                </ResendButton>
-              </ResendLink>
-            </VerificationSection>
+                <TextField>
+                  <Label>비밀번호 확인</Label>
+                  <PasswordInputBox $hasError={!!signupEmail.errors.passwordConfirm}>
+                    <PasswordInput
+                      type={signupEmail.showPasswordConfirm ? "text" : "password"}
+                      placeholder="비밀번호 확인"
+                      value={signupEmail.passwordConfirm}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        signupEmail.onPasswordConfirmChange(e.target.value)
+                      }
+                      onBlur={signupEmail.onPasswordConfirmBlur}
+                    />
+                    <VisibilityToggle
+                      type="button"
+                      onClick={signupEmail.onTogglePasswordConfirmVisibility}
+                      aria-label={signupEmail.showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
+                    >
+                      {signupEmail.showPasswordConfirm ? (
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                          <path d="M11 4.5C6 4.5 2.73 7.61 1 11C2.73 14.39 6 17.5 11 17.5C16 17.5 19.27 14.39 21 11C19.27 7.61 16 4.5 11 4.5ZM11 15C8.79 15 7 13.21 7 11C7 8.79 8.79 7 11 7C13.21 7 15 8.79 15 11C15 13.21 13.21 15 11 15ZM11 9C9.9 9 9 9.9 9 11C9 12.1 9.9 13 11 13C12.1 13 13 12.1 13 11C13 9.9 12.1 9 11 9Z" fill="rgba(12, 12, 12, 0.4)"/>
+                        </svg>
+                      ) : (
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                          <path d="M11 6C13.76 6 16 8.24 16 11C16 11.65 15.87 12.26 15.64 12.83L18.56 15.75C20.07 14.49 21.26 12.86 21.99 11C20.26 6.61 15.99 3.5 10.99 3.5C9.59 3.5 8.25 3.75 7.01 4.2L9.17 6.36C9.74 6.13 10.35 6 11 6ZM1 2.27L3.74 5.01C2.06 6.3 0.74 8.07 0 10.99C1.73 15.38 6 18.5 11 18.5C12.55 18.5 14.03 18.2 15.38 17.66L18.73 21L20 19.73L2.27 1L1 2.27ZM6.53 7.8L8.08 9.35C8.03 9.56 8 9.78 8 10C8 11.66 9.34 13 11 13C11.22 13 11.44 12.97 11.65 12.92L13.2 14.47C12.53 14.8 11.79 15 11 15C8.24 15 6 12.76 6 10C6 9.21 6.2 8.47 6.53 7.8ZM10.84 7.02L13.99 10.17L14.01 10.01C14.01 8.35 12.67 7.01 11.01 7.01L10.84 7.02Z" fill="rgba(12, 12, 12, 0.4)"/>
+                        </svg>
+                      )}
+                    </VisibilityToggle>
+                    {signupEmail.errors.passwordConfirm && (
+                      <ErrorMessage>{signupEmail.errors.passwordConfirm}</ErrorMessage>
+                    )}
+                  </PasswordInputBox>
+                </TextField>
+              </PasswordSection>
+            </>
+          ) : (
+            <>
+              <InputGroup>
+                <TextField>
+                  <Label>이메일</Label>
+                  <InputBox $hasError={!!signupEmail.errors.email}>
+                    <Input
+                      type="email"
+                      placeholder="이메일"
+                      value={signupEmail.email}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        signupEmail.onEmailChange(e.target.value)
+                      }
+                      onBlur={signupEmail.onEmailBlur}
+                    />
+                    {signupEmail.errors.email && (
+                      <ErrorMessage>{signupEmail.errors.email}</ErrorMessage>
+                    )}
+                  </InputBox>
+                </TextField>
+              </InputGroup>
+
+              <VerifyButton
+                onClick={signupEmail.onVerifyEmail}
+                disabled={
+                  signupEmail.isVerifying ||
+                  !signupEmail.email.trim() ||
+                  signupEmail.isCodeSent
+                }
+                $isActive={
+                  signupEmail.email.trim().length > 0 && !signupEmail.isCodeSent
+                }
+              >
+                {signupEmail.isVerifying ? "인증 중..." : "이메일 인증하기"}
+              </VerifyButton>
+
+              {signupEmail.isCodeSent && (
+                <VerificationSection>
+                  <TextField>
+                    <Label>이메일 인증코드</Label>
+                    <CodeInputBox $hasError={!!signupEmail.errors.verificationCode}>
+                      <CodeInputRow>
+                        <CodeInput
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="인증코드 6자리"
+                          value={signupEmail.verificationCode}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            signupEmail.onCodeChange(
+                              e.target.value.replace(/[^0-9]/g, ""),
+                            )
+                          }
+                          onBlur={signupEmail.onCodeBlur}
+                          maxLength={6}
+                        />
+                        <TimerText>{signupEmail.timer}</TimerText>
+                        <ConfirmButton
+                          onClick={signupEmail.onConfirmCode}
+                          disabled={
+                            signupEmail.isConfirming ||
+                            signupEmail.verificationCode.length !== 6
+                          }
+                          $isActive={signupEmail.verificationCode.length === 6}
+                        >
+                          {signupEmail.isConfirming ? "확인 중" : "확인"}
+                        </ConfirmButton>
+                      </CodeInputRow>
+                      {signupEmail.errors.verificationCode && (
+                        <ErrorMessage>
+                          {signupEmail.errors.verificationCode}
+                        </ErrorMessage>
+                      )}
+                    </CodeInputBox>
+                  </TextField>
+
+                  <ResendLink>
+                    인증코드를 받지 못하셨나요?
+                    <ResendButton onClick={signupEmail.onResendCode}>
+                      인증코드 재전송하기
+                    </ResendButton>
+                  </ResendLink>
+                </VerificationSection>
+              )}
+            </>
           )}
         </FormSection>
       </Content>
@@ -539,5 +637,103 @@ const SubmitButton = styled.button<{ $isActive?: boolean }>`
 
   &:disabled {
     cursor: not-allowed;
+  }
+`;
+
+const VerifiedEmailSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const VerifiedInputBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 16px;
+  width: 100%;
+  height: 48px;
+  background: rgba(12, 12, 12, 0.06);
+  border-radius: 4px;
+`;
+
+const VerifiedInputText = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #101112;
+`;
+
+const VerifiedBadge = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: var(--color-primary);
+`;
+
+const PasswordSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 24px;
+`;
+
+const PasswordInputBox = styled.div<{ $hasError?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 4px;
+  width: 100%;
+  min-height: 48px;
+  background: ${(props) =>
+    props.$hasError ? "#ffffff" : "rgba(12, 12, 12, 0.06)"};
+  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "transparent")};
+  border-radius: 4px;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+`;
+
+const PasswordInput = styled.input`
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #101112;
+  padding: 0;
+
+  &::placeholder {
+    color: rgba(12, 12, 12, 0.3);
+  }
+`;
+
+const VisibilityToggle = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 0.7;
   }
 `;

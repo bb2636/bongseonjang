@@ -21,12 +21,19 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@components": ["src/components/index.ts"],
       "@components/*": ["src/components/*"],
+      "@contexts": ["src/contexts/index.ts"],
       "@contexts/*": ["src/contexts/*"],
+      "@hooks": ["src/hooks/index.ts"],
       "@hooks/*": ["src/hooks/*"],
+      "@services": ["src/services/index.ts"],
       "@services/*": ["src/services/*"],
+      "@layouts": ["src/layouts/index.ts"],
       "@layouts/*": ["src/layouts/*"],
+      "@features": ["src/features/index.ts"],
       "@features/*": ["src/features/*"],
+      "@styles": ["src/styles/index.ts"],
       "@styles/*": ["src/styles/*"],
       "@assets/*": ["src/assets/*"]
     }
