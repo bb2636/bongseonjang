@@ -86,7 +86,7 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
                       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
                         <path d="M11 4.5C6 4.5 2 11 2 11C2 11 6 17.5 11 17.5C16 17.5 20 11 20 11C20 11 16 4.5 11 4.5Z" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         <circle cx="11" cy="11" r="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5"/>
-                        <line x1="4" y1="4" x2="18" y2="18" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round"/>
+                        <line x1="3" y1="19" x2="19" y2="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round"/>
                       </svg>
                     )}
                   </VisibilityButton>
