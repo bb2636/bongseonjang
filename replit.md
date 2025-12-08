@@ -204,14 +204,50 @@ server/
 ## UI/UX Patterns
 - CSS 변수를 통한 일관된 테마
 - 전역 토스트 알림 시스템
-- ValidatedInput 컴포넌트로 실시간 폼 검증
+- 공통 Input/PasswordInput 컴포넌트로 일관된 폼 스타일링
 - 공통 컴포넌트를 통한 반응형 디자인
 - 스켈레톤 로딩으로 UX 개선
+
+### Common Components (src/components/)
+- **Input**: 라벨 + 입력 필드 + 에러 메시지 통합 컴포넌트
+  - Props: label, error, type, placeholder, value, onChange 등
+  - 에러 상태 시 빨간 테두리 + 에러 메시지 자동 표시
+- **PasswordInput**: Input 확장 + 눈 아이콘 토글 내장
+  - controlled/uncontrolled 모드 지원 (showPassword, onToggleVisibility props)
+  - 내부 상태 관리로 간단한 사용 가능
+
+**사용 예시:**
+```typescript
+import { Input, PasswordInput } from '@/components';
+
+<Input
+  label="이메일"
+  type="email"
+  placeholder="이메일"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  error={emailError}
+/>
+
+<PasswordInput
+  label="비밀번호"
+  placeholder="비밀번호"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  error={passwordError}
+/>
+```
+
+**커스텀 레이아웃이 필요한 경우 (직접 구현):**
+- 인증코드 + 타이머 조합
+- 휴대폰번호 + 인증버튼 조합
+- 생년월일 3분할 입력
+- 추천인코드 + 확인버튼 조합
 
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
 - **Vite**: 빌드 도구
-- **styled-components**: CSS-in-JS
+- **Vanilla CSS**: 스타일링 (CSS 변수 활용)
 - **React Query**: 서버 상태 관리
 - **Express.js**: 백엔드 프레임워크
 - **TypeORM**: ORM
