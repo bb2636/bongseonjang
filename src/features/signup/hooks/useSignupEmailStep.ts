@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useSignupFormState } from './useSignupFormState';
 import { SIGNUP_MESSAGES, SIGNUP_VALIDATION } from '../constants';
-import { sendVerificationCode, verifyCode } from '../../../services/emailVerificationService';
+import { signupService } from '../services/signupService';
 
 const TIMER_DURATION = 180;
 
@@ -26,7 +26,7 @@ export function useSignupEmailStep() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const sendCodeMutation = useMutation({
-    mutationFn: (email: string) => sendVerificationCode(email),
+    mutationFn: (email: string) => signupService.sendVerificationCode(email),
     onSuccess: () => {
       updateFormData({ isCodeSent: true });
       setTimer(TIMER_DURATION);
@@ -39,7 +39,7 @@ export function useSignupEmailStep() {
   });
 
   const verifyCodeMutation = useMutation({
-    mutationFn: (data: { email: string; code: string }) => verifyCode(data.email, data.code),
+    mutationFn: (data: { email: string; code: string }) => signupService.verifyCode(data.email, data.code),
     onSuccess: (result) => {
       if (result.success) {
         updateFormData({ isEmailVerified: true });

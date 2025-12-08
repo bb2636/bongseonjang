@@ -2,8 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useSignupFormState, clearFormDataFromStorage } from './useSignupFormState';
-import { verifyReferralId } from '../../../services/referralService';
-import { authService } from '../../../services/authService';
+import { signupService } from '../services/signupService';
 
 interface TouchedFields {
   name: boolean;
@@ -29,7 +28,7 @@ export function useSignupProfileStep() {
   const [referralModalMessage, setReferralModalMessage] = useState('');
 
   const referralMutation = useMutation({
-    mutationFn: (referralId: string) => verifyReferralId(referralId),
+    mutationFn: (referralId: string) => signupService.verifyReferralId(referralId),
     onSuccess: (result) => {
       if (result.exists) {
         updateFormData({ isReferralIdVerified: true });
@@ -48,7 +47,7 @@ export function useSignupProfileStep() {
   });
 
   const signupMutation = useMutation({
-    mutationFn: () => authService.signup({
+    mutationFn: () => signupService.signup({
       email: formData.email,
       password: formData.password,
       name: formData.name,

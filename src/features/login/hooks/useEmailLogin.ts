@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { LOGIN_ROUTES } from '../constants';
-import { authService } from '../../../services/authService';
+import { loginService } from '../services/loginService';
 
 interface FieldError {
   email: string | null;
@@ -17,7 +17,7 @@ export function useEmailLogin() {
   const [touched, setTouched] = useState({ email: false, password: false });
 
   const loginMutation = useMutation({
-    mutationFn: (data: { email: string; password: string }) => authService.loginWithEmail(data.email, data.password),
+    mutationFn: (data: { email: string; password: string }) => loginService.loginWithEmail(data.email, data.password),
     onSuccess: () => {
       navigate('/');
     },
