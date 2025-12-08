@@ -1,8 +1,8 @@
 import { ChangeEvent } from "react";
-import styled, { keyframes } from "styled-components";
 import { AlertModal } from "@components";
 import ReferralResultModal from "../../../components/ReferralResultModal";
 import AgreementSection from "../components/AgreementSection";
+import './SignupEmailView.css';
 
 type CurrentStep = 'email' | 'password' | 'profile';
 
@@ -125,8 +125,18 @@ export default function SignupEmailView({
   profileStep,
   onBack,
 }: SignupEmailViewProps) {
+  const getSubmitButtonClass = () => {
+    if (currentStep === 'profile') {
+      return `signup-submit-button ${profileStep.isValid ? 'signup-submit-button--active' : ''}`;
+    }
+    if (currentStep === 'password') {
+      return `signup-submit-button ${passwordStep.isPasswordValid && passwordStep.isPasswordConfirmValid ? 'signup-submit-button--active' : ''}`;
+    }
+    return 'signup-submit-button';
+  };
+
   return (
-    <Container>
+    <div className="signup-container">
       <AlertModal
         isOpen={emailStep.showErrorModal}
         title={emailStep.errorModalMessage}
@@ -140,14 +150,14 @@ export default function SignupEmailView({
       />
 
       {emailStep.showSnackbar && (
-        <Snackbar>
-          <SnackbarText>작성하신 이메일로 인증코드를 보냈어요</SnackbarText>
-        </Snackbar>
+        <div className="signup-snackbar">
+          <span className="signup-snackbar-text">작성하신 이메일로 인증코드를 보냈어요</span>
+        </div>
       )}
 
-      <Header>
-        <BackButton onClick={onBack} aria-label="뒤로가기">
-          <BackIcon>
+      <header className="signup-header">
+        <button className="signup-back-button" onClick={onBack} aria-label="뒤로가기">
+          <span className="signup-back-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
                 d="M15 18L9 12L15 6"
@@ -157,14 +167,14 @@ export default function SignupEmailView({
                 strokeLinejoin="round"
               />
             </svg>
-          </BackIcon>
-        </BackButton>
-        <HeaderTitle>이메일로 회원가입</HeaderTitle>
-        <HeaderSpacer />
-      </Header>
+          </span>
+        </button>
+        <h1 className="signup-header-title">이메일로 회원가입</h1>
+        <div className="signup-header-spacer" />
+      </header>
 
-      <Content>
-        <FormSection>
+      <main className="signup-content">
+        <div className="signup-form-section">
           {currentStep === 'profile' ? (
             <ProfileForm profileStep={profileStep} />
           ) : currentStep === 'password' ? (
@@ -172,47 +182,51 @@ export default function SignupEmailView({
           ) : (
             <EmailForm emailStep={emailStep} />
           )}
-        </FormSection>
-      </Content>
+        </div>
+      </main>
 
-      <Footer>
+      <footer className="signup-footer">
         {currentStep === 'profile' ? (
-          <SubmitButton
+          <button
+            className={getSubmitButtonClass()}
             onClick={profileStep.onSubmit}
             disabled={!profileStep.isValid || profileStep.isLoading}
-            $isActive={profileStep.isValid}
           >
             {profileStep.isLoading ? "처리 중..." : "다음"}
-          </SubmitButton>
+          </button>
         ) : currentStep === 'password' ? (
-          <SubmitButton
+          <button
+            className={getSubmitButtonClass()}
             onClick={passwordStep.onPasswordNext}
             disabled={!passwordStep.isPasswordValid || !passwordStep.isPasswordConfirmValid}
-            $isActive={passwordStep.isPasswordValid && passwordStep.isPasswordConfirmValid}
           >
             다음
-          </SubmitButton>
+          </button>
         ) : (
-          <SubmitButton
+          <button
+            className="signup-submit-button"
             disabled
-            $isActive={false}
           >
             다음
-          </SubmitButton>
+          </button>
         )}
-      </Footer>
-    </Container>
+      </footer>
+    </div>
   );
 }
 
 function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
+  const verifyButtonClass = `signup-verify-button ${emailStep.email.trim().length > 0 && !emailStep.isCodeSent ? 'signup-verify-button--active' : ''}`;
+  const confirmButtonClass = `signup-confirm-button ${emailStep.verificationCode.length === 6 ? 'signup-confirm-button--active' : ''}`;
+
   return (
     <>
-      <InputGroup>
-        <TextField>
-          <Label>이메일</Label>
-          <InputBox $hasError={!!emailStep.errors.email}>
-            <Input
+      <div className="signup-input-group">
+        <div className="signup-text-field">
+          <label className="signup-label">이메일</label>
+          <div className={`signup-input-box ${emailStep.errors.email ? 'signup-input-box--error' : ''}`}>
+            <input
+              className="signup-input"
               type="email"
               placeholder="이메일"
               value={emailStep.email}
@@ -222,33 +236,32 @@ function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
               onBlur={emailStep.onEmailBlur}
             />
             {emailStep.errors.email && (
-              <ErrorMessage>{emailStep.errors.email}</ErrorMessage>
+              <span className="signup-error">{emailStep.errors.email}</span>
             )}
-          </InputBox>
-        </TextField>
-      </InputGroup>
+          </div>
+        </div>
+      </div>
 
-      <VerifyButton
+      <button
+        className={verifyButtonClass}
         onClick={emailStep.onVerifyEmail}
         disabled={
           emailStep.isVerifying ||
           !emailStep.email.trim() ||
           emailStep.isCodeSent
         }
-        $isActive={
-          emailStep.email.trim().length > 0 && !emailStep.isCodeSent
-        }
       >
         {emailStep.isVerifying ? "인증 중..." : "이메일 인증하기"}
-      </VerifyButton>
+      </button>
 
       {emailStep.isCodeSent && (
-        <VerificationSection>
-          <TextField>
-            <Label>이메일 인증코드</Label>
-            <CodeInputBox $hasError={!!emailStep.errors.verificationCode}>
-              <CodeInputRow>
-                <CodeInput
+        <div className="signup-verification-section">
+          <div className="signup-text-field">
+            <label className="signup-label">이메일 인증코드</label>
+            <div className={`signup-code-input-box ${emailStep.errors.verificationCode ? 'signup-code-input-box--error' : ''}`}>
+              <div className="signup-code-input-row">
+                <input
+                  className="signup-code-input"
                   type="text"
                   inputMode="numeric"
                   placeholder="인증코드 6자리"
@@ -261,33 +274,33 @@ function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
                   onBlur={emailStep.onCodeBlur}
                   maxLength={6}
                 />
-                <TimerText>{emailStep.timer}</TimerText>
-                <ConfirmButton
+                <span className="signup-timer-text">{emailStep.timer}</span>
+                <button
+                  className={confirmButtonClass}
                   onClick={emailStep.onConfirmCode}
                   disabled={
                     emailStep.isConfirming ||
                     emailStep.verificationCode.length !== 6
                   }
-                  $isActive={emailStep.verificationCode.length === 6}
                 >
                   {emailStep.isConfirming ? "확인 중" : "확인"}
-                </ConfirmButton>
-              </CodeInputRow>
+                </button>
+              </div>
               {emailStep.errors.verificationCode && (
-                <ErrorMessage>
+                <span className="signup-error">
                   {emailStep.errors.verificationCode}
-                </ErrorMessage>
+                </span>
               )}
-            </CodeInputBox>
-          </TextField>
+            </div>
+          </div>
 
-          <ResendLink>
+          <div className="signup-resend-link">
             인증코드를 받지 못하셨나요?
-            <ResendButton onClick={emailStep.onResendCode}>
+            <button className="signup-resend-button" onClick={emailStep.onResendCode}>
               인증코드 재전송하기
-            </ResendButton>
-          </ResendLink>
-        </VerificationSection>
+            </button>
+          </div>
+        </div>
       )}
     </>
   );
@@ -296,22 +309,23 @@ function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
 function PasswordForm({ passwordStep }: { passwordStep: PasswordStepProps }) {
   return (
     <>
-      <VerifiedEmailSection>
-        <TextField>
-          <Label>이메일</Label>
-          <VerifiedInputBox>
-            <VerifiedInputText>{passwordStep.email}</VerifiedInputText>
-          </VerifiedInputBox>
-        </TextField>
-        <VerifiedButton>이메일 인증 완료</VerifiedButton>
-      </VerifiedEmailSection>
+      <div className="signup-verified-section">
+        <div className="signup-text-field">
+          <label className="signup-label">이메일</label>
+          <div className="signup-verified-input-box">
+            <span className="signup-verified-input-text">{passwordStep.email}</span>
+          </div>
+        </div>
+        <div className="signup-verified-button">이메일 인증 완료</div>
+      </div>
 
-      <PasswordSection>
-        <TextField>
-          <Label>비밀번호</Label>
-          <PasswordInputBox $hasError={!!passwordStep.errors.password}>
-            <PasswordInputRow>
-              <PasswordInput
+      <div className="signup-password-section">
+        <div className="signup-text-field">
+          <label className="signup-label">비밀번호</label>
+          <div className={`signup-password-input-box ${passwordStep.errors.password ? 'signup-password-input-box--error' : ''}`}>
+            <div className="signup-password-input-row">
+              <input
+                className="signup-password-input"
                 type={passwordStep.showPassword ? "text" : "password"}
                 placeholder="비밀번호"
                 value={passwordStep.password}
@@ -320,7 +334,8 @@ function PasswordForm({ passwordStep }: { passwordStep: PasswordStepProps }) {
                 }
                 onBlur={passwordStep.onPasswordBlur}
               />
-              <VisibilityToggle
+              <button
+                className="signup-visibility-toggle"
                 type="button"
                 onClick={passwordStep.onTogglePasswordVisibility}
                 aria-label={passwordStep.showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
@@ -334,19 +349,20 @@ function PasswordForm({ passwordStep }: { passwordStep: PasswordStepProps }) {
                     <path d="M11 6C13.76 6 16 8.24 16 11C16 11.65 15.87 12.26 15.64 12.83L18.56 15.75C20.07 14.49 21.26 12.86 21.99 11C20.26 6.61 15.99 3.5 10.99 3.5C9.59 3.5 8.25 3.75 7.01 4.2L9.17 6.36C9.74 6.13 10.35 6 11 6ZM1 2.27L3.74 5.01C2.06 6.3 0.74 8.07 0 10.99C1.73 15.38 6 18.5 11 18.5C12.55 18.5 14.03 18.2 15.38 17.66L18.73 21L20 19.73L2.27 1L1 2.27ZM6.53 7.8L8.08 9.35C8.03 9.56 8 9.78 8 10C8 11.66 9.34 13 11 13C11.22 13 11.44 12.97 11.65 12.92L13.2 14.47C12.53 14.8 11.79 15 11 15C8.24 15 6 12.76 6 10C6 9.21 6.2 8.47 6.53 7.8ZM10.84 7.02L13.99 10.17L14.01 10.01C14.01 8.35 12.67 7.01 11.01 7.01L10.84 7.02Z" fill="rgba(12, 12, 12, 0.4)"/>
                   </svg>
                 )}
-              </VisibilityToggle>
-            </PasswordInputRow>
+              </button>
+            </div>
             {passwordStep.errors.password && (
-              <ErrorMessage>{passwordStep.errors.password}</ErrorMessage>
+              <span className="signup-error">{passwordStep.errors.password}</span>
             )}
-          </PasswordInputBox>
-        </TextField>
+          </div>
+        </div>
 
-        <TextField>
-          <Label>비밀번호 확인</Label>
-          <PasswordInputBox $hasError={!!passwordStep.errors.passwordConfirm}>
-            <PasswordInputRow>
-              <PasswordInput
+        <div className="signup-text-field">
+          <label className="signup-label">비밀번호 확인</label>
+          <div className={`signup-password-input-box ${passwordStep.errors.passwordConfirm ? 'signup-password-input-box--error' : ''}`}>
+            <div className="signup-password-input-row">
+              <input
+                className="signup-password-input"
                 type={passwordStep.showPasswordConfirm ? "text" : "password"}
                 placeholder="비밀번호 확인"
                 value={passwordStep.passwordConfirm}
@@ -355,7 +371,8 @@ function PasswordForm({ passwordStep }: { passwordStep: PasswordStepProps }) {
                 }
                 onBlur={passwordStep.onPasswordConfirmBlur}
               />
-              <VisibilityToggle
+              <button
+                className="signup-visibility-toggle"
                 type="button"
                 onClick={passwordStep.onTogglePasswordConfirmVisibility}
                 aria-label={passwordStep.showPasswordConfirm ? "비밀번호 숨기기" : "비밀번호 보기"}
@@ -369,33 +386,41 @@ function PasswordForm({ passwordStep }: { passwordStep: PasswordStepProps }) {
                     <path d="M11 6C13.76 6 16 8.24 16 11C16 11.65 15.87 12.26 15.64 12.83L18.56 15.75C20.07 14.49 21.26 12.86 21.99 11C20.26 6.61 15.99 3.5 10.99 3.5C9.59 3.5 8.25 3.75 7.01 4.2L9.17 6.36C9.74 6.13 10.35 6 11 6ZM1 2.27L3.74 5.01C2.06 6.3 0.74 8.07 0 10.99C1.73 15.38 6 18.5 11 18.5C12.55 18.5 14.03 18.2 15.38 17.66L18.73 21L20 19.73L2.27 1L1 2.27ZM6.53 7.8L8.08 9.35C8.03 9.56 8 9.78 8 10C8 11.66 9.34 13 11 13C11.22 13 11.44 12.97 11.65 12.92L13.2 14.47C12.53 14.8 11.79 15 11 15C8.24 15 6 12.76 6 10C6 9.21 6.2 8.47 6.53 7.8ZM10.84 7.02L13.99 10.17L14.01 10.01C14.01 8.35 12.67 7.01 11.01 7.01L10.84 7.02Z" fill="rgba(12, 12, 12, 0.4)"/>
                   </svg>
                 )}
-              </VisibilityToggle>
-            </PasswordInputRow>
+              </button>
+            </div>
             {passwordStep.errors.passwordConfirm && (
-              <ErrorMessage>{passwordStep.errors.passwordConfirm}</ErrorMessage>
+              <span className="signup-error">{passwordStep.errors.passwordConfirm}</span>
             )}
-          </PasswordInputBox>
-        </TextField>
-      </PasswordSection>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
 
 function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
-  return (
-    <FullSignupForm>
-      <TextField>
-        <Label>이메일</Label>
-        <ReadonlyInputBox>
-          <ReadonlyInputText>{profileStep.email}</ReadonlyInputText>
-        </ReadonlyInputBox>
-      </TextField>
+  const getInputBoxClass = (hasError: boolean, hasSuccess?: boolean) => {
+    let className = 'signup-verify-input-box-with-error';
+    if (hasError) className += ' signup-verify-input-box-with-error--error';
+    if (hasSuccess) className += ' signup-verify-input-box-with-error--success';
+    return className;
+  };
 
-      <TextField>
-        <Label>성함</Label>
-        <FormInputBox $hasError={!!profileStep.errors.name}>
-          <FormInputRow>
-            <FormInput
+  return (
+    <div className="signup-full-form">
+      <div className="signup-text-field">
+        <label className="signup-label">이메일</label>
+        <div className="signup-readonly-input-box">
+          <span className="signup-readonly-input-text">{profileStep.email}</span>
+        </div>
+      </div>
+
+      <div className="signup-text-field">
+        <label className="signup-label">성함</label>
+        <div className={`signup-form-input-box ${profileStep.errors.name ? 'signup-form-input-box--error' : ''}`}>
+          <div className="signup-form-input-row">
+            <input
+              className="signup-form-input"
               type="text"
               placeholder="성함"
               value={profileStep.name}
@@ -404,18 +429,19 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
               }
               onBlur={profileStep.onNameBlur}
             />
-          </FormInputRow>
+          </div>
           {profileStep.errors.name && (
-            <ErrorMessage>{profileStep.errors.name}</ErrorMessage>
+            <span className="signup-error">{profileStep.errors.name}</span>
           )}
-        </FormInputBox>
-      </TextField>
+        </div>
+      </div>
 
-      <TextField>
-        <Label>휴대폰</Label>
-        <VerifyInputRow>
-          <VerifyInputBoxWithError $hasError={!!profileStep.errors.phone}>
-            <FormInput
+      <div className="signup-text-field">
+        <label className="signup-label">휴대폰</label>
+        <div className="signup-verify-input-row">
+          <div className={getInputBoxClass(!!profileStep.errors.phone)}>
+            <input
+              className="signup-form-input"
               type="tel"
               placeholder="휴대폰 번호를 입력해주세요"
               value={profileStep.phone}
@@ -426,19 +452,20 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
               maxLength={11}
             />
             {profileStep.errors.phone && (
-              <ErrorMessage>{profileStep.errors.phone}</ErrorMessage>
+              <span className="signup-error">{profileStep.errors.phone}</span>
             )}
-          </VerifyInputBoxWithError>
-          <BlackVerifyButton onClick={profileStep.onPhoneVerify}>인증</BlackVerifyButton>
-        </VerifyInputRow>
-      </TextField>
+          </div>
+          <button className="signup-black-verify-button" onClick={profileStep.onPhoneVerify}>인증</button>
+        </div>
+      </div>
 
-      <TextField>
-        <Label>생년월일</Label>
-        <BirthDateContainer $hasError={!!profileStep.errors.birthDate}>
-          <BirthDateRow>
-            <BirthDateInputBox>
-              <BirthDateInput
+      <div className="signup-text-field">
+        <label className="signup-label">생년월일</label>
+        <div className="signup-birth-date-container">
+          <div className="signup-birth-date-row">
+            <div className="signup-birth-date-input-box">
+              <input
+                className="signup-birth-date-input"
                 type="text"
                 inputMode="numeric"
                 placeholder="YYYY"
@@ -449,10 +476,11 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
                 onBlur={profileStep.onBirthDateBlur}
                 maxLength={4}
               />
-            </BirthDateInputBox>
-            <BirthDateSeparator>.</BirthDateSeparator>
-            <BirthDateInputBox>
-              <BirthDateInput
+            </div>
+            <span className="signup-birth-date-separator">.</span>
+            <div className="signup-birth-date-input-box">
+              <input
+                className="signup-birth-date-input"
                 type="text"
                 inputMode="numeric"
                 placeholder="MM"
@@ -463,10 +491,11 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
                 onBlur={profileStep.onBirthDateBlur}
                 maxLength={2}
               />
-            </BirthDateInputBox>
-            <BirthDateSeparator>.</BirthDateSeparator>
-            <BirthDateInputBox>
-              <BirthDateInput
+            </div>
+            <span className="signup-birth-date-separator">.</span>
+            <div className="signup-birth-date-input-box">
+              <input
+                className="signup-birth-date-input"
                 type="text"
                 inputMode="numeric"
                 placeholder="DD"
@@ -477,47 +506,45 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
                 onBlur={profileStep.onBirthDateBlur}
                 maxLength={2}
               />
-            </BirthDateInputBox>
-          </BirthDateRow>
+            </div>
+          </div>
           {profileStep.errors.birthDate && (
-            <ErrorMessage>{profileStep.errors.birthDate}</ErrorMessage>
+            <span className="signup-error">{profileStep.errors.birthDate}</span>
           )}
-        </BirthDateContainer>
-      </TextField>
+        </div>
+      </div>
 
-      <TextField>
-        <Label>성별</Label>
-        <GenderContainer $hasError={!!profileStep.errors.gender}>
-          <GenderRow>
-            <GenderOption
-              $isSelected={profileStep.gender === 'male'}
+      <div className="signup-text-field">
+        <label className="signup-label">성별</label>
+        <div className="signup-gender-container">
+          <div className="signup-gender-row">
+            <div
+              className={`signup-gender-option ${profileStep.gender === 'male' ? 'signup-gender-option--selected' : ''}`}
               onClick={() => profileStep.onGenderChange('male')}
             >
-              <GenderRadio $isSelected={profileStep.gender === 'male'} />
-              <GenderLabel>남성</GenderLabel>
-            </GenderOption>
-            <GenderOption
-              $isSelected={profileStep.gender === 'female'}
+              <div className={`signup-gender-radio ${profileStep.gender === 'male' ? 'signup-gender-radio--selected' : ''}`} />
+              <span className="signup-gender-label">남성</span>
+            </div>
+            <div
+              className={`signup-gender-option ${profileStep.gender === 'female' ? 'signup-gender-option--selected' : ''}`}
               onClick={() => profileStep.onGenderChange('female')}
             >
-              <GenderRadio $isSelected={profileStep.gender === 'female'} />
-              <GenderLabel>여성</GenderLabel>
-            </GenderOption>
-          </GenderRow>
+              <div className={`signup-gender-radio ${profileStep.gender === 'female' ? 'signup-gender-radio--selected' : ''}`} />
+              <span className="signup-gender-label">여성</span>
+            </div>
+          </div>
           {profileStep.errors.gender && (
-            <ErrorMessage>{profileStep.errors.gender}</ErrorMessage>
+            <span className="signup-error">{profileStep.errors.gender}</span>
           )}
-        </GenderContainer>
-      </TextField>
+        </div>
+      </div>
 
-      <TextField>
-        <Label>추천인 아이디(선택)</Label>
-        <VerifyInputRow>
-          <VerifyInputBoxWithError 
-            $hasError={!!profileStep.errors.referralId}
-            $hasSuccess={profileStep.isReferralIdVerified}
-          >
-            <FormInput
+      <div className="signup-text-field">
+        <label className="signup-label">추천인 아이디(선택)</label>
+        <div className="signup-verify-input-row">
+          <div className={getInputBoxClass(!!profileStep.errors.referralId, profileStep.isReferralIdVerified)}>
+            <input
+              className="signup-form-input"
               type="text"
               placeholder="최소 3자 이상 입력하세요"
               value={profileStep.referralId}
@@ -527,17 +554,18 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
               onBlur={profileStep.onReferralIdBlur}
             />
             {profileStep.errors.referralId && (
-              <ErrorMessage>{profileStep.errors.referralId}</ErrorMessage>
+              <span className="signup-error">{profileStep.errors.referralId}</span>
             )}
-          </VerifyInputBoxWithError>
-          <BlackVerifyButton 
+          </div>
+          <button 
+            className="signup-black-verify-button"
             onClick={profileStep.onReferralIdVerify}
             disabled={profileStep.isReferralVerifying}
           >
             {profileStep.isReferralVerifying ? '확인 중...' : '아이디 확인'}
-          </BlackVerifyButton>
-        </VerifyInputRow>
-      </TextField>
+          </button>
+        </div>
+      </div>
 
       <AgreementSection
         isOver14={profileStep.isOver14}
@@ -550,521 +578,6 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
         onTermsDetailClick={profileStep.onTermsDetailClick}
         onPrivacyDetailClick={profileStep.onPrivacyDetailClick}
       />
-    </FullSignupForm>
+    </div>
   );
 }
-
-const slideUp = keyframes`
-  from {
-    transform: translateX(-50%) translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: #ffffff;
-  font-family: var(--font-family-base);
-  position: relative;
-`;
-
-const Snackbar = styled.div`
-  position: fixed;
-  bottom: 120px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 12px;
-  width: 343px;
-  max-width: calc(100% - 32px);
-  height: 52px;
-  background-color: rgba(12, 12, 12, 0.7);
-  border-radius: 12px;
-  animation: ${slideUp} 0.3s ease-out;
-`;
-
-const SnackbarText = styled.span`
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
-`;
-
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  height: 56px;
-  background: #ffffff;
-`;
-
-const BackButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-`;
-
-const BackIcon = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const HeaderTitle = styled.h1`
-  font-size: 16px;
-  font-weight: 600;
-  color: #101112;
-  margin: 0;
-`;
-
-const HeaderSpacer = styled.div`
-  width: 40px;
-`;
-
-const Content = styled.main`
-  flex: 1;
-  padding: 24px 16px;
-  overflow-y: auto;
-  padding-bottom: 100px;
-`;
-
-const FormSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;
-
-const InputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const TextField = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Label = styled.label`
-  font-size: 14px;
-  font-weight: 500;
-  color: #101112;
-`;
-
-const InputBox = styled.div<{ $hasError?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 16px;
-  background: #f5f5f5;
-  border-radius: 12px;
-  border: 1px solid ${props => props.$hasError ? '#ff4444' : 'transparent'};
-`;
-
-const Input = styled.input`
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  color: #101112;
-  outline: none;
-  
-  &::placeholder {
-    color: rgba(16, 17, 18, 0.4);
-  }
-`;
-
-const ErrorMessage = styled.span`
-  font-size: 12px;
-  color: #ff4444;
-  margin-top: 4px;
-`;
-
-const VerifyButton = styled.button<{ $isActive?: boolean }>`
-  width: 100%;
-  padding: 16px;
-  background: ${props => props.$isActive ? '#3B9BD5' : '#e5e5e5'};
-  color: ${props => props.$isActive ? '#ffffff' : 'rgba(16, 17, 18, 0.4)'};
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
-  transition: background 0.2s, color 0.2s;
-  
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
-const VerificationSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const CodeInputBox = styled.div<{ $hasError?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 16px;
-  background: #f5f5f5;
-  border-radius: 12px;
-  border: 1px solid ${props => props.$hasError ? '#ff4444' : 'transparent'};
-`;
-
-const CodeInputRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const CodeInput = styled.input`
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  color: #101112;
-  outline: none;
-  
-  &::placeholder {
-    color: rgba(16, 17, 18, 0.4);
-  }
-`;
-
-const TimerText = styled.span`
-  font-size: 14px;
-  color: #3B9BD5;
-  font-weight: 500;
-`;
-
-const ConfirmButton = styled.button<{ $isActive?: boolean }>`
-  padding: 8px 16px;
-  background: ${props => props.$isActive ? '#101112' : '#e5e5e5'};
-  color: ${props => props.$isActive ? '#ffffff' : 'rgba(16, 17, 18, 0.4)'};
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
-  
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
-const ResendLink = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  font-size: 14px;
-  color: rgba(16, 17, 18, 0.6);
-`;
-
-const ResendButton = styled.button`
-  background: transparent;
-  border: none;
-  color: #3B9BD5;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 0;
-`;
-
-const VerifiedEmailSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const VerifiedInputBox = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 14px 16px;
-  background: #f5f5f5;
-  border-radius: 12px;
-`;
-
-const VerifiedInputText = styled.span`
-  font-size: 16px;
-  color: #101112;
-`;
-
-const VerifiedButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 16px;
-  background: #e8f4fc;
-  border-radius: 8px;
-  color: #3B9BD5;
-  font-size: 14px;
-  font-weight: 500;
-`;
-
-const PasswordSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 24px;
-`;
-
-const PasswordInputBox = styled.div<{ $hasError?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 16px;
-  background: #f5f5f5;
-  border-radius: 12px;
-  border: 1px solid ${props => props.$hasError ? '#ff4444' : 'transparent'};
-`;
-
-const PasswordInputRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const PasswordInput = styled.input`
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  color: #101112;
-  outline: none;
-  
-  &::placeholder {
-    color: rgba(16, 17, 18, 0.4);
-  }
-`;
-
-const VisibilityToggle = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-`;
-
-const FullSignupForm = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;
-
-const ReadonlyInputBox = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 14px 16px;
-  background: #f5f5f5;
-  border-radius: 12px;
-`;
-
-const ReadonlyInputText = styled.span`
-  font-size: 16px;
-  color: rgba(16, 17, 18, 0.6);
-`;
-
-const FormInputBox = styled.div<{ $hasError?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 16px;
-  background: #f5f5f5;
-  border-radius: 12px;
-  border: 1px solid ${props => props.$hasError ? '#ff4444' : 'transparent'};
-`;
-
-const FormInputRow = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const FormInput = styled.input`
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  color: #101112;
-  outline: none;
-  
-  &::placeholder {
-    color: rgba(16, 17, 18, 0.4);
-  }
-`;
-
-const VerifyInputRow = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-`;
-
-const VerifyInputBoxWithError = styled.div<{ $hasError?: boolean; $hasSuccess?: boolean }>`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 16px;
-  background: #f5f5f5;
-  border-radius: 12px;
-  border: 1px solid ${props => {
-    if (props.$hasError) return '#ff4444';
-    if (props.$hasSuccess) return '#3B9BD5';
-    return 'transparent';
-  }};
-`;
-
-const BlackVerifyButton = styled.button`
-  padding: 14px 20px;
-  background: #101112;
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  
-  &:disabled {
-    background: #e5e5e5;
-    color: rgba(16, 17, 18, 0.4);
-    cursor: not-allowed;
-  }
-`;
-
-const BirthDateContainer = styled.div<{ $hasError?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const BirthDateRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const BirthDateInputBox = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  padding: 14px 16px;
-  background: #f5f5f5;
-  border-radius: 12px;
-`;
-
-const BirthDateInput = styled.input`
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  color: #101112;
-  outline: none;
-  text-align: center;
-  
-  &::placeholder {
-    color: rgba(16, 17, 18, 0.4);
-  }
-`;
-
-const BirthDateSeparator = styled.span`
-  font-size: 16px;
-  color: rgba(16, 17, 18, 0.4);
-`;
-
-const GenderContainer = styled.div<{ $hasError?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const GenderRow = styled.div`
-  display: flex;
-  gap: 16px;
-`;
-
-const GenderOption = styled.div<{ $isSelected?: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  padding: 12px 16px;
-  border-radius: 12px;
-  background: ${props => props.$isSelected ? '#e8f4fc' : '#f5f5f5'};
-  border: 1px solid ${props => props.$isSelected ? '#3B9BD5' : 'transparent'};
-  flex: 1;
-`;
-
-const GenderRadio = styled.div<{ $isSelected?: boolean }>`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid ${props => props.$isSelected ? '#3B9BD5' : 'rgba(16, 17, 18, 0.2)'};
-  background: ${props => props.$isSelected ? '#3B9BD5' : 'transparent'};
-  position: relative;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: ${props => props.$isSelected ? '#ffffff' : 'transparent'};
-  }
-`;
-
-const GenderLabel = styled.span`
-  font-size: 14px;
-  color: #101112;
-`;
-
-const Footer = styled.footer`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 16px;
-  background: #ffffff;
-  border-top: 1px solid #f0f0f0;
-`;
-
-const SubmitButton = styled.button<{ $isActive?: boolean }>`
-  width: 100%;
-  padding: 16px;
-  background: ${props => props.$isActive ? '#3B9BD5' : '#e5e5e5'};
-  color: ${props => props.$isActive ? '#ffffff' : 'rgba(16, 17, 18, 0.4)'};
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
-  transition: background 0.2s, color 0.2s;
-  
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;

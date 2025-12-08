@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import GlobalStyles from './styles/GlobalStyles';
+import './styles/global.css';
 import { AuthProvider, ToastProvider } from './contexts';
 import { ToastManager } from './components';
 
@@ -22,7 +22,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <BrowserRouter>
         <AuthProvider>
           <ToastProvider>
-            <GlobalStyles />
             <App />
             <ToastManager />
           </ToastProvider>

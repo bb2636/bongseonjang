@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import './AgreementSection.css';
 
 interface AgreementSectionProps {
   isOver14: boolean;
@@ -11,111 +11,6 @@ interface AgreementSectionProps {
   onTermsDetailClick: () => void;
   onPrivacyDetailClick: () => void;
 }
-
-const Container = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 4px 12px;
-  width: 100%;
-  border: 1px solid rgba(12, 12, 12, 0.06);
-  border-radius: 8px;
-`;
-
-const AllAgreeRow = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 12px 0px;
-  gap: 10px;
-  width: 100%;
-  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
-  cursor: pointer;
-`;
-
-const ItemsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0px;
-  width: 100%;
-`;
-
-const ItemRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0px;
-  gap: 10px;
-  width: 100%;
-  cursor: pointer;
-`;
-
-const ItemLeftSection = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px;
-  gap: 10px;
-`;
-
-const CheckboxIcon = styled.div<{ $checked: boolean }>`
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const LabelContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px;
-  gap: 6px;
-`;
-
-const AllAgreeLabel = styled.span`
-  font-family: 'Pretendard';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 128%;
-  letter-spacing: -0.01em;
-  color: #0C0C0C;
-`;
-
-const ItemLabel = styled.span`
-  font-family: 'Pretendard';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 128%;
-  letter-spacing: -0.01em;
-  color: rgba(12, 12, 12, 0.8);
-`;
-
-const RequiredBadge = styled.span`
-  font-family: 'Pretendard';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 128%;
-  letter-spacing: -0.01em;
-  color: #0C95F6;
-`;
-
-const ArrowIcon = styled.div`
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-`;
 
 function CheckedBox() {
   return (
@@ -182,57 +77,57 @@ export default function AgreementSection({
   };
 
   return (
-    <Container>
-      <AllAgreeRow onClick={handleAllAgreeClick}>
-        <CheckboxIcon $checked={allAgreed}>
+    <div className="agreement-container">
+      <div className="agreement-all-row" onClick={handleAllAgreeClick}>
+        <div className="agreement-checkbox">
           {allAgreed ? <CheckedBox /> : <UncheckedBox />}
-        </CheckboxIcon>
-        <AllAgreeLabel>약관 전체동의</AllAgreeLabel>
-      </AllAgreeRow>
+        </div>
+        <span className="agreement-all-label">약관 전체동의</span>
+      </div>
 
-      <ItemsContainer>
-        <ItemRow onClick={handleOver14Click}>
-          <ItemLeftSection>
-            <CheckboxIcon $checked={isOver14}>
+      <div className="agreement-items">
+        <div className="agreement-item-row" onClick={handleOver14Click}>
+          <div className="agreement-item-left">
+            <div className="agreement-checkbox">
               {isOver14 ? <CheckedBox /> : <UncheckedBox />}
-            </CheckboxIcon>
-            <LabelContainer>
-              <ItemLabel>만 14세 이상입니다</ItemLabel>
-              <RequiredBadge>필수</RequiredBadge>
-            </LabelContainer>
-          </ItemLeftSection>
-        </ItemRow>
+            </div>
+            <div className="agreement-label-container">
+              <span className="agreement-item-label">만 14세 이상입니다</span>
+              <span className="agreement-required-badge">필수</span>
+            </div>
+          </div>
+        </div>
 
-        <ItemRow onClick={handleTermsClick}>
-          <ItemLeftSection>
-            <CheckboxIcon $checked={termsAgreed}>
+        <div className="agreement-item-row" onClick={handleTermsClick}>
+          <div className="agreement-item-left">
+            <div className="agreement-checkbox">
               {termsAgreed ? <CheckedBox /> : <UncheckedBox />}
-            </CheckboxIcon>
-            <LabelContainer>
-              <ItemLabel>이용약관</ItemLabel>
-              <RequiredBadge>필수</RequiredBadge>
-            </LabelContainer>
-          </ItemLeftSection>
-          <ArrowIcon onClick={handleTermsDetailClick}>
+            </div>
+            <div className="agreement-label-container">
+              <span className="agreement-item-label">이용약관</span>
+              <span className="agreement-required-badge">필수</span>
+            </div>
+          </div>
+          <div className="agreement-arrow" onClick={handleTermsDetailClick}>
             <ArrowRight />
-          </ArrowIcon>
-        </ItemRow>
+          </div>
+        </div>
 
-        <ItemRow onClick={handlePrivacyClick}>
-          <ItemLeftSection>
-            <CheckboxIcon $checked={privacyAgreed}>
+        <div className="agreement-item-row" onClick={handlePrivacyClick}>
+          <div className="agreement-item-left">
+            <div className="agreement-checkbox">
               {privacyAgreed ? <CheckedBox /> : <UncheckedBox />}
-            </CheckboxIcon>
-            <LabelContainer>
-              <ItemLabel>개인정보 처리방침</ItemLabel>
-              <RequiredBadge>필수</RequiredBadge>
-            </LabelContainer>
-          </ItemLeftSection>
-          <ArrowIcon onClick={handlePrivacyDetailClick}>
+            </div>
+            <div className="agreement-label-container">
+              <span className="agreement-item-label">개인정보 처리방침</span>
+              <span className="agreement-required-badge">필수</span>
+            </div>
+          </div>
+          <div className="agreement-arrow" onClick={handlePrivacyDetailClick}>
             <ArrowRight />
-          </ArrowIcon>
-        </ItemRow>
-      </ItemsContainer>
-    </Container>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

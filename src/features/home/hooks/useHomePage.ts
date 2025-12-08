@@ -14,7 +14,7 @@ export function useHomePage(): HomePageNamespace {
   
   const featureList = [
     'React 18 + TypeScript',
-    'styled-components',
+    'Vanilla CSS',
     'React Query',
     'Express.js Backend',
     'TypeORM + PostgreSQL',

@@ -1,0 +1,104 @@
+.agreement-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 4px 12px;
+  width: 100%;
+  border: 1px solid rgba(12, 12, 12, 0.06);
+  border-radius: 8px;
+}
+
+.agreement-all-row {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 0px;
+  gap: 10px;
+  width: 100%;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+  cursor: pointer;
+}
+
+.agreement-items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  width: 100%;
+}
+
+.agreement-item-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0px;
+  gap: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.agreement-item-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+}
+
+.agreement-checkbox {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agreement-label-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 6px;
+}
+
+.agreement-all-label {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.agreement-item-label {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.agreement-required-badge {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C95F6;
+}
+
+.agreement-arrow {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
