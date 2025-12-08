@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+import { Input, PasswordInput } from '@components';
 import './GuestOrderLookupView.css';
 
 interface GuestOrderLookupViewProps {
@@ -42,56 +43,34 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
       <main className="guest-order-content">
         <div className="guest-order-form">
           <div className="guest-order-input-group">
-            <div className="guest-order-text-field">
-              <label className="guest-order-label">주문자명</label>
-              <div className={`guest-order-input-box ${guestOrderLookup.errors.ordererName ? 'guest-order-input-box--error' : ''}`}>
-                <input
-                  className="guest-order-input"
-                  type="text"
-                  placeholder="주문자명"
-                  value={guestOrderLookup.ordererName}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrdererNameChange(e.target.value)}
-                  onBlur={guestOrderLookup.onOrdererNameBlur}
-                />
-                {guestOrderLookup.errors.ordererName && (
-                  <span className="guest-order-error">{guestOrderLookup.errors.ordererName}</span>
-                )}
-              </div>
-            </div>
+            <Input
+              label="주문자명"
+              type="text"
+              placeholder="주문자명"
+              value={guestOrderLookup.ordererName}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrdererNameChange(e.target.value)}
+              onBlur={guestOrderLookup.onOrdererNameBlur}
+              error={guestOrderLookup.errors.ordererName}
+            />
 
-            <div className="guest-order-text-field">
-              <label className="guest-order-label">주문번호</label>
-              <div className={`guest-order-input-box ${guestOrderLookup.errors.orderNumber ? 'guest-order-input-box--error' : ''}`}>
-                <input
-                  className="guest-order-input"
-                  type="text"
-                  placeholder="주문번호"
-                  value={guestOrderLookup.orderNumber}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderNumberChange(e.target.value)}
-                  onBlur={guestOrderLookup.onOrderNumberBlur}
-                />
-                {guestOrderLookup.errors.orderNumber && (
-                  <span className="guest-order-error">{guestOrderLookup.errors.orderNumber}</span>
-                )}
-              </div>
-            </div>
+            <Input
+              label="주문번호"
+              type="text"
+              placeholder="주문번호"
+              value={guestOrderLookup.orderNumber}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderNumberChange(e.target.value)}
+              onBlur={guestOrderLookup.onOrderNumberBlur}
+              error={guestOrderLookup.errors.orderNumber}
+            />
 
-            <div className="guest-order-text-field">
-              <label className="guest-order-label">주문 비밀번호</label>
-              <div className={`guest-order-input-box ${guestOrderLookup.errors.orderPassword ? 'guest-order-input-box--error' : ''}`}>
-                <input
-                  className="guest-order-input"
-                  type="password"
-                  placeholder="주문 비밀번호"
-                  value={guestOrderLookup.orderPassword}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderPasswordChange(e.target.value)}
-                  onBlur={guestOrderLookup.onOrderPasswordBlur}
-                />
-                {guestOrderLookup.errors.orderPassword && (
-                  <span className="guest-order-error">{guestOrderLookup.errors.orderPassword}</span>
-                )}
-              </div>
-            </div>
+            <PasswordInput
+              label="주문 비밀번호"
+              placeholder="주문 비밀번호"
+              value={guestOrderLookup.orderPassword}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderPasswordChange(e.target.value)}
+              onBlur={guestOrderLookup.onOrderPasswordBlur}
+              error={guestOrderLookup.errors.orderPassword}
+            />
           </div>
 
           <button 
