@@ -14,7 +14,13 @@ export const loginService = {
       body: JSON.stringify({ email, password }),
     });
 
-    return response.json();
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || '로그인에 실패했습니다');
+    }
+
+    return data;
   },
 
   async loginWithKakao(): Promise<LoginResponse> {

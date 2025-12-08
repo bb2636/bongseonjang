@@ -144,18 +144,28 @@ src/
 │       ├── components/    # 기능 전용 컴포넌트
 │       ├── hooks/         # 기능 전용 훅
 │       ├── pages/         # 페이지 컴포넌트
+│       ├── services/      # 기능 전용 API 서비스
 │       └── constants/     # 상수
 ├── components/            # 공통 컴포넌트
 ├── contexts/              # React Context
 ├── hooks/                 # 공통 훅
 ├── layouts/               # 레이아웃
-├── services/              # API 서비스
+├── services/              # 공통 API 유틸리티 (apiClient 등)
 ├── api/                   # 외부 API
 ├── assets/                # 이미지, 폰트 등
 ├── styles/                # 전역 스타일
 ├── App.tsx                # 루트 라우터
 └── index.tsx              # 엔트리 포인트
 ```
+
+### Service Placement Rules
+- **기능 전용 서비스** → `features/<feature>/services/`
+  - 해당 기능에서만 사용되는 API 호출
+  - 예: `features/signup/services/signupService.ts` (이메일 인증, 회원가입, 추천인 확인)
+  - 예: `features/login/services/loginService.ts` (이메일 로그인, 소셜 로그인)
+- **공통 유틸리티** → `src/services/`
+  - 여러 기능에서 공유하는 것만 유지
+  - 예: `apiClient.ts` (인증 토큰 자동 첨부, 에러 처리 등)
 
 ### State Management
 - **전역 상태**: React Context 사용 (AuthContext, ToastContext 등)
@@ -230,13 +240,15 @@ export function useCreateData() {
 
 ```typescript
 // Hook 내부에서 useMutation 정의 (useSignupProfileStep 예시)
+import { signupService } from '../services/signupService';
+
 export function useSignupProfileStep() {
   const navigate = useNavigate();
   const { formData, updateFormData, clearFormDataFromStorage } = useSignupFormState();
 
   // 회원가입 뮤테이션
   const signupMutation = useMutation({
-    mutationFn: () => authService.signup({
+    mutationFn: () => signupService.signup({
       email: formData.email,
       password: formData.password,
       name: formData.name,

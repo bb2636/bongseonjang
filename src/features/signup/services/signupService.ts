@@ -82,6 +82,12 @@ export const signupService = {
       body: JSON.stringify(data),
     });
 
-    return response.json();
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || '회원가입에 실패했습니다');
+    }
+
+    return result;
   },
 };
