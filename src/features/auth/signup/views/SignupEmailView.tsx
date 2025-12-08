@@ -12,6 +12,9 @@ interface SignupEmailViewProps {
     passwordConfirm: string;
     showPassword: boolean;
     showPasswordConfirm: boolean;
+    isPasswordSet: boolean;
+    name: string;
+    phone: string;
     isLoading: boolean;
     isVerifying: boolean;
     isConfirming: boolean;
@@ -19,12 +22,16 @@ interface SignupEmailViewProps {
     isCodeValid: boolean;
     isPasswordValid: boolean;
     isPasswordConfirmValid: boolean;
+    isNameValid: boolean;
+    isPhoneValid: boolean;
     isValid: boolean;
     errors: {
       email: string | null;
       verificationCode: string | null;
       password: string | null;
       passwordConfirm: string | null;
+      name: string | null;
+      phone: string | null;
     };
     showSnackbar: boolean;
     showErrorModal: boolean;
@@ -41,6 +48,11 @@ interface SignupEmailViewProps {
     onPasswordConfirmBlur: () => void;
     onTogglePasswordVisibility: () => void;
     onTogglePasswordConfirmVisibility: () => void;
+    onNameChange: (value: string) => void;
+    onPhoneChange: (value: string) => void;
+    onNameBlur: () => void;
+    onPhoneBlur: () => void;
+    onPasswordNext: () => void;
     onVerifyEmail: () => void;
     onResendCode: () => void;
     onConfirmCode: () => void;
@@ -85,7 +97,62 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
 
       <Content>
         <FormSection>
-          {signupEmail.isEmailVerified ? (
+          {signupEmail.isPasswordSet ? (
+            <>
+              <FullSignupForm>
+                <TextField>
+                  <Label>이메일</Label>
+                  <ReadonlyInputBox>
+                    <ReadonlyInputText>{signupEmail.email}</ReadonlyInputText>
+                  </ReadonlyInputBox>
+                </TextField>
+
+                <TextField>
+                  <Label>성함</Label>
+                  <FormInputBox $hasError={!!signupEmail.errors.name}>
+                    <FormInputRow>
+                      <FormInput
+                        type="text"
+                        placeholder="성함"
+                        value={signupEmail.name}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          signupEmail.onNameChange(e.target.value)
+                        }
+                        onBlur={signupEmail.onNameBlur}
+                      />
+                    </FormInputRow>
+                    {signupEmail.errors.name && (
+                      <ErrorMessage>{signupEmail.errors.name}</ErrorMessage>
+                    )}
+                  </FormInputBox>
+                </TextField>
+
+                <TextField>
+                  <Label>휴대폰</Label>
+                  <PhoneInputRow>
+                    <FormInputBox $hasError={!!signupEmail.errors.phone} style={{ flex: 1 }}>
+                      <FormInputRow>
+                        <FormInput
+                          type="tel"
+                          placeholder="휴대폰 번호"
+                          value={signupEmail.phone}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            signupEmail.onPhoneChange(e.target.value)
+                          }
+                          onBlur={signupEmail.onPhoneBlur}
+                          maxLength={11}
+                        />
+                      </FormInputRow>
+                      {signupEmail.errors.phone && (
+                        <ErrorMessage>{signupEmail.errors.phone}</ErrorMessage>
+                      )}
+                    </FormInputBox>
+                    <PhoneVerifyButton>인증</PhoneVerifyButton>
+                  </PhoneInputRow>
+                </TextField>
+              </FullSignupForm>
+            </>
+          ) : signupEmail.isEmailVerified ? (
             <>
               <VerifiedEmailSection>
                 <TextField>
@@ -258,13 +325,30 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
       </Content>
 
       <Footer>
-        <SubmitButton
-          onClick={signupEmail.onSubmit}
-          disabled={!signupEmail.isValid || signupEmail.isLoading}
-          $isActive={signupEmail.isValid}
-        >
-          {signupEmail.isLoading ? "처리 중..." : "다음"}
-        </SubmitButton>
+        {signupEmail.isPasswordSet ? (
+          <SubmitButton
+            onClick={signupEmail.onSubmit}
+            disabled={!signupEmail.isValid || signupEmail.isLoading}
+            $isActive={signupEmail.isValid}
+          >
+            {signupEmail.isLoading ? "처리 중..." : "다음"}
+          </SubmitButton>
+        ) : signupEmail.isEmailVerified ? (
+          <SubmitButton
+            onClick={signupEmail.onPasswordNext}
+            disabled={!signupEmail.isPasswordValid || !signupEmail.isPasswordConfirmValid}
+            $isActive={signupEmail.isPasswordValid && signupEmail.isPasswordConfirmValid}
+          >
+            다음
+          </SubmitButton>
+        ) : (
+          <SubmitButton
+            disabled
+            $isActive={false}
+          >
+            다음
+          </SubmitButton>
+        )}
       </Footer>
     </Container>
   );
@@ -758,5 +842,124 @@ const VisibilityToggle = styled.button`
 
   &:hover {
     opacity: 0.7;
+  }
+`;
+
+const FullSignupForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 16px;
+  width: 100%;
+`;
+
+const ReadonlyInputBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 16px;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  background: rgba(12, 12, 12, 0.06);
+  border-radius: 4px;
+`;
+
+const ReadonlyInputText = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #101112;
+`;
+
+const FormInputBox = styled.div<{ $hasError?: boolean }>`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 12px 8px 16px;
+  gap: 4px;
+  width: 100%;
+  min-height: 65px;
+  background: ${(props) =>
+    props.$hasError ? "#ffffff" : "rgba(12, 12, 12, 0.06)"};
+  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "transparent")};
+  border-radius: 4px;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
+`;
+
+const FormInputRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  width: 100%;
+  height: 30px;
+`;
+
+const FormInput = styled.input`
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #101112;
+  padding: 0;
+
+  &::placeholder {
+    color: rgba(12, 12, 12, 0.3);
+  }
+`;
+
+const PhoneInputRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0;
+  gap: 8px;
+  width: 100%;
+`;
+
+const PhoneVerifyButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  gap: 10px;
+  min-width: 41px;
+  height: 30px;
+  background: #3B9BD5;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  margin-top: 19px;
+
+  font-family: var(--font-family-base);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #FDFDFD;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    background: rgba(12, 12, 12, 0.12);
+    color: rgba(12, 12, 12, 0.3);
+    cursor: not-allowed;
   }
 `;

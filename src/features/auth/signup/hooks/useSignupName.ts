@@ -12,6 +12,9 @@ interface SignupEmailState {
   passwordConfirm: string;
   showPassword: boolean;
   showPasswordConfirm: boolean;
+  isPasswordSet: boolean;
+  name: string;
+  phone: string;
 }
 
 interface SignupEmailErrors {
@@ -19,6 +22,8 @@ interface SignupEmailErrors {
   verificationCode: string | null;
   password: string | null;
   passwordConfirm: string | null;
+  name: string | null;
+  phone: string | null;
 }
 
 interface TouchedFields {
@@ -26,6 +31,8 @@ interface TouchedFields {
   verificationCode: boolean;
   password: boolean;
   passwordConfirm: boolean;
+  name: boolean;
+  phone: boolean;
 }
 
 const TIMER_DURATION = 180;
@@ -42,6 +49,9 @@ export function useSignupEmail() {
     passwordConfirm: '',
     showPassword: false,
     showPasswordConfirm: false,
+    isPasswordSet: false,
+    name: '',
+    phone: '',
   });
   
   const [touched, setTouched] = useState<TouchedFields>({
@@ -49,6 +59,8 @@ export function useSignupEmail() {
     verificationCode: false,
     password: false,
     passwordConfirm: false,
+    name: false,
+    phone: false,
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -117,18 +129,39 @@ export function useSignupEmail() {
     return null;
   }, []);
 
+  const validateName = useCallback((value: string): string | null => {
+    if (!value.trim()) {
+      return '성함을 입력해주세요';
+    }
+    return null;
+  }, []);
+
+  const validatePhone = useCallback((value: string): string | null => {
+    if (!value.trim()) {
+      return '휴대폰 번호를 입력해주세요';
+    }
+    if (!/^[0-9]{10,11}$/.test(value.replace(/-/g, ''))) {
+      return '올바른 휴대폰 번호를 입력해주세요';
+    }
+    return null;
+  }, []);
+
   const errors: SignupEmailErrors = {
     email: touched.email ? validateEmail(formData.email) : null,
     verificationCode: touched.verificationCode ? validateCode(formData.verificationCode) : null,
     password: touched.password ? validatePassword(formData.password) : null,
     passwordConfirm: touched.passwordConfirm ? validatePasswordConfirm(formData.passwordConfirm, formData.password) : null,
+    name: touched.name ? validateName(formData.name) : null,
+    phone: touched.phone ? validatePhone(formData.phone) : null,
   };
 
   const isEmailValid = !validateEmail(formData.email);
   const isCodeValid = !validateCode(formData.verificationCode);
   const isPasswordValid = !validatePassword(formData.password);
   const isPasswordConfirmValid = !validatePasswordConfirm(formData.passwordConfirm, formData.password);
-  const isValid = isEmailValid && formData.isEmailVerified && isPasswordValid && isPasswordConfirmValid;
+  const isNameValid = !validateName(formData.name);
+  const isPhoneValid = !validatePhone(formData.phone);
+  const isValid = isEmailValid && formData.isEmailVerified && isPasswordValid && isPasswordConfirmValid && formData.isPasswordSet && isNameValid && isPhoneValid;
 
   const onEmailChange = useCallback((value: string) => {
     setFormData(prev => ({ 
@@ -178,6 +211,31 @@ export function useSignupEmail() {
   const onTogglePasswordConfirmVisibility = useCallback(() => {
     setFormData(prev => ({ ...prev, showPasswordConfirm: !prev.showPasswordConfirm }));
   }, []);
+
+  const onNameChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, name: value }));
+  }, []);
+
+  const onPhoneChange = useCallback((value: string) => {
+    const numbersOnly = value.replace(/[^0-9]/g, '');
+    setFormData(prev => ({ ...prev, phone: numbersOnly }));
+  }, []);
+
+  const onNameBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, name: true }));
+  }, []);
+
+  const onPhoneBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, phone: true }));
+  }, []);
+
+  const onPasswordNext = useCallback(() => {
+    setTouched(prev => ({ ...prev, password: true, passwordConfirm: true }));
+    
+    if (isPasswordValid && isPasswordConfirmValid) {
+      setFormData(prev => ({ ...prev, isPasswordSet: true }));
+    }
+  }, [isPasswordValid, isPasswordConfirmValid]);
 
   const onVerifyEmail = useCallback(async () => {
     setTouched(prev => ({ ...prev, email: true }));
@@ -252,7 +310,7 @@ export function useSignupEmail() {
   }, []);
 
   const onSubmit = useCallback(async () => {
-    setTouched({ email: true, verificationCode: true, password: true, passwordConfirm: true });
+    setTouched({ email: true, verificationCode: true, password: true, passwordConfirm: true, name: true, phone: true });
 
     if (!isValid) {
       return;
@@ -260,7 +318,7 @@ export function useSignupEmail() {
 
     setIsLoading(true);
     try {
-      console.log('Signup email:', formData);
+      console.log('Signup data:', formData);
     } catch (error) {
       console.error('Signup failed:', error);
     } finally {
@@ -282,6 +340,9 @@ export function useSignupEmail() {
       passwordConfirm: formData.passwordConfirm,
       showPassword: formData.showPassword,
       showPasswordConfirm: formData.showPasswordConfirm,
+      isPasswordSet: formData.isPasswordSet,
+      name: formData.name,
+      phone: formData.phone,
       isLoading,
       isVerifying,
       isConfirming,
@@ -289,6 +350,8 @@ export function useSignupEmail() {
       isCodeValid,
       isPasswordValid,
       isPasswordConfirmValid,
+      isNameValid,
+      isPhoneValid,
       isValid,
       errors,
       showSnackbar,
@@ -306,6 +369,11 @@ export function useSignupEmail() {
       onPasswordConfirmBlur,
       onTogglePasswordVisibility,
       onTogglePasswordConfirmVisibility,
+      onNameChange,
+      onPhoneChange,
+      onNameBlur,
+      onPhoneBlur,
+      onPasswordNext,
       onVerifyEmail,
       onResendCode,
       onConfirmCode,
