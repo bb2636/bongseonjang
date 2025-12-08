@@ -105,24 +105,53 @@ feat: 간단한 제목
 `useQuery`는 데이터 조회에 사용되며, `queryKey`, `queryFn`, `staleTime`, `enabled` 옵션을 가집니다.
 `useMutation`은 데이터 변경에 사용되며, `mutationFn`, `onSuccess`, `onError` 콜백을 통해 비동기 작업을 처리합니다. 로딩 상태는 `mutation.isPending`을 사용하며, 모든 API 호출은 `useMutation`으로 관리합니다.
 
-### Backend Architecture (Clean Architecture with TypeORM)
-백엔드는 Clean Architecture를 따르며, Routes, Middleware, Controller, Application Service, Domain Service, Repository, Entity 레이어로 구성됩니다. 각 레이어는 단방향 의존성을 유지합니다.
+### Backend Architecture (Clean Architecture + Feature-Based)
+백엔드는 Clean Architecture를 따르며, 기능(Feature)별로 폴더를 구성합니다. 각 Feature 내에서 Controller, Application, Domain, Repository, Routes 레이어가 단방향 의존성을 유지합니다.
 
 **백엔드 폴더 구조:**
-`server/` 아래에 `routes/`, `middleware/`, `controller/`, `application/`, `domain/`, `repository/`, `entity/`, `config/`, `scheduler/` 등의 폴더를 가집니다.
+```
+server/
+├── features/                    # 기능별 모듈
+│   ├── auth/                    # 인증 + 사용자
+│   │   ├── controller/
+│   │   ├── application/
+│   │   ├── domain/
+│   │   ├── repository/
+│   │   ├── routes/
+│   │   └── index.ts
+│   ├── emailVerification/       # 이메일 인증
+│   │   ├── controller/
+│   │   ├── application/
+│   │   ├── repository/
+│   │   ├── routes/
+│   │   └── index.ts
+│   └── referral/                # 추천인
+│       ├── controller/
+│       ├── application/
+│       ├── repository/
+│       ├── routes/
+│       └── index.ts
+├── common/                      # 공통 모듈
+│   ├── middleware/              # authMiddleware 등
+│   └── services/                # emailService 등
+├── config/                      # 설정 (database, repositories)
+├── entity/                      # TypeORM 엔티티
+├── routes/                      # 라우트 집계 (features에서 import)
+└── index.ts                     # 서버 엔트리
+```
 
 ### Repository Pattern (Mock/Real 스위칭)
 목 데이터와 실제 DB 구현체를 쉽게 전환할 수 있는 Generic Factory + Map 캐싱 패턴:
 
 **파일 구조:**
 ```
-server/repository/
-├── ReferralRepository.ts        # 인터페이스 정의
-├── MockReferralRepository.ts    # 목 구현체 (개발용)
-└── TypeORMReferralRepository.ts # 실제 구현체 (프로덕션용)
+server/features/<feature>/repository/
+├── <Feature>Repository.ts        # 인터페이스 정의
+├── Mock<Feature>Repository.ts    # 목 구현체 (개발용)
+└── TypeORM<Feature>Repository.ts # 실제 구현체 (프로덕션용)
 
 server/config/
-└── repositories.ts              # 구현체 선택 설정
+└── repositories.ts               # 구현체 선택 설정
 ```
 
 **핵심 구조:**
