@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AUTH_ROUTES } from '../constants';
+import { LOGIN_ROUTES } from '../constants';
 
 interface FieldError {
   email: string | null;
@@ -94,7 +94,7 @@ export function useEmailLogin() {
   }, []);
 
   const onBack = useCallback(() => {
-    navigate(AUTH_ROUTES.LOGIN);
+    navigate(LOGIN_ROUTES.LOGIN);
   }, [navigate]);
 
   return {

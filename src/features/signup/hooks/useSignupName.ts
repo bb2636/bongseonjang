@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SIGNUP_MESSAGES, SIGNUP_VALIDATION } from '../constants';
-import { sendVerificationCode, verifyCode } from '../../../../services/emailVerificationService';
-import { verifyReferralId } from '../../../../services/referralService';
+import { sendVerificationCode, verifyCode } from '../../../services/emailVerificationService';
+import { verifyReferralId } from '../../../services/referralService';
 
 interface SignupEmailState {
   email: string;
@@ -430,11 +430,11 @@ export function useSignupEmail() {
   }, []);
 
   const onTermsDetailClick = useCallback(() => {
-    navigate('/terms');
+    navigate('/signup/terms');
   }, [navigate]);
 
   const onPrivacyDetailClick = useCallback(() => {
-    navigate('/privacy');
+    navigate('/signup/privacy');
   }, [navigate]);
 
   const onPasswordNext = useCallback(() => {

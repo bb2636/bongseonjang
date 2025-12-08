@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { AlertModal } from "@components";
-import ReferralResultModal from "../../../../components/ReferralResultModal";
+import ReferralResultModal from "../../../components/ReferralResultModal";
 import AgreementSection from "../components/AgreementSection";
 
 interface SignupEmailViewProps {

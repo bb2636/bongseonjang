@@ -1,4 +1,4 @@
-export const AUTH_ROUTES = {
+export const LOGIN_ROUTES = {
   LOGIN: '/login',
   EMAIL_LOGIN: '/login/email',
   EMAIL_SIGNUP: '/signup/email',

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AUTH_ROUTES, SOCIAL_PROVIDERS } from '../constants';
+import { LOGIN_ROUTES, SOCIAL_PROVIDERS } from '../constants';
 
 export function useLogin() {
   const navigate = useNavigate();
@@ -14,15 +14,15 @@ export function useLogin() {
   }, []);
 
   const onEmailLogin = useCallback(() => {
-    navigate(AUTH_ROUTES.EMAIL_LOGIN);
+    navigate(LOGIN_ROUTES.EMAIL_LOGIN);
   }, [navigate]);
 
   const onEmailSignup = useCallback(() => {
-    navigate(AUTH_ROUTES.EMAIL_SIGNUP);
+    navigate(LOGIN_ROUTES.EMAIL_SIGNUP);
   }, [navigate]);
 
   const onGuestOrder = useCallback(() => {
-    navigate(AUTH_ROUTES.GUEST_ORDER);
+    navigate(LOGIN_ROUTES.GUEST_ORDER);
   }, [navigate]);
 
   const onClose = useCallback(() => {
