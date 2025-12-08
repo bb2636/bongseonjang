@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 import { useSignupFormState, clearFormDataFromStorage } from './useSignupFormState';
 import { verifyReferralId } from '../../../services/referralService';
+import { authService } from '../../../services/authService';
 
 interface TouchedFields {
   name: boolean;
@@ -23,10 +25,48 @@ export function useSignupProfileStep() {
     referralId: false,
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isReferralVerifying, setIsReferralVerifying] = useState(false);
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralModalMessage, setReferralModalMessage] = useState('');
+
+  const referralMutation = useMutation({
+    mutationFn: (referralId: string) => verifyReferralId(referralId),
+    onSuccess: (result) => {
+      if (result.exists) {
+        updateFormData({ isReferralIdVerified: true });
+        setReferralModalMessage('추천인 아이디가 확인되었습니다');
+      } else {
+        updateFormData({ isReferralIdVerified: false });
+        setReferralModalMessage('입력하신 아이디를 확인해주세요');
+      }
+      setShowReferralModal(true);
+    },
+    onError: () => {
+      setReferralModalMessage('추천인 확인에 실패했습니다');
+      setShowReferralModal(true);
+      updateFormData({ isReferralIdVerified: false });
+    },
+  });
+
+  const signupMutation = useMutation({
+    mutationFn: () => authService.signup({
+      email: formData.email,
+      password: formData.password,
+      name: formData.name,
+      phone: formData.phone,
+      birthYear: formData.birthYear,
+      birthMonth: formData.birthMonth,
+      birthDay: formData.birthDay,
+      gender: formData.gender,
+      referralId: formData.referralId || undefined,
+    }),
+    onSuccess: () => {
+      clearFormDataFromStorage();
+      navigate('/signup/complete');
+    },
+    onError: (error: Error) => {
+      console.error('Signup failed:', error);
+    },
+  });
 
   const validateName = useCallback((value: string): string | null => {
     if (!value.trim()) {
@@ -152,7 +192,7 @@ export function useSignupProfileStep() {
     setTouched(prev => ({ ...prev, referralId: true }));
   }, []);
 
-  const onReferralIdVerify = useCallback(async () => {
+  const onReferralIdVerify = useCallback(() => {
     setTouched(prev => ({ ...prev, referralId: true }));
     
     if (formData.referralId.length < 3) {
@@ -161,26 +201,10 @@ export function useSignupProfileStep() {
       return;
     }
 
-    setIsReferralVerifying(true);
-    try {
-      const result = await verifyReferralId(formData.referralId);
-      if (result.exists) {
-        updateFormData({ isReferralIdVerified: true });
-        setReferralModalMessage('추천인 아이디가 확인되었습니다');
-        setShowReferralModal(true);
-      } else {
-        updateFormData({ isReferralIdVerified: false });
-        setReferralModalMessage('입력하신 아이디를 확인해주세요');
-        setShowReferralModal(true);
-      }
-    } catch (error) {
-      setReferralModalMessage('추천인 확인에 실패했습니다');
-      setShowReferralModal(true);
-      updateFormData({ isReferralIdVerified: false });
-    } finally {
-      setIsReferralVerifying(false);
-    }
-  }, [formData.referralId, updateFormData]);
+    if (referralMutation.isPending) return;
+
+    referralMutation.mutate(formData.referralId);
+  }, [formData.referralId, referralMutation]);
 
   const onCloseReferralModal = useCallback(() => {
     setShowReferralModal(false);
@@ -215,24 +239,15 @@ export function useSignupProfileStep() {
     navigate('/signup/privacy');
   }, [navigate]);
 
-  const onSubmit = useCallback(async () => {
+  const onSubmit = useCallback(() => {
     setTouched({ name: true, phone: true, birthDate: true, gender: true, referralId: true });
 
-    if (!isValid) {
+    if (!isValid || signupMutation.isPending) {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      console.log('Signup data:', formData);
-      clearFormDataFromStorage();
-      navigate('/signup/complete');
-    } catch (error) {
-      console.error('Signup failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [formData, isValid, navigate]);
+    signupMutation.mutate();
+  }, [isValid, signupMutation]);
 
   return {
     email: formData.email,
@@ -248,8 +263,8 @@ export function useSignupProfileStep() {
     isOver14: formData.isOver14,
     termsAgreed: formData.termsAgreed,
     privacyAgreed: formData.privacyAgreed,
-    isLoading,
-    isReferralVerifying,
+    isLoading: signupMutation.isPending,
+    isReferralVerifying: referralMutation.isPending,
     isNameValid,
     isPhoneValid,
     isBirthDateValid,

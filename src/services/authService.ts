@@ -6,6 +6,18 @@ export interface AuthResponse {
   token?: string;
 }
 
+export interface SignupData {
+  email: string;
+  password: string;
+  name: string;
+  phone: string;
+  birthYear: string;
+  birthMonth: string;
+  birthDay: string;
+  gender: string;
+  referralId?: string;
+}
+
 export const authService = {
   async loginWithKakao(): Promise<AuthResponse> {
     return { success: false, message: '카카오 로그인은 아직 구현되지 않았습니다.' };
@@ -24,11 +36,11 @@ export const authService = {
     return response.json();
   },
 
-  async signup(email: string, password: string, name: string): Promise<AuthResponse> {
+  async signup(data: SignupData): Promise<AuthResponse> {
     const response = await fetch(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, name }),
+      body: JSON.stringify(data),
     });
     return response.json();
   },

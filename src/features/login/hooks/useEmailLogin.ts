@@ -1,6 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 import { LOGIN_ROUTES } from '../constants';
+import { authService } from '../../../services/authService';
 
 interface FieldError {
   email: string | null;
@@ -11,9 +13,18 @@ export function useEmailLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<FieldError>({ email: null, password: null });
   const [touched, setTouched] = useState({ email: false, password: false });
+
+  const loginMutation = useMutation({
+    mutationFn: (data: { email: string; password: string }) => authService.loginWithEmail(data.email, data.password),
+    onSuccess: () => {
+      navigate('/');
+    },
+    onError: (error: Error) => {
+      setErrors(prev => ({ ...prev, password: error.message || '로그인에 실패했습니다' }));
+    },
+  });
 
   const validateEmail = useCallback((value: string): string | null => {
     if (!value.trim()) {
@@ -64,7 +75,7 @@ export function useEmailLogin() {
     setErrors(prev => ({ ...prev, password: validatePassword(password) }));
   }, [password, validatePassword]);
 
-  const onSubmit = useCallback(async () => {
+  const onSubmit = useCallback(() => {
     setTouched({ email: true, password: true });
     
     const emailError = validateEmail(email);
@@ -76,18 +87,10 @@ export function useEmailLogin() {
       return;
     }
 
-    if (isLoading) return;
+    if (loginMutation.isPending) return;
 
-    setIsLoading(true);
-    try {
-      console.log('이메일 로그인 시도:', { email });
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('로그인 실패:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [email, password, isLoading, validateEmail, validatePassword]);
+    loginMutation.mutate({ email, password });
+  }, [email, password, loginMutation, validateEmail, validatePassword]);
 
   const onForgotPassword = useCallback(() => {
     console.log('비밀번호 찾기로 이동');
@@ -101,7 +104,7 @@ export function useEmailLogin() {
     emailLogin: {
       email,
       password,
-      isLoading,
+      isLoading: loginMutation.isPending,
       isValid,
       errors,
       onEmailChange,

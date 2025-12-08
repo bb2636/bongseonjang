@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { useSignupFormState } from './useSignupFormState';
 import { SIGNUP_MESSAGES, SIGNUP_VALIDATION } from '../constants';
 import { sendVerificationCode, verifyCode } from '../../../services/emailVerificationService';
@@ -18,13 +19,40 @@ export function useSignupEmailStep() {
     verificationCode: false,
   });
 
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isConfirming, setIsConfirming] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState('');
   const [timer, setTimer] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const sendCodeMutation = useMutation({
+    mutationFn: (email: string) => sendVerificationCode(email),
+    onSuccess: () => {
+      updateFormData({ isCodeSent: true });
+      setTimer(TIMER_DURATION);
+      setShowSnackbar(true);
+      setTimeout(() => setShowSnackbar(false), 3000);
+    },
+    onError: (error: Error) => {
+      alert(error.message || '이메일 전송에 실패했습니다');
+    },
+  });
+
+  const verifyCodeMutation = useMutation({
+    mutationFn: (data: { email: string; code: string }) => verifyCode(data.email, data.code),
+    onSuccess: (result) => {
+      if (result.success) {
+        updateFormData({ isEmailVerified: true });
+      } else {
+        setErrorModalMessage('이메일 인증코드가 틀립니다');
+        setShowErrorModal(true);
+      }
+    },
+    onError: () => {
+      setErrorModalMessage('인증에 실패했습니다');
+      setShowErrorModal(true);
+    },
+  });
 
   useEffect(() => {
     if (timer > 0) {
@@ -95,72 +123,34 @@ export function useSignupEmailStep() {
     setTouched(prev => ({ ...prev, verificationCode: true }));
   }, []);
 
-  const onVerifyEmail = useCallback(async () => {
+  const onVerifyEmail = useCallback(() => {
     setTouched(prev => ({ ...prev, email: true }));
     
-    if (!isEmailValid) {
+    if (!isEmailValid || sendCodeMutation.isPending) {
       return;
     }
 
-    setIsVerifying(true);
-    try {
-      await sendVerificationCode(formData.email);
-      updateFormData({ isCodeSent: true });
-      setTimer(TIMER_DURATION);
-      setShowSnackbar(true);
-      setTimeout(() => setShowSnackbar(false), 3000);
-    } catch (error) {
-      console.error('Email verification failed:', error);
-      alert(error instanceof Error ? error.message : '이메일 전송에 실패했습니다');
-    } finally {
-      setIsVerifying(false);
-    }
-  }, [formData.email, isEmailValid, updateFormData]);
+    sendCodeMutation.mutate(formData.email);
+  }, [formData.email, isEmailValid, sendCodeMutation]);
 
-  const onResendCode = useCallback(async () => {
-    if (!isEmailValid) {
+  const onResendCode = useCallback(() => {
+    if (!isEmailValid || sendCodeMutation.isPending) {
       return;
     }
 
-    setIsVerifying(true);
-    try {
-      await sendVerificationCode(formData.email);
-      setTimer(TIMER_DURATION);
-      updateFormData({ verificationCode: '' });
-      setShowSnackbar(true);
-      setTimeout(() => setShowSnackbar(false), 3000);
-    } catch (error) {
-      console.error('Resend code failed:', error);
-      alert(error instanceof Error ? error.message : '이메일 전송에 실패했습니다');
-    } finally {
-      setIsVerifying(false);
-    }
-  }, [formData.email, isEmailValid, updateFormData]);
+    updateFormData({ verificationCode: '' });
+    sendCodeMutation.mutate(formData.email);
+  }, [formData.email, isEmailValid, sendCodeMutation, updateFormData]);
 
-  const onConfirmCode = useCallback(async () => {
+  const onConfirmCode = useCallback(() => {
     setTouched(prev => ({ ...prev, verificationCode: true }));
     
-    if (!isCodeValid) {
+    if (!isCodeValid || verifyCodeMutation.isPending) {
       return;
     }
 
-    setIsConfirming(true);
-    try {
-      const result = await verifyCode(formData.email, formData.verificationCode);
-      if (result.success) {
-        updateFormData({ isEmailVerified: true });
-      } else {
-        setErrorModalMessage('이메일 인증코드가 틀립니다');
-        setShowErrorModal(true);
-      }
-    } catch (error) {
-      console.error('Code confirmation failed:', error);
-      setErrorModalMessage('인증에 실패했습니다');
-      setShowErrorModal(true);
-    } finally {
-      setIsConfirming(false);
-    }
-  }, [formData.email, formData.verificationCode, isCodeValid, updateFormData]);
+    verifyCodeMutation.mutate({ email: formData.email, code: formData.verificationCode });
+  }, [formData.email, formData.verificationCode, isCodeValid, verifyCodeMutation]);
 
   const onCloseErrorModal = useCallback(() => {
     setShowErrorModal(false);
@@ -172,8 +162,8 @@ export function useSignupEmailStep() {
     verificationCode: formData.verificationCode,
     isCodeSent: formData.isCodeSent,
     isEmailVerified: formData.isEmailVerified,
-    isVerifying,
-    isConfirming,
+    isVerifying: sendCodeMutation.isPending,
+    isConfirming: verifyCodeMutation.isPending,
     isEmailValid,
     isCodeValid,
     errors,
