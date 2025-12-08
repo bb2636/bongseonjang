@@ -41,18 +41,16 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
             <TextField>
               <Label>이메일</Label>
               <InputBox $hasError={!!signupEmail.errors.email}>
-                <InputRow>
-                  <Input
-                    type="email"
-                    placeholder="이메일"
-                    value={signupEmail.email}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => signupEmail.onEmailChange(e.target.value)}
-                    onBlur={signupEmail.onEmailBlur}
-                  />
-                  {signupEmail.errors.email && (
-                    <ErrorMessage>{signupEmail.errors.email}</ErrorMessage>
-                  )}
-                </InputRow>
+                <Input
+                  type="email"
+                  placeholder="이메일"
+                  value={signupEmail.email}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => signupEmail.onEmailChange(e.target.value)}
+                  onBlur={signupEmail.onEmailBlur}
+                />
+                {signupEmail.errors.email && (
+                  <ErrorMessage>{signupEmail.errors.email}</ErrorMessage>
+                )}
               </InputBox>
             </TextField>
           </InputGroup>
@@ -184,18 +182,8 @@ const InputBox = styled.div<{ $hasError?: boolean }>`
   transition: border-color var(--transition-fast), background var(--transition-fast);
 `;
 
-const InputRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: 8px;
-`;
-
 const Input = styled.input`
-  flex: 1;
-  min-width: 0;
+  width: 100%;
   background: transparent;
   border: none;
   outline: none;
@@ -213,7 +201,6 @@ const Input = styled.input`
 `;
 
 const ErrorMessage = styled.span`
-  flex-shrink: 0;
   font-family: var(--font-family-base);
   font-weight: 400;
   font-size: 12px;

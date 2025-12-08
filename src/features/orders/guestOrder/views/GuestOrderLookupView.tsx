@@ -45,54 +45,48 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
             <TextField>
               <Label>주문자명</Label>
               <InputBox $hasError={!!guestOrderLookup.errors.ordererName}>
-                <InputRow>
-                  <Input
-                    type="text"
-                    placeholder="주문자명"
-                    value={guestOrderLookup.ordererName}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrdererNameChange(e.target.value)}
-                    onBlur={guestOrderLookup.onOrdererNameBlur}
-                  />
-                  {guestOrderLookup.errors.ordererName && (
-                    <ErrorMessage>{guestOrderLookup.errors.ordererName}</ErrorMessage>
-                  )}
-                </InputRow>
+                <Input
+                  type="text"
+                  placeholder="주문자명"
+                  value={guestOrderLookup.ordererName}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrdererNameChange(e.target.value)}
+                  onBlur={guestOrderLookup.onOrdererNameBlur}
+                />
+                {guestOrderLookup.errors.ordererName && (
+                  <ErrorMessage>{guestOrderLookup.errors.ordererName}</ErrorMessage>
+                )}
               </InputBox>
             </TextField>
 
             <TextField>
               <Label>주문번호</Label>
               <InputBox $hasError={!!guestOrderLookup.errors.orderNumber}>
-                <InputRow>
-                  <Input
-                    type="text"
-                    placeholder="주문번호"
-                    value={guestOrderLookup.orderNumber}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderNumberChange(e.target.value)}
-                    onBlur={guestOrderLookup.onOrderNumberBlur}
-                  />
-                  {guestOrderLookup.errors.orderNumber && (
-                    <ErrorMessage>{guestOrderLookup.errors.orderNumber}</ErrorMessage>
-                  )}
-                </InputRow>
+                <Input
+                  type="text"
+                  placeholder="주문번호"
+                  value={guestOrderLookup.orderNumber}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderNumberChange(e.target.value)}
+                  onBlur={guestOrderLookup.onOrderNumberBlur}
+                />
+                {guestOrderLookup.errors.orderNumber && (
+                  <ErrorMessage>{guestOrderLookup.errors.orderNumber}</ErrorMessage>
+                )}
               </InputBox>
             </TextField>
 
             <TextField>
               <Label>주문 비밀번호</Label>
               <InputBox $hasError={!!guestOrderLookup.errors.orderPassword}>
-                <InputRow>
-                  <Input
-                    type="password"
-                    placeholder="주문 비밀번호"
-                    value={guestOrderLookup.orderPassword}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderPasswordChange(e.target.value)}
-                    onBlur={guestOrderLookup.onOrderPasswordBlur}
-                  />
-                  {guestOrderLookup.errors.orderPassword && (
-                    <ErrorMessage>{guestOrderLookup.errors.orderPassword}</ErrorMessage>
-                  )}
-                </InputRow>
+                <Input
+                  type="password"
+                  placeholder="주문 비밀번호"
+                  value={guestOrderLookup.orderPassword}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderPasswordChange(e.target.value)}
+                  onBlur={guestOrderLookup.onOrderPasswordBlur}
+                />
+                {guestOrderLookup.errors.orderPassword && (
+                  <ErrorMessage>{guestOrderLookup.errors.orderPassword}</ErrorMessage>
+                )}
               </InputBox>
             </TextField>
           </InputGroup>
@@ -212,18 +206,8 @@ const InputBox = styled.div<{ $hasError?: boolean }>`
   transition: border-color var(--transition-fast), background var(--transition-fast);
 `;
 
-const InputRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: 8px;
-`;
-
 const Input = styled.input`
-  flex: 1;
-  min-width: 0;
+  width: 100%;
   background: transparent;
   border: none;
   outline: none;
@@ -241,7 +225,6 @@ const Input = styled.input`
 `;
 
 const ErrorMessage = styled.span`
-  flex-shrink: 0;
   font-family: var(--font-family-base);
   font-weight: 400;
   font-size: 12px;
