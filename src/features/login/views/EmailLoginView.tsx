@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import styled from 'styled-components';
+import './EmailLoginView.css';
 
 interface EmailLoginViewProps {
   emailLogin: {
@@ -29,26 +29,27 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
   };
 
   return (
-    <Container>
-      <Header>
-        <BackButton onClick={emailLogin.onBack} aria-label="뒤로가기">
-          <BackIcon>
+    <div className="email-login-container">
+      <header className="email-login-header">
+        <button className="email-login-back-button" onClick={emailLogin.onBack} aria-label="뒤로가기">
+          <span className="email-login-back-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M15 18L9 12L15 6" stroke="#101112" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </BackIcon>
-        </BackButton>
-        <HeaderTitle>이메일로 로그인</HeaderTitle>
-        <HeaderSpacer />
-      </Header>
+          </span>
+        </button>
+        <h1 className="email-login-header-title">이메일로 로그인</h1>
+        <div className="email-login-header-spacer" />
+      </header>
 
-      <Content>
-        <FormSection>
-          <InputGroup>
-            <TextField>
-              <Label>이메일</Label>
-              <InputBox $hasError={!!emailLogin.errors.email}>
-                <Input
+      <main className="email-login-content">
+        <div className="email-login-form">
+          <div className="email-login-input-group">
+            <div className="email-login-text-field">
+              <label className="email-login-label">이메일</label>
+              <div className={`email-login-input-box ${emailLogin.errors.email ? 'email-login-input-box--error' : ''}`}>
+                <input
+                  className="email-login-input"
                   type="email"
                   placeholder="이메일"
                   value={emailLogin.email}
@@ -56,23 +57,25 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
                   onBlur={emailLogin.onEmailBlur}
                 />
                 {emailLogin.errors.email && (
-                  <ErrorMessage>{emailLogin.errors.email}</ErrorMessage>
+                  <span className="email-login-error">{emailLogin.errors.email}</span>
                 )}
-              </InputBox>
-            </TextField>
+              </div>
+            </div>
 
-            <TextField>
-              <Label>비밀번호</Label>
-              <InputBox $hasError={!!emailLogin.errors.password}>
-                <InputRow>
-                  <Input
+            <div className="email-login-text-field">
+              <label className="email-login-label">비밀번호</label>
+              <div className={`email-login-input-box ${emailLogin.errors.password ? 'email-login-input-box--error' : ''}`}>
+                <div className="email-login-input-row">
+                  <input
+                    className="email-login-input"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="비밀번호"
                     value={emailLogin.password}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => emailLogin.onPasswordChange(e.target.value)}
                     onBlur={emailLogin.onPasswordBlur}
                   />
-                  <VisibilityButton 
+                  <button 
+                    className="email-login-visibility-button"
                     type="button"
                     onClick={togglePasswordVisibility}
                     aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
@@ -89,228 +92,28 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
                         <line x1="3" y1="19" x2="19" y2="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round"/>
                       </svg>
                     )}
-                  </VisibilityButton>
-                </InputRow>
+                  </button>
+                </div>
                 {emailLogin.errors.password && (
-                  <ErrorMessage>{emailLogin.errors.password}</ErrorMessage>
+                  <span className="email-login-error">{emailLogin.errors.password}</span>
                 )}
-              </InputBox>
-            </TextField>
-          </InputGroup>
+              </div>
+            </div>
+          </div>
 
-          <SubmitButton 
+          <button 
+            className="email-login-submit"
             onClick={emailLogin.onSubmit}
             disabled={emailLogin.isLoading}
           >
             {emailLogin.isLoading ? '로그인 중...' : '로그인'}
-          </SubmitButton>
-        </FormSection>
+          </button>
+        </div>
 
-        <ForgotPasswordLink onClick={emailLogin.onForgotPassword}>
+        <button className="email-login-forgot" onClick={emailLogin.onForgotPassword}>
           비밀번호를 잊어버렸어요
-        </ForgotPasswordLink>
-      </Content>
-    </Container>
+        </button>
+      </main>
+    </div>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: #ffffff;
-  font-family: var(--font-family-base);
-`;
-
-const Header = styled.header`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 8px;
-  height: 48px;
-`;
-
-const BackButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 42px;
-  height: 42px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-`;
-
-const BackIcon = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const HeaderTitle = styled.h1`
-  font-family: var(--font-family-base);
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 128%;
-  letter-spacing: -0.02em;
-  color: #0C0C0C;
-`;
-
-const HeaderSpacer = styled.div`
-  width: 42px;
-  height: 42px;
-`;
-
-const Content = styled.main`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 33px 16px 0;
-  gap: 16px;
-`;
-
-const FormSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-  max-width: 343px;
-  gap: 32px;
-`;
-
-const InputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 16px;
-`;
-
-const TextField = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 8px;
-`;
-
-const Label = styled.label`
-  padding: 0 4px;
-  font-family: var(--font-family-base);
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 128%;
-  letter-spacing: -0.01em;
-  color: #0C0C0C;
-`;
-
-const InputBox = styled.div<{ $hasError?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 10px 16px;
-  gap: 4px;
-  width: 100%;
-  min-height: 48px;
-  background: ${props => props.$hasError ? '#ffffff' : 'rgba(12, 12, 12, 0.06)'};
-  border: 1px solid ${props => props.$hasError ? '#FF4B3F' : 'transparent'};
-  border-radius: 4px;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
-`;
-
-const InputRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-`;
-
-const Input = styled.input`
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-family: var(--font-family-base);
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 128%;
-  letter-spacing: -0.01em;
-  color: #0C0C0C;
-  padding: 0;
-
-  &::placeholder {
-    color: rgba(12, 12, 12, 0.3);
-  }
-`;
-
-const VisibilityButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
-`;
-
-const ErrorMessage = styled.span`
-  font-family: var(--font-family-base);
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 140%;
-  letter-spacing: -0.01em;
-  color: #FF4B3F;
-`;
-
-const SubmitButton = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 14px;
-  width: 100%;
-  height: 50px;
-  background: var(--color-primary);
-  border: 1px solid var(--color-primary);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: opacity var(--transition-fast);
-
-  font-family: var(--font-family-base);
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 128%;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-
-  &:hover:not(:disabled) {
-    opacity: 0.9;
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-`;
-
-const ForgotPasswordLink = styled.button`
-  padding: 10px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-
-  font-family: var(--font-family-base);
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 140%;
-  letter-spacing: -0.025em;
-  text-decoration: underline;
-  color: rgba(12, 12, 12, 0.7);
-
-  &:hover {
-    color: rgba(12, 12, 12, 0.9);
-  }
-`;

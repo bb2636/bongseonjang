@@ -1,0 +1,193 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: var(--font-family-base);
+}
+
+.login-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 8px;
+  height: 48px;
+}
+
+.login-close-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.login-close-icon {
+  font-size: 24px;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.login-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.login-logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 80px;
+  margin-bottom: 64px;
+}
+
+.login-logo-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.login-logo-image {
+  width: 60px;
+  height: 60px;
+}
+
+.login-logo-text {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+
+.login-button-section {
+  width: 100%;
+  max-width: 343px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-social-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-social-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  gap: 6px;
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 150ms ease-in-out;
+}
+
+.login-social-button:hover {
+  opacity: 0.9;
+}
+
+.login-kakao-button {
+  background: #FEE500;
+}
+
+.login-naver-button {
+  background: #03C75A;
+}
+
+.login-kakao-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-naver-icon {
+  font-family: var(--font-family-base);
+  font-weight: 700;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.login-button-text {
+  font-family: var(--font-family-base);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+}
+
+.login-button-text--kakao {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.login-button-text--naver {
+  color: #ffffff;
+}
+
+.login-email-links {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.login-email-link {
+  background: transparent;
+  border: none;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+  color: rgba(12, 12, 12, 0.7);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.login-email-link:hover {
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.login-divider {
+  color: rgba(12, 12, 12, 0.3);
+}
+
+.login-footer {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  margin-bottom: 34px;
+}
+
+.login-guest-link {
+  background: transparent;
+  border: none;
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+  color: rgba(12, 12, 12, 0.7);
+  cursor: pointer;
+}
+
+.login-guest-link:hover {
+  color: rgba(12, 12, 12, 0.9);
+}
