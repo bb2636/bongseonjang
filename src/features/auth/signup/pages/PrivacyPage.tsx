@@ -70,7 +70,7 @@ export default function PrivacyPage() {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(-1);
+    navigate('/signup/email');
   };
 
   return (

@@ -53,33 +53,60 @@ interface TouchedFields {
 }
 
 const TIMER_DURATION = 180;
+const STORAGE_KEY = 'signupFormData';
+
+function loadFormDataFromStorage(): Partial<SignupEmailState> {
+  try {
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Failed to load form data from storage:', error);
+  }
+  return {};
+}
+
+function saveFormDataToStorage(data: SignupEmailState) {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Failed to save form data to storage:', error);
+  }
+}
 
 export function useSignupEmail() {
   const navigate = useNavigate();
   
-  const [formData, setFormData] = useState<SignupEmailState>({
-    email: '',
-    verificationCode: '',
-    isCodeSent: false,
-    isEmailVerified: false,
-    password: '',
-    passwordConfirm: '',
-    showPassword: false,
-    showPasswordConfirm: false,
-    isPasswordSet: false,
-    name: '',
-    phone: '',
-    isPhoneVerified: false,
-    birthYear: '',
-    birthMonth: '',
-    birthDay: '',
-    gender: '',
-    referralId: '',
-    isReferralIdVerified: false,
-    isOver14: false,
-    termsAgreed: false,
-    privacyAgreed: false,
-  });
+  const getInitialFormData = (): SignupEmailState => {
+    const defaultData: SignupEmailState = {
+      email: '',
+      verificationCode: '',
+      isCodeSent: false,
+      isEmailVerified: false,
+      password: '',
+      passwordConfirm: '',
+      showPassword: false,
+      showPasswordConfirm: false,
+      isPasswordSet: false,
+      name: '',
+      phone: '',
+      isPhoneVerified: false,
+      birthYear: '',
+      birthMonth: '',
+      birthDay: '',
+      gender: '',
+      referralId: '',
+      isReferralIdVerified: false,
+      isOver14: false,
+      termsAgreed: false,
+      privacyAgreed: false,
+    };
+    const storedData = loadFormDataFromStorage();
+    return { ...defaultData, ...storedData };
+  };
+
+  const [formData, setFormData] = useState<SignupEmailState>(getInitialFormData);
   
   const [touched, setTouched] = useState<TouchedFields>({
     email: false,
@@ -115,6 +142,10 @@ export function useSignupEmail() {
       }
     };
   }, [timer]);
+
+  useEffect(() => {
+    saveFormDataToStorage(formData);
+  }, [formData]);
 
   const formatTimer = useCallback((seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -496,12 +527,14 @@ export function useSignupEmail() {
     setIsLoading(true);
     try {
       console.log('Signup data:', formData);
+      sessionStorage.removeItem(STORAGE_KEY);
+      navigate('/signup/complete');
     } catch (error) {
       console.error('Signup failed:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [formData, isValid]);
+  }, [formData, isValid, navigate]);
 
   const onBack = useCallback(() => {
     navigate(-1);
