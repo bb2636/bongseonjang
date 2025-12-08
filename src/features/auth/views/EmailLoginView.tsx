@@ -47,59 +47,60 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
           <InputGroup>
             <TextField>
               <Label>이메일</Label>
-              <InputWrapper $hasError={!!emailLogin.errors.email}>
+              <InputBox $hasError={!!emailLogin.errors.email}>
                 <Input
                   type="email"
-                  placeholder="이메일을 입력해주세요."
+                  placeholder="이메일"
                   value={emailLogin.email}
                   onChange={(e) => emailLogin.onEmailChange(e.target.value)}
                   onBlur={emailLogin.onEmailBlur}
                 />
-              </InputWrapper>
-              {emailLogin.errors.email && (
-                <ErrorMessage>{emailLogin.errors.email}</ErrorMessage>
-              )}
+                {emailLogin.errors.email && (
+                  <ErrorMessage>{emailLogin.errors.email}</ErrorMessage>
+                )}
+              </InputBox>
             </TextField>
 
             <TextField>
               <Label>비밀번호</Label>
-              <InputWrapper $hasError={!!emailLogin.errors.password}>
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="비밀번호를 입력해주세요."
-                  value={emailLogin.password}
-                  onChange={(e) => emailLogin.onPasswordChange(e.target.value)}
-                  onBlur={emailLogin.onPasswordBlur}
-                />
-                <VisibilityButton 
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
-                >
-                  {showPassword ? (
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                      <path d="M11 4.5C6 4.5 2 11 2 11C2 11 6 17.5 11 17.5C16 17.5 20 11 20 11C20 11 16 4.5 11 4.5Z" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="11" cy="11" r="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5"/>
-                    </svg>
-                  ) : (
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                      <path d="M11 4.5C6 4.5 2 11 2 11C2 11 6 17.5 11 17.5C16 17.5 20 11 20 11C20 11 16 4.5 11 4.5Z" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="11" cy="11" r="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5"/>
-                      <line x1="4" y1="4" x2="18" y2="18" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
-                  )}
-                </VisibilityButton>
-              </InputWrapper>
-              {emailLogin.errors.password && (
-                <ErrorMessage>{emailLogin.errors.password}</ErrorMessage>
-              )}
+              <InputBox $hasError={!!emailLogin.errors.password}>
+                <InputRow>
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="비밀번호"
+                    value={emailLogin.password}
+                    onChange={(e) => emailLogin.onPasswordChange(e.target.value)}
+                    onBlur={emailLogin.onPasswordBlur}
+                  />
+                  <VisibilityButton 
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                  >
+                    {showPassword ? (
+                      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                        <path d="M11 4.5C6 4.5 2 11 2 11C2 11 6 17.5 11 17.5C16 17.5 20 11 20 11C20 11 16 4.5 11 4.5Z" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="11" cy="11" r="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5"/>
+                      </svg>
+                    ) : (
+                      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                        <path d="M11 4.5C6 4.5 2 11 2 11C2 11 6 17.5 11 17.5C16 17.5 20 11 20 11C20 11 16 4.5 11 4.5Z" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="11" cy="11" r="3" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5"/>
+                        <line x1="4" y1="4" x2="18" y2="18" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                    )}
+                  </VisibilityButton>
+                </InputRow>
+                {emailLogin.errors.password && (
+                  <ErrorMessage>{emailLogin.errors.password}</ErrorMessage>
+                )}
+              </InputBox>
             </TextField>
           </InputGroup>
 
           <SubmitButton 
             onClick={emailLogin.onSubmit}
             disabled={emailLogin.isLoading}
-            $isActive={emailLogin.isValid}
           >
             {emailLogin.isLoading ? '로그인 중...' : '로그인'}
           </SubmitButton>
@@ -202,23 +203,30 @@ const Label = styled.label`
   color: #0C0C0C;
 `;
 
-const InputWrapper = styled.div<{ $hasError?: boolean }>`
+const InputBox = styled.div<{ $hasError?: boolean }>`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 16px;
+  gap: 4px;
   width: 100%;
-  height: 48px;
+  min-height: 48px;
   background: ${props => props.$hasError ? '#ffffff' : 'rgba(12, 12, 12, 0.06)'};
   border: 1px solid ${props => props.$hasError ? '#FF4B3F' : 'transparent'};
   border-radius: 4px;
   transition: border-color var(--transition-fast), background var(--transition-fast);
 `;
 
+const InputRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
 const Input = styled.input`
   flex: 1;
-  height: 100%;
   background: transparent;
   border: none;
   outline: none;
@@ -228,6 +236,7 @@ const Input = styled.input`
   line-height: 128%;
   letter-spacing: -0.01em;
   color: #0C0C0C;
+  padding: 0;
 
   &::placeholder {
     color: rgba(12, 12, 12, 0.3);
@@ -244,10 +253,10 @@ const VisibilityButton = styled.button`
   border: none;
   cursor: pointer;
   padding: 0;
+  flex-shrink: 0;
 `;
 
 const ErrorMessage = styled.span`
-  padding: 0 4px;
   font-family: var(--font-family-base);
   font-weight: 400;
   font-size: 12px;
@@ -256,7 +265,7 @@ const ErrorMessage = styled.span`
   color: #FF4B3F;
 `;
 
-const SubmitButton = styled.button<{ $isActive: boolean }>`
+const SubmitButton = styled.button`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -264,21 +273,26 @@ const SubmitButton = styled.button<{ $isActive: boolean }>`
   padding: 8px 14px;
   width: 100%;
   height: 50px;
-  background: ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.1)'};
-  border: 1px solid ${props => props.$isActive ? 'var(--color-primary)' : 'rgba(12, 12, 12, 0.08)'};
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 4px;
-  cursor: ${props => props.$isActive ? 'pointer' : 'not-allowed'};
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
 
   font-family: var(--font-family-base);
   font-weight: 600;
   font-size: 16px;
   line-height: 128%;
   letter-spacing: -0.02em;
-  color: ${props => props.$isActive ? '#ffffff' : 'rgba(12, 12, 12, 0.3)'};
+  color: #ffffff;
 
   &:hover:not(:disabled) {
     opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 `;
 
