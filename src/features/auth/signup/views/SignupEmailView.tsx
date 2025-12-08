@@ -789,14 +789,15 @@ const PasswordInputBox = styled.div<{ $hasError?: boolean }>`
   padding: 10px 16px;
   gap: 4px;
   width: 100%;
-  min-height: 57px;
+  min-height: ${(props) => (props.$hasError ? "57px" : "48px")};
   background: ${(props) =>
     props.$hasError ? "#ffffff" : "rgba(12, 12, 12, 0.06)"};
   border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "transparent")};
   border-radius: 4px;
   transition:
     border-color var(--transition-fast),
-    background var(--transition-fast);
+    background var(--transition-fast),
+    min-height var(--transition-fast);
 `;
 
 const PasswordInputRow = styled.div`
@@ -880,17 +881,18 @@ const FormInputBox = styled.div<{ $hasError?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 8px 12px 8px 16px;
+  padding: 10px 16px;
   gap: 4px;
   width: 100%;
-  min-height: 65px;
+  min-height: ${(props) => (props.$hasError ? "65px" : "48px")};
   background: ${(props) =>
     props.$hasError ? "#ffffff" : "rgba(12, 12, 12, 0.06)"};
   border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "transparent")};
   border-radius: 4px;
   transition:
     border-color var(--transition-fast),
-    background var(--transition-fast);
+    background var(--transition-fast),
+    min-height var(--transition-fast);
 `;
 
 const FormInputRow = styled.div`
@@ -900,7 +902,7 @@ const FormInputRow = styled.div`
   align-items: center;
   padding: 0;
   width: 100%;
-  height: 30px;
+  height: 18px;
 `;
 
 const FormInput = styled.input`
@@ -944,7 +946,7 @@ const PhoneVerifyButton = styled.button`
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  margin-top: 19px;
+  margin-top: 9px;
 
   font-family: var(--font-family-base);
   font-weight: 600;
