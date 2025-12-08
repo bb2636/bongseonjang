@@ -1,8 +1,25 @@
-import { useSignupEmail } from '../hooks/useSignupName';
+import { SignupFormProvider } from '../hooks/useSignupFormState';
+import { useSignupPage } from '../hooks/useSignupPage';
 import SignupEmailView from '../views/SignupEmailView';
 
-export default function SignupEmailPage() {
-  const { signupEmail } = useSignupEmail();
+function SignupEmailPageContent() {
+  const { currentStep, emailStep, passwordStep, profileStep, onBack } = useSignupPage();
 
-  return <SignupEmailView signupEmail={signupEmail} />;
+  return (
+    <SignupEmailView
+      currentStep={currentStep}
+      emailStep={emailStep}
+      passwordStep={passwordStep}
+      profileStep={profileStep}
+      onBack={onBack}
+    />
+  );
+}
+
+export default function SignupEmailPage() {
+  return (
+    <SignupFormProvider>
+      <SignupEmailPageContent />
+    </SignupFormProvider>
+  );
 }
