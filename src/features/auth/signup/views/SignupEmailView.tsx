@@ -15,6 +15,13 @@ interface SignupEmailViewProps {
     isPasswordSet: boolean;
     name: string;
     phone: string;
+    isPhoneVerified: boolean;
+    birthYear: string;
+    birthMonth: string;
+    birthDay: string;
+    gender: 'male' | 'female' | '';
+    referralId: string;
+    isReferralIdVerified: boolean;
     isLoading: boolean;
     isVerifying: boolean;
     isConfirming: boolean;
@@ -24,6 +31,9 @@ interface SignupEmailViewProps {
     isPasswordConfirmValid: boolean;
     isNameValid: boolean;
     isPhoneValid: boolean;
+    isBirthDateValid: boolean;
+    isGenderValid: boolean;
+    isReferralIdValid: boolean;
     isValid: boolean;
     errors: {
       email: string | null;
@@ -32,6 +42,9 @@ interface SignupEmailViewProps {
       passwordConfirm: string | null;
       name: string | null;
       phone: string | null;
+      birthDate: string | null;
+      gender: string | null;
+      referralId: string | null;
     };
     showSnackbar: boolean;
     showErrorModal: boolean;
@@ -52,6 +65,15 @@ interface SignupEmailViewProps {
     onPhoneChange: (value: string) => void;
     onNameBlur: () => void;
     onPhoneBlur: () => void;
+    onPhoneVerify: () => void;
+    onBirthYearChange: (value: string) => void;
+    onBirthMonthChange: (value: string) => void;
+    onBirthDayChange: (value: string) => void;
+    onBirthDateBlur: () => void;
+    onGenderChange: (value: 'male' | 'female') => void;
+    onReferralIdChange: (value: string) => void;
+    onReferralIdBlur: () => void;
+    onReferralIdVerify: () => void;
     onPasswordNext: () => void;
     onVerifyEmail: () => void;
     onResendCode: () => void;
@@ -129,26 +151,122 @@ export default function SignupEmailView({ signupEmail }: SignupEmailViewProps) {
 
                 <TextField>
                   <Label>휴대폰</Label>
-                  <PhoneInputRow>
-                    <FormInputBox $hasError={!!signupEmail.errors.phone} style={{ flex: 1 }}>
-                      <FormInputRow>
-                        <FormInput
-                          type="tel"
-                          placeholder="휴대폰 번호"
-                          value={signupEmail.phone}
-                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                            signupEmail.onPhoneChange(e.target.value)
-                          }
-                          onBlur={signupEmail.onPhoneBlur}
-                          maxLength={11}
-                        />
-                      </FormInputRow>
+                  <VerifyInputRow>
+                    <VerifyInputBoxWithError $hasError={!!signupEmail.errors.phone}>
+                      <FormInput
+                        type="tel"
+                        placeholder="휴대폰 번호를 입력해주세요"
+                        value={signupEmail.phone}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          signupEmail.onPhoneChange(e.target.value)
+                        }
+                        onBlur={signupEmail.onPhoneBlur}
+                        maxLength={11}
+                      />
                       {signupEmail.errors.phone && (
                         <ErrorMessage>{signupEmail.errors.phone}</ErrorMessage>
                       )}
-                    </FormInputBox>
-                    <PhoneVerifyButton>인증</PhoneVerifyButton>
-                  </PhoneInputRow>
+                    </VerifyInputBoxWithError>
+                    <BlackVerifyButton onClick={signupEmail.onPhoneVerify}>인증</BlackVerifyButton>
+                  </VerifyInputRow>
+                </TextField>
+
+                <TextField>
+                  <Label>생년월일</Label>
+                  <BirthDateContainer $hasError={!!signupEmail.errors.birthDate}>
+                    <BirthDateRow>
+                      <BirthDateInputBox>
+                        <BirthDateInput
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="YYYY"
+                          value={signupEmail.birthYear}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            signupEmail.onBirthYearChange(e.target.value)
+                          }
+                          onBlur={signupEmail.onBirthDateBlur}
+                          maxLength={4}
+                        />
+                      </BirthDateInputBox>
+                      <BirthDateSeparator>.</BirthDateSeparator>
+                      <BirthDateInputBox>
+                        <BirthDateInput
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="MM"
+                          value={signupEmail.birthMonth}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            signupEmail.onBirthMonthChange(e.target.value)
+                          }
+                          onBlur={signupEmail.onBirthDateBlur}
+                          maxLength={2}
+                        />
+                      </BirthDateInputBox>
+                      <BirthDateSeparator>.</BirthDateSeparator>
+                      <BirthDateInputBox>
+                        <BirthDateInput
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="DD"
+                          value={signupEmail.birthDay}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            signupEmail.onBirthDayChange(e.target.value)
+                          }
+                          onBlur={signupEmail.onBirthDateBlur}
+                          maxLength={2}
+                        />
+                      </BirthDateInputBox>
+                    </BirthDateRow>
+                    {signupEmail.errors.birthDate && (
+                      <ErrorMessage>{signupEmail.errors.birthDate}</ErrorMessage>
+                    )}
+                  </BirthDateContainer>
+                </TextField>
+
+                <TextField>
+                  <Label>성별</Label>
+                  <GenderContainer $hasError={!!signupEmail.errors.gender}>
+                    <GenderRow>
+                      <GenderOption
+                        $isSelected={signupEmail.gender === 'male'}
+                        onClick={() => signupEmail.onGenderChange('male')}
+                      >
+                        <GenderRadio $isSelected={signupEmail.gender === 'male'} />
+                        <GenderLabel>남성</GenderLabel>
+                      </GenderOption>
+                      <GenderOption
+                        $isSelected={signupEmail.gender === 'female'}
+                        onClick={() => signupEmail.onGenderChange('female')}
+                      >
+                        <GenderRadio $isSelected={signupEmail.gender === 'female'} />
+                        <GenderLabel>여성</GenderLabel>
+                      </GenderOption>
+                    </GenderRow>
+                    {signupEmail.errors.gender && (
+                      <ErrorMessage>{signupEmail.errors.gender}</ErrorMessage>
+                    )}
+                  </GenderContainer>
+                </TextField>
+
+                <TextField>
+                  <Label>추천인 아이디(선택)</Label>
+                  <VerifyInputRow>
+                    <VerifyInputBoxWithError $hasError={!!signupEmail.errors.referralId}>
+                      <FormInput
+                        type="text"
+                        placeholder="최소 3자 이상 입력하세요"
+                        value={signupEmail.referralId}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          signupEmail.onReferralIdChange(e.target.value)
+                        }
+                        onBlur={signupEmail.onReferralIdBlur}
+                      />
+                      {signupEmail.errors.referralId && (
+                        <ErrorMessage>{signupEmail.errors.referralId}</ErrorMessage>
+                      )}
+                    </VerifyInputBoxWithError>
+                    <BlackVerifyButton onClick={signupEmail.onReferralIdVerify}>아이디 확인</BlackVerifyButton>
+                  </VerifyInputRow>
                 </TextField>
               </FullSignupForm>
             </>
@@ -964,4 +1082,221 @@ const PhoneVerifyButton = styled.button`
     color: rgba(12, 12, 12, 0.3);
     cursor: not-allowed;
   }
+`;
+
+const VerifyInputRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 8px;
+  width: 100%;
+`;
+
+const VerifyInputBox = styled.div<{ $hasError?: boolean }>`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 16px;
+  gap: 10px;
+  flex: 1;
+  height: 48px;
+  background: transparent;
+  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "rgba(12, 12, 12, 0.12)")};
+  border-radius: 4px;
+`;
+
+const VerifyInputBoxWithError = styled.div<{ $hasError?: boolean }>`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 16px;
+  gap: 4px;
+  flex: 1;
+  min-height: ${(props) => (props.$hasError ? "65px" : "48px")};
+  background: ${(props) => (props.$hasError ? "#ffffff" : "transparent")};
+  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "rgba(12, 12, 12, 0.12)")};
+  border-radius: 4px;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    min-height var(--transition-fast);
+`;
+
+const BlackVerifyButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  gap: 10px;
+  min-width: 72px;
+  height: 48px;
+  background: #0C0C0C;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+
+  font-family: var(--font-family-base);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #FDFDFD;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    background: rgba(12, 12, 12, 0.12);
+    color: rgba(12, 12, 12, 0.3);
+    cursor: not-allowed;
+  }
+`;
+
+const FieldErrorMessage = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #ff4b3f;
+  padding-left: 4px;
+  margin-top: 4px;
+`;
+
+const BirthDateContainer = styled.div<{ $hasError?: boolean }>`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 16px;
+  gap: 4px;
+  width: 100%;
+  min-height: ${(props) => (props.$hasError ? "65px" : "48px")};
+  background: ${(props) => (props.$hasError ? "#ffffff" : "rgba(12, 12, 12, 0.06)")};
+  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "transparent")};
+  border-radius: 4px;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    min-height var(--transition-fast);
+`;
+
+const BirthDateRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  gap: 0;
+  width: 100%;
+`;
+
+const BirthDateInputBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+`;
+
+const BirthDateInput = styled.input`
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #101112;
+  text-align: center;
+  padding: 0;
+
+  &::placeholder {
+    color: rgba(12, 12, 12, 0.3);
+  }
+`;
+
+const BirthDateSeparator = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.3);
+  padding: 0 4px;
+`;
+
+const GenderContainer = styled.div<{ $hasError?: boolean }>`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px 16px;
+  gap: 4px;
+  width: 100%;
+  min-height: ${(props) => (props.$hasError ? "65px" : "48px")};
+  background: ${(props) => (props.$hasError ? "#ffffff" : "rgba(12, 12, 12, 0.06)")};
+  border: 1px solid ${(props) => (props.$hasError ? "#FF4B3F" : "transparent")};
+  border-radius: 4px;
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    min-height var(--transition-fast);
+`;
+
+const GenderRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 24px;
+  width: 100%;
+`;
+
+const GenderOption = styled.div<{ $isSelected?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+`;
+
+const GenderRadio = styled.div<{ $isSelected?: boolean }>`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid ${(props) => (props.$isSelected ? "#3B9BD5" : "rgba(12, 12, 12, 0.2)")};
+  background: ${(props) => (props.$isSelected ? "#3B9BD5" : "transparent")};
+  position: relative;
+  transition: all 0.2s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    opacity: ${(props) => (props.$isSelected ? 1 : 0)};
+    transition: opacity 0.2s ease;
+  }
+`;
+
+const GenderLabel = styled.span`
+  font-family: var(--font-family-base);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #101112;
 `;

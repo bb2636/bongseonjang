@@ -15,6 +15,13 @@ interface SignupEmailState {
   isPasswordSet: boolean;
   name: string;
   phone: string;
+  isPhoneVerified: boolean;
+  birthYear: string;
+  birthMonth: string;
+  birthDay: string;
+  gender: 'male' | 'female' | '';
+  referralId: string;
+  isReferralIdVerified: boolean;
 }
 
 interface SignupEmailErrors {
@@ -24,6 +31,9 @@ interface SignupEmailErrors {
   passwordConfirm: string | null;
   name: string | null;
   phone: string | null;
+  birthDate: string | null;
+  gender: string | null;
+  referralId: string | null;
 }
 
 interface TouchedFields {
@@ -33,6 +43,9 @@ interface TouchedFields {
   passwordConfirm: boolean;
   name: boolean;
   phone: boolean;
+  birthDate: boolean;
+  gender: boolean;
+  referralId: boolean;
 }
 
 const TIMER_DURATION = 180;
@@ -52,6 +65,13 @@ export function useSignupEmail() {
     isPasswordSet: false,
     name: '',
     phone: '',
+    isPhoneVerified: false,
+    birthYear: '',
+    birthMonth: '',
+    birthDay: '',
+    gender: '',
+    referralId: '',
+    isReferralIdVerified: false,
   });
   
   const [touched, setTouched] = useState<TouchedFields>({
@@ -61,6 +81,9 @@ export function useSignupEmail() {
     passwordConfirm: false,
     name: false,
     phone: false,
+    birthDate: false,
+    gender: false,
+    referralId: false,
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -146,6 +169,40 @@ export function useSignupEmail() {
     return null;
   }, []);
 
+  const validateBirthDate = useCallback((year: string, month: string, day: string): string | null => {
+    if (!year.trim() || !month.trim() || !day.trim()) {
+      return '생년월일을 입력해주세요';
+    }
+    const yearNum = parseInt(year, 10);
+    const monthNum = parseInt(month, 10);
+    const dayNum = parseInt(day, 10);
+    const currentYear = new Date().getFullYear();
+    if (yearNum < 1900 || yearNum > currentYear) {
+      return '올바른 연도를 입력해주세요';
+    }
+    if (monthNum < 1 || monthNum > 12) {
+      return '올바른 월을 입력해주세요';
+    }
+    if (dayNum < 1 || dayNum > 31) {
+      return '올바른 일을 입력해주세요';
+    }
+    return null;
+  }, []);
+
+  const validateGender = useCallback((value: string): string | null => {
+    if (!value) {
+      return '성별을 선택해주세요';
+    }
+    return null;
+  }, []);
+
+  const validateReferralId = useCallback((value: string): string | null => {
+    if (value.trim() && value.length < 3) {
+      return '최소 3자 이상 입력해주세요';
+    }
+    return null;
+  }, []);
+
   const errors: SignupEmailErrors = {
     email: touched.email ? validateEmail(formData.email) : null,
     verificationCode: touched.verificationCode ? validateCode(formData.verificationCode) : null,
@@ -153,6 +210,9 @@ export function useSignupEmail() {
     passwordConfirm: touched.passwordConfirm ? validatePasswordConfirm(formData.passwordConfirm, formData.password) : null,
     name: touched.name ? validateName(formData.name) : null,
     phone: touched.phone ? validatePhone(formData.phone) : null,
+    birthDate: touched.birthDate ? validateBirthDate(formData.birthYear, formData.birthMonth, formData.birthDay) : null,
+    gender: touched.gender ? validateGender(formData.gender) : null,
+    referralId: touched.referralId ? validateReferralId(formData.referralId) : null,
   };
 
   const isEmailValid = !validateEmail(formData.email);
@@ -161,7 +221,10 @@ export function useSignupEmail() {
   const isPasswordConfirmValid = !validatePasswordConfirm(formData.passwordConfirm, formData.password);
   const isNameValid = !validateName(formData.name);
   const isPhoneValid = !validatePhone(formData.phone);
-  const isValid = isEmailValid && formData.isEmailVerified && isPasswordValid && isPasswordConfirmValid && formData.isPasswordSet && isNameValid && isPhoneValid;
+  const isBirthDateValid = !validateBirthDate(formData.birthYear, formData.birthMonth, formData.birthDay);
+  const isGenderValid = !validateGender(formData.gender);
+  const isReferralIdValid = !validateReferralId(formData.referralId);
+  const isValid = isEmailValid && formData.isEmailVerified && isPasswordValid && isPasswordConfirmValid && formData.isPasswordSet && isNameValid && isPhoneValid && isBirthDateValid && isGenderValid && isReferralIdValid;
 
   const onEmailChange = useCallback((value: string) => {
     setFormData(prev => ({ 
@@ -228,6 +291,52 @@ export function useSignupEmail() {
   const onPhoneBlur = useCallback(() => {
     setTouched(prev => ({ ...prev, phone: true }));
   }, []);
+
+  const onPhoneVerify = useCallback(() => {
+    setTouched(prev => ({ ...prev, phone: true }));
+    if (isPhoneValid) {
+      setFormData(prev => ({ ...prev, isPhoneVerified: true }));
+    }
+  }, [isPhoneValid]);
+
+  const onBirthYearChange = useCallback((value: string) => {
+    const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 4);
+    setFormData(prev => ({ ...prev, birthYear: numbersOnly }));
+  }, []);
+
+  const onBirthMonthChange = useCallback((value: string) => {
+    const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 2);
+    setFormData(prev => ({ ...prev, birthMonth: numbersOnly }));
+  }, []);
+
+  const onBirthDayChange = useCallback((value: string) => {
+    const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 2);
+    setFormData(prev => ({ ...prev, birthDay: numbersOnly }));
+  }, []);
+
+  const onBirthDateBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, birthDate: true }));
+  }, []);
+
+  const onGenderChange = useCallback((value: 'male' | 'female') => {
+    setFormData(prev => ({ ...prev, gender: value }));
+    setTouched(prev => ({ ...prev, gender: true }));
+  }, []);
+
+  const onReferralIdChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, referralId: value, isReferralIdVerified: false }));
+  }, []);
+
+  const onReferralIdBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, referralId: true }));
+  }, []);
+
+  const onReferralIdVerify = useCallback(() => {
+    setTouched(prev => ({ ...prev, referralId: true }));
+    if (formData.referralId.length >= 3) {
+      setFormData(prev => ({ ...prev, isReferralIdVerified: true }));
+    }
+  }, [formData.referralId]);
 
   const onPasswordNext = useCallback(() => {
     setTouched(prev => ({ ...prev, password: true, passwordConfirm: true }));
@@ -310,7 +419,7 @@ export function useSignupEmail() {
   }, []);
 
   const onSubmit = useCallback(async () => {
-    setTouched({ email: true, verificationCode: true, password: true, passwordConfirm: true, name: true, phone: true });
+    setTouched({ email: true, verificationCode: true, password: true, passwordConfirm: true, name: true, phone: true, birthDate: true, gender: true, referralId: true });
 
     if (!isValid) {
       return;
@@ -343,6 +452,13 @@ export function useSignupEmail() {
       isPasswordSet: formData.isPasswordSet,
       name: formData.name,
       phone: formData.phone,
+      isPhoneVerified: formData.isPhoneVerified,
+      birthYear: formData.birthYear,
+      birthMonth: formData.birthMonth,
+      birthDay: formData.birthDay,
+      gender: formData.gender,
+      referralId: formData.referralId,
+      isReferralIdVerified: formData.isReferralIdVerified,
       isLoading,
       isVerifying,
       isConfirming,
@@ -352,6 +468,9 @@ export function useSignupEmail() {
       isPasswordConfirmValid,
       isNameValid,
       isPhoneValid,
+      isBirthDateValid,
+      isGenderValid,
+      isReferralIdValid,
       isValid,
       errors,
       showSnackbar,
@@ -373,6 +492,15 @@ export function useSignupEmail() {
       onPhoneChange,
       onNameBlur,
       onPhoneBlur,
+      onPhoneVerify,
+      onBirthYearChange,
+      onBirthMonthChange,
+      onBirthDayChange,
+      onBirthDateBlur,
+      onGenderChange,
+      onReferralIdChange,
+      onReferralIdBlur,
+      onReferralIdVerify,
       onPasswordNext,
       onVerifyEmail,
       onResendCode,

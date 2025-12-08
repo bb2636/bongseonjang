@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
 
 interface EmailLoginViewProps {
@@ -52,7 +52,7 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
                   type="email"
                   placeholder="이메일"
                   value={emailLogin.email}
-                  onChange={(e) => emailLogin.onEmailChange(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => emailLogin.onEmailChange(e.target.value)}
                   onBlur={emailLogin.onEmailBlur}
                 />
                 {emailLogin.errors.email && (
@@ -69,7 +69,7 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="비밀번호"
                     value={emailLogin.password}
-                    onChange={(e) => emailLogin.onPasswordChange(e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => emailLogin.onPasswordChange(e.target.value)}
                     onBlur={emailLogin.onPasswordBlur}
                   />
                   <VisibilityButton 
