@@ -2,7 +2,7 @@ export const AUTH_ROUTES = {
   LOGIN: '/login',
   EMAIL_LOGIN: '/login/email',
   EMAIL_SIGNUP: '/signup/email',
-  GUEST_ORDER: '/guest-order',
+  GUEST_ORDER: '/orders/guest',
 } as const;
 
 export const SOCIAL_PROVIDERS = {
