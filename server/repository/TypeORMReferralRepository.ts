@@ -3,9 +3,9 @@ import { User } from '../entity/User';
 import { ReferralRepository, VerifyReferralResult } from './ReferralRepository';
 
 export class TypeORMReferralRepository implements ReferralRepository {
-  async verifyByEmail(email: string): Promise<VerifyReferralResult> {
+  async verifyById(referralId: string): Promise<VerifyReferralResult> {
     const userRepository = AppDataSource.getRepository(User);
-    const user = await userRepository.findOneBy({ email });
+    const user = await userRepository.findOneBy({ email: referralId });
 
     if (user) {
       return {

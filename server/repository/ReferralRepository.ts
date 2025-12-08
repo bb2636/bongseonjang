@@ -4,5 +4,5 @@ export interface VerifyReferralResult {
 }
 
 export interface ReferralRepository {
-  verifyByEmail(email: string): Promise<VerifyReferralResult>;
+  verifyById(referralId: string): Promise<VerifyReferralResult>;
 }

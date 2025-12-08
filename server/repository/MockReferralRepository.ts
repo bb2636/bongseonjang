@@ -1,10 +1,10 @@
 import { ReferralRepository, VerifyReferralResult } from './ReferralRepository';
 
-const MOCK_EXISTING_EMAILS = ['test@test.com', 'friend@example.com'];
+const MOCK_REGISTERED_USERS = ['test@test.com', 'friend@example.com'];
 
 export class MockReferralRepository implements ReferralRepository {
-  async verifyByEmail(email: string): Promise<VerifyReferralResult> {
-    const exists = MOCK_EXISTING_EMAILS.includes(email);
+  async verifyById(referralId: string): Promise<VerifyReferralResult> {
+    const exists = MOCK_REGISTERED_USERS.includes(referralId);
 
     if (exists) {
       return {
