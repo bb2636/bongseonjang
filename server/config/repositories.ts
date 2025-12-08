@@ -31,6 +31,21 @@ const repositoryMap: {
   },
 };
 
+let referralRepositoryInstance: ReferralRepository | null = null;
+
+export function getReferralRepository(): ReferralRepository {
+  if (!referralRepositoryInstance) {
+    referralRepositoryInstance = repositoryMap.referral[config.referral]();
+  }
+  return referralRepositoryInstance;
+}
+
+export function resetRepositories(): void {
+  referralRepositoryInstance = null;
+}
+
 export const repositories = {
-  referral: repositoryMap.referral[config.referral](),
+  get referral(): ReferralRepository {
+    return getReferralRepository();
+  },
 };
