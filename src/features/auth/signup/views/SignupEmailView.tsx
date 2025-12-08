@@ -158,25 +158,30 @@ const Container = styled.div`
 const Snackbar = styled.div`
   position: fixed;
   bottom: 120px;
-  left: 16px;
-  right: 16px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 14px 16px;
-  background: var(--color-primary);
-  border-radius: 8px;
+  padding: 20px 12px;
+  width: 343px;
+  max-width: calc(100% - 32px);
+  height: 52px;
+  background: rgba(12, 12, 12, 0.38);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  border-radius: 40px;
   animation: ${slideUp} 0.3s ease-out;
 `;
 
 const SnackbarText = styled.span`
   font-family: var(--font-family-base);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   line-height: 128%;
   letter-spacing: -0.01em;
-  color: #ffffff;
+  color: #FDFDFD;
 `;
 
 const Header = styled.header`
