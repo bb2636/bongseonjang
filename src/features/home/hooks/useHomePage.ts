@@ -1,12 +1,14 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHeroImages } from './useHeroImages';
 
 type NavItem = 'home' | 'category' | 'search' | 'profile';
+type CategoryTab = 'best' | 'new' | 'event' | 'all';
 
 export function useHomePage() {
   const navigate = useNavigate();
   const { heroImages, isLoading: isHeroImagesLoading } = useHeroImages();
+  const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
     navigate('/cart');
@@ -29,10 +31,16 @@ export function useHomePage() {
     }
   }, [navigate]);
 
+  const onTabChange = useCallback((tab: CategoryTab) => {
+    setActiveTab(tab);
+  }, []);
+
   return {
     onCartClick,
     onNavItemClick,
     heroImages,
     isHeroImagesLoading,
+    activeTab,
+    onTabChange,
   };
 }
