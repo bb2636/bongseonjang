@@ -1,3 +1,7 @@
+import seasonalSeafood from '@/assets/image/home/seasonal-seafood.svg';
+import preparedSeafood from '@/assets/image/home/prepared-seafood.svg';
+import expressSeafood from '@/assets/image/home/express-seafood.svg';
+import pickledSeafood from '@/assets/image/home/pickled-seafood.svg';
 import './SubCategoryCards.css';
 
 interface SubCategory {
@@ -12,10 +16,10 @@ interface SubCategoryCardsProps {
 }
 
 const DEFAULT_CATEGORIES: SubCategory[] = [
-  { id: 'seasonal', name: '제철 수산물' },
-  { id: 'prepared', name: '손질 수산물' },
-  { id: 'frozen', name: '급랭 수산물' },
-  { id: 'pickled', name: '바담은 절임류' },
+  { id: 'seasonal', name: '제철 수산물', imageUrl: seasonalSeafood },
+  { id: 'prepared', name: '손질 수산물', imageUrl: preparedSeafood },
+  { id: 'frozen', name: '급랭 수산물', imageUrl: expressSeafood },
+  { id: 'pickled', name: '바담은 절임류', imageUrl: pickledSeafood },
 ];
 
 export default function SubCategoryCards({ 
