@@ -198,6 +198,33 @@ export const repositories = {
 - **반응형 디자인**: 공통 컴포넌트를 활용.
 - **스켈레톤 로딩**: UX 개선.
 
+### CompletionScreen 공용 컴포넌트
+완료 화면(회원가입 완료, 비밀번호 변경 완료 등)에서 재사용하는 공용 컴포넌트입니다.
+
+**위치**: `src/components/CompletionScreen/`
+
+**구조**:
+```
+├── CompletionScreen.tsx   # 메인 컴포넌트
+├── CompletionScreen.css   # 스타일
+├── constants.ts           # variant별 멘트 정의
+└── index.ts               # export
+```
+
+**사용법**:
+```tsx
+import { CompletionScreen, COMPLETION_VARIANT } from '@/components/CompletionScreen';
+
+<CompletionScreen
+  variant={COMPLETION_VARIANT.SIGNUP_COMPLETE}
+  onButtonClick={handleClick}
+/>
+```
+
+**새 variant 추가**: `constants.ts`의 `COMPLETION_VARIANT`와 `COMPLETION_CONTENT`에 항목 추가
+
+**Props 직접 전달**: 특수한 경우 `title`, `subtitle`, `buttonText` props로 직접 전달 가능
+
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
 - **Vite**: 빌드 도구
