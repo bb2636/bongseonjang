@@ -94,18 +94,6 @@ export default function ProductCarousel({
               </div>
 
               <div className="product-carousel__info">
-                <div className="product-carousel__details">
-                  <span className="product-carousel__name">{product.name}</span>
-                  <div className="product-carousel__price-row">
-                    <span className="product-carousel__discount">
-                      {product.discountPercent}%
-                    </span>
-                    <span className="product-carousel__price">
-                      {formatPrice(product.discountedPrice)}원
-                    </span>
-                  </div>
-                </div>
-
                 <button
                   type="button"
                   className="product-carousel__add-button"
@@ -125,6 +113,18 @@ export default function ProductCarousel({
                   </svg>
                   <span>담기</span>
                 </button>
+
+                <div className="product-carousel__details">
+                  <span className="product-carousel__name">{product.name}</span>
+                  <div className="product-carousel__price-row">
+                    <span className="product-carousel__discount">
+                      {product.discountPercent}%
+                    </span>
+                    <span className="product-carousel__price">
+                      {formatPrice(product.discountedPrice)}원
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </SwiperSlide>
