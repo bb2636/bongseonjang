@@ -5,6 +5,7 @@ import { CategoryTabs } from "../components/CategoryTabs";
 import { SubCategoryCards } from "../components/SubCategoryCards";
 import { TimeDealSection } from "../components/TimeDealSection";
 import { BestProductSection } from "../components/BestProductSection";
+import { MiddleBanner } from "../components/MiddleBanner";
 import type { HeroImage } from "../types/heroImage";
 import type { TimeDeal } from "../types/timeDeal";
 import type { BestProduct } from "../types/bestProduct";
@@ -67,6 +68,7 @@ export default function HomeView({ homePage }: HomeViewProps) {
           onAddToCart={onAddToCart}
           onViewAll={onViewAllBestProducts}
         />
+        <MiddleBanner />
       </main>
 
       <HomeBottomNav activeItem="home" onItemClick={onNavItemClick} />
