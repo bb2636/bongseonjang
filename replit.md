@@ -125,9 +125,16 @@ server/
 │   │   ├── repository/
 │   │   ├── routes/
 │   │   └── index.ts
-│   └── referral/                # 추천인
+│   ├── referral/                # 추천인
+│   │   ├── controller/
+│   │   ├── application/
+│   │   ├── repository/
+│   │   ├── routes/
+│   │   └── index.ts
+│   └── home/                    # 홈 화면
 │       ├── controller/
 │       ├── application/
+│       ├── domain/
 │       ├── repository/
 │       ├── routes/
 │       └── index.ts
@@ -225,11 +232,45 @@ import { CompletionScreen, COMPLETION_VARIANT } from '@/components/CompletionScr
 
 **Props 직접 전달**: 특수한 경우 `title`, `subtitle`, `buttonText` props로 직접 전달 가능
 
+### Home Feature (홈 화면)
+홈 화면은 feature-first 레이아웃 전략을 사용하며, MainLayout을 사용하지 않고 자체 AppBar/BottomNav를 가집니다.
+
+**홈 화면 컴포넌트:**
+```
+src/features/home/
+├── components/
+│   ├── HomeAppBar/           # 상단 앱바 (봉선장 로고 + 장바구니)
+│   ├── HomeBottomNav/        # 하단 네비게이션 (홈, 카테고리, 검색, 봉크루)
+│   └── HeroBanner/           # 히어로 배너 (Swiper.js 자동 슬라이드)
+├── hooks/
+│   ├── useHomePage.ts        # 홈 페이지 로직
+│   └── useHeroImages.ts      # 히어로 이미지 React Query hook
+├── api/
+│   └── heroImageApi.ts       # API 호출
+├── types/
+│   └── heroImage.ts          # HeroImage 타입 정의
+├── views/
+│   └── HomeView.tsx          # 홈 화면 View
+└── pages/
+    └── HomePage.tsx          # 홈 페이지 (Hook 호출 + View 렌더링)
+```
+
+**HeroBanner (Swiper.js):**
+- 자동 재생 (3초 간격)
+- 무한 루프
+- 페이지네이션 dots
+- 높이: 247px
+
+**Home API:**
+- `GET /api/home/hero-images`: 히어로 배너 이미지 목록
+- Mock/Real Repository 스위칭 지원
+
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
 - **Vite**: 빌드 도구
 - **Vanilla CSS**: 스타일링 (CSS 변수 활용)
 - **React Query**: 서버 상태 관리
+- **Swiper.js**: 이미지 슬라이더/캐러셀
 - **Express.js**: 백엔드 프레임워크
 - **TypeORM**: ORM
 - **PostgreSQL**: 데이터베이스
