@@ -3,9 +3,11 @@
   flex-direction: column;
   min-height: 100vh;
   background: #FFFFFF;
+  overflow-x: hidden;
 }
 
 .home-view__content {
   flex: 1;
   padding-bottom: 94px;
+  overflow-x: hidden;
 }

@@ -29,9 +29,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 10px 4px;
   gap: 2px;
   flex: 1;
+  min-width: 0;
   height: 60px;
   background: transparent;
   border: none;
@@ -45,9 +46,16 @@
 .home-bottom-nav__icon {
   width: 24px;
   height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.home-bottom-nav__icon svg {
+  flex-shrink: 0;
 }
 
 .home-bottom-nav__label {
@@ -59,6 +67,10 @@
   text-align: center;
   letter-spacing: -0.01em;
   color: rgba(12, 12, 12, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .home-bottom-nav__label--active {
