@@ -1,24 +1,24 @@
 import { ProductSection } from '@/components/ProductSection';
-import type { FreshFood } from '../../types/freshFood';
+import type { BadameunProduct } from '../../types/badameun';
 
-interface FreshFoodSectionProps {
-  products: FreshFood[];
+interface BadameunSectionProps {
+  products: BadameunProduct[];
   isLoading: boolean;
   onAddToCart?: (productId: string) => void;
   onHeartClick?: (productId: string) => void;
   onViewAll?: () => void;
 }
 
-export default function FreshFoodSection({
+export default function BadameunSection({
   products,
   isLoading,
   onAddToCart,
   onHeartClick,
   onViewAll,
-}: FreshFoodSectionProps) {
+}: BadameunSectionProps) {
   return (
     <ProductSection
-      title="신선식품"
+      title="바담은"
       products={products}
       isLoading={isLoading}
       showHeartButton

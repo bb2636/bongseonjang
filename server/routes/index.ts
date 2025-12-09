@@ -8,6 +8,7 @@ import { bestProductRoutes } from '../features/bestProduct';
 import { middleBannerRoutes } from '../features/middleBanner';
 import { freshFoodRoutes } from '../features/freshFood';
 import { mdPickRoutes } from '../features/mdPick';
+import { badameunRoutes } from '../features/badameun';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/best-products', bestProductRoutes);
 router.use('/middle-banners', middleBannerRoutes);
 router.use('/fresh-foods', freshFoodRoutes);
 router.use('/md-picks', mdPickRoutes);
+router.use('/badameun', badameunRoutes);
 
 export default router;

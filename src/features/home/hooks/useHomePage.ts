@@ -6,6 +6,7 @@ import { useBestProducts } from './useBestProducts';
 import { useMiddleBanners } from './useMiddleBanners';
 import { useFreshFoods } from './useFreshFoods';
 import { useMdPicks } from './useMdPicks';
+import { useBadameunProducts } from './useBadameunProducts';
 import type { NavItem, CategoryTab } from '../types/navigation';
 
 export function useHomePage() {
@@ -16,6 +17,7 @@ export function useHomePage() {
   const { middleBanners, isLoading: isMiddleBannersLoading } = useMiddleBanners();
   const { freshFoods, isLoading: isFreshFoodsLoading } = useFreshFoods();
   const { mdPicks, isLoading: isMdPicksLoading } = useMdPicks();
+  const { badameunProducts, isLoading: isBadameunLoading } = useBadameunProducts();
   const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
@@ -63,6 +65,10 @@ export function useHomePage() {
     navigate('/fresh-foods');
   }, [navigate]);
 
+  const onViewAllBadameun = useCallback(() => {
+    navigate('/badameun');
+  }, [navigate]);
+
   return {
     onCartClick,
     onNavItemClick,
@@ -85,6 +91,9 @@ export function useHomePage() {
     onViewAllFreshFoods,
     mdPicks,
     isMdPicksLoading,
+    badameunProducts,
+    isBadameunLoading,
+    onViewAllBadameun,
   };
 }
 

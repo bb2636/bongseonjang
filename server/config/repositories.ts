@@ -12,6 +12,8 @@ import { MockFreshFoodRepository } from '../features/freshFood/repository/MockFr
 import { TypeORMFreshFoodRepository } from '../features/freshFood/repository/TypeORMFreshFoodRepository';
 import { MockMdPickRepository } from '../features/mdPick/repository/MockMdPickRepository';
 import { TypeORMMdPickRepository } from '../features/mdPick/repository/TypeORMMdPickRepository';
+import { MockBadameunRepository } from '../features/badameun/repository/MockBadameunRepository';
+import { TypeORMBadameunRepository } from '../features/badameun/repository/TypeORMBadameunRepository';
 import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
 import type { HeroImageRepository } from '../features/home/repository/HeroImageRepository';
 import type { TimeDealRepository } from '../features/timeDeal/repository/TimeDealRepository';
@@ -19,6 +21,7 @@ import type { BestProductRepository } from '../features/bestProduct/repository/B
 import type { MiddleBannerRepository } from '../features/middleBanner/repository/MiddleBannerRepository';
 import type { FreshFoodRepository } from '../features/freshFood/repository/FreshFoodRepository';
 import type { MdPickRepository } from '../features/mdPick/repository/MdPickRepository';
+import type { BadameunRepository } from '../features/badameun/repository/BadameunRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',
@@ -35,6 +38,7 @@ interface RepositoryConfig {
   middleBanner: RepositoryType;
   freshFood: RepositoryType;
   mdPick: RepositoryType;
+  badameun: RepositoryType;
 }
 
 const config: RepositoryConfig = {
@@ -45,6 +49,7 @@ const config: RepositoryConfig = {
   middleBanner: REPOSITORY_TYPE.MOCK,
   freshFood: REPOSITORY_TYPE.MOCK,
   mdPick: REPOSITORY_TYPE.MOCK,
+  badameun: REPOSITORY_TYPE.MOCK,
 };
 
 type RepositoryFactory<T> = {
@@ -60,6 +65,7 @@ interface RepositoryMap {
   middleBanner: RepositoryFactory<MiddleBannerRepository>;
   freshFood: RepositoryFactory<FreshFoodRepository>;
   mdPick: RepositoryFactory<MdPickRepository>;
+  badameun: RepositoryFactory<BadameunRepository>;
 }
 
 const repositoryMap: RepositoryMap = {
@@ -90,6 +96,10 @@ const repositoryMap: RepositoryMap = {
   mdPick: {
     [REPOSITORY_TYPE.MOCK]: () => new MockMdPickRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMMdPickRepository(),
+  },
+  badameun: {
+    [REPOSITORY_TYPE.MOCK]: () => new MockBadameunRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMBadameunRepository(),
   },
 };
 
@@ -132,5 +142,8 @@ export const repositories = {
   },
   get mdPick(): MdPickRepository {
     return createRepository<MdPickRepository>('mdPick');
+  },
+  get badameun(): BadameunRepository {
+    return createRepository<BadameunRepository>('badameun');
   },
 };
