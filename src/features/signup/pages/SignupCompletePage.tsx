@@ -1,8 +1,13 @@
+import { CompletionScreen, COMPLETION_VARIANT } from '@/components/CompletionScreen';
 import { useSignupCompletePage } from '../hooks/useSignupCompletePage';
-import SignupCompleteView from '../views/SignupCompleteView';
 
 export default function SignupCompletePage() {
-  const complete = useSignupCompletePage();
+  const { onButtonClick } = useSignupCompletePage();
 
-  return <SignupCompleteView complete={complete} />;
+  return (
+    <CompletionScreen
+      variant={COMPLETION_VARIANT.SIGNUP_COMPLETE}
+      onButtonClick={onButtonClick}
+    />
+  );
 }

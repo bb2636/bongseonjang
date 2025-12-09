@@ -1,4 +1,4 @@
-@keyframes fadeIn {
+@keyframes completion-screen-fade-in {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -9,7 +9,7 @@
   }
 }
 
-@keyframes confettiFall {
+@keyframes completion-screen-confetti-fall {
   0% {
     transform: translateY(-100%) rotate(0deg);
     opacity: 1;
@@ -20,7 +20,7 @@
   }
 }
 
-.signup-complete-container {
+.completion-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,7 +31,7 @@
   overflow: hidden;
 }
 
-.signup-complete-confetti-container {
+.completion-screen__confetti-container {
   position: absolute;
   width: 352px;
   height: 316px;
@@ -42,34 +42,34 @@
   pointer-events: none;
 }
 
-.signup-complete-confetti {
+.completion-screen__confetti {
   position: absolute;
   width: 10px;
   height: 10px;
-  animation: confettiFall 3s ease-in-out infinite;
+  animation: completion-screen-confetti-fall 3s ease-in-out infinite;
   border-radius: 2px;
 }
 
-.signup-complete-content {
+.completion-screen__content {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 278px;
-  animation: fadeIn 0.6s ease-out;
+  animation: completion-screen-fade-in 0.6s ease-out;
 }
 
-.signup-complete-mascot-image {
+.completion-screen__mascot-image {
   width: 100.05px;
   height: 108.33px;
   margin-bottom: 29px;
 }
 
-.signup-complete-message-container {
+.completion-screen__message-container {
   text-align: center;
   margin-top: 8px;
 }
 
-.signup-complete-title {
+.completion-screen__title {
   font-family: 'Pretendard';
   font-weight: 600;
   font-size: 20px;
@@ -80,7 +80,7 @@
   margin: 0 0 8px 0;
 }
 
-.signup-complete-subtitle {
+.completion-screen__subtitle {
   font-family: 'Pretendard';
   font-weight: 400;
   font-size: 16px;
@@ -90,7 +90,7 @@
   margin: 0;
 }
 
-.signup-complete-button-container {
+.completion-screen__button-container {
   position: fixed;
   bottom: 46px;
   left: 50%;
@@ -98,7 +98,7 @@
   width: 343px;
 }
 
-.signup-complete-login-button {
+.completion-screen__button {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -114,15 +114,15 @@
   transition: background 0.2s ease;
 }
 
-.signup-complete-login-button:hover {
+.completion-screen__button:hover {
   background: #2A8BC5;
 }
 
-.signup-complete-login-button:active {
+.completion-screen__button:active {
   background: #1A7BB5;
 }
 
-.signup-complete-button-text {
+.completion-screen__button-text {
   font-family: 'Pretendard';
   font-weight: 600;
   font-size: 16px;
