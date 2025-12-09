@@ -1,0 +1,13 @@
+import type { MiddleBannerImage } from '../types/middleBanner';
+
+const API_BASE_URL = '/api/middle-banners';
+
+export async function fetchMiddleBanners(): Promise<MiddleBannerImage[]> {
+  const response = await fetch(API_BASE_URL);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch middle banners');
+  }
+
+  return response.json();
+}

@@ -6,10 +6,13 @@ import { MockTimeDealRepository } from '../features/timeDeal/repository/MockTime
 import { TypeORMTimeDealRepository } from '../features/timeDeal/repository/TypeORMTimeDealRepository';
 import { MockBestProductRepository } from '../features/bestProduct/repository/MockBestProductRepository';
 import { TypeORMBestProductRepository } from '../features/bestProduct/repository/TypeORMBestProductRepository';
+import { MockMiddleBannerRepository } from '../features/middleBanner/repository/MockMiddleBannerRepository';
+import { TypeORMMiddleBannerRepository } from '../features/middleBanner/repository/TypeORMMiddleBannerRepository';
 import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
 import type { HeroImageRepository } from '../features/home/repository/HeroImageRepository';
 import type { TimeDealRepository } from '../features/timeDeal/repository/TimeDealRepository';
 import type { BestProductRepository } from '../features/bestProduct/repository/BestProductRepository';
+import type { MiddleBannerRepository } from '../features/middleBanner/repository/MiddleBannerRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',
@@ -23,6 +26,7 @@ interface RepositoryConfig {
   heroImage: RepositoryType;
   timeDeal: RepositoryType;
   bestProduct: RepositoryType;
+  middleBanner: RepositoryType;
 }
 
 const config: RepositoryConfig = {
@@ -30,6 +34,7 @@ const config: RepositoryConfig = {
   heroImage: REPOSITORY_TYPE.MOCK,
   timeDeal: REPOSITORY_TYPE.MOCK,
   bestProduct: REPOSITORY_TYPE.MOCK,
+  middleBanner: REPOSITORY_TYPE.MOCK,
 };
 
 type RepositoryFactory<T> = {
@@ -42,6 +47,7 @@ interface RepositoryMap {
   heroImage: RepositoryFactory<HeroImageRepository>;
   timeDeal: RepositoryFactory<TimeDealRepository>;
   bestProduct: RepositoryFactory<BestProductRepository>;
+  middleBanner: RepositoryFactory<MiddleBannerRepository>;
 }
 
 const repositoryMap: RepositoryMap = {
@@ -60,6 +66,10 @@ const repositoryMap: RepositoryMap = {
   bestProduct: {
     [REPOSITORY_TYPE.MOCK]: () => new MockBestProductRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMBestProductRepository(),
+  },
+  middleBanner: {
+    [REPOSITORY_TYPE.MOCK]: () => new MockMiddleBannerRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMMiddleBannerRepository(),
   },
 };
 
@@ -93,5 +103,8 @@ export const repositories = {
   },
   get bestProduct(): BestProductRepository {
     return createRepository<BestProductRepository>('bestProduct');
+  },
+  get middleBanner(): MiddleBannerRepository {
+    return createRepository<MiddleBannerRepository>('middleBanner');
   },
 };

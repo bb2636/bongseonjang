@@ -9,6 +9,7 @@ import { MiddleBanner } from "../components/MiddleBanner";
 import type { HeroImage } from "../types/heroImage";
 import type { TimeDeal } from "../types/timeDeal";
 import type { BestProduct } from "../types/bestProduct";
+import type { MiddleBannerImage } from "../types/middleBanner";
 import "./HomeView.css";
 
 type NavItem = "home" | "category" | "search" | "profile";
@@ -29,6 +30,8 @@ interface HomeViewProps {
     bestProducts: BestProduct[];
     isBestProductsLoading: boolean;
     onViewAllBestProducts: () => void;
+    middleBanners: MiddleBannerImage[];
+    isMiddleBannersLoading: boolean;
   };
 }
 
@@ -47,6 +50,8 @@ export default function HomeView({ homePage }: HomeViewProps) {
     bestProducts,
     isBestProductsLoading,
     onViewAllBestProducts,
+    middleBanners,
+    isMiddleBannersLoading,
   } = homePage;
 
   return (
@@ -68,7 +73,10 @@ export default function HomeView({ homePage }: HomeViewProps) {
           onAddToCart={onAddToCart}
           onViewAll={onViewAllBestProducts}
         />
-        <MiddleBanner />
+        <MiddleBanner
+          banners={middleBanners}
+          isLoading={isMiddleBannersLoading}
+        />
       </main>
 
       <HomeBottomNav activeItem="home" onItemClick={onNavItemClick} />

@@ -1,0 +1,83 @@
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import './BannerCarousel.css';
+
+export interface BannerImage {
+  id: number | string;
+  imageUrl: string;
+  linkUrl?: string;
+}
+
+interface BannerCarouselProps {
+  images: BannerImage[];
+  isLoading: boolean;
+  height: number;
+  autoplay?: boolean;
+  autoplayDelay?: number;
+  pagination?: boolean;
+  loop?: boolean;
+  onSlideClick?: (image: BannerImage) => void;
+}
+
+const DEFAULT_AUTOPLAY_DELAY = 3000;
+
+export default function BannerCarousel({
+  images,
+  isLoading,
+  height,
+  autoplay = false,
+  autoplayDelay = DEFAULT_AUTOPLAY_DELAY,
+  pagination = false,
+  loop = true,
+  onSlideClick,
+}: BannerCarouselProps) {
+  const style = { height: `${height}px` };
+
+  if (isLoading) {
+    return <div className="banner-carousel banner-carousel--loading" style={style} />;
+  }
+
+  if (images.length === 0) {
+    return <div className="banner-carousel banner-carousel--empty" style={style} />;
+  }
+
+  const swiperModules = [];
+  if (autoplay) swiperModules.push(Autoplay);
+  if (pagination) swiperModules.push(Pagination);
+
+  return (
+    <div className="banner-carousel" style={style}>
+      <Swiper
+        modules={swiperModules}
+        autoplay={autoplay ? { delay: autoplayDelay, disableOnInteraction: false } : false}
+        pagination={pagination ? { clickable: true } : false}
+        loop={loop}
+        className="banner-carousel__swiper"
+      >
+        {images.map((image) => (
+          <SwiperSlide key={image.id}>
+            {image.linkUrl ? (
+              <a href={image.linkUrl} className="banner-carousel__link">
+                <img
+                  src={image.imageUrl}
+                  alt=""
+                  className="banner-carousel__image"
+                />
+              </a>
+            ) : (
+              <img
+                src={image.imageUrl}
+                alt=""
+                className="banner-carousel__image"
+                onClick={() => onSlideClick?.(image)}
+                style={onSlideClick ? { cursor: 'pointer' } : undefined}
+              />
+            )}
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
+  );
+}

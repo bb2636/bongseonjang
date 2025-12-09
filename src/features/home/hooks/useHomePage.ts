@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useHeroImages } from './useHeroImages';
 import { useTimeDeals } from './useTimeDeals';
 import { useBestProducts } from './useBestProducts';
+import { useMiddleBanners } from './useMiddleBanners';
 
 type NavItem = 'home' | 'category' | 'search' | 'profile';
 type CategoryTab = 'best' | 'new' | 'event' | 'all';
@@ -12,6 +13,7 @@ export function useHomePage() {
   const { heroImages, isLoading: isHeroImagesLoading } = useHeroImages();
   const { timeDeals, isLoading: isTimeDealsLoading } = useTimeDeals();
   const { bestProducts, isLoading: isBestProductsLoading } = useBestProducts();
+  const { middleBanners, isLoading: isMiddleBannersLoading } = useMiddleBanners();
   const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
@@ -65,5 +67,7 @@ export function useHomePage() {
     bestProducts,
     isBestProductsLoading,
     onViewAllBestProducts,
+    middleBanners,
+    isMiddleBannersLoading,
   };
 }

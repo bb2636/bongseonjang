@@ -1,13 +1,20 @@
-import './MiddleBanner.css';
+import { BannerCarousel } from '@/components/BannerCarousel';
+import type { MiddleBannerImage } from '../../types/middleBanner';
 
 interface MiddleBannerProps {
-  onClick?: () => void;
+  banners: MiddleBannerImage[];
+  isLoading: boolean;
 }
 
-export default function MiddleBanner({ onClick }: MiddleBannerProps) {
+const MIDDLE_BANNER_HEIGHT = 94;
+
+export default function MiddleBanner({ banners, isLoading }: MiddleBannerProps) {
   return (
-    <div className="middle-banner" onClick={onClick} role="button" tabIndex={0}>
-      <div className="middle-banner__placeholder" />
-    </div>
+    <BannerCarousel
+      images={banners}
+      isLoading={isLoading}
+      height={MIDDLE_BANNER_HEIGHT}
+      loop
+    />
   );
 }
