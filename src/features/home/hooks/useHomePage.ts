@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHeroImages } from './useHeroImages';
+import { useTimeDeals } from './useTimeDeals';
 
 type NavItem = 'home' | 'category' | 'search' | 'profile';
 type CategoryTab = 'best' | 'new' | 'event' | 'all';
@@ -8,6 +9,7 @@ type CategoryTab = 'best' | 'new' | 'event' | 'all';
 export function useHomePage() {
   const navigate = useNavigate();
   const { heroImages, isLoading: isHeroImagesLoading } = useHeroImages();
+  const { timeDeals, isLoading: isTimeDealsLoading } = useTimeDeals();
   const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
@@ -52,5 +54,7 @@ export function useHomePage() {
     onTabChange,
     onSubCategoryClick,
     onAddToCart,
+    timeDeals,
+    isTimeDealsLoading,
   };
 }
