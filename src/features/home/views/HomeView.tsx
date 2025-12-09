@@ -4,8 +4,10 @@ import { HeroBanner } from "../components/HeroBanner";
 import { CategoryTabs } from "../components/CategoryTabs";
 import { SubCategoryCards } from "../components/SubCategoryCards";
 import { TimeDealSection } from "../components/TimeDealSection";
+import { BestProductSection } from "../components/BestProductSection";
 import type { HeroImage } from "../types/heroImage";
 import type { TimeDeal } from "../types/timeDeal";
+import type { BestProduct } from "../types/bestProduct";
 import "./HomeView.css";
 
 type NavItem = "home" | "category" | "search" | "profile";
@@ -23,6 +25,9 @@ interface HomeViewProps {
     onAddToCart: (productId: string) => void;
     timeDeals: TimeDeal[];
     isTimeDealsLoading: boolean;
+    bestProducts: BestProduct[];
+    isBestProductsLoading: boolean;
+    onViewAllBestProducts: () => void;
   };
 }
 
@@ -38,6 +43,9 @@ export default function HomeView({ homePage }: HomeViewProps) {
     onAddToCart,
     timeDeals,
     isTimeDealsLoading,
+    bestProducts,
+    isBestProductsLoading,
+    onViewAllBestProducts,
   } = homePage;
 
   return (
@@ -52,6 +60,12 @@ export default function HomeView({ homePage }: HomeViewProps) {
           timeDeals={timeDeals} 
           isLoading={isTimeDealsLoading} 
           onAddToCart={onAddToCart} 
+        />
+        <BestProductSection
+          products={bestProducts}
+          isLoading={isBestProductsLoading}
+          onAddToCart={onAddToCart}
+          onViewAll={onViewAllBestProducts}
         />
       </main>
 

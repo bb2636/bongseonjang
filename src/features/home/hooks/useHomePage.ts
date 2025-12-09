@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHeroImages } from './useHeroImages';
 import { useTimeDeals } from './useTimeDeals';
+import { useBestProducts } from './useBestProducts';
 
 type NavItem = 'home' | 'category' | 'search' | 'profile';
 type CategoryTab = 'best' | 'new' | 'event' | 'all';
@@ -10,6 +11,7 @@ export function useHomePage() {
   const navigate = useNavigate();
   const { heroImages, isLoading: isHeroImagesLoading } = useHeroImages();
   const { timeDeals, isLoading: isTimeDealsLoading } = useTimeDeals();
+  const { bestProducts, isLoading: isBestProductsLoading } = useBestProducts();
   const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
@@ -45,6 +47,10 @@ export function useHomePage() {
     console.log('Add to cart:', productId);
   }, []);
 
+  const onViewAllBestProducts = useCallback(() => {
+    navigate('/best-products');
+  }, [navigate]);
+
   return {
     onCartClick,
     onNavItemClick,
@@ -56,5 +62,8 @@ export function useHomePage() {
     onAddToCart,
     timeDeals,
     isTimeDealsLoading,
+    bestProducts,
+    isBestProductsLoading,
+    onViewAllBestProducts,
   };
 }

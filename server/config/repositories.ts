@@ -4,9 +4,12 @@ import { MockHeroImageRepository } from '../features/home/repository/MockHeroIma
 import { TypeORMHeroImageRepository } from '../features/home/repository/TypeORMHeroImageRepository';
 import { MockTimeDealRepository } from '../features/timeDeal/repository/MockTimeDealRepository';
 import { TypeORMTimeDealRepository } from '../features/timeDeal/repository/TypeORMTimeDealRepository';
+import { MockBestProductRepository } from '../features/bestProduct/repository/MockBestProductRepository';
+import { TypeORMBestProductRepository } from '../features/bestProduct/repository/TypeORMBestProductRepository';
 import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
 import type { HeroImageRepository } from '../features/home/repository/HeroImageRepository';
 import type { TimeDealRepository } from '../features/timeDeal/repository/TimeDealRepository';
+import type { BestProductRepository } from '../features/bestProduct/repository/BestProductRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',
@@ -19,12 +22,14 @@ interface RepositoryConfig {
   referral: RepositoryType;
   heroImage: RepositoryType;
   timeDeal: RepositoryType;
+  bestProduct: RepositoryType;
 }
 
 const config: RepositoryConfig = {
   referral: REPOSITORY_TYPE.MOCK,
   heroImage: REPOSITORY_TYPE.MOCK,
   timeDeal: REPOSITORY_TYPE.MOCK,
+  bestProduct: REPOSITORY_TYPE.MOCK,
 };
 
 type RepositoryFactory<T> = {
@@ -36,6 +41,7 @@ interface RepositoryMap {
   referral: RepositoryFactory<ReferralRepository>;
   heroImage: RepositoryFactory<HeroImageRepository>;
   timeDeal: RepositoryFactory<TimeDealRepository>;
+  bestProduct: RepositoryFactory<BestProductRepository>;
 }
 
 const repositoryMap: RepositoryMap = {
@@ -50,6 +56,10 @@ const repositoryMap: RepositoryMap = {
   timeDeal: {
     [REPOSITORY_TYPE.MOCK]: () => new MockTimeDealRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMTimeDealRepository(),
+  },
+  bestProduct: {
+    [REPOSITORY_TYPE.MOCK]: () => new MockBestProductRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMBestProductRepository(),
   },
 };
 
@@ -80,5 +90,8 @@ export const repositories = {
   },
   get timeDeal(): TimeDealRepository {
     return createRepository<TimeDealRepository>('timeDeal');
+  },
+  get bestProduct(): BestProductRepository {
+    return createRepository<BestProductRepository>('bestProduct');
   },
 };
