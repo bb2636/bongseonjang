@@ -8,9 +8,9 @@ import { BestProductSection } from "../components/BestProductSection";
 import { MiddleBanner } from "../components/MiddleBanner";
 import { FreshFoodSection } from "../components/FreshFoodSection";
 import { MdPickSection } from "../components/MdPickSection";
+import { Spacer } from "@/components/Spacer";
 import type { HomePageState } from "../hooks/useHomePage";
 import "./HomeView.css";
-import { Spacer } from "@/components/Spacer";
 
 interface HomeViewProps {
   homePage: HomePageState;
