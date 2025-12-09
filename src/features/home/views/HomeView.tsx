@@ -11,6 +11,7 @@ import { MdPickSection } from "../components/MdPickSection";
 import { BadameunSection } from "../components/BadameunSection";
 import { BongseonjangTvSection } from "../components/BongseonjangTvSection";
 import { BongcookSection } from "../components/BongcookSection";
+import { Footer } from "../components/Footer";
 import { Spacer } from "@/components/Spacer";
 import type { HomePageState } from "../hooks/useHomePage";
 import "./HomeView.css";
@@ -110,6 +111,8 @@ export default function HomeView({ homePage }: HomeViewProps) {
           onAddToCart={onAddToCart}
           onViewAll={onViewAllBongcook}
         />
+        <Spacer height={20} />
+        <Footer />
       </main>
 
       <HomeBottomNav activeItem="home" onItemClick={onNavItemClick} />
