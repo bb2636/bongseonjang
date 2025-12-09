@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePlatformDetect } from '@/hooks/usePlatformDetect';
 import './Footer.css';
 
 export default function Footer() {
   const navigate = useNavigate();
+  const { isWebBrowser } = usePlatformDetect();
   const [isBusinessInfoOpen, setIsBusinessInfoOpen] = useState(false);
 
   const toggleBusinessInfo = () => {
@@ -14,8 +16,8 @@ export default function Footer() {
     navigate('/login');
   };
 
-  const handleSignupClick = () => {
-    navigate('/signup');
+  const handleAppInstallClick = () => {
+    window.open('https://play.google.com/store', '_blank');
   };
 
   return (
@@ -83,13 +85,15 @@ export default function Footer() {
             >
               로그인
             </button>
-            <button 
-              type="button" 
-              className="footer__button footer__button--secondary"
-              onClick={handleSignupClick}
-            >
-              회원가입
-            </button>
+            {isWebBrowser && (
+              <button 
+                type="button" 
+                className="footer__button footer__button--secondary"
+                onClick={handleAppInstallClick}
+              >
+                앱 설치
+              </button>
+            )}
           </div>
         </div>
       </div>
