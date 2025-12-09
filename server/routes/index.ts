@@ -11,6 +11,7 @@ import { mdPickRoutes } from '../features/mdPick';
 import { badameunRoutes } from '../features/badameun';
 import { bongseonjangTvRoutes } from '../features/bongseonjangTv';
 import { bongcookRoutes } from '../features/bongcook';
+import { bottomBannerRoutes } from '../features/bottomBanner';
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use('/md-picks', mdPickRoutes);
 router.use('/badameun', badameunRoutes);
 router.use('/bongseonjang-tv', bongseonjangTvRoutes);
 router.use('/bongcook', bongcookRoutes);
+router.use('/bottom-banners', bottomBannerRoutes);
 
 export default router;

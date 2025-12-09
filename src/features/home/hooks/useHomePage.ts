@@ -9,6 +9,7 @@ import { useMdPicks } from './useMdPicks';
 import { useBadameunProducts } from './useBadameunProducts';
 import { useBongseonjangTvImages } from './useBongseonjangTvImages';
 import { useBongcookProducts } from './useBongcookProducts';
+import { useBottomBanners } from './useBottomBanners';
 import type { NavItem, CategoryTab } from '../types/navigation';
 
 export function useHomePage() {
@@ -22,6 +23,7 @@ export function useHomePage() {
   const { badameunProducts, isLoading: isBadameunLoading } = useBadameunProducts();
   const { tvImages: bongseonjangTvImages, isLoading: isBongseonjangTvLoading } = useBongseonjangTvImages();
   const { bongcookProducts, isLoading: isBongcookLoading } = useBongcookProducts();
+  const { bottomBanners, isLoading: isBottomBannersLoading } = useBottomBanners();
   const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
@@ -107,6 +109,8 @@ export function useHomePage() {
     bongcookProducts,
     isBongcookLoading,
     onViewAllBongcook,
+    bottomBanners,
+    isBottomBannersLoading,
   };
 }
 
