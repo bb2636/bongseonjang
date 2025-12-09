@@ -62,15 +62,15 @@ export default function HomeView({ homePage }: HomeViewProps) {
           onViewAll={onViewAllBestProducts}
         />
         <Spacer height={20} />
+        <MiddleBanner
+          banners={middleBanners}
+          isLoading={isMiddleBannersLoading}
+        />
+        <Spacer height={20} />
         <MdPickSection
           products={mdPicks}
           isLoading={isMdPicksLoading}
           onAddToCart={onAddToCart}
-        />
-        <Spacer height={20} />
-        <MiddleBanner
-          banners={middleBanners}
-          isLoading={isMiddleBannersLoading}
         />
         <Spacer height={20} />
         <FreshFoodSection
