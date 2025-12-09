@@ -1,6 +1,9 @@
 import { MockReferralRepository } from '../features/referral/repository/MockReferralRepository';
 import { TypeORMReferralRepository } from '../features/referral/repository/TypeORMReferralRepository';
+import { MockHeroImageRepository } from '../features/home/repository/MockHeroImageRepository';
+import { TypeORMHeroImageRepository } from '../features/home/repository/TypeORMHeroImageRepository';
 import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
+import type { HeroImageRepository } from '../features/home/repository/HeroImageRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',
@@ -11,10 +14,12 @@ type RepositoryType = typeof REPOSITORY_TYPE[keyof typeof REPOSITORY_TYPE];
 
 interface RepositoryConfig {
   referral: RepositoryType;
+  heroImage: RepositoryType;
 }
 
 const config: RepositoryConfig = {
   referral: REPOSITORY_TYPE.MOCK,
+  heroImage: REPOSITORY_TYPE.MOCK,
 };
 
 type RepositoryFactory<T> = {
@@ -24,12 +29,17 @@ type RepositoryFactory<T> = {
 
 interface RepositoryMap {
   referral: RepositoryFactory<ReferralRepository>;
+  heroImage: RepositoryFactory<HeroImageRepository>;
 }
 
 const repositoryMap: RepositoryMap = {
   referral: {
     [REPOSITORY_TYPE.MOCK]: () => new MockReferralRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMReferralRepository(),
+  },
+  heroImage: {
+    [REPOSITORY_TYPE.MOCK]: () => new MockHeroImageRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMHeroImageRepository(),
   },
 };
 
@@ -42,7 +52,7 @@ function createRepository<T>(name: keyof RepositoryConfig): T {
   }
 
   const factory = repositoryMap[name][config[name]];
-  const instance = factory();
+  const instance = factory() as unknown;
   instances.set(name, instance);
   return instance as T;
 }
@@ -54,5 +64,8 @@ export function resetRepositories(): void {
 export const repositories = {
   get referral(): ReferralRepository {
     return createRepository<ReferralRepository>('referral');
+  },
+  get heroImage(): HeroImageRepository {
+    return createRepository<HeroImageRepository>('heroImage');
   },
 };

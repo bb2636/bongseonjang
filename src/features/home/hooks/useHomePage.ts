@@ -1,10 +1,12 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useHeroImages } from './useHeroImages';
 
 type NavItem = 'home' | 'category' | 'search' | 'profile';
 
 export function useHomePage() {
   const navigate = useNavigate();
+  const { heroImages, isLoading: isHeroImagesLoading } = useHeroImages();
 
   const onCartClick = useCallback(() => {
     navigate('/cart');
@@ -30,5 +32,7 @@ export function useHomePage() {
   return {
     onCartClick,
     onNavItemClick,
+    heroImages,
+    isHeroImagesLoading,
   };
 }
