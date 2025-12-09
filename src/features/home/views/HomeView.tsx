@@ -37,8 +37,8 @@ export default function HomeView({ homePage }: HomeViewProps) {
       <HomeAppBar onCartClick={onCartClick} />
 
       <main className="home-view__content">
-        <HeroBanner heroImages={heroImages} isLoading={isHeroImagesLoading} />
         <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />
+        <HeroBanner heroImages={heroImages} isLoading={isHeroImagesLoading} />
         <SubCategoryCards onCategoryClick={onSubCategoryClick} />
       </main>
 
