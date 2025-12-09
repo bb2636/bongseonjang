@@ -8,6 +8,7 @@ import { GuestOrderLookupPage } from './features/orders';
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/login/email" element={<EmailLoginPage />} />
       <Route path="/signup/email" element={<SignupEmailPage />} />
@@ -20,7 +21,7 @@ export default function App() {
         element={
           <MainLayout>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="*" element={<div>페이지를 찾을 수 없습니다</div>} />
             </Routes>
           </MainLayout>
         }

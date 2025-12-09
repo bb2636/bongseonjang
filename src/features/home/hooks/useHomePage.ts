@@ -1,33 +1,34 @@
 import { useCallback } from 'react';
-import { useToast } from '../../../contexts';
+import { useNavigate } from 'react-router-dom';
 
-interface HomePageNamespace {
-  welcomeMessage: string;
-  featureList: string[];
-  handleGetStarted: () => void;
-}
+type NavItem = 'home' | 'category' | 'search' | 'profile';
 
-export function useHomePage(): HomePageNamespace {
-  const { showToast } = useToast();
-  
-  const welcomeMessage = 'Welcome to Your Project';
-  
-  const featureList = [
-    'React 18 + TypeScript',
-    'Vanilla CSS',
-    'React Query',
-    'Express.js Backend',
-    'TypeORM + PostgreSQL',
-    'Clean Architecture',
-  ];
-  
-  const handleGetStarted = useCallback(() => {
-    showToast('프로젝트를 시작합니다!', 'success');
-  }, [showToast]);
-  
+export function useHomePage() {
+  const navigate = useNavigate();
+
+  const onCartClick = useCallback(() => {
+    navigate('/cart');
+  }, [navigate]);
+
+  const onNavItemClick = useCallback((item: NavItem) => {
+    switch (item) {
+      case 'home':
+        navigate('/');
+        break;
+      case 'category':
+        navigate('/category');
+        break;
+      case 'search':
+        navigate('/search');
+        break;
+      case 'profile':
+        navigate('/profile');
+        break;
+    }
+  }, [navigate]);
+
   return {
-    welcomeMessage,
-    featureList,
-    handleGetStarted,
+    onCartClick,
+    onNavItemClick,
   };
 }

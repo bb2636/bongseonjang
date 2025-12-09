@@ -1,37 +1,28 @@
-import { Button } from '../../../components';
+import { HomeAppBar } from '../components/HomeAppBar';
+import { HomeBottomNav } from '../components/HomeBottomNav';
 import './HomeView.css';
 
-interface HomePageNamespace {
-  welcomeMessage: string;
-  featureList: string[];
-  handleGetStarted: () => void;
-}
+type NavItem = 'home' | 'category' | 'search' | 'profile';
 
 interface HomeViewProps {
-  homePage: HomePageNamespace;
+  homePage: {
+    onCartClick: () => void;
+    onNavItemClick: (item: NavItem) => void;
+  };
 }
 
 export default function HomeView({ homePage }: HomeViewProps) {
-  const { welcomeMessage, featureList, handleGetStarted } = homePage;
-  
+  const { onCartClick, onNavItemClick } = homePage;
+
   return (
-    <div className="home-container">
-      <h1 className="home-title">{welcomeMessage}</h1>
-      <p className="home-subtitle">
-        Hook-First Pattern과 Clean Architecture를 적용한 풀스택 프로젝트 템플릿입니다.
-      </p>
+    <div className="home-view">
+      <HomeAppBar onCartClick={onCartClick} />
       
-      <Button size="large" onClick={handleGetStarted}>
-        시작하기
-      </Button>
+      <main className="home-view__content">
+        {/* 콘텐츠 영역 - 추후 구현 */}
+      </main>
       
-      <div className="home-feature-grid">
-        {featureList.map((feature, index) => (
-          <div key={index} className="home-feature-card">
-            <p className="home-feature-text">{feature}</p>
-          </div>
-        ))}
-      </div>
+      <HomeBottomNav activeItem="home" onItemClick={onNavItemClick} />
     </div>
   );
 }
