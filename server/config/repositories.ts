@@ -2,8 +2,11 @@ import { MockReferralRepository } from '../features/referral/repository/MockRefe
 import { TypeORMReferralRepository } from '../features/referral/repository/TypeORMReferralRepository';
 import { MockHeroImageRepository } from '../features/home/repository/MockHeroImageRepository';
 import { TypeORMHeroImageRepository } from '../features/home/repository/TypeORMHeroImageRepository';
+import { MockTimeDealRepository } from '../features/timeDeal/repository/MockTimeDealRepository';
+import { TypeORMTimeDealRepository } from '../features/timeDeal/repository/TypeORMTimeDealRepository';
 import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
 import type { HeroImageRepository } from '../features/home/repository/HeroImageRepository';
+import type { TimeDealRepository } from '../features/timeDeal/repository/TimeDealRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',
@@ -15,11 +18,13 @@ type RepositoryType = typeof REPOSITORY_TYPE[keyof typeof REPOSITORY_TYPE];
 interface RepositoryConfig {
   referral: RepositoryType;
   heroImage: RepositoryType;
+  timeDeal: RepositoryType;
 }
 
 const config: RepositoryConfig = {
   referral: REPOSITORY_TYPE.MOCK,
   heroImage: REPOSITORY_TYPE.MOCK,
+  timeDeal: REPOSITORY_TYPE.MOCK,
 };
 
 type RepositoryFactory<T> = {
@@ -30,6 +35,7 @@ type RepositoryFactory<T> = {
 interface RepositoryMap {
   referral: RepositoryFactory<ReferralRepository>;
   heroImage: RepositoryFactory<HeroImageRepository>;
+  timeDeal: RepositoryFactory<TimeDealRepository>;
 }
 
 const repositoryMap: RepositoryMap = {
@@ -40,6 +46,10 @@ const repositoryMap: RepositoryMap = {
   heroImage: {
     [REPOSITORY_TYPE.MOCK]: () => new MockHeroImageRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMHeroImageRepository(),
+  },
+  timeDeal: {
+    [REPOSITORY_TYPE.MOCK]: () => new MockTimeDealRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMTimeDealRepository(),
   },
 };
 
@@ -67,5 +77,8 @@ export const repositories = {
   },
   get heroImage(): HeroImageRepository {
     return createRepository<HeroImageRepository>('heroImage');
+  },
+  get timeDeal(): TimeDealRepository {
+    return createRepository<TimeDealRepository>('timeDeal');
   },
 };

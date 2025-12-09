@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
-import type { TimeDealProduct } from './TimeDealSection';
+import type { TimeDeal } from '../../types/timeDeal';
 import './TimeDealCard.css';
 
 interface TimeDealCardProps {
-  product: TimeDealProduct;
+  deal: TimeDeal;
   onAddToCart?: () => void;
+}
+
+function calculateRemainingSeconds(endTime: string): number {
+  const endTimeMs = new Date(endTime).getTime();
+  const now = Date.now();
+  return Math.max(0, Math.floor((endTimeMs - now) / 1000));
 }
 
 function formatTime(seconds: number): string {
@@ -18,25 +24,27 @@ function formatPrice(price: number): string {
   return price.toLocaleString('ko-KR');
 }
 
-export function TimeDealCard({ product, onAddToCart }: TimeDealCardProps) {
-  const [remainingSeconds, setRemainingSeconds] = useState(product.remainingSeconds);
+export function TimeDealCard({ deal, onAddToCart }: TimeDealCardProps) {
+  const [remainingSeconds, setRemainingSeconds] = useState(() => 
+    calculateRemainingSeconds(deal.endTime)
+  );
 
   useEffect(() => {
     if (remainingSeconds <= 0) return;
 
     const timer = setInterval(() => {
-      setRemainingSeconds((prev) => Math.max(0, prev - 1));
+      setRemainingSeconds(calculateRemainingSeconds(deal.endTime));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [remainingSeconds]);
+  }, [deal.endTime, remainingSeconds]);
 
   return (
     <div className="time-deal-card">
       <div className="time-deal-card__image-container">
         <div className="time-deal-card__image">
-          {product.imageUrl && (
-            <img src={product.imageUrl} alt={product.name} />
+          {deal.imageUrl && (
+            <img src={deal.imageUrl} alt={deal.name} />
           )}
         </div>
         <div className="time-deal-card__timer">
@@ -46,10 +54,10 @@ export function TimeDealCard({ product, onAddToCart }: TimeDealCardProps) {
 
       <div className="time-deal-card__info">
         <div className="time-deal-card__details">
-          <span className="time-deal-card__name">{product.name}</span>
+          <span className="time-deal-card__name">{deal.name}</span>
           <div className="time-deal-card__price-row">
-            <span className="time-deal-card__discount">{product.discountPercent}%</span>
-            <span className="time-deal-card__price">{formatPrice(product.discountedPrice)}원</span>
+            <span className="time-deal-card__discount">{deal.discountPercent}%</span>
+            <span className="time-deal-card__price">{formatPrice(deal.discountedPrice)}원</span>
           </div>
         </div>
 
