@@ -1,8 +1,8 @@
-import type { BestProduct } from '../../types/bestProduct';
-import './BestProductCard.css';
+import type { LargeProduct } from './types';
+import './LargeProductCard.css';
 
-interface BestProductCardProps {
-  product: BestProduct;
+interface LargeProductCardProps {
+  product: LargeProduct;
   onAddToCart?: () => void;
 }
 
@@ -10,31 +10,31 @@ function formatPrice(price: number): string {
   return price.toLocaleString('ko-KR');
 }
 
-export function BestProductCard({ product, onAddToCart }: BestProductCardProps) {
+export default function LargeProductCard({ product, onAddToCart }: LargeProductCardProps) {
   return (
-    <div className="best-product-card">
-      <div className="best-product-card__image">
+    <div className="large-product-card">
+      <div className="large-product-card__image">
         {product.imageUrl && (
           <img src={product.imageUrl} alt={product.name} />
         )}
       </div>
 
-      <div className="best-product-card__info">
-        <div className="best-product-card__details">
-          <span className="best-product-card__name">{product.name}</span>
-          <div className="best-product-card__price-row">
-            <span className="best-product-card__discount">{product.discountPercent}%</span>
-            <span className="best-product-card__price">{formatPrice(product.discountedPrice)}원</span>
+      <div className="large-product-card__info">
+        <div className="large-product-card__details">
+          <span className="large-product-card__name">{product.name}</span>
+          <div className="large-product-card__price-row">
+            <span className="large-product-card__discount">{product.discountPercent}%</span>
+            <span className="large-product-card__price">{formatPrice(product.discountedPrice)}원</span>
           </div>
         </div>
 
         <button
           type="button"
-          className="best-product-card__add-button"
+          className="large-product-card__add-button"
           onClick={onAddToCart}
         >
           <svg
-            className="best-product-card__cart-icon"
+            className="large-product-card__cart-icon"
             width="16"
             height="16"
             viewBox="0 0 24 24"

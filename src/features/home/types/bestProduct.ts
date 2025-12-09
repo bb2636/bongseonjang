@@ -1,9 +1,6 @@
-export interface BestProduct {
-  id: string;
-  name: string;
-  imageUrl?: string;
+import type { LargeProduct } from '@/components/LargeProductCard';
+
+export interface BestProduct extends LargeProduct {
   originalPrice: number;
-  discountPercent: number;
-  discountedPrice: number;
   rank: number;
 }

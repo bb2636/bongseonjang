@@ -1,6 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { SectionHeader } from '@/components/SectionHeader';
-import { BestProductCard } from './BestProductCard';
+import { LargeProductCard } from '@/components/LargeProductCard';
 import type { BestProduct } from '../../types/bestProduct';
 import 'swiper/css';
 import './BestProductSection.css';
@@ -42,7 +42,7 @@ export default function BestProductSection({
         >
           {products.map((product) => (
             <SwiperSlide key={product.id} className="best-product-section__slide">
-              <BestProductCard
+              <LargeProductCard
                 product={product}
                 onAddToCart={() => onAddToCart?.(product.id)}
               />
