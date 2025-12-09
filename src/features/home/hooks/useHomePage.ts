@@ -7,6 +7,7 @@ import { useMiddleBanners } from './useMiddleBanners';
 import { useFreshFoods } from './useFreshFoods';
 import { useMdPicks } from './useMdPicks';
 import { useBadameunProducts } from './useBadameunProducts';
+import { useBongseonjangTvImages } from './useBongseonjangTvImages';
 import type { NavItem, CategoryTab } from '../types/navigation';
 
 export function useHomePage() {
@@ -18,6 +19,7 @@ export function useHomePage() {
   const { freshFoods, isLoading: isFreshFoodsLoading } = useFreshFoods();
   const { mdPicks, isLoading: isMdPicksLoading } = useMdPicks();
   const { badameunProducts, isLoading: isBadameunLoading } = useBadameunProducts();
+  const { tvImages: bongseonjangTvImages, isLoading: isBongseonjangTvLoading } = useBongseonjangTvImages();
   const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
@@ -94,6 +96,8 @@ export function useHomePage() {
     badameunProducts,
     isBadameunLoading,
     onViewAllBadameun,
+    bongseonjangTvImages,
+    isBongseonjangTvLoading,
   };
 }
 

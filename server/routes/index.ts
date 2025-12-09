@@ -9,6 +9,7 @@ import { middleBannerRoutes } from '../features/middleBanner';
 import { freshFoodRoutes } from '../features/freshFood';
 import { mdPickRoutes } from '../features/mdPick';
 import { badameunRoutes } from '../features/badameun';
+import { bongseonjangTvRoutes } from '../features/bongseonjangTv';
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use('/middle-banners', middleBannerRoutes);
 router.use('/fresh-foods', freshFoodRoutes);
 router.use('/md-picks', mdPickRoutes);
 router.use('/badameun', badameunRoutes);
+router.use('/bongseonjang-tv', bongseonjangTvRoutes);
 
 export default router;
