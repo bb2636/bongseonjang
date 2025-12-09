@@ -15,7 +15,7 @@
 }
 
 .product-carousel__slide {
-  width: auto !important;
+  flex-shrink: 0;
 }
 
 .product-carousel__card {
