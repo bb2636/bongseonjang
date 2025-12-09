@@ -8,6 +8,7 @@ import { useFreshFoods } from './useFreshFoods';
 import { useMdPicks } from './useMdPicks';
 import { useBadameunProducts } from './useBadameunProducts';
 import { useBongseonjangTvImages } from './useBongseonjangTvImages';
+import { useBongcookProducts } from './useBongcookProducts';
 import type { NavItem, CategoryTab } from '../types/navigation';
 
 export function useHomePage() {
@@ -20,6 +21,7 @@ export function useHomePage() {
   const { mdPicks, isLoading: isMdPicksLoading } = useMdPicks();
   const { badameunProducts, isLoading: isBadameunLoading } = useBadameunProducts();
   const { tvImages: bongseonjangTvImages, isLoading: isBongseonjangTvLoading } = useBongseonjangTvImages();
+  const { bongcookProducts, isLoading: isBongcookLoading } = useBongcookProducts();
   const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
@@ -71,6 +73,10 @@ export function useHomePage() {
     navigate('/badameun');
   }, [navigate]);
 
+  const onViewAllBongcook = useCallback(() => {
+    navigate('/bongcook');
+  }, [navigate]);
+
   return {
     onCartClick,
     onNavItemClick,
@@ -98,6 +104,9 @@ export function useHomePage() {
     onViewAllBadameun,
     bongseonjangTvImages,
     isBongseonjangTvLoading,
+    bongcookProducts,
+    isBongcookLoading,
+    onViewAllBongcook,
   };
 }
 

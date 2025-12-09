@@ -10,6 +10,7 @@ import { FreshFoodSection } from "../components/FreshFoodSection";
 import { MdPickSection } from "../components/MdPickSection";
 import { BadameunSection } from "../components/BadameunSection";
 import { BongseonjangTvSection } from "../components/BongseonjangTvSection";
+import { BongcookSection } from "../components/BongcookSection";
 import { Spacer } from "@/components/Spacer";
 import type { HomePageState } from "../hooks/useHomePage";
 import "./HomeView.css";
@@ -46,6 +47,9 @@ export default function HomeView({ homePage }: HomeViewProps) {
     onViewAllBadameun,
     bongseonjangTvImages,
     isBongseonjangTvLoading,
+    bongcookProducts,
+    isBongcookLoading,
+    onViewAllBongcook,
   } = homePage;
 
   return (
@@ -98,6 +102,13 @@ export default function HomeView({ homePage }: HomeViewProps) {
         <BongseonjangTvSection
           tvImages={bongseonjangTvImages}
           isLoading={isBongseonjangTvLoading}
+        />
+        <Spacer height={20} />
+        <BongcookSection
+          products={bongcookProducts}
+          isLoading={isBongcookLoading}
+          onAddToCart={onAddToCart}
+          onViewAll={onViewAllBongcook}
         />
       </main>
 

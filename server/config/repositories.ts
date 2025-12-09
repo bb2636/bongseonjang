@@ -16,6 +16,8 @@ import { MockBadameunRepository } from '../features/badameun/repository/MockBada
 import { TypeORMBadameunRepository } from '../features/badameun/repository/TypeORMBadameunRepository';
 import { MockBongseonjangTvRepository } from '../features/bongseonjangTv/repository/MockBongseonjangTvRepository';
 import { TypeORMBongseonjangTvRepository } from '../features/bongseonjangTv/repository/TypeORMBongseonjangTvRepository';
+import { MockBongcookRepository } from '../features/bongcook/repository/MockBongcookRepository';
+import { TypeORMBongcookRepository } from '../features/bongcook/repository/TypeORMBongcookRepository';
 import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
 import type { HeroImageRepository } from '../features/home/repository/HeroImageRepository';
 import type { TimeDealRepository } from '../features/timeDeal/repository/TimeDealRepository';
@@ -25,6 +27,7 @@ import type { FreshFoodRepository } from '../features/freshFood/repository/Fresh
 import type { MdPickRepository } from '../features/mdPick/repository/MdPickRepository';
 import type { BadameunRepository } from '../features/badameun/repository/BadameunRepository';
 import type { BongseonjangTvRepository } from '../features/bongseonjangTv/repository/BongseonjangTvRepository';
+import type { BongcookRepository } from '../features/bongcook/repository/BongcookRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',
@@ -43,6 +46,7 @@ interface RepositoryConfig {
   mdPick: RepositoryType;
   badameun: RepositoryType;
   bongseonjangTv: RepositoryType;
+  bongcook: RepositoryType;
 }
 
 const config: RepositoryConfig = {
@@ -55,6 +59,7 @@ const config: RepositoryConfig = {
   mdPick: REPOSITORY_TYPE.MOCK,
   badameun: REPOSITORY_TYPE.MOCK,
   bongseonjangTv: REPOSITORY_TYPE.MOCK,
+  bongcook: REPOSITORY_TYPE.MOCK,
 };
 
 type RepositoryFactory<T> = {
@@ -72,6 +77,7 @@ interface RepositoryMap {
   mdPick: RepositoryFactory<MdPickRepository>;
   badameun: RepositoryFactory<BadameunRepository>;
   bongseonjangTv: RepositoryFactory<BongseonjangTvRepository>;
+  bongcook: RepositoryFactory<BongcookRepository>;
 }
 
 const repositoryMap: RepositoryMap = {
@@ -110,6 +116,10 @@ const repositoryMap: RepositoryMap = {
   bongseonjangTv: {
     [REPOSITORY_TYPE.MOCK]: () => new MockBongseonjangTvRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMBongseonjangTvRepository(),
+  },
+  bongcook: {
+    [REPOSITORY_TYPE.MOCK]: () => new MockBongcookRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMBongcookRepository(),
   },
 };
 
@@ -158,5 +168,8 @@ export const repositories = {
   },
   get bongseonjangTv(): BongseonjangTvRepository {
     return createRepository<BongseonjangTvRepository>('bongseonjangTv');
+  },
+  get bongcook(): BongcookRepository {
+    return createRepository<BongcookRepository>('bongcook');
   },
 };
