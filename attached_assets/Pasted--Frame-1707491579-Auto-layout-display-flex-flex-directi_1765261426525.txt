@@ -1,0 +1,245 @@
+/* Frame 1707491579 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 6px;
+
+position: absolute;
+width: 394px;
+height: 33px;
+left: 16px;
+top: 160px;
+
+
+
+/* Frame 1707491574 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 10px;
+gap: 10px;
+
+width: 43px;
+height: 33px;
+
+background: #0C0C0C;
+border-radius: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 전체 */
+
+width: 23px;
+height: 17px;
+
+/* pretendard/medium/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+text-align: center;
+letter-spacing: -0.01em;
+
+color: #FDFDFD;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491577 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 10px;
+gap: 10px;
+
+width: 79px;
+height: 33px;
+
+border: 1px solid rgba(12, 12, 12, 0.06);
+border-radius: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 제출 수산물 */
+
+width: 59px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+text-align: center;
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.5);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491578 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 10px;
+gap: 10px;
+
+width: 79px;
+height: 33px;
+
+border: 1px solid rgba(12, 12, 12, 0.06);
+border-radius: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* 제출 수산물 */
+
+width: 59px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+text-align: center;
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.5);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491579 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 10px;
+gap: 10px;
+
+width: 79px;
+height: 33px;
+
+border: 1px solid rgba(12, 12, 12, 0.06);
+border-radius: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* 제출 수산물 */
+
+width: 59px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+text-align: center;
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.5);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491580 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 10px;
+gap: 10px;
+
+width: 90px;
+height: 33px;
+
+border: 1px solid rgba(12, 12, 12, 0.06);
+border-radius: 24px;
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* 제출 수산물 */
+
+width: 70px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+text-align: center;
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.5);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
