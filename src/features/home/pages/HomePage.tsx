@@ -1,8 +1,8 @@
-import HomeView from '../views/HomeView';
-import { useHomePage } from '../hooks/useHomePage';
+import HomeShellView from '../views/HomeShellView';
+import { useHomeShell } from '../hooks/useHomeShell';
 
 export default function HomePage() {
-  const homePage = useHomePage();
+  const shell = useHomeShell();
   
-  return <HomeView homePage={homePage} />;
+  return <HomeShellView shell={shell} />;
 }

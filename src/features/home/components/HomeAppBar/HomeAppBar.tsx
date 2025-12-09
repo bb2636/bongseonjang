@@ -2,12 +2,19 @@ import './HomeAppBar.css';
 
 interface HomeAppBarProps {
   onCartClick?: () => void;
+  onLogoClick?: () => void;
 }
 
-export default function HomeAppBar({ onCartClick }: HomeAppBarProps) {
+export default function HomeAppBar({ onCartClick, onLogoClick }: HomeAppBarProps) {
   return (
     <header className="home-app-bar">
-      <span className="home-app-bar__title">봉선장</span>
+      <button 
+        type="button"
+        className="home-app-bar__logo-button"
+        onClick={onLogoClick}
+      >
+        <span className="home-app-bar__title">봉선장</span>
+      </button>
       <button 
         className="home-app-bar__cart-button" 
         onClick={onCartClick}

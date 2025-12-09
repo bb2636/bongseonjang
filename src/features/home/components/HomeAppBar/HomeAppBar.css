@@ -10,6 +10,13 @@
   box-sizing: border-box;
 }
 
+.home-app-bar__logo-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 .home-app-bar__title {
   font-family: 'Pretendard';
   font-style: normal;

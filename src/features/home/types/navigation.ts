@@ -1,2 +1,2 @@
 export type NavItem = "home" | "category" | "search" | "profile";
-export type CategoryTab = "best" | "new" | "event" | "all";
+export type CategoryTab = "default" | "best" | "new" | "event" | "all";

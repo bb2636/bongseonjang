@@ -1,14 +1,15 @@
+import type { CategoryTab } from '../../types/navigation';
 import './CategoryTabs.css';
-
-type CategoryTab = 'best' | 'new' | 'event' | 'all';
 
 interface CategoryTabsProps {
   activeTab: CategoryTab;
   onTabChange: (tab: CategoryTab) => void;
 }
 
+type TabCategoryTab = 'best' | 'new' | 'event' | 'all';
+
 interface TabConfig {
-  id: CategoryTab;
+  id: TabCategoryTab;
   label: string;
   isEvent?: boolean;
 }
@@ -21,13 +22,17 @@ const TABS: TabConfig[] = [
 ];
 
 export default function CategoryTabs({ activeTab, onTabChange }: CategoryTabsProps) {
+  const isTabActive = (tabId: TabCategoryTab) => {
+    return activeTab === tabId;
+  };
+
   return (
     <div className="category-tabs">
       {TABS.map((tab) => (
         <button
           key={tab.id}
           type="button"
-          className={`category-tabs__tab ${activeTab === tab.id ? 'category-tabs__tab--active' : ''} ${tab.isEvent ? 'category-tabs__tab--event' : ''}`}
+          className={`category-tabs__tab ${isTabActive(tab.id) ? 'category-tabs__tab--active' : ''} ${tab.isEvent ? 'category-tabs__tab--event' : ''}`}
           onClick={() => onTabChange(tab.id)}
         >
           {tab.label}
