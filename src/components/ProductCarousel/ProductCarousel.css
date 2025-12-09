@@ -93,6 +93,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   width: 100%;
+  min-height: 42px;
 }
 
 .product-carousel__price-row {
