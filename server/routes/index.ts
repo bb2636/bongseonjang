@@ -6,6 +6,7 @@ import { heroImageRoutes } from '../features/home';
 import { timeDealRoutes } from '../features/timeDeal';
 import { bestProductRoutes } from '../features/bestProduct';
 import { middleBannerRoutes } from '../features/middleBanner';
+import { freshFoodRoutes } from '../features/freshFood';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/home', heroImageRoutes);
 router.use('/time-deals', timeDealRoutes);
 router.use('/best-products', bestProductRoutes);
 router.use('/middle-banners', middleBannerRoutes);
+router.use('/fresh-foods', freshFoodRoutes);
 
 export default router;

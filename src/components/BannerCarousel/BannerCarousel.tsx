@@ -24,7 +24,7 @@ interface BannerCarouselProps {
 const DEFAULT_AUTOPLAY_DELAY = 3000;
 
 export default function BannerCarousel({
-  images,
+  images = [],
   isLoading,
   height,
   autoplay = false,
@@ -39,7 +39,7 @@ export default function BannerCarousel({
     return <div className="banner-carousel banner-carousel--loading" style={style} />;
   }
 
-  if (images.length === 0) {
+  if (!images || images.length === 0) {
     return <div className="banner-carousel banner-carousel--empty" style={style} />;
   }
 

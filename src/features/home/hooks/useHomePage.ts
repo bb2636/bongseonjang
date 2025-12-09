@@ -4,6 +4,7 @@ import { useHeroImages } from './useHeroImages';
 import { useTimeDeals } from './useTimeDeals';
 import { useBestProducts } from './useBestProducts';
 import { useMiddleBanners } from './useMiddleBanners';
+import { useFreshFoods } from './useFreshFoods';
 
 type NavItem = 'home' | 'category' | 'search' | 'profile';
 type CategoryTab = 'best' | 'new' | 'event' | 'all';
@@ -14,6 +15,7 @@ export function useHomePage() {
   const { timeDeals, isLoading: isTimeDealsLoading } = useTimeDeals();
   const { bestProducts, isLoading: isBestProductsLoading } = useBestProducts();
   const { middleBanners, isLoading: isMiddleBannersLoading } = useMiddleBanners();
+  const { freshFoods, isLoading: isFreshFoodsLoading } = useFreshFoods();
   const [activeTab, setActiveTab] = useState<CategoryTab>('best');
 
   const onCartClick = useCallback(() => {
@@ -49,8 +51,16 @@ export function useHomePage() {
     console.log('Add to cart:', productId);
   }, []);
 
+  const onHeartClick = useCallback((productId: string) => {
+    console.log('Toggle favorite:', productId);
+  }, []);
+
   const onViewAllBestProducts = useCallback(() => {
     navigate('/best-products');
+  }, [navigate]);
+
+  const onViewAllFreshFoods = useCallback(() => {
+    navigate('/fresh-foods');
   }, [navigate]);
 
   return {
@@ -62,6 +72,7 @@ export function useHomePage() {
     onTabChange,
     onSubCategoryClick,
     onAddToCart,
+    onHeartClick,
     timeDeals,
     isTimeDealsLoading,
     bestProducts,
@@ -69,5 +80,8 @@ export function useHomePage() {
     onViewAllBestProducts,
     middleBanners,
     isMiddleBannersLoading,
+    freshFoods,
+    isFreshFoodsLoading,
+    onViewAllFreshFoods,
   };
 }

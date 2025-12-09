@@ -8,11 +8,14 @@ import { MockBestProductRepository } from '../features/bestProduct/repository/Mo
 import { TypeORMBestProductRepository } from '../features/bestProduct/repository/TypeORMBestProductRepository';
 import { MockMiddleBannerRepository } from '../features/middleBanner/repository/MockMiddleBannerRepository';
 import { TypeORMMiddleBannerRepository } from '../features/middleBanner/repository/TypeORMMiddleBannerRepository';
+import { MockFreshFoodRepository } from '../features/freshFood/repository/MockFreshFoodRepository';
+import { TypeORMFreshFoodRepository } from '../features/freshFood/repository/TypeORMFreshFoodRepository';
 import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
 import type { HeroImageRepository } from '../features/home/repository/HeroImageRepository';
 import type { TimeDealRepository } from '../features/timeDeal/repository/TimeDealRepository';
 import type { BestProductRepository } from '../features/bestProduct/repository/BestProductRepository';
 import type { MiddleBannerRepository } from '../features/middleBanner/repository/MiddleBannerRepository';
+import type { FreshFoodRepository } from '../features/freshFood/repository/FreshFoodRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',
@@ -27,6 +30,7 @@ interface RepositoryConfig {
   timeDeal: RepositoryType;
   bestProduct: RepositoryType;
   middleBanner: RepositoryType;
+  freshFood: RepositoryType;
 }
 
 const config: RepositoryConfig = {
@@ -35,6 +39,7 @@ const config: RepositoryConfig = {
   timeDeal: REPOSITORY_TYPE.MOCK,
   bestProduct: REPOSITORY_TYPE.MOCK,
   middleBanner: REPOSITORY_TYPE.MOCK,
+  freshFood: REPOSITORY_TYPE.MOCK,
 };
 
 type RepositoryFactory<T> = {
@@ -48,6 +53,7 @@ interface RepositoryMap {
   timeDeal: RepositoryFactory<TimeDealRepository>;
   bestProduct: RepositoryFactory<BestProductRepository>;
   middleBanner: RepositoryFactory<MiddleBannerRepository>;
+  freshFood: RepositoryFactory<FreshFoodRepository>;
 }
 
 const repositoryMap: RepositoryMap = {
@@ -70,6 +76,10 @@ const repositoryMap: RepositoryMap = {
   middleBanner: {
     [REPOSITORY_TYPE.MOCK]: () => new MockMiddleBannerRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMMiddleBannerRepository(),
+  },
+  freshFood: {
+    [REPOSITORY_TYPE.MOCK]: () => new MockFreshFoodRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMFreshFoodRepository(),
   },
 };
 
@@ -106,5 +116,8 @@ export const repositories = {
   },
   get middleBanner(): MiddleBannerRepository {
     return createRepository<MiddleBannerRepository>('middleBanner');
+  },
+  get freshFood(): FreshFoodRepository {
+    return createRepository<FreshFoodRepository>('freshFood');
   },
 };
