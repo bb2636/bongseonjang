@@ -7,6 +7,7 @@ import { TimeDealSection } from "../components/TimeDealSection";
 import { BestProductSection } from "../components/BestProductSection";
 import { MiddleBanner } from "../components/MiddleBanner";
 import { FreshFoodSection } from "../components/FreshFoodSection";
+import { MdPickSection } from "../components/MdPickSection";
 import type { HomePageState } from "../hooks/useHomePage";
 import "./HomeView.css";
 import { Spacer } from "@/components/Spacer";
@@ -36,6 +37,8 @@ export default function HomeView({ homePage }: HomeViewProps) {
     freshFoods,
     isFreshFoodsLoading,
     onViewAllFreshFoods,
+    mdPicks,
+    isMdPicksLoading,
   } = homePage;
 
   return (
@@ -57,6 +60,12 @@ export default function HomeView({ homePage }: HomeViewProps) {
           isLoading={isBestProductsLoading}
           onAddToCart={onAddToCart}
           onViewAll={onViewAllBestProducts}
+        />
+        <Spacer height={20} />
+        <MdPickSection
+          products={mdPicks}
+          isLoading={isMdPicksLoading}
+          onAddToCart={onAddToCart}
         />
         <Spacer height={20} />
         <MiddleBanner

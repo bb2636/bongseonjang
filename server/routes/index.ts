@@ -7,6 +7,7 @@ import { timeDealRoutes } from '../features/timeDeal';
 import { bestProductRoutes } from '../features/bestProduct';
 import { middleBannerRoutes } from '../features/middleBanner';
 import { freshFoodRoutes } from '../features/freshFood';
+import { mdPickRoutes } from '../features/mdPick';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/time-deals', timeDealRoutes);
 router.use('/best-products', bestProductRoutes);
 router.use('/middle-banners', middleBannerRoutes);
 router.use('/fresh-foods', freshFoodRoutes);
+router.use('/md-picks', mdPickRoutes);
 
 export default router;
