@@ -1,17 +1,17 @@
-import './HomeBottomNav.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import './BottomNav.css';
 
-type NavItem = 'home' | 'category' | 'search' | 'profile';
+export type NavItem = 'home' | 'category' | 'search' | 'profile';
 
-interface HomeBottomNavProps {
-  activeItem?: NavItem;
-  onItemClick?: (item: NavItem) => void;
+interface BottomNavProps {
+  onHomeClick?: () => void;
 }
 
-const NAV_ITEMS: { id: NavItem; label: string }[] = [
-  { id: 'home', label: '홈' },
-  { id: 'category', label: '카테고리' },
-  { id: 'search', label: '검색' },
-  { id: 'profile', label: '봉크루' },
+const NAV_ITEMS: { id: NavItem; label: string; path: string }[] = [
+  { id: 'home', label: '홈', path: '/' },
+  { id: 'category', label: '카테고리', path: '/category' },
+  { id: 'search', label: '검색', path: '/search' },
+  { id: 'profile', label: '봉크루', path: '/profile' },
 ];
 
 function HomeIcon({ active }: { active: boolean }) {
@@ -102,32 +102,53 @@ function getIcon(id: NavItem, active: boolean) {
   }
 }
 
-export default function HomeBottomNav({ 
-  activeItem = 'home', 
-  onItemClick 
-}: HomeBottomNavProps) {
+export default function BottomNav({ onHomeClick }: BottomNavProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const getActiveItem = (): NavItem => {
+    const path = location.pathname;
+    if (path === '/') return 'home';
+    if (path.startsWith('/category')) return 'category';
+    if (path.startsWith('/search')) return 'search';
+    if (path.startsWith('/profile')) return 'profile';
+    return 'home';
+  };
+
+  const activeItem = getActiveItem();
+
+  const handleItemClick = (item: NavItem) => {
+    if (item === 'home' && onHomeClick) {
+      onHomeClick();
+    }
+    const navItem = NAV_ITEMS.find(n => n.id === item);
+    if (navItem) {
+      navigate(navItem.path);
+    }
+  };
+
   return (
-    <nav className="home-bottom-nav">
-      <div className="home-bottom-nav__items">
+    <nav className="bottom-nav">
+      <div className="bottom-nav__items">
         {NAV_ITEMS.map(item => {
           const isActive = activeItem === item.id;
           return (
             <button
               key={item.id}
-              className={`home-bottom-nav__item ${isActive ? 'home-bottom-nav__item--active' : ''}`}
-              onClick={() => onItemClick?.(item.id)}
+              className={`bottom-nav__item ${isActive ? 'bottom-nav__item--active' : ''}`}
+              onClick={() => handleItemClick(item.id)}
             >
-              <span className="home-bottom-nav__icon">
+              <span className="bottom-nav__icon">
                 {getIcon(item.id, isActive)}
               </span>
-              <span className={`home-bottom-nav__label ${isActive ? 'home-bottom-nav__label--active' : ''}`}>
+              <span className={`bottom-nav__label ${isActive ? 'bottom-nav__label--active' : ''}`}>
                 {item.label}
               </span>
             </button>
           );
         })}
       </div>
-      <div className="home-bottom-nav__indicator" />
+      <div className="bottom-nav__indicator" />
     </nav>
   );
 }

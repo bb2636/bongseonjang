@@ -1,26 +1,24 @@
 import { ReactNode } from 'react';
+import { BottomNav } from '../components/BottomNav';
 import './MainLayout.css';
 
 interface MainLayoutProps {
   children: ReactNode;
+  showBottomNav?: boolean;
+  onHomeClick?: () => void;
 }
 
-export function MainLayout({ children }: MainLayoutProps) {
+export function MainLayout({ 
+  children, 
+  showBottomNav = true,
+  onHomeClick 
+}: MainLayoutProps) {
   return (
-    <div className="layout-wrapper">
-      <header className="layout-header">
-        <div className="layout-header-content">
-          <h1 className="layout-logo">Project Name</h1>
-        </div>
-      </header>
-      <main className="layout-main">
-        <div className="layout-main-content">
-          {children}
-        </div>
+    <div className="main-layout">
+      <main className="main-layout__content">
+        {children}
       </main>
-      <footer className="layout-footer">
-        &copy; {new Date().getFullYear()} Project Name. All rights reserved.
-      </footer>
+      {showBottomNav && <BottomNav onHomeClick={onHomeClick} />}
     </div>
   );
 }

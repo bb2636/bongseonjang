@@ -1,5 +1,4 @@
 import { HomeAppBar } from "../components/HomeAppBar";
-import { HomeBottomNav } from "../components/HomeBottomNav";
 import { CategoryTabs } from "../components/CategoryTabs";
 import { DefaultHomeContent } from "../components/DefaultHomeContent";
 import { BestProductsContent } from "../components/BestProductsContent";
@@ -19,7 +18,6 @@ export default function HomeShellView({ shell }: HomeShellViewProps) {
     onTabChange,
     onLogoClick,
     onCartClick,
-    onNavItemClick,
   } = shell;
 
   const renderContent = () => {
@@ -47,8 +45,6 @@ export default function HomeShellView({ shell }: HomeShellViewProps) {
         <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />
         {renderContent()}
       </main>
-
-      <HomeBottomNav activeItem="home" onItemClick={onNavItemClick} />
     </div>
   );
 }

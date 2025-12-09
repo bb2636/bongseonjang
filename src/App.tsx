@@ -17,12 +17,34 @@ export default function App() {
       <Route path="/signup/privacy" element={<PrivacyPage />} />
       <Route path="/orders/guest" element={<GuestOrderLookupPage />} />
       <Route
-        path="/*"
+        path="/category"
         element={
           <MainLayout>
-            <Routes>
-              <Route path="*" element={<div>페이지를 찾을 수 없습니다</div>} />
-            </Routes>
+            <div style={{ padding: '80px 16px 16px' }}>카테고리 페이지</div>
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/search"
+        element={
+          <MainLayout>
+            <div style={{ padding: '80px 16px 16px' }}>검색 페이지</div>
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <MainLayout>
+            <div style={{ padding: '80px 16px 16px' }}>봉크루 페이지</div>
+          </MainLayout>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <MainLayout>
+            <div style={{ padding: '80px 16px 16px' }}>페이지를 찾을 수 없습니다</div>
           </MainLayout>
         }
       />
