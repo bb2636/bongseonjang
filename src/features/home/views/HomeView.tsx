@@ -24,32 +24,6 @@ interface HomeViewProps {
     heroImages: HeroImage[];
     isHeroImagesLoading: boolean;
     activeTab: CategoryTab;
-    onTabChange: (tab: CategoryTab) => void;} from "../components/HomeAppBar";
-import { HomeBottomNav } from "../components/HomeBottomNav";
-import { HeroBanner } from "../components/HeroBanner";
-import { CategoryTabs } from "../components/CategoryTabs";
-import { SubCategoryCards } from "../components/SubCategoryCards";
-import { TimeDealSection } from "../components/TimeDealSection";
-import { BestProductSection } from "../components/BestProductSection";
-import { MiddleBanner } from "../components/MiddleBanner";
-import { FreshFoodSection } from "../components/FreshFoodSection";
-import type { HeroImage } from "../types/heroImage";
-import type { TimeDeal } from "../types/timeDeal";
-import type { BestProduct } from "../types/bestProduct";
-import type { MiddleBannerImage } from "../types/middleBanner";
-import type { FreshFood } from "../types/freshFood";
-import "./HomeView.css";
-
-type NavItem = "home" | "category" | "search" | "profile";
-type CategoryTab = "best" | "new" | "event" | "all";
-
-interface HomeViewProps {
-  homePage: {
-    onCartClick: () => void;
-    onNavItemClick: (item: NavItem) => void;
-    heroImages: HeroImage[];
-    isHeroImagesLoading: boolean;
-    activeTab: CategoryTab;
     onTabChange: (tab: CategoryTab) => void;
     onSubCategoryClick: (categoryId: string) => void;
     onAddToCart: (productId: string) => void;
