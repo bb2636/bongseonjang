@@ -35,6 +35,10 @@ export function useHomePage() {
     setActiveTab(tab);
   }, []);
 
+  const onSubCategoryClick = useCallback((categoryId: string) => {
+    navigate(`/category/${categoryId}`);
+  }, [navigate]);
+
   return {
     onCartClick,
     onNavItemClick,
@@ -42,5 +46,6 @@ export function useHomePage() {
     isHeroImagesLoading,
     activeTab,
     onTabChange,
+    onSubCategoryClick,
   };
 }
