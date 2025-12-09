@@ -39,6 +39,10 @@ export function useHomePage() {
     navigate(`/category/${categoryId}`);
   }, [navigate]);
 
+  const onAddToCart = useCallback((productId: string) => {
+    console.log('Add to cart:', productId);
+  }, []);
+
   return {
     onCartClick,
     onNavItemClick,
@@ -47,5 +51,6 @@ export function useHomePage() {
     activeTab,
     onTabChange,
     onSubCategoryClick,
+    onAddToCart,
   };
 }

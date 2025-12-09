@@ -3,6 +3,7 @@ import { HomeBottomNav } from "../components/HomeBottomNav";
 import { HeroBanner } from "../components/HeroBanner";
 import { CategoryTabs } from "../components/CategoryTabs";
 import { SubCategoryCards } from "../components/SubCategoryCards";
+import { TimeDealSection } from "../components/TimeDealSection";
 import type { HeroImage } from "../types/heroImage";
 import "./HomeView.css";
 
@@ -18,6 +19,7 @@ interface HomeViewProps {
     activeTab: CategoryTab;
     onTabChange: (tab: CategoryTab) => void;
     onSubCategoryClick: (categoryId: string) => void;
+    onAddToCart: (productId: string) => void;
   };
 }
 
@@ -30,6 +32,7 @@ export default function HomeView({ homePage }: HomeViewProps) {
     activeTab,
     onTabChange,
     onSubCategoryClick,
+    onAddToCart,
   } = homePage;
 
   return (
@@ -40,6 +43,7 @@ export default function HomeView({ homePage }: HomeViewProps) {
         <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />
         <HeroBanner heroImages={heroImages} isLoading={isHeroImagesLoading} />
         <SubCategoryCards onCategoryClick={onSubCategoryClick} />
+        <TimeDealSection onAddToCart={onAddToCart} />
       </main>
 
       <HomeBottomNav activeItem="home" onItemClick={onNavItemClick} />
