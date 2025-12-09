@@ -7,38 +7,11 @@ import { TimeDealSection } from "../components/TimeDealSection";
 import { BestProductSection } from "../components/BestProductSection";
 import { MiddleBanner } from "../components/MiddleBanner";
 import { FreshFoodSection } from "../components/FreshFoodSection";
-import type { HeroImage } from "../types/heroImage";
-import type { TimeDeal } from "../types/timeDeal";
-import type { BestProduct } from "../types/bestProduct";
-import type { MiddleBannerImage } from "../types/middleBanner";
-import type { FreshFood } from "../types/freshFood";
+import type { HomePageState } from "../hooks/useHomePage";
 import "./HomeView.css";
 
-type NavItem = "home" | "category" | "search" | "profile";
-type CategoryTab = "best" | "new" | "event" | "all";
-
 interface HomeViewProps {
-  homePage: {
-    onCartClick: () => void;
-    onNavItemClick: (item: NavItem) => void;
-    heroImages: HeroImage[];
-    isHeroImagesLoading: boolean;
-    activeTab: CategoryTab;
-    onTabChange: (tab: CategoryTab) => void;
-    onSubCategoryClick: (categoryId: string) => void;
-    onAddToCart: (productId: string) => void;
-    onHeartClick: (productId: string) => void;
-    timeDeals: TimeDeal[];
-    isTimeDealsLoading: boolean;
-    bestProducts: BestProduct[];
-    isBestProductsLoading: boolean;
-    onViewAllBestProducts: () => void;
-    middleBanners: MiddleBannerImage[];
-    isMiddleBannersLoading: boolean;
-    freshFoods: FreshFood[];
-    isFreshFoodsLoading: boolean;
-    onViewAllFreshFoods: () => void;
-  };
+  homePage: HomePageState;
 }
 
 export default function HomeView({ homePage }: HomeViewProps) {
@@ -72,10 +45,10 @@ export default function HomeView({ homePage }: HomeViewProps) {
         <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />
         <HeroBanner heroImages={heroImages} isLoading={isHeroImagesLoading} />
         <SubCategoryCards onCategoryClick={onSubCategoryClick} />
-        <TimeDealSection 
-          timeDeals={timeDeals} 
-          isLoading={isTimeDealsLoading} 
-          onAddToCart={onAddToCart} 
+        <TimeDealSection
+          timeDeals={timeDeals}
+          isLoading={isTimeDealsLoading}
+          onAddToCart={onAddToCart}
         />
         <BestProductSection
           products={bestProducts}

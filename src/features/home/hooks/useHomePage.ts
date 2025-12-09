@@ -5,9 +5,7 @@ import { useTimeDeals } from './useTimeDeals';
 import { useBestProducts } from './useBestProducts';
 import { useMiddleBanners } from './useMiddleBanners';
 import { useFreshFoods } from './useFreshFoods';
-
-type NavItem = 'home' | 'category' | 'search' | 'profile';
-type CategoryTab = 'best' | 'new' | 'event' | 'all';
+import type { NavItem, CategoryTab } from '../types/navigation';
 
 export function useHomePage() {
   const navigate = useNavigate();
@@ -85,3 +83,5 @@ export function useHomePage() {
     onViewAllFreshFoods,
   };
 }
+
+export type HomePageState = ReturnType<typeof useHomePage>;

@@ -1,4 +1,5 @@
 import { ProductCarousel } from '@/components/ProductCarousel';
+import { SectionHeader } from '@/components/SectionHeader';
 import type { FreshFood } from '../../types/freshFood';
 import './FreshFoodSection.css';
 
@@ -23,9 +24,7 @@ export default function FreshFoodSection({
   if (isLoading) {
     return (
       <section className="fresh-food-section">
-        <div className="fresh-food-section__header">
-          <h2 className="fresh-food-section__title">신선식품</h2>
-        </div>
+        <SectionHeader title="신선식품" />
         <div className="fresh-food-section__loading">로딩 중...</div>
       </section>
     );
@@ -37,32 +36,7 @@ export default function FreshFoodSection({
 
   return (
     <section className="fresh-food-section">
-      <div className="fresh-food-section__header">
-        <h2 className="fresh-food-section__title">신선식품</h2>
-        <button
-          type="button"
-          className="fresh-food-section__view-all"
-          onClick={onViewAll}
-        >
-          <span>전체보기</span>
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 13 13"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.5 2.5L8.5 6.5L4.5 10.5"
-              stroke="#3B9BD5"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-
+      <SectionHeader title="신선식품" onViewAll={onViewAll} />
       <ProductCarousel
         products={products}
         isLoading={isLoading}
