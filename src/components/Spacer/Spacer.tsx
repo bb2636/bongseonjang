@@ -1,4 +1,4 @@
-import './Spacer.css';
+import "./Spacer.css";
 
 interface SpacerProps {
   height?: number;
@@ -7,16 +7,12 @@ interface SpacerProps {
 
 const DEFAULT_HEIGHT = 8;
 
-export default function Spacer({
-  height = DEFAULT_HEIGHT,
-  backgroundColor = '#F5F5F5',
-}: SpacerProps) {
+export default function Spacer({ height = DEFAULT_HEIGHT }: SpacerProps) {
   return (
     <div
       className="spacer"
       style={{
         height: `${height}px`,
-        backgroundColor,
       }}
     />
   );

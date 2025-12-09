@@ -9,6 +9,7 @@ import { MiddleBanner } from "../components/MiddleBanner";
 import { FreshFoodSection } from "../components/FreshFoodSection";
 import type { HomePageState } from "../hooks/useHomePage";
 import "./HomeView.css";
+import { Spacer } from "@/components/Spacer";
 
 interface HomeViewProps {
   homePage: HomePageState;
@@ -50,16 +51,19 @@ export default function HomeView({ homePage }: HomeViewProps) {
           isLoading={isTimeDealsLoading}
           onAddToCart={onAddToCart}
         />
+        <Spacer height={20} />
         <BestProductSection
           products={bestProducts}
           isLoading={isBestProductsLoading}
           onAddToCart={onAddToCart}
           onViewAll={onViewAllBestProducts}
         />
+        <Spacer height={20} />
         <MiddleBanner
           banners={middleBanners}
           isLoading={isMiddleBannersLoading}
         />
+        <Spacer height={20} />
         <FreshFoodSection
           products={freshFoods}
           isLoading={isFreshFoodsLoading}
