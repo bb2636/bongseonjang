@@ -3,6 +3,7 @@ import ProductInfo from '../components/ProductInfo';
 import ProductBenefits from '../components/ProductBenefits';
 import ProductOptions from '../components/ProductOptions';
 import ProductDescription from '../components/ProductDescription';
+import ProductDetailContent from '../components/ProductDetailContent';
 import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
@@ -46,13 +47,20 @@ export default function ProductDetailView({
   onShare,
   onTabChange,
 }: ProductDetailViewProps) {
+  const sliderImages = product.images.filter(
+    (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
+  );
+  const detailImages = product.images.filter(
+    (img) => img.imageType === 'DETAIL'
+  );
+
   return (
     <div className="product-detail-view">
       <DetailAppBar onCartClick={onCartClick} />
       
       <div className="product-detail-view__content">
         <ProductImageSlider
-          images={product.images}
+          images={sliderImages}
           thumbnailUrl={product.thumbnailUrl}
         />
 
@@ -99,6 +107,8 @@ export default function ProductDetailView({
               shippingRegion={product.shippingRegion}
               notice={product.notice}
             />
+
+            <ProductDetailContent images={detailImages} />
           </>
         )}
 
