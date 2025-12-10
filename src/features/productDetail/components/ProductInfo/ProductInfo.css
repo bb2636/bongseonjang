@@ -59,38 +59,43 @@
 
 .product-info__price {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   margin-top: 4px;
+}
+
+.product-info__price-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
 }
 
 .product-info__discount-rate {
   font-family: 'Pretendard';
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 140%;
-  color: #3B9BD5;
-}
-
-.product-info__price-values {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
 }
 
 .product-info__original-price {
   font-family: 'Pretendard';
   font-weight: 400;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 128%;
+  letter-spacing: -0.01em;
   color: rgba(12, 12, 12, 0.4);
   text-decoration: line-through;
 }
 
 .product-info__discounted-price {
   font-family: 'Pretendard';
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 140%;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
   color: #0C0C0C;
 }

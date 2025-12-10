@@ -68,18 +68,16 @@ export default function ProductInfo({
 
       <div className="product-info__price">
         {isDiscounted && (
-          <span className="product-info__discount-rate">{discountRate}%</span>
-        )}
-        <div className="product-info__price-values">
-          {isDiscounted && (
+          <div className="product-info__price-row">
+            <span className="product-info__discount-rate">{discountRate}%</span>
             <span className="product-info__original-price">
-              {formatPrice(basePrice)}원
+              {formatPrice(basePrice)}
             </span>
-          )}
-          <span className="product-info__discounted-price">
-            {formatPrice(discountedPrice)}원
-          </span>
-        </div>
+          </div>
+        )}
+        <span className="product-info__discounted-price">
+          {formatPrice(discountedPrice)}원
+        </span>
       </div>
     </div>
   );
