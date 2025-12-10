@@ -51,7 +51,7 @@ export default function ProductDetailView({
       
       <div className="product-detail-view__content">
         <ProductImageSlider
-          images={product.images.filter(img => img.imageType === 'GALLERY')}
+          images={product.images}
           thumbnailUrl={product.thumbnailUrl}
         />
 
