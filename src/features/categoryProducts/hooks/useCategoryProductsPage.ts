@@ -13,9 +13,11 @@ const SLUG_TO_DISPLAY_CATEGORY: Record<string, string> = {
 };
 
 export interface UseCategoryProductsPageReturn {
+  activeSlug: string;
   products: ProductCardData[];
   isLoading: boolean;
   error: Error | null;
+  handleTabChange: (slug: string) => void;
   handleProductClick: (productId: string) => void;
   handleAddToCart: (productId: string) => void;
   handleToggleFavorite: (productId: string) => void;
@@ -26,9 +28,14 @@ export interface UseCategoryProductsPageReturn {
 export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
+  const activeSlug = slug || 'all';
   
-  const displayCategoryName = SLUG_TO_DISPLAY_CATEGORY[slug || 'all'] || '베스트';
+  const displayCategoryName = SLUG_TO_DISPLAY_CATEGORY[activeSlug] || '';
   const { products, isLoading, error } = useProductsByCategory(displayCategoryName);
+
+  const handleTabChange = (newSlug: string) => {
+    navigate(`/category/${newSlug}`, { replace: true });
+  };
 
   const handleProductClick = (productId: string) => {
     navigate(`/product/${productId}`);
@@ -51,9 +58,11 @@ export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
   };
 
   return {
+    activeSlug,
     products,
     isLoading,
     error: error as Error | null,
+    handleTabChange,
     handleProductClick,
     handleAddToCart,
     handleToggleFavorite,
