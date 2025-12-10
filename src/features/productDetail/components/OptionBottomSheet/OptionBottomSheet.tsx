@@ -147,7 +147,10 @@ export default function OptionBottomSheet({
 
         <div className="option-bottom-sheet__content">
           <div className="option-bottom-sheet__section">
-            <h4 className="option-bottom-sheet__section-title">{mainOptionGroupName}</h4>
+            <h4 className="option-bottom-sheet__section-title">
+              {mainOptionGroupName}
+              <span className="option-bottom-sheet__required-badge">필수</span>
+            </h4>
             <div className="option-bottom-sheet__options">
               {mainOptions.map((option) => (
                 <button
@@ -165,27 +168,33 @@ export default function OptionBottomSheet({
             </div>
           </div>
 
-          {hasSubOptions && selectedMainOption && (
-            <div className="option-bottom-sheet__section">
-              <h4 className="option-bottom-sheet__section-title">{subOptionGroupName}</h4>
-              <div className="option-bottom-sheet__options">
-                {subOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    className={`option-bottom-sheet__option ${
-                      selectedSubOption?.id === option.id ? 'option-bottom-sheet__option--selected' : ''
-                    } ${option.stockQty <= 0 ? 'option-bottom-sheet__option--disabled' : ''}`}
-                    onClick={() => option.stockQty > 0 && handleSubOptionSelect(option)}
-                    disabled={option.stockQty <= 0}
-                  >
-                    <span className="option-bottom-sheet__option-name">{option.name}</span>
-                    <span className="option-bottom-sheet__option-additional">
-                      {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : '추가금액 없음'}
-                    </span>
-                  </button>
-                ))}
+          {hasSubOptions && (
+            <>
+              <div className="option-bottom-sheet__section-divider" />
+              <div className="option-bottom-sheet__section">
+                <h4 className="option-bottom-sheet__section-title">
+                  {subOptionGroupName}
+                  <span className="option-bottom-sheet__optional-badge">선택</span>
+                </h4>
+                <div className="option-bottom-sheet__options">
+                  {subOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      className={`option-bottom-sheet__option ${
+                        selectedSubOption?.id === option.id ? 'option-bottom-sheet__option--selected' : ''
+                      } ${option.stockQty <= 0 ? 'option-bottom-sheet__option--disabled' : ''}`}
+                      onClick={() => option.stockQty > 0 && handleSubOptionSelect(option)}
+                      disabled={option.stockQty <= 0}
+                    >
+                      <span className="option-bottom-sheet__option-name">{option.name}</span>
+                      <span className="option-bottom-sheet__option-additional">
+                        {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : '추가금액 없음'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            </>
           )}
 
           {canAddToList && (
