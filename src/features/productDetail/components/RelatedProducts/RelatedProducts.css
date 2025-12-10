@@ -9,7 +9,7 @@
 .related-products__header {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 10px 16px;
   gap: 10px;
@@ -22,7 +22,7 @@
   font-weight: 500;
   font-size: 18px;
   line-height: 128%;
-  text-align: center;
+  text-align: left;
   letter-spacing: -0.02em;
   color: #0C0C0C;
   margin: 0;
