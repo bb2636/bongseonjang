@@ -1,0 +1,601 @@
+/* Frame 1707491628 */
+
+position: absolute;
+width: 375px;
+height: 318px;
+left: calc(50% - 375px/2 + 0.5px);
+bottom: 343px;
+
+background: #FFFFFF;
+border-radius: 24px 24px 0px 0px;
+
+
+/* Frame 1707491634 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 12px;
+
+position: absolute;
+width: 375px;
+height: 96px;
+left: 0px;
+bottom: 0px;
+
+
+
+/* button */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 14px;
+gap: 6px;
+
+width: 343px;
+height: 50px;
+
+background: #3B9BD5;
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Component 1 */
+
+display: none;
+width: 24px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 로그인 */
+
+width: 152px;
+height: 20px;
+
+/* pretendard/semibold/16 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 128%;
+/* or 20px */
+letter-spacing: -0.02em;
+
+/* white */
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 홈인디케이터 */
+
+width: 375px;
+height: 34px;
+
+border-radius: 0px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Home Indicator */
+
+position: absolute;
+width: 134px;
+height: 5px;
+left: calc(50% - 134px/2 + 0.5px);
+bottom: 8px;
+
+/* BG/Black_Color */
+background: #111111;
+border-radius: 100px;
+
+
+/* Frame 1707491635 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 8px 10px;
+gap: 10px;
+
+position: absolute;
+width: 374px;
+height: 20px;
+left: 1px;
+top: 0px;
+
+
+
+/* Rectangle 103 */
+
+width: 44px;
+height: 4px;
+
+background: #D9D9D9;
+border-radius: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492417 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 16px;
+
+position: absolute;
+width: 375px;
+height: 170px;
+left: 0px;
+top: 28px;
+
+
+
+/* Frame 1707492415 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 16px;
+
+width: 375px;
+height: 60px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Component 34 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 16px 12px 16px 16px;
+gap: 10px;
+
+width: 343px;
+height: 44px;
+
+border: 1px solid #3B9BD5;
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 문의 유형 선택 */
+
+margin: 0 auto;
+width: 25px;
+height: 18px;
+
+/* pretendard/regular/14 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 128%;
+/* identical to box height, or 18px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* icons */
+
+margin: 0 auto;
+width: 20px;
+height: 20px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* arrow_drop_down */
+
+position: absolute;
+left: 34.29%;
+right: 34.29%;
+top: 42.71%;
+bottom: 40.07%;
+
+background: #3B9BD5;
+
+
+/* Line 5 */
+
+width: 375px;
+height: 0px;
+
+border: 1px solid rgba(12, 12, 12, 0.12);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491633 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 12px;
+gap: 10px;
+
+width: 343px;
+height: 94px;
+
+background: rgba(12, 12, 12, 0.04);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707492416 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 319px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 중하 새우로 만든 살로만 새우장 / 소 1kg */
+
+margin: 0 auto;
+width: 214px;
+height: 19px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 138%;
+/* or 19px */
+letter-spacing: -0.02em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* icons */
+
+margin: 0 auto;
+width: 24px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* close_small */
+
+position: absolute;
+left: 31.16%;
+right: 31.22%;
+top: 31.24%;
+bottom: 31.11%;
+
+background: rgba(12, 12, 12, 0.4);
+
+
+/* Frame 1707491632 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 124px;
+
+width: 319px;
+height: 36px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491629 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 4px;
+
+width: 131px;
+height: 23px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 12,900원 */
+
+width: 72px;
+height: 23px;
+
+/* pretendard/semibold/18 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 18px;
+line-height: 128%;
+/* identical to box height, or 23px */
+letter-spacing: -0.02em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 12,900원 */
+
+width: 55px;
+height: 18px;
+
+/* pretendard/regular/14 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 128%;
+/* identical to box height, or 18px */
+letter-spacing: -0.01em;
+text-decoration-line: line-through;
+
+color: rgba(12, 12, 12, 0.4);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491630 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 6px;
+gap: 8px;
+
+width: 88px;
+height: 36px;
+
+border: 1px solid rgba(12, 12, 12, 0.12);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* remove */
+
+width: 20px;
+height: 20px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* remove */
+
+position: absolute;
+left: 22.92%;
+right: 22.92%;
+top: 46.88%;
+bottom: 46.88%;
+
+background: rgba(12, 12, 12, 0.9);
+
+
+/* Frame 1707491631 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 20px;
+height: 20px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 1 */
+
+width: 7px;
+height: 18px;
+
+/* pretendard/semibold/14 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 14px;
+line-height: 128%;
+/* identical to box height, or 18px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* icons */
+
+width: 20px;
+height: 20px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* add */
+
+position: absolute;
+left: 22.92%;
+right: 22.92%;
+top: 22.92%;
+bottom: 22.92%;
+
+background: rgba(12, 12, 12, 0.9);

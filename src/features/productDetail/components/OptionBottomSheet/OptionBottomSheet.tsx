@@ -196,60 +196,76 @@ export default function OptionBottomSheet({
 
           {selectedItems.length > 0 && (
             <div className="option-bottom-sheet__selected-items">
-              {selectedItems.map((item) => (
-                <div key={item.id} className="option-bottom-sheet__selected-item">
-                  <div className="option-bottom-sheet__selected-info">
-                    <span className="option-bottom-sheet__selected-name">{item.mainOption.name}</span>
-                    {item.subOption && (
-                      <span className="option-bottom-sheet__selected-options">{item.subOption.name}</span>
-                    )}
+              {selectedItems.map((item) => {
+                const itemPrice = calculateItemPrice(item);
+                const originalPrice = item.mainOption.compareAtPrice 
+                  ? (item.mainOption.compareAtPrice + (item.subOption?.additionalPrice || 0)) * item.quantity 
+                  : null;
+                const optionLabel = item.subOption 
+                  ? `${item.mainOption.name} / ${item.subOption.name}`
+                  : item.mainOption.name;
+
+                return (
+                  <div key={item.id} className="option-bottom-sheet__selected-item">
+                    <div className="option-bottom-sheet__selected-header">
+                      <div className="option-bottom-sheet__selected-info">
+                        <span className="option-bottom-sheet__selected-name">{optionLabel}</span>
+                      </div>
+                      <button className="option-bottom-sheet__remove-btn" onClick={() => removeItem(item.id)}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M18 6L6 18M6 6L18 18"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="option-bottom-sheet__selected-footer">
+                      <div className="option-bottom-sheet__price-info">
+                        <span className="option-bottom-sheet__selected-price">{formatPrice(itemPrice)}</span>
+                        {originalPrice && originalPrice > itemPrice && (
+                          <span className="option-bottom-sheet__original-price">{formatPrice(originalPrice)}</span>
+                        )}
+                      </div>
+                      <div className="option-bottom-sheet__quantity-controls">
+                        <button
+                          className="option-bottom-sheet__quantity-btn"
+                          onClick={() => updateQuantity(item.id, -1)}
+                          disabled={item.quantity <= 1}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M4 10H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          </svg>
+                        </button>
+                        <span className="option-bottom-sheet__quantity">{item.quantity}</span>
+                        <button
+                          className="option-bottom-sheet__quantity-btn"
+                          onClick={() => updateQuantity(item.id, 1)}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="option-bottom-sheet__quantity-controls">
-                    <button
-                      className="option-bottom-sheet__quantity-btn"
-                      onClick={() => updateQuantity(item.id, -1)}
-                      disabled={item.quantity <= 1}
-                    >
-                      -
-                    </button>
-                    <span className="option-bottom-sheet__quantity">{item.quantity}</span>
-                    <button
-                      className="option-bottom-sheet__quantity-btn"
-                      onClick={() => updateQuantity(item.id, 1)}
-                    >
-                      +
-                    </button>
-                  </div>
-                  <span className="option-bottom-sheet__selected-price">{formatPrice(calculateItemPrice(item))}</span>
-                  <button className="option-bottom-sheet__remove-btn" onClick={() => removeItem(item.id)}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M18 6L6 18M6 6L18 18"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
 
         <div className="option-bottom-sheet__footer">
-          <div className="option-bottom-sheet__total">
-            <span className="option-bottom-sheet__total-label">총 금액</span>
-            <span className="option-bottom-sheet__total-price">{formatPrice(totalPrice)}</span>
-          </div>
           <button
             className="option-bottom-sheet__submit"
             onClick={handleConfirm}
             disabled={selectedItems.length === 0}
           >
             {selectedItems.length > 0
-              ? `${selectedItems.reduce((sum, item) => sum + item.quantity, 0)}개 구매하기`
+              ? `${formatPrice(totalPrice)} 구매하기`
               : '옵션을 선택해주세요'}
           </button>
         </div>
