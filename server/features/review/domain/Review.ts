@@ -7,7 +7,6 @@ export interface ReviewDto {
   content: string;
   imageUrls: string[];
   isVerifiedPurchase: boolean;
-  helpfulCount: number;
   createdAt: string;
 }
 

@@ -25,9 +25,6 @@ export class Review {
   @Column({ type: 'boolean', default: false })
   isVerifiedPurchase!: boolean;
 
-  @Column({ type: 'int', default: 0 })
-  helpfulCount!: number;
-
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 

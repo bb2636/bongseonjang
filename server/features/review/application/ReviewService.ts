@@ -23,7 +23,6 @@ export class ReviewService implements ReviewStatsProvider {
       content: request.content,
       imageUrls: request.imageUrls || null,
       isVerifiedPurchase: false,
-      helpfulCount: 0,
     });
 
     const savedReview = await this.reviewRepository.findById(review.id);
@@ -58,7 +57,6 @@ export class ReviewService implements ReviewStatsProvider {
       content: review.content,
       imageUrls: review.imageUrls || [],
       isVerifiedPurchase: review.isVerifiedPurchase,
-      helpfulCount: review.helpfulCount,
       createdAt: review.createdAt.toISOString(),
     };
   }

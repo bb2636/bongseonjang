@@ -303,7 +303,6 @@ reviews
 ├── content (TEXT)
 ├── imageUrls (TEXT[], 선택)
 ├── isVerifiedPurchase (BOOLEAN)
-├── helpfulCount (INTEGER)
 ├── createdAt (TIMESTAMP)
 └── updatedAt (TIMESTAMP)
 ```
