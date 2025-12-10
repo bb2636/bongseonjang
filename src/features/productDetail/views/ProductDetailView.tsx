@@ -1,5 +1,6 @@
 import ProductImageSlider from '../components/ProductImageSlider';
 import ProductInfo from '../components/ProductInfo';
+import ProductBenefits from '../components/ProductBenefits';
 import ProductOptions from '../components/ProductOptions';
 import ProductDescription from '../components/ProductDescription';
 import ReviewSection from '../components/ReviewSection';
@@ -72,6 +73,12 @@ export default function ProductDetailView({
               reviewCount={product.reviewCount}
               averageRating={product.averageRating}
               onShare={onShare}
+            />
+
+            <ProductBenefits
+              points={Math.floor(product.discountedPrice * 0.01)}
+              shippingFee={product.shippingFee}
+              notice={product.notice}
             />
 
             <ProductOptions
