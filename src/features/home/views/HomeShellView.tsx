@@ -1,4 +1,4 @@
-import { HomeAppBar } from "../components/HomeAppBar";
+import { AppBar } from "@/components/AppBar";
 import { CategoryTabs } from "../components/CategoryTabs";
 import { DefaultHomeContent } from "../components/DefaultHomeContent";
 import { BestProductsContent } from "../components/BestProductsContent";
@@ -39,7 +39,7 @@ export default function HomeShellView({ shell }: HomeShellViewProps) {
 
   return (
     <div className="home-shell">
-      <HomeAppBar onCartClick={onCartClick} onLogoClick={onLogoClick} />
+      <AppBar onCartClick={onCartClick} onLogoClick={onLogoClick} />
       
       <main className="home-shell__content">
         <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />

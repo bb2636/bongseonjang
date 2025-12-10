@@ -13,6 +13,7 @@ export default function CategoryProductsPage() {
     handleToggleFavorite,
     handleCartClick,
     handleBack,
+    handleLogoClick,
   } = useCategoryProductsPage();
 
   return (
@@ -27,6 +28,7 @@ export default function CategoryProductsPage() {
       onToggleFavorite={handleToggleFavorite}
       onCartClick={handleCartClick}
       onBack={handleBack}
+      onLogoClick={handleLogoClick}
     />
   );
 }

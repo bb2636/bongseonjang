@@ -1,22 +1,52 @@
-.search-appbar {
+.app-bar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 8px 10px 16px;
+  padding: 0 8px 0 16px;
+  width: 100%;
   height: 48px;
-  box-sizing: border-box;
   background: #FFFFFF;
+  box-sizing: border-box;
 }
 
-.search-appbar__logo-button {
+.app-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-bar__right {
+  display: flex;
+  align-items: center;
+}
+
+.app-bar__back-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: -8px;
+}
+
+.app-bar__back-button:hover {
+  background: rgba(12, 12, 12, 0.04);
+  border-radius: 50%;
+}
+
+.app-bar__logo-button {
   background: transparent;
   border: none;
   padding: 0;
   cursor: pointer;
 }
 
-.search-appbar__title {
+.app-bar__title {
   font-family: 'Pretendard', sans-serif;
   font-style: normal;
   font-weight: 500;
@@ -27,20 +57,31 @@
   color: #3B9BD5;
 }
 
-.search-appbar__cart {
+.app-bar__cart-button {
   position: relative;
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
+  padding: 10px;
   width: 42px;
   height: 42px;
-  padding: 10px;
   background: transparent;
   border: none;
   cursor: pointer;
 }
 
-.search-appbar__cart-badge {
+.app-bar__cart-button:hover {
+  background: rgba(12, 12, 12, 0.04);
+  border-radius: 50%;
+}
+
+.app-bar__cart-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.app-bar__cart-badge {
   position: absolute;
   right: -6px;
   top: -4px;

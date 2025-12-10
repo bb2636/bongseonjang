@@ -1,5 +1,5 @@
 import './SearchView.css';
-import SearchAppBar from '../components/SearchAppBar';
+import { AppBar } from '@/components/AppBar';
 import SearchInput from '../components/SearchInput';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import { BottomNav } from '@/components/BottomNav';
@@ -12,7 +12,7 @@ interface SearchViewProps {
 export default function SearchView({ state }: SearchViewProps) {
   return (
     <div className="search-view">
-      <SearchAppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} />
+      <AppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} />
       
       <main className="search-view__content">
         <section className="search-view__search-section">

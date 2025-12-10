@@ -1,4 +1,4 @@
-import CategoryProductsAppBar from '../components/CategoryProductsAppBar/CategoryProductsAppBar';
+import { AppBar } from '@/components/AppBar';
 import { CategoryTabs } from '../components/CategoryTabs';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import type { ProductCardData } from '@/components/ProductCard';
@@ -15,6 +15,7 @@ interface CategoryProductsViewProps {
   onToggleFavorite: (productId: string) => void;
   onCartClick: () => void;
   onBack: () => void;
+  onLogoClick: () => void;
 }
 
 export default function CategoryProductsView({
@@ -28,12 +29,15 @@ export default function CategoryProductsView({
   onToggleFavorite,
   onCartClick,
   onBack,
+  onLogoClick,
 }: CategoryProductsViewProps) {
   return (
     <div className="category-products-page">
-      <CategoryProductsAppBar 
+      <AppBar 
+        showBackButton
+        onBackClick={onBack}
+        onLogoClick={onLogoClick}
         onCartClick={onCartClick}
-        onBack={onBack}
       />
       <CategoryTabs 
         activeSlug={activeSlug}

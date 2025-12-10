@@ -23,6 +23,7 @@ export interface UseCategoryProductsPageReturn {
   handleToggleFavorite: (productId: string) => void;
   handleCartClick: () => void;
   handleBack: () => void;
+  handleLogoClick: () => void;
 }
 
 export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
@@ -57,6 +58,10 @@ export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
     navigate(-1);
   };
 
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
   return {
     activeSlug,
     products,
@@ -68,5 +73,6 @@ export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
     handleToggleFavorite,
     handleCartClick,
     handleBack,
+    handleLogoClick,
   };
 }
