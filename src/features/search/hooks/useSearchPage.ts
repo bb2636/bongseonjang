@@ -77,9 +77,38 @@ export function useSearchPage() {
     }
   }, [searchQuery, recentSearches]);
 
-  const handleRecentSearchClick = useCallback((term: string) => {
+  const handleRecentSearchClick = useCallback(async (term: string) => {
     setSearchQuery(term);
-  }, []);
+    setIsSearching(true);
+    setHasSearched(true);
+
+    const updatedRecent = [
+      term,
+      ...recentSearches.filter(s => s !== term)
+    ].slice(0, 10);
+    setRecentSearches(updatedRecent);
+
+    try {
+      const response = await fetch(`/api/products?search=${encodeURIComponent(term)}`);
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data.map((p: any) => ({
+          id: String(p.id),
+          name: p.name || '상품명 없음',
+          price: p.lowestPrice || p.basePrice || 0,
+          originalPrice: p.basePrice || undefined,
+          discountRate: p.discountRate || 0,
+          imageUrl: p.thumbnailUrl || '',
+          isFavorite: false,
+        })));
+      }
+    } catch (error) {
+      console.error('Search failed:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [recentSearches]);
 
   const handleRecentSearchDelete = useCallback((term: string) => {
     setRecentSearches(prev => prev.filter(s => s !== term));
