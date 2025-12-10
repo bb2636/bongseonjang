@@ -41,12 +41,12 @@ export default function OptionBottomSheet({
   }, [isOpen]);
 
   const handleMainOptionSelect = useCallback((option: MainOption) => {
-    setSelectedMainOption(option);
+    setSelectedMainOption(prev => prev?.id === option.id ? null : option);
     setSelectedSubOption(null);
   }, []);
 
   const handleSubOptionSelect = useCallback((option: SubOption) => {
-    setSelectedSubOption(option);
+    setSelectedSubOption(prev => prev?.id === option.id ? null : option);
   }, []);
 
   const canAddToList = selectedMainOption !== null;
