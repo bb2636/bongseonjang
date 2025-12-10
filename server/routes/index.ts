@@ -15,6 +15,7 @@ import { bottomBannerRoutes } from '../features/bottomBanner';
 import { productRoutes } from '../features/product';
 import { eventRoutes } from '../features/event';
 import { reviewRoutes } from '../features/review';
+import { searchRoutes } from '../features/search';
 
 const router = Router();
 
@@ -34,5 +35,6 @@ router.use('/bottom-banners', bottomBannerRoutes);
 router.use('/products', productRoutes);
 router.use('/events', eventRoutes);
 router.use('/reviews', reviewRoutes);
+router.use('/search', searchRoutes);
 
 export default router;
