@@ -4,6 +4,16 @@ import type { ProductCardData } from '@/components/ProductCard';
 
 const RECENT_SEARCHES_KEY = 'recentSearches';
 
+export type SortBy = 'default' | 'newest' | 'priceAsc' | 'priceDesc' | 'discountDesc';
+
+export const SORT_OPTIONS: { value: SortBy; label: string }[] = [
+  { value: 'default', label: '기본순' },
+  { value: 'newest', label: '신상품순' },
+  { value: 'priceAsc', label: '가격 낮은순' },
+  { value: 'priceDesc', label: '가격 높은순' },
+  { value: 'discountDesc', label: '할인율순' },
+];
+
 interface PopularSearchTerm {
   term: string;
   searchCount: number;
@@ -46,6 +56,8 @@ export function useSearchPage() {
   const [searchResults, setSearchResults] = useState<ProductCardData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [sortBy, setSortBy] = useState<SortBy>('default');
+  const [currentSearchTerm, setCurrentSearchTerm] = useState('');
 
   useEffect(() => {
     saveRecentSearches(recentSearches);
@@ -66,32 +78,38 @@ export function useSearchPage() {
     fetchPopularSearches();
   }, []);
 
-  const performSearch = useCallback(async (term: string) => {
+  const performSearch = useCallback(async (term: string, sort: SortBy = sortBy, isNewSearch: boolean = true) => {
     if (!term.trim()) return;
 
     setSearchQuery(term);
+    setCurrentSearchTerm(term);
     setIsSearching(true);
     setHasSearched(true);
 
-    const updatedRecent = [
-      term,
-      ...recentSearches.filter(s => s !== term)
-    ].slice(0, 10);
-    setRecentSearches(updatedRecent);
-
-    recordSearchToServer(term);
+    if (isNewSearch) {
+      const updatedRecent = [
+        term,
+        ...recentSearches.filter(s => s !== term)
+      ].slice(0, 10);
+      setRecentSearches(updatedRecent);
+      recordSearchToServer(term);
+    }
 
     try {
-      const response = await fetch(`/api/products?search=${encodeURIComponent(term)}`);
+      const params = new URLSearchParams();
+      params.set('search', term);
+      params.set('sortBy', sort);
+      
+      const response = await fetch(`/api/products?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.map((p: any) => ({
           id: String(p.id),
           name: p.name || '상품명 없음',
-          price: p.lowestPrice || p.basePrice || 0,
-          originalPrice: p.basePrice || undefined,
-          discountRate: p.discountRate || 0,
-          imageUrl: p.thumbnailUrl || '',
+          price: p.discountedPrice || p.originalPrice || 0,
+          originalPrice: p.originalPrice || undefined,
+          discountRate: p.discountPercent || 0,
+          imageUrl: p.imageUrl || '',
           isFavorite: false,
         })));
       }
@@ -101,7 +119,7 @@ export function useSearchPage() {
     } finally {
       setIsSearching(false);
     }
-  }, [recentSearches]);
+  }, [recentSearches, sortBy]);
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
@@ -124,6 +142,13 @@ export function useSearchPage() {
   const handlePopularSearchClick = useCallback((_term: string) => {
     // 현재 인기검색어 클릭 시 아무 동작 안함
   }, []);
+
+  const handleSortChange = useCallback((newSort: SortBy) => {
+    setSortBy(newSort);
+    if (currentSearchTerm) {
+      performSearch(currentSearchTerm, newSort, false);
+    }
+  }, [currentSearchTerm, performSearch]);
 
   const handleRecentSearchDelete = useCallback((term: string) => {
     setRecentSearches(prev => prev.filter(s => s !== term));
@@ -160,11 +185,13 @@ export function useSearchPage() {
     searchResults,
     isSearching,
     hasSearched,
+    sortBy,
     onSearchChange: handleSearchChange,
     onSearchClear: handleSearchClear,
     onSearch: handleSearch,
     onRecentSearchClick: handleRecentSearchClick,
     onPopularSearchClick: handlePopularSearchClick,
+    onSortChange: handleSortChange,
     onRecentSearchDelete: handleRecentSearchDelete,
     onClearAllRecent: handleClearAllRecent,
     onCartClick: handleCartClick,

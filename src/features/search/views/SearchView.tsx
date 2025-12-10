@@ -3,7 +3,9 @@ import { AppBar } from '@/components/AppBar';
 import SearchInput from '../components/SearchInput';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import { BottomNav } from '@/components/BottomNav';
+import SortDropdown from '../components/SortDropdown';
 import type { SearchPageState } from '../hooks/useSearchPage';
+import { SORT_OPTIONS } from '../hooks/useSearchPage';
 
 interface SearchViewProps {
   state: SearchPageState;
@@ -95,6 +97,13 @@ export default function SearchView({ state }: SearchViewProps) {
 
         {state.hasSearched && (
           <section className="search-view__results">
+            <div className="search-view__sort-bar">
+              <SortDropdown
+                value={state.sortBy}
+                options={SORT_OPTIONS}
+                onChange={state.onSortChange}
+              />
+            </div>
             {!state.isSearching && state.searchResults.length === 0 ? (
               <div className="search-view__empty">
                 <p>검색 결과가 없습니다.</p>

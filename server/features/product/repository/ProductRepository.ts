@@ -1,8 +1,11 @@
 import type { Product } from '../../../entity/Product';
 
+export type SortBy = 'default' | 'newest' | 'priceAsc' | 'priceDesc' | 'discountDesc';
+
 export interface ProductFilter {
   productCategory?: string;
   search?: string;
+  sortBy?: SortBy;
 }
 
 export interface ProductRepository {

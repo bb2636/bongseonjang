@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import type { ProductService } from '../application/ProductService';
-import type { ProductFilter } from '../repository/ProductRepository';
+import type { ProductFilter, SortBy } from '../repository/ProductRepository';
 
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -25,7 +25,7 @@ export class ProductController {
 
   async getAllProducts(req: Request, res: Response): Promise<void> {
     try {
-      const { productCategory, search } = req.query;
+      const { productCategory, search, sortBy } = req.query;
       
       const filter: ProductFilter = {};
       if (productCategory && typeof productCategory === 'string') {
@@ -33,6 +33,12 @@ export class ProductController {
       }
       if (search && typeof search === 'string') {
         filter.search = search;
+      }
+      if (sortBy && typeof sortBy === 'string') {
+        const validSortOptions: SortBy[] = ['default', 'newest', 'priceAsc', 'priceDesc', 'discountDesc'];
+        if (validSortOptions.includes(sortBy as SortBy)) {
+          filter.sortBy = sortBy as SortBy;
+        }
       }
 
       const products = await this.productService.getAllProducts(filter);

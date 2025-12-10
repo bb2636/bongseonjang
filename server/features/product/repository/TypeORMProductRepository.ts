@@ -42,9 +42,39 @@ export class TypeORMProductRepository implements ProductRepository {
       queryBuilder.andWhere('product.name ILIKE :search', { search: `%${filter.search}%` });
     }
 
-    return queryBuilder
-      .orderBy('product.sortOrder', 'ASC')
-      .getMany();
+    switch (filter?.sortBy) {
+      case 'newest':
+        queryBuilder
+          .orderBy('product.createdAt', 'DESC')
+          .addOrderBy('product.sortOrder', 'ASC')
+          .addOrderBy('product.id', 'ASC');
+        break;
+      case 'priceAsc':
+        queryBuilder
+          .orderBy('product.basePrice', 'ASC')
+          .addOrderBy('product.sortOrder', 'ASC')
+          .addOrderBy('product.id', 'ASC');
+        break;
+      case 'priceDesc':
+        queryBuilder
+          .orderBy('product.basePrice', 'DESC')
+          .addOrderBy('product.sortOrder', 'ASC')
+          .addOrderBy('product.id', 'ASC');
+        break;
+      case 'discountDesc':
+        queryBuilder
+          .orderBy('product.discountRate', 'DESC')
+          .addOrderBy('product.sortOrder', 'ASC')
+          .addOrderBy('product.id', 'ASC');
+        break;
+      default:
+        queryBuilder
+          .orderBy('product.sortOrder', 'ASC')
+          .addOrderBy('product.id', 'ASC');
+        break;
+    }
+
+    return queryBuilder.getMany();
   }
 
   async findById(id: string): Promise<Product | null> {
