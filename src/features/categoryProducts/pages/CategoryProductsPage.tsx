@@ -5,8 +5,10 @@ export default function CategoryProductsPage() {
   const {
     products,
     isLoading,
+    error,
     handleProductClick,
     handleAddToCart,
+    handleToggleFavorite,
     handleCartClick,
     handleBack,
   } = useCategoryProductsPage();
@@ -15,8 +17,10 @@ export default function CategoryProductsPage() {
     <CategoryProductsView
       products={products}
       isLoading={isLoading}
+      error={error}
       onProductClick={handleProductClick}
       onAddToCart={handleAddToCart}
+      onToggleFavorite={handleToggleFavorite}
       onCartClick={handleCartClick}
       onBack={handleBack}
     />

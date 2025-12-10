@@ -1,20 +1,15 @@
 import CategoryProductsAppBar from '../components/CategoryProductsAppBar/CategoryProductsAppBar';
-import ProductGrid from '../components/ProductGrid/ProductGrid';
+import { ProductGridContent } from '@/components/ProductGridContent';
+import type { ProductCardData } from '@/components/ProductCard';
 import './CategoryProductsView.css';
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  discountRate: number;
-  imageUrl: string;
-}
-
 interface CategoryProductsViewProps {
-  products: Product[];
+  products: ProductCardData[];
   isLoading: boolean;
-  onProductClick: (productId: number) => void;
-  onAddToCart: (productId: number) => void;
+  error: Error | null;
+  onProductClick: (productId: string) => void;
+  onAddToCart: (productId: string) => void;
+  onToggleFavorite: (productId: string) => void;
   onCartClick: () => void;
   onBack: () => void;
 }
@@ -22,8 +17,10 @@ interface CategoryProductsViewProps {
 export default function CategoryProductsView({
   products,
   isLoading,
+  error,
   onProductClick,
   onAddToCart,
+  onToggleFavorite,
   onCartClick,
   onBack,
 }: CategoryProductsViewProps) {
@@ -34,15 +31,14 @@ export default function CategoryProductsView({
         onBack={onBack}
       />
       <main className="category-products-page__content">
-        {isLoading ? (
-          <div className="category-products-page__loading">로딩중...</div>
-        ) : (
-          <ProductGrid 
-            products={products}
-            onProductClick={onProductClick}
-            onAddToCart={onAddToCart}
-          />
-        )}
+        <ProductGridContent
+          products={products}
+          isLoading={isLoading}
+          error={error}
+          onAddToCart={onAddToCart}
+          onToggleFavorite={onToggleFavorite}
+          onProductClick={onProductClick}
+        />
       </main>
     </div>
   );
