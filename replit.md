@@ -93,17 +93,16 @@ feat: 간단한 제목
 프론트엔드는 Hook-First 패턴을 따르며, Context, Api, Service, Hook, Page, View 레이어로 구성됩니다. Page는 Hook 호출 후 View에 props를 전달하고, View는 UI 렌더링만 담당합니다. 모든 페이지는 Hook과 View로 분리되어야 하며, Page 파일에는 CSS import를 금지하고, View는 순수 프레젠테이션 컴포넌트여야 합니다.
 
 **프론트엔드 폴더 구조:**
-`src/` 아래에 `features/` (기능별 모듈), `components/` (공통), `contexts/`, `hooks/`, `layouts/`, `services/`, `api/`, `assets/`, `styles/` 등의 폴더를 가집니다. 기능 전용 서비스는 `features/<feature>/services/`에, 공통 유틸리티는 `src/services/`에 위치합니다.
+`src/` 아래에 `features/`, `components/`, `contexts/`, `hooks/`, `layouts/`, `services/`, `api/`, `assets/`, `styles/` 등의 폴더를 가집니다.
 
 ### State Management
-- **전역 상태**: React Context 사용 (AuthContext, ToastContext 등).
+- **전역 상태**: React Context 사용.
 - **서버 상태**: React Query 사용 (5분 staleTime 캐싱, `keepPreviousData`, Query Key에 사용자 ID 포함).
 - **기능별 상태**: Custom Hook으로 캡슐화.
-- **멀티 스텝 폼**: Context Provider와 Step별 Hook 분리 패턴을 사용합니다.
+- **멀티 스텝 폼**: Context Provider와 Step별 Hook 분리 패턴 사용.
 
 ### React Query 패턴
-`useQuery`는 데이터 조회에 사용되며, `queryKey`, `queryFn`, `staleTime`, `enabled` 옵션을 가집니다.
-`useMutation`은 데이터 변경에 사용되며, `mutationFn`, `onSuccess`, `onError` 콜백을 통해 비동기 작업을 처리합니다. 로딩 상태는 `mutation.isPending`을 사용하며, 모든 API 호출은 `useMutation`으로 관리합니다.
+`useQuery`는 데이터 조회에, `useMutation`은 데이터 변경에 사용되며, 로딩 상태는 `mutation.isPending`으로 관리합니다.
 
 ### Backend Architecture (Clean Architecture + Feature-Based)
 백엔드는 Clean Architecture를 따르며, 기능(Feature)별로 폴더를 구성합니다. 각 Feature 내에서 Controller, Application, Domain, Repository, Routes 레이어가 단방향 의존성을 유지합니다.
@@ -111,241 +110,50 @@ feat: 간단한 제목
 **백엔드 폴더 구조:**
 ```
 server/
-├── features/                    # 기능별 모듈
-│   ├── auth/                    # 인증 + 사용자
+├── features/                    # 기능별 모듈 (auth, emailVerification, referral, home 등)
+│   ├── [feature_name]/
 │   │   ├── controller/
 │   │   ├── application/
 │   │   ├── domain/
 │   │   ├── repository/
 │   │   ├── routes/
 │   │   └── index.ts
-│   ├── emailVerification/       # 이메일 인증
-│   │   ├── controller/
-│   │   ├── application/
-│   │   ├── repository/
-│   │   ├── routes/
-│   │   └── index.ts
-│   ├── referral/                # 추천인
-│   │   ├── controller/
-│   │   ├── application/
-│   │   ├── repository/
-│   │   ├── routes/
-│   │   └── index.ts
-│   └── home/                    # 홈 화면
-│       ├── controller/
-│       ├── application/
-│       ├── domain/
-│       ├── repository/
-│       ├── routes/
-│       └── index.ts
-├── common/                      # 공통 모듈
-│   ├── middleware/              # authMiddleware 등
-│   └── services/                # emailService 등
+├── common/                      # 공통 모듈 (middleware, services)
 ├── config/                      # 설정 (database, repositories)
 ├── entity/                      # TypeORM 엔티티
-├── routes/                      # 라우트 집계 (features에서 import)
+├── routes/                      # 라우트 집계
 └── index.ts                     # 서버 엔트리
 ```
 
 ### Repository Pattern (Clean Architecture)
-**중요**: Repository는 TypeORM Entity를 반환하고, Service에서 DTO로 변환합니다.
+Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈니스 로직 처리 및 DTO로 변환합니다. Mock/Real 스위칭을 지원하는 Generic Factory + Map 캐싱 패턴을 사용합니다.
 
-**레이어 책임:**
-- **Repository**: DB 접근, Entity 반환
-- **Service**: 비즈니스 로직, Entity → DTO 변환
-- **Controller**: HTTP 요청/응답 처리
-
-**예시 (Product feature):**
-```typescript
-// Repository - Entity 반환
-interface ProductRepository {
-  findById(id: string): Promise<Product | null>;
-}
-
-// Service - DTO 변환 + 비즈니스 로직
-class ProductService {
-  async getProductById(id: string): Promise<ProductDetailDto | null> {
-    const product = await this.productRepository.findById(id);
-    if (!product) return null;
-    return this.toDetailDto(product);
-  }
-}
-```
-
-### Repository Pattern (Mock/Real 스위칭)
-목 데이터와 실제 DB 구현체를 쉽게 전환할 수 있는 Generic Factory + Map 캐싱 패턴:
-
-**파일 구조:**
-```
-server/features/<feature>/repository/
-├── <Feature>Repository.ts        # 인터페이스 정의
-├── Mock<Feature>Repository.ts    # 목 구현체 (개발용)
-└── TypeORM<Feature>Repository.ts # 실제 구현체 (프로덕션용)
-
-server/config/
-└── repositories.ts               # 구현체 선택 설정
-```
-
-**핵심 구조:**
-```typescript
-export const REPOSITORY_TYPE = { MOCK: 'mock', REAL: 'real' } as const;
-
-const config: RepositoryConfig = { referral: REPOSITORY_TYPE.MOCK };
-
-const repositoryMap: RepositoryMap = {
-  referral: {
-    [REPOSITORY_TYPE.MOCK]: () => new MockReferralRepository(),
-    [REPOSITORY_TYPE.REAL]: () => new TypeORMReferralRepository(),
-  },
-};
-
-const instances = new Map<keyof RepositoryConfig, unknown>();
-
-function createRepository<T>(name: keyof RepositoryConfig): T {
-  const cached = instances.get(name);
-  if (cached) return cached as T;
-  const instance = repositoryMap[name][config[name]]();
-  instances.set(name, instance);
-  return instance as T;
-}
-
-export const repositories = {
-  get referral() { return createRepository<ReferralRepository>('referral'); },
-};
-```
-
-**새 Repository 추가 (2곳만 수정):**
-1. `repository/` 폴더에 인터페이스 + Mock/TypeORM 구현체 생성
-2. `config/repositories.ts`에서:
-   - `RepositoryConfig` + `RepositoryMap` 인터페이스에 항목 추가
-   - `config` + `repositoryMap` 객체에 값 추가
-   - `repositories` 객체에 getter 추가
-
-**Mock/Real 전환:** `config` 객체에서 `REPOSITORY_TYPE.MOCK` ↔ `REPOSITORY_TYPE.REAL` 변경
-
-## UI/UX Patterns
+### UI/UX Patterns
 - **CSS 변수**: 일관된 테마 적용.
 - **전역 토스트 알림 시스템**.
-- **공통 Input/PasswordInput 컴포넌트**: 일관된 폼 스타일링. `src/components/`에 위치하며, 라벨, 입력 필드, 에러 메시지를 통합 제공합니다.
+- **공통 Input/PasswordInput 컴포넌트**: 일관된 폼 스타일링.
 - **반응형 디자인**: 공통 컴포넌트를 활용.
 - **스켈레톤 로딩**: UX 개선.
 
 ### CompletionScreen 공용 컴포넌트
-완료 화면(회원가입 완료, 비밀번호 변경 완료 등)에서 재사용하는 공용 컴포넌트입니다.
-
-**위치**: `src/components/CompletionScreen/`
-
-**구조**:
-```
-├── CompletionScreen.tsx   # 메인 컴포넌트
-├── CompletionScreen.css   # 스타일
-├── constants.ts           # variant별 멘트 정의
-└── index.ts               # export
-```
-
-**사용법**:
-```tsx
-import { CompletionScreen, COMPLETION_VARIANT } from '@/components/CompletionScreen';
-
-<CompletionScreen
-  variant={COMPLETION_VARIANT.SIGNUP_COMPLETE}
-  onButtonClick={handleClick}
-/>
-```
-
-**새 variant 추가**: `constants.ts`의 `COMPLETION_VARIANT`와 `COMPLETION_CONTENT`에 항목 추가
-
-**Props 직접 전달**: 특수한 경우 `title`, `subtitle`, `buttonText` props로 직접 전달 가능
+회원가입 완료, 비밀번호 변경 완료 등 완료 화면에서 재사용되는 공용 컴포넌트입니다.
 
 ### Home Feature (홈 화면)
-홈 화면은 feature-first 레이아웃 전략을 사용하며, MainLayout을 사용하지 않고 자체 AppBar/BottomNav를 가집니다.
+홈 화면은 feature-first 레이아웃 전략을 사용하며, 자체 AppBar/BottomNav를 가집니다. HeroBanner는 Swiper.js를 사용하여 자동 재생, 무한 루프, 페이지네이션 dots 기능을 제공합니다.
 
-**홈 화면 컴포넌트:**
-```
-src/features/home/
-├── components/
-│   ├── HomeAppBar/           # 상단 앱바 (봉선장 로고 + 장바구니)
-│   ├── HomeBottomNav/        # 하단 네비게이션 (홈, 카테고리, 검색, 봉크루)
-│   └── HeroBanner/           # 히어로 배너 (Swiper.js 자동 슬라이드)
-├── hooks/
-│   ├── useHomePage.ts        # 홈 페이지 로직
-│   └── useHeroImages.ts      # 히어로 이미지 React Query hook
-├── api/
-│   └── heroImageApi.ts       # API 호출
-├── types/
-│   └── heroImage.ts          # HeroImage 타입 정의
-├── views/
-│   └── HomeView.tsx          # 홈 화면 View
-└── pages/
-    └── HomePage.tsx          # 홈 페이지 (Hook 호출 + View 렌더링)
-```
-
-**HeroBanner (Swiper.js):**
-- 자동 재생 (3초 간격)
-- 무한 루프
-- 페이지네이션 dots
-- 높이: 247px
-
-**Home API:**
-- `GET /api/home/hero-images`: 히어로 배너 이미지 목록
-- Mock/Real Repository 스위칭 지원
+### Product Image (상품 이미지)
+상품 이미지는 `product_images` 테이블에서 관리되며, `isThumbnail` 플래그와 Partial Unique Index를 사용하여 상품당 하나의 썸네일만 허용합니다.
 
 ### Review Feature (리뷰 시스템)
-상품에 대한 리뷰 및 평점 관리 기능입니다.
-
-**Entity 구조 (reviews 테이블):**
-```
-reviews
-├── id (UUID, PK)
-├── productId (UUID, FK → products.id)
-├── userId (UUID, FK → users.id)
-├── rating (INTEGER, 1~5)
-├── content (TEXT)
-├── imageUrls (TEXT[], 선택)
-├── isVerifiedPurchase (BOOLEAN)
-├── createdAt (TIMESTAMP)
-└── updatedAt (TIMESTAMP)
-```
-
-**API 엔드포인트:**
-- `GET /api/reviews/product/:productId` - 상품 리뷰 목록
-- `GET /api/reviews/product/:productId/stats` - 상품 리뷰 통계 (평균 평점, 분포)
-- `POST /api/reviews` - 리뷰 작성 (인증 필요)
-- `DELETE /api/reviews/:id` - 리뷰 삭제 (인증 필요)
+상품에 대한 리뷰 및 평점 관리 기능으로, `reviews` 테이블에 저장되며 상품 리뷰 목록, 통계 조회, 작성, 삭제 API를 제공합니다.
 
 ### Product Detail Tabs (상품 상세 탭)
-상품 상세페이지의 탭 네비게이션 컴포넌트입니다.
-
-**컴포넌트 위치:** `src/features/productDetail/components/ProductDetailTabs/`
-
-**탭 구성:**
-- 상품정보: 상품 기본 정보, 옵션, 상세 설명
-- 후기 N: 리뷰 목록 (N = 리뷰 개수)
-- 문의: 문의 기능 (준비 중)
-
-**스타일:**
-- 선택된 탭: 파란색(#3B9BD5) 하단 테두리 + 숫자
-- 높이: 38px, 3등분 너비
-
-**Service 간 의존성 (ReviewStatsProvider):**
-ProductService가 리뷰 통계를 가져오기 위해 ReviewService를 주입받습니다.
-```typescript
-interface ReviewStatsProvider {
-  getReviewStatsByProductId(productId: string): Promise<ReviewStats>;
-}
-
-class ProductService {
-  constructor(
-    private productRepository: ProductRepository,
-    private reviewStatsProvider?: ReviewStatsProvider,
-  ) {}
-}
-```
+상품 상세페이지의 탭 네비게이션 컴포넌트로 "상품정보", "후기 N", "문의" 탭으로 구성됩니다. ProductService는 ReviewService를 주입받아 리뷰 통계를 가져옵니다.
 
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
 - **Vite**: 빌드 도구
-- **Vanilla CSS**: 스타일링 (CSS 변수 활용)
+- **Vanilla CSS**: 스타일링
 - **React Query**: 서버 상태 관리
 - **Swiper.js**: 이미지 슬라이더/캐러셀
 - **Express.js**: 백엔드 프레임워크
