@@ -1,10 +1,27 @@
 import { useState } from 'react';
 import { FilterChips } from '../FilterChips';
+import { ProductGridContent } from '@/components/ProductGridContent';
 import { PRODUCT_CATEGORIES } from '../../constants/productCategories';
+import { useProductsByCategory } from '../../hooks/useProductsByCategory';
 import './AllProductsContent.css';
+
+const DISPLAY_CATEGORY = '전체상품';
 
 export default function AllProductsContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const { products, isLoading, error } = useProductsByCategory(DISPLAY_CATEGORY);
+
+  const handleAddToCart = (productId: string) => {
+    console.log('Add to cart:', productId);
+  };
+
+  const handleToggleFavorite = (productId: string) => {
+    console.log('Toggle favorite:', productId);
+  };
+
+  const handleProductClick = (productId: string) => {
+    console.log('Product clicked:', productId);
+  };
 
   return (
     <div className="all-products-content">
@@ -13,10 +30,14 @@ export default function AllProductsContent() {
         selectedChipId={selectedCategory}
         onChipSelect={setSelectedCategory}
       />
-      <div className="all-products-content__placeholder">
-        <h2 className="all-products-content__title">전체상품</h2>
-        <p className="all-products-content__description">준비 중입니다</p>
-      </div>
+      <ProductGridContent
+        products={products}
+        isLoading={isLoading}
+        error={error}
+        onAddToCart={handleAddToCart}
+        onToggleFavorite={handleToggleFavorite}
+        onProductClick={handleProductClick}
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { badameunRoutes } from '../features/badameun';
 import { bongseonjangTvRoutes } from '../features/bongseonjangTv';
 import { bongcookRoutes } from '../features/bongcook';
 import { bottomBannerRoutes } from '../features/bottomBanner';
+import { productRoutes } from '../features/product';
 
 const router = Router();
 
@@ -28,5 +29,6 @@ router.use('/badameun', badameunRoutes);
 router.use('/bongseonjang-tv', bongseonjangTvRoutes);
 router.use('/bongcook', bongcookRoutes);
 router.use('/bottom-banners', bottomBannerRoutes);
+router.use('/products', productRoutes);
 
 export default router;
