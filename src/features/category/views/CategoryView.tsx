@@ -1,5 +1,6 @@
 import CategoryAppBar from '../components/CategoryAppBar';
 import CategoryList from '../components/CategoryList';
+import { CategoryCardGrid } from '../components/CategoryCardGrid';
 import BottomNav from '../../../components/BottomNav/BottomNav';
 import { Category } from '../types/category';
 import './CategoryView.css';
@@ -7,6 +8,7 @@ import './CategoryView.css';
 interface CategoryViewProps {
   categories: Category[];
   onCategoryClick: (category: Category) => void;
+  onBrandClick: (brandId: string) => void;
   onCartClick: () => void;
   onLogoClick: () => void;
 }
@@ -14,6 +16,7 @@ interface CategoryViewProps {
 export default function CategoryView({
   categories,
   onCategoryClick,
+  onBrandClick,
   onCartClick,
   onLogoClick,
 }: CategoryViewProps) {
@@ -32,6 +35,8 @@ export default function CategoryView({
           categories={categories}
           onCategoryClick={onCategoryClick}
         />
+        
+        <CategoryCardGrid onCardClick={onBrandClick} />
       </main>
 
       <BottomNav />

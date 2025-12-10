@@ -4,6 +4,7 @@ import { CATEGORIES, Category } from '../types/category';
 export interface UseCategoryPageReturn {
   categories: Category[];
   handleCategoryClick: (category: Category) => void;
+  handleBrandClick: (brandId: string) => void;
   handleCartClick: () => void;
   handleLogoClick: () => void;
 }
@@ -13,6 +14,10 @@ export function useCategoryPage(): UseCategoryPageReturn {
 
   const handleCategoryClick = (category: Category) => {
     navigate(`/?category=${category.slug}`);
+  };
+
+  const handleBrandClick = (brandId: string) => {
+    navigate(`/?brand=${brandId}`);
   };
 
   const handleCartClick = () => {
@@ -26,6 +31,7 @@ export function useCategoryPage(): UseCategoryPageReturn {
   return {
     categories: CATEGORIES,
     handleCategoryClick,
+    handleBrandClick,
     handleCartClick,
     handleLogoClick,
   };

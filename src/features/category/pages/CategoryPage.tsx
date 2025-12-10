@@ -5,6 +5,7 @@ export default function CategoryPage() {
   const {
     categories,
     handleCategoryClick,
+    handleBrandClick,
     handleCartClick,
     handleLogoClick,
   } = useCategoryPage();
@@ -13,6 +14,7 @@ export default function CategoryPage() {
     <CategoryView
       categories={categories}
       onCategoryClick={handleCategoryClick}
+      onBrandClick={handleBrandClick}
       onCartClick={handleCartClick}
       onLogoClick={handleLogoClick}
     />
