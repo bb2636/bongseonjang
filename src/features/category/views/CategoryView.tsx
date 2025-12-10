@@ -28,7 +28,6 @@ export default function CategoryView({
         <div className="category-page__header">
           <h1 className="category-page__title">카테고리</h1>
         </div>
-        <div className="category-page__divider" />
         <CategoryList 
           categories={categories}
           onCategoryClick={onCategoryClick}
