@@ -9,6 +9,13 @@
   background: #FFFFFF;
 }
 
+.search-appbar__logo-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 .search-appbar__title {
   font-family: 'Pretendard', sans-serif;
   font-style: normal;
@@ -17,7 +24,7 @@
   line-height: 128%;
   text-align: center;
   letter-spacing: -0.02em;
-  color: #0C0C0C;
+  color: #3B9BD5;
 }
 
 .search-appbar__cart {

@@ -3,15 +3,23 @@ import './SearchAppBar.css';
 interface SearchAppBarProps {
   cartCount?: number;
   onCartClick: () => void;
+  onLogoClick: () => void;
 }
 
 export default function SearchAppBar({ 
   cartCount = 0, 
-  onCartClick 
+  onCartClick,
+  onLogoClick
 }: SearchAppBarProps) {
   return (
     <header className="search-appbar">
-      <span className="search-appbar__title">봉선장</span>
+      <button 
+        type="button"
+        className="search-appbar__logo-button"
+        onClick={onLogoClick}
+      >
+        <span className="search-appbar__title">봉선장</span>
+      </button>
       <button className="search-appbar__cart" onClick={onCartClick}>
         <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
           <path 

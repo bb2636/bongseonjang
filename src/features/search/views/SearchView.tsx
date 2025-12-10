@@ -12,7 +12,7 @@ interface SearchViewProps {
 export default function SearchView({ state }: SearchViewProps) {
   return (
     <div className="search-view">
-      <SearchAppBar onCartClick={state.onCartClick} />
+      <SearchAppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} />
       
       <main className="search-view__content">
         <section className="search-view__search-section">
