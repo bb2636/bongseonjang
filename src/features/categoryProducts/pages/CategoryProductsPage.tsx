@@ -3,11 +3,8 @@ import CategoryProductsView from '../views/CategoryProductsView';
 
 export default function CategoryProductsPage() {
   const {
-    activeCategory,
-    categories,
     products,
     isLoading,
-    handleCategoryChange,
     handleProductClick,
     handleAddToCart,
     handleCartClick,
@@ -16,11 +13,8 @@ export default function CategoryProductsPage() {
 
   return (
     <CategoryProductsView
-      activeCategory={activeCategory}
-      categories={categories}
       products={products}
       isLoading={isLoading}
-      onCategoryChange={handleCategoryChange}
       onProductClick={handleProductClick}
       onAddToCart={handleAddToCart}
       onCartClick={handleCartClick}

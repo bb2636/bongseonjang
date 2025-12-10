@@ -1,7 +1,5 @@
 import CategoryProductsAppBar from '../components/CategoryProductsAppBar/CategoryProductsAppBar';
-import CategoryTabs from '../components/CategoryTabs/CategoryTabs';
 import ProductGrid from '../components/ProductGrid/ProductGrid';
-import { Category } from '../../category/types/category';
 import './CategoryProductsView.css';
 
 interface Product {
@@ -13,11 +11,8 @@ interface Product {
 }
 
 interface CategoryProductsViewProps {
-  activeCategory: string;
-  categories: Category[];
   products: Product[];
   isLoading: boolean;
-  onCategoryChange: (slug: string) => void;
   onProductClick: (productId: number) => void;
   onAddToCart: (productId: number) => void;
   onCartClick: () => void;
@@ -25,11 +20,8 @@ interface CategoryProductsViewProps {
 }
 
 export default function CategoryProductsView({
-  activeCategory,
-  categories,
   products,
   isLoading,
-  onCategoryChange,
   onProductClick,
   onAddToCart,
   onCartClick,
@@ -40,11 +32,6 @@ export default function CategoryProductsView({
       <CategoryProductsAppBar 
         onCartClick={onCartClick}
         onBack={onBack}
-      />
-      <CategoryTabs 
-        categories={categories}
-        activeCategory={activeCategory}
-        onCategoryChange={onCategoryChange}
       />
       <main className="category-products-page__content">
         {isLoading ? (
