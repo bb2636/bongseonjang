@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useProductDetail } from './useProductDetail';
 import { useProductReviews } from './useProductReviews';
 import { useRelatedProducts } from './useRelatedProducts';
 import type { ProductOption } from '../types/productDetail';
 import type { TabType } from '../components/ProductDetailTabs';
+import type { SelectedItem } from '../components/OptionBottomSheet';
 
 export function useProductDetailPage(productId: string) {
   const { product, isLoading, error } = useProductDetail(productId);
@@ -13,6 +14,7 @@ export function useProductDetailPage(productId: string) {
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('info');
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
   const handleOptionSelect = (option: ProductOption) => {
     setSelectedOption(option);
@@ -34,13 +36,26 @@ export function useProductDetailPage(productId: string) {
     });
   };
 
-  const handleBuyClick = () => {
-    console.log('Buy now:', {
-      productId,
-      selectedOption,
-      quantity,
-    });
-  };
+  const handleBuyClick = useCallback(() => {
+    if (product && product.mainOptions && product.mainOptions.length > 0) {
+      setIsBottomSheetOpen(true);
+    } else {
+      console.log('Direct purchase (legacy):', {
+        productId,
+        selectedOption,
+        quantity,
+      });
+    }
+  }, [product, productId, selectedOption, quantity]);
+
+  const handleBottomSheetClose = useCallback(() => {
+    setIsBottomSheetOpen(false);
+  }, []);
+
+  const handleOptionConfirm = useCallback((items: SelectedItem[]) => {
+    console.log('Purchase confirmed:', items);
+    setIsBottomSheetOpen(false);
+  }, []);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -78,6 +93,7 @@ export function useProductDetailPage(productId: string) {
     reviewsLoading,
     relatedProducts,
     relatedProductsLoading,
+    isBottomSheetOpen,
     handleOptionSelect,
     handleQuantityChange,
     handleWishlistClick,
@@ -86,5 +102,7 @@ export function useProductDetailPage(productId: string) {
     handleShare,
     handleTabChange,
     handleAddToCart,
+    handleBottomSheetClose,
+    handleOptionConfirm,
   };
 }

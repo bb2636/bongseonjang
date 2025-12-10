@@ -19,6 +19,7 @@ export default function ProductDetailPage() {
     reviewsLoading,
     relatedProducts,
     relatedProductsLoading,
+    isBottomSheetOpen,
     handleOptionSelect,
     handleQuantityChange,
     handleWishlistClick,
@@ -27,6 +28,8 @@ export default function ProductDetailPage() {
     handleShare,
     handleTabChange,
     handleAddToCart,
+    handleBottomSheetClose,
+    handleOptionConfirm,
   } = useProductDetailPage(id || '');
 
   if (isLoading) {
@@ -65,6 +68,7 @@ export default function ProductDetailPage() {
       reviewsLoading={reviewsLoading}
       relatedProducts={relatedProducts}
       relatedProductsLoading={relatedProductsLoading}
+      isBottomSheetOpen={isBottomSheetOpen}
       onOptionSelect={handleOptionSelect}
       onQuantityChange={handleQuantityChange}
       onWishlistClick={handleWishlistClick}
@@ -73,6 +77,8 @@ export default function ProductDetailPage() {
       onShare={handleShare}
       onTabChange={handleTabChange}
       onAddToCart={handleAddToCart}
+      onBottomSheetClose={handleBottomSheetClose}
+      onOptionConfirm={handleOptionConfirm}
     />
   );
 }

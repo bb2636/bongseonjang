@@ -9,6 +9,8 @@ import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
 import ProductDetailTabs from '../components/ProductDetailTabs';
+import OptionBottomSheet from '../components/OptionBottomSheet';
+import type { SelectedItem } from '../components/OptionBottomSheet';
 import type { TabType } from '../components/ProductDetailTabs';
 import type { ProductDetail, ProductOption, Review } from '../types/productDetail';
 import type { RelatedProduct } from '../api/productDetailApi';
@@ -25,6 +27,7 @@ interface ProductDetailViewProps {
   reviewsLoading: boolean;
   relatedProducts: RelatedProduct[];
   relatedProductsLoading: boolean;
+  isBottomSheetOpen: boolean;
   onOptionSelect: (option: ProductOption) => void;
   onQuantityChange: (quantity: number) => void;
   onWishlistClick: () => void;
@@ -33,6 +36,8 @@ interface ProductDetailViewProps {
   onShare: () => void;
   onTabChange: (tab: TabType) => void;
   onAddToCart: (productId: string) => void;
+  onBottomSheetClose: () => void;
+  onOptionConfirm: (items: SelectedItem[]) => void;
 }
 
 export default function ProductDetailView({
@@ -46,6 +51,7 @@ export default function ProductDetailView({
   reviewsLoading,
   relatedProducts,
   relatedProductsLoading,
+  isBottomSheetOpen,
   onOptionSelect,
   onQuantityChange,
   onWishlistClick,
@@ -54,6 +60,8 @@ export default function ProductDetailView({
   onShare,
   onTabChange,
   onAddToCart,
+  onBottomSheetClose,
+  onOptionConfirm,
 }: ProductDetailViewProps) {
   const sliderImages = product.images.filter(
     (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
@@ -97,13 +105,15 @@ export default function ProductDetailView({
               notice={product.notice}
             />
 
-            <ProductOptions
-              options={product.options}
-              selectedOption={selectedOption}
-              quantity={quantity}
-              onOptionSelect={onOptionSelect}
-              onQuantityChange={onQuantityChange}
-            />
+            {product.mainOptions.length === 0 && product.options.length > 0 && (
+              <ProductOptions
+                options={product.options}
+                selectedOption={selectedOption}
+                quantity={quantity}
+                onOptionSelect={onOptionSelect}
+                onQuantityChange={onQuantityChange}
+              />
+            )}
 
             <ProductDescription
               description={product.description}
@@ -146,6 +156,15 @@ export default function ProductDetailView({
         isWishlisted={isWishlisted}
         onWishlistClick={onWishlistClick}
         onBuyClick={onBuyClick}
+      />
+
+      <OptionBottomSheet
+        isOpen={isBottomSheetOpen}
+        onClose={onBottomSheetClose}
+        productName={product.name}
+        mainOptions={product.mainOptions}
+        subOptions={product.subOptions}
+        onConfirm={onOptionConfirm}
       />
     </div>
   );
