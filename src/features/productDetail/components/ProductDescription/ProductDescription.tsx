@@ -28,7 +28,9 @@ export default function ProductDescription({
   return (
     <div className="product-description">
       <div className="product-description__section">
-        <h3 className="product-description__title">상품 정보</h3>
+        <div className="product-description__header">
+          <h3 className="product-description__title">상품정보</h3>
+        </div>
         <div className="product-description__info-list">
           {origin && (
             <div className="product-description__info-item">
@@ -52,7 +54,9 @@ export default function ProductDescription({
       </div>
 
       <div className="product-description__section">
-        <h3 className="product-description__title">배송 정보</h3>
+        <div className="product-description__header">
+          <h3 className="product-description__title">배송정보</h3>
+        </div>
         <div className="product-description__info-list">
           <div className="product-description__info-item">
             <span className="product-description__info-label">배송비</span>
