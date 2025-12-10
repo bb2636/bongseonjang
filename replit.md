@@ -313,6 +313,20 @@ reviews
 - `POST /api/reviews` - 리뷰 작성 (인증 필요)
 - `DELETE /api/reviews/:id` - 리뷰 삭제 (인증 필요)
 
+### Product Detail Tabs (상품 상세 탭)
+상품 상세페이지의 탭 네비게이션 컴포넌트입니다.
+
+**컴포넌트 위치:** `src/features/productDetail/components/ProductDetailTabs/`
+
+**탭 구성:**
+- 상품정보: 상품 기본 정보, 옵션, 상세 설명
+- 후기 N: 리뷰 목록 (N = 리뷰 개수)
+- 문의: 문의 기능 (준비 중)
+
+**스타일:**
+- 선택된 탭: 파란색(#3B9BD5) 하단 테두리 + 숫자
+- 높이: 38px, 3등분 너비
+
 **Service 간 의존성 (ReviewStatsProvider):**
 ProductService가 리뷰 통계를 가져오기 위해 ReviewService를 주입받습니다.
 ```typescript
