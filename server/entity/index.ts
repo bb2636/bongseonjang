@@ -11,3 +11,4 @@ export { MiddleBanner } from './MiddleBanner';
 export { BottomBanner } from './BottomBanner';
 export { BongseonjangTv } from './BongseonjangTv';
 export { Event } from './Event';
+export { Review } from './Review';

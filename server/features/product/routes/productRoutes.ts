@@ -2,11 +2,14 @@ import { Router } from 'express';
 import { ProductController } from '../controller/ProductController';
 import { ProductService } from '../application/ProductService';
 import { TypeORMProductRepository } from '../repository/TypeORMProductRepository';
+import { ReviewService, TypeORMReviewRepository } from '../../review';
 
 const router = Router();
 
 const productRepository = new TypeORMProductRepository();
-const productService = new ProductService(productRepository);
+const reviewRepository = new TypeORMReviewRepository();
+const reviewService = new ReviewService(reviewRepository);
+const productService = new ProductService(productRepository, reviewService);
 const productController = new ProductController(productService);
 
 router.get('/category/:category', (req, res) => productController.getProductsByDisplayCategory(req, res));

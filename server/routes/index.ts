@@ -14,6 +14,7 @@ import { bongcookRoutes } from '../features/bongcook';
 import { bottomBannerRoutes } from '../features/bottomBanner';
 import { productRoutes } from '../features/product';
 import { eventRoutes } from '../features/event';
+import { reviewRoutes } from '../features/review';
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use('/bongcook', bongcookRoutes);
 router.use('/bottom-banners', bottomBannerRoutes);
 router.use('/products', productRoutes);
 router.use('/events', eventRoutes);
+router.use('/reviews', reviewRoutes);
 
 export default router;

@@ -3,6 +3,7 @@ import type { ProductCategory } from './ProductCategory';
 import type { DisplayCategory } from './DisplayCategory';
 import type { ProductOption } from './ProductOption';
 import type { ProductImage } from './ProductImage';
+import type { Review } from './Review';
 
 @Entity('products')
 export class Product {
@@ -91,4 +92,7 @@ export class Product {
 
   @OneToMany('ProductImage', 'product')
   images!: ProductImage[];
+
+  @OneToMany('Review', 'product')
+  reviews!: Review[];
 }

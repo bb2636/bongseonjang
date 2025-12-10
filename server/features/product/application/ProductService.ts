@@ -1,18 +1,104 @@
-import type { ProductDto, ProductDetailDto } from '../domain/Product';
+import type { Product } from '../../../entity/Product';
+import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
 
+export interface ReviewStats {
+  reviewCount: number;
+  averageRating: number;
+}
+
+export interface ReviewStatsProvider {
+  getReviewStatsByProductId(productId: string): Promise<ReviewStats>;
+}
+
 export class ProductService {
-  constructor(private readonly productRepository: ProductRepository) {}
+  constructor(
+    private readonly productRepository: ProductRepository,
+    private readonly reviewStatsProvider?: ReviewStatsProvider,
+  ) {}
 
   async getProductsByDisplayCategory(displayCategoryName: string, filter?: ProductFilter): Promise<ProductDto[]> {
-    return this.productRepository.findByDisplayCategory(displayCategoryName, filter);
+    const products = await this.productRepository.findByDisplayCategory(displayCategoryName, filter);
+    return products.map((product) => this.toDto(product));
   }
 
   async getAllProducts(filter?: ProductFilter): Promise<ProductDto[]> {
-    return this.productRepository.findAll(filter);
+    const products = await this.productRepository.findAll(filter);
+    return products.map((product) => this.toDto(product));
   }
 
   async getProductById(id: string): Promise<ProductDetailDto | null> {
-    return this.productRepository.findById(id);
+    const product = await this.productRepository.findById(id);
+    
+    if (!product) {
+      return null;
+    }
+
+    const reviewStats = this.reviewStatsProvider 
+      ? await this.reviewStatsProvider.getReviewStatsByProductId(id)
+      : { reviewCount: 0, averageRating: 0 };
+
+    return this.toDetailDto(product, reviewStats);
+  }
+
+  private toDto(product: Product): ProductDto {
+    const discountedPrice = product.isDiscounted
+      ? Math.round(product.basePrice * (1 - product.discountRate / 100))
+      : product.basePrice;
+
+    return {
+      id: product.id,
+      name: product.name,
+      imageUrl: product.thumbnailUrl ?? undefined,
+      originalPrice: product.basePrice,
+      discountPercent: product.isDiscounted ? product.discountRate : 0,
+      discountedPrice,
+    };
+  }
+
+  private toDetailDto(product: Product, reviewStats: ReviewStats): ProductDetailDto {
+    const discountedPrice = product.isDiscounted
+      ? Math.round(product.basePrice * (1 - product.discountRate / 100))
+      : product.basePrice;
+
+    const options: ProductOptionDto[] = (product.options || []).map((option) => ({
+      id: option.id,
+      name: option.name,
+      price: option.price,
+      compareAtPrice: option.compareAtPrice ?? undefined,
+      stockQty: option.stockQty,
+      isDefault: option.isDefault,
+    }));
+
+    const images: ProductImageDto[] = (product.images || []).map((image) => ({
+      id: image.id,
+      imageUrl: image.imageUrl,
+      imageType: image.imageType as 'THUMBNAIL' | 'DETAIL' | 'GALLERY',
+      sortOrder: image.sortOrder,
+    }));
+
+    return {
+      id: product.id,
+      name: product.name,
+      summary: product.summary ?? undefined,
+      description: product.description ?? undefined,
+      thumbnailUrl: product.thumbnailUrl ?? undefined,
+      basePrice: product.basePrice,
+      discountRate: product.discountRate,
+      isDiscounted: product.isDiscounted,
+      discountedPrice,
+      origin: product.origin ?? undefined,
+      storageMethod: product.storageMethod ?? undefined,
+      expirationInfo: product.expirationInfo ?? undefined,
+      shippingFee: product.shippingFee,
+      shippingMethod: product.shippingMethod ?? undefined,
+      shippingRegion: product.shippingRegion ?? undefined,
+      notice: product.notice ?? undefined,
+      isOptionRequired: product.isOptionRequired,
+      options,
+      images,
+      reviewCount: reviewStats.reviewCount,
+      averageRating: reviewStats.averageRating,
+    };
   }
 }
