@@ -44,12 +44,6 @@ export default function ProductDescription({
               <span className="product-description__info-value">{storageMethod}</span>
             </div>
           )}
-          {expirationInfo && (
-            <div className="product-description__info-item">
-              <span className="product-description__info-label">유통기한</span>
-              <span className="product-description__info-value">{expirationInfo}</span>
-            </div>
-          )}
         </div>
       </div>
 
@@ -70,24 +64,17 @@ export default function ProductDescription({
               <span className="product-description__info-value">{shippingMethod}</span>
             </div>
           )}
-          {shippingRegion && (
+          {expirationInfo && (
             <div className="product-description__info-item">
-              <span className="product-description__info-label">배송지역</span>
-              <span className="product-description__info-value">{shippingRegion}</span>
+              <span className="product-description__info-label">유통기한</span>
+              <span className="product-description__info-value">{expirationInfo}</span>
             </div>
           )}
         </div>
+        {description && (
+          <p className="product-description__text">{description}</p>
+        )}
       </div>
-
-      {description && (
-        <div className="product-description__section">
-          <h3 className="product-description__title">상품 상세</h3>
-          <div 
-            className="product-description__content"
-            dangerouslySetInnerHTML={{ __html: description }}
-          />
-        </div>
-      )}
 
       {notice && (
         <div className="product-description__section">
