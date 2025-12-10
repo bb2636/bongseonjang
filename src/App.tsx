@@ -5,6 +5,7 @@ import { LoginPage, EmailLoginPage } from './features/login';
 import { SignupEmailPage, TermsPage, PrivacyPage, SignupCompletePage } from './features/signup';
 import { GuestOrderLookupPage } from './features/orders';
 import { ProductDetailPage } from './features/productDetail';
+import { CategoryPage } from './features/category';
 
 export default function App() {
   return (
@@ -18,14 +19,7 @@ export default function App() {
       <Route path="/signup/terms" element={<TermsPage />} />
       <Route path="/signup/privacy" element={<PrivacyPage />} />
       <Route path="/orders/guest" element={<GuestOrderLookupPage />} />
-      <Route
-        path="/category"
-        element={
-          <MainLayout>
-            <div style={{ padding: '80px 16px 16px' }}>카테고리 페이지</div>
-          </MainLayout>
-        }
-      />
+      <Route path="/category" element={<CategoryPage />} />
       <Route
         path="/search"
         element={
