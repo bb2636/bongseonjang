@@ -12,7 +12,7 @@ export function useCategoryPage(): UseCategoryPageReturn {
   const navigate = useNavigate();
 
   const handleCategoryClick = (category: Category) => {
-    navigate(`/?category=${category.slug}`);
+    navigate('/');
   };
 
   const handleCartClick = () => {
