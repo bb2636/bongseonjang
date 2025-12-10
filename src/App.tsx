@@ -6,6 +6,7 @@ import { SignupEmailPage, TermsPage, PrivacyPage, SignupCompletePage } from './f
 import { GuestOrderLookupPage } from './features/orders';
 import { ProductDetailPage } from './features/productDetail';
 import { CategoryPage } from './features/category';
+import { CategoryProductsPage } from './features/categoryProducts';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/signup/privacy" element={<PrivacyPage />} />
       <Route path="/orders/guest" element={<GuestOrderLookupPage />} />
       <Route path="/category" element={<CategoryPage />} />
+      <Route path="/category/:slug" element={<CategoryProductsPage />} />
       <Route
         path="/search"
         element={

@@ -1,0 +1,15 @@
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.product-grid__empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.6);
+}
