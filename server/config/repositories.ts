@@ -57,7 +57,7 @@ const config: RepositoryConfig = {
   referral: REPOSITORY_TYPE.MOCK,
   heroImage: REPOSITORY_TYPE.MOCK,
   timeDeal: REPOSITORY_TYPE.MOCK,
-  bestProduct: REPOSITORY_TYPE.MOCK,
+  bestProduct: REPOSITORY_TYPE.REAL,
   middleBanner: REPOSITORY_TYPE.MOCK,
   freshFood: REPOSITORY_TYPE.MOCK,
   mdPick: REPOSITORY_TYPE.MOCK,
