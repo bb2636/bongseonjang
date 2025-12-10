@@ -162,6 +162,13 @@ Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈
 - `product_main_options`: groupName, name, price, compareAtPrice, stockQty
 - `product_sub_options`: groupName, name, additionalPrice, stockQty
 
+### Category Feature (카테고리 페이지)
+바텀 네비게이션에서 카테고리 탭 클릭 시 표시되는 전용 페이지입니다.
+- **CategoryAppBar**: 봉선장 로고 + 장바구니 아이콘 (개수 배지 지원)
+- **CategoryList**: 51px 높이 항목, 15px medium 폰트, 구분선
+- **카테고리 목록**: 전체, 신상품, 베스트, 제철 수산물, 급랭 수산물, 손질 수산물, 바담은 절임류
+- **카테고리 클릭**: 홈페이지의 해당 탭으로 이동 (쿼리 파라미터 사용)
+
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
 - **Vite**: 빌드 도구
