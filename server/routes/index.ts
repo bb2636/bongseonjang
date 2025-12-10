@@ -13,6 +13,7 @@ import { bongseonjangTvRoutes } from '../features/bongseonjangTv';
 import { bongcookRoutes } from '../features/bongcook';
 import { bottomBannerRoutes } from '../features/bottomBanner';
 import { productRoutes } from '../features/product';
+import { eventRoutes } from '../features/event';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/bongseonjang-tv', bongseonjangTvRoutes);
 router.use('/bongcook', bongcookRoutes);
 router.use('/bottom-banners', bottomBannerRoutes);
 router.use('/products', productRoutes);
+router.use('/events', eventRoutes);
 
 export default router;

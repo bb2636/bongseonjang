@@ -10,3 +10,4 @@ export { HeroBanner } from './HeroBanner';
 export { MiddleBanner } from './MiddleBanner';
 export { BottomBanner } from './BottomBanner';
 export { BongseonjangTv } from './BongseonjangTv';
+export { Event } from './Event';
