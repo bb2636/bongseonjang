@@ -1,4 +1,4 @@
-import type { ProductDto } from '../domain/Product';
+import type { ProductDto, ProductDetailDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
 
 export class ProductService {
@@ -10,5 +10,9 @@ export class ProductService {
 
   async getAllProducts(filter?: ProductFilter): Promise<ProductDto[]> {
     return this.productRepository.findAll(filter);
+  }
+
+  async getProductById(id: string): Promise<ProductDetailDto | null> {
+    return this.productRepository.findById(id);
   }
 }

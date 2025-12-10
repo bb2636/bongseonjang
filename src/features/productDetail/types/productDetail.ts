@@ -1,13 +1,4 @@
-export interface ProductDto {
-  id: string;
-  name: string;
-  imageUrl?: string;
-  originalPrice: number;
-  discountPercent: number;
-  discountedPrice: number;
-}
-
-export interface ProductOptionDto {
+export interface ProductOption {
   id: string;
   name: string;
   price: number;
@@ -16,14 +7,14 @@ export interface ProductOptionDto {
   isDefault: boolean;
 }
 
-export interface ProductImageDto {
+export interface ProductImage {
   id: string;
   imageUrl: string;
   imageType: 'THUMBNAIL' | 'DETAIL' | 'GALLERY';
   sortOrder: number;
 }
 
-export interface ProductDetailDto {
+export interface ProductDetail {
   id: string;
   name: string;
   summary?: string;
@@ -41,8 +32,8 @@ export interface ProductDetailDto {
   shippingRegion?: string;
   notice?: string;
   isOptionRequired: boolean;
-  options: ProductOptionDto[];
-  images: ProductImageDto[];
+  options: ProductOption[];
+  images: ProductImage[];
   reviewCount: number;
   averageRating: number;
 }

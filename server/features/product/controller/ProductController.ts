@@ -39,4 +39,21 @@ export class ProductController {
       res.status(500).json({ error: 'Failed to fetch products' });
     }
   }
+
+  async getProductById(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const product = await this.productService.getProductById(id);
+      
+      if (!product) {
+        res.status(404).json({ error: 'Product not found' });
+        return;
+      }
+
+      res.json(product);
+    } catch (error) {
+      console.error('Error fetching product by id:', error);
+      res.status(500).json({ error: 'Failed to fetch product' });
+    }
+  }
 }

@@ -4,11 +4,13 @@ import HomePage from './features/home/pages/HomePage';
 import { LoginPage, EmailLoginPage } from './features/login';
 import { SignupEmailPage, TermsPage, PrivacyPage, SignupCompletePage } from './features/signup';
 import { GuestOrderLookupPage } from './features/orders';
+import { ProductDetailPage } from './features/productDetail';
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/product/:id" element={<ProductDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/login/email" element={<EmailLoginPage />} />
       <Route path="/signup/email" element={<SignupEmailPage />} />

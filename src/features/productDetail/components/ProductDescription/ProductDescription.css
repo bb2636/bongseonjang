@@ -1,0 +1,73 @@
+.product-description {
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+}
+
+.product-description__section {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px;
+  border-top: 8px solid #F5F5F5;
+}
+
+.product-description__title {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 140%;
+  color: #0C0C0C;
+  margin: 0 0 16px 0;
+}
+
+.product-description__info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-description__info-item {
+  display: flex;
+  gap: 16px;
+}
+
+.product-description__info-label {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.5);
+  min-width: 80px;
+}
+
+.product-description__info-value {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.9);
+  flex: 1;
+}
+
+.product-description__content {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.product-description__content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.product-description__notice {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 160%;
+  color: rgba(12, 12, 12, 0.6);
+  margin: 0;
+  white-space: pre-wrap;
+}
