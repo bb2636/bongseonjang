@@ -61,6 +61,38 @@ export default function SearchView({ state }: SearchViewProps) {
           </section>
         )}
 
+        {!state.hasSearched && state.popularSearches.length > 0 && (
+          <section className="search-view__popular">
+            <h3 className="search-view__popular-title">인기 검색어</h3>
+            <div className="search-view__popular-grid">
+              <div className="search-view__popular-column">
+                {state.popularSearches.slice(0, 5).map((item, index) => (
+                  <button
+                    key={item.term}
+                    className="search-view__popular-item"
+                    onClick={() => state.onPopularSearchClick(item.term)}
+                  >
+                    <span className="search-view__popular-rank">{index + 1}</span>
+                    <span className="search-view__popular-term">{item.term}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="search-view__popular-column">
+                {state.popularSearches.slice(5, 10).map((item, index) => (
+                  <button
+                    key={item.term}
+                    className="search-view__popular-item"
+                    onClick={() => state.onPopularSearchClick(item.term)}
+                  >
+                    <span className="search-view__popular-rank">{index + 6}</span>
+                    <span className="search-view__popular-term">{item.term}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {state.hasSearched && (
           <section className="search-view__results">
             {!state.isSearching && state.searchResults.length === 0 ? (

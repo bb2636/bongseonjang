@@ -4,6 +4,11 @@ import type { ProductCardData } from '@/components/ProductCard';
 
 const RECENT_SEARCHES_KEY = 'recentSearches';
 
+interface PopularSearchTerm {
+  term: string;
+  searchCount: number;
+}
+
 function loadRecentSearches(): string[] {
   try {
     const saved = localStorage.getItem(RECENT_SEARCHES_KEY);
@@ -21,10 +26,23 @@ function saveRecentSearches(searches: string[]) {
   }
 }
 
+async function recordSearchToServer(term: string) {
+  try {
+    await fetch('/api/search/record', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ term }),
+    });
+  } catch (error) {
+    console.error('Failed to record search:', error);
+  }
+}
+
 export function useSearchPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] = useState<string[]>(loadRecentSearches);
+  const [popularSearches, setPopularSearches] = useState<PopularSearchTerm[]>([]);
   const [searchResults, setSearchResults] = useState<ProductCardData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
@@ -33,51 +51,24 @@ export function useSearchPage() {
     saveRecentSearches(recentSearches);
   }, [recentSearches]);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchQuery(value);
-  }, []);
-
-  const handleSearchClear = useCallback(() => {
-    setSearchQuery('');
-    setHasSearched(false);
-    setSearchResults([]);
-  }, []);
-
-  const handleSearch = useCallback(async () => {
-    if (!searchQuery.trim()) return;
-
-    setIsSearching(true);
-    setHasSearched(true);
-
-    const updatedRecent = [
-      searchQuery,
-      ...recentSearches.filter(s => s !== searchQuery)
-    ].slice(0, 10);
-    setRecentSearches(updatedRecent);
-
-    try {
-      const response = await fetch(`/api/products?search=${encodeURIComponent(searchQuery)}`);
-      if (response.ok) {
-        const data = await response.json();
-        setSearchResults(data.map((p: any) => ({
-          id: String(p.id),
-          name: p.name || '상품명 없음',
-          price: p.lowestPrice || p.basePrice || 0,
-          originalPrice: p.basePrice || undefined,
-          discountRate: p.discountRate || 0,
-          imageUrl: p.thumbnailUrl || '',
-          isFavorite: false,
-        })));
+  useEffect(() => {
+    async function fetchPopularSearches() {
+      try {
+        const response = await fetch('/api/search/popular?limit=10');
+        if (response.ok) {
+          const data = await response.json();
+          setPopularSearches(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch popular searches:', error);
       }
-    } catch (error) {
-      console.error('Search failed:', error);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
     }
-  }, [searchQuery, recentSearches]);
+    fetchPopularSearches();
+  }, []);
 
-  const handleRecentSearchClick = useCallback(async (term: string) => {
+  const performSearch = useCallback(async (term: string) => {
+    if (!term.trim()) return;
+
     setSearchQuery(term);
     setIsSearching(true);
     setHasSearched(true);
@@ -87,6 +78,8 @@ export function useSearchPage() {
       ...recentSearches.filter(s => s !== term)
     ].slice(0, 10);
     setRecentSearches(updatedRecent);
+
+    recordSearchToServer(term);
 
     try {
       const response = await fetch(`/api/products?search=${encodeURIComponent(term)}`);
@@ -109,6 +102,28 @@ export function useSearchPage() {
       setIsSearching(false);
     }
   }, [recentSearches]);
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value);
+  }, []);
+
+  const handleSearchClear = useCallback(() => {
+    setSearchQuery('');
+    setHasSearched(false);
+    setSearchResults([]);
+  }, []);
+
+  const handleSearch = useCallback(async () => {
+    await performSearch(searchQuery);
+  }, [searchQuery, performSearch]);
+
+  const handleRecentSearchClick = useCallback(async (term: string) => {
+    await performSearch(term);
+  }, [performSearch]);
+
+  const handlePopularSearchClick = useCallback(async (term: string) => {
+    await performSearch(term);
+  }, [performSearch]);
 
   const handleRecentSearchDelete = useCallback((term: string) => {
     setRecentSearches(prev => prev.filter(s => s !== term));
@@ -141,6 +156,7 @@ export function useSearchPage() {
   return {
     searchQuery,
     recentSearches,
+    popularSearches,
     searchResults,
     isSearching,
     hasSearched,
@@ -148,6 +164,7 @@ export function useSearchPage() {
     onSearchClear: handleSearchClear,
     onSearch: handleSearch,
     onRecentSearchClick: handleRecentSearchClick,
+    onPopularSearchClick: handlePopularSearchClick,
     onRecentSearchDelete: handleRecentSearchDelete,
     onClearAllRecent: handleClearAllRecent,
     onCartClick: handleCartClick,
