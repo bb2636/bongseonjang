@@ -1,4 +1,7 @@
+import { useState } from 'react';
 import './ProductCard.css';
+
+const FALLBACK_IMAGE = 'https://placehold.co/400x280/f5f5f5/999999?text=No+Image';
 
 export interface ProductCardData {
   id: string;
@@ -27,6 +30,12 @@ export default function ProductCard({
   onToggleFavorite,
   onClick,
 }: ProductCardProps) {
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAddToCart?.();
@@ -40,15 +49,12 @@ export default function ProductCard({
   return (
     <div className="product-card" onClick={onClick}>
       <div className="product-card__image-container">
-        {product.imageUrl ? (
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="product-card__image"
-          />
-        ) : (
-          <div className="product-card__image-placeholder" />
-        )}
+        <img
+          src={imageError || !product.imageUrl ? FALLBACK_IMAGE : product.imageUrl}
+          alt={product.name}
+          className="product-card__image"
+          onError={handleImageError}
+        />
         <button
           type="button"
           className="product-card__favorite-button"
