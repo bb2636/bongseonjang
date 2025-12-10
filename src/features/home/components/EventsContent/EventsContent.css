@@ -9,7 +9,8 @@
 .events-content__list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  gap: 12px;
 }
 
 .events-content__loading {
