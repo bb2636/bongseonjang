@@ -8,6 +8,7 @@ export class TypeORMProductRepository implements ProductRepository {
     
     const queryBuilder = productRepository
       .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .innerJoin('product.displayCategory', 'displayCategory')
       .where('displayCategory.name = :displayName', { displayName: displayCategoryName })
       .andWhere('product.isActive = :isActive', { isActive: true });
@@ -28,6 +29,7 @@ export class TypeORMProductRepository implements ProductRepository {
     
     const queryBuilder = productRepository
       .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .where('product.isActive = :isActive', { isActive: true });
 
     if (filter?.productCategory) {

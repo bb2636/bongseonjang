@@ -46,10 +46,12 @@ export class ProductService {
       ? Math.round(product.basePrice * (1 - product.discountRate / 100))
       : product.basePrice;
 
+    const thumbnailImage = product.images?.find((img) => img.isThumbnail);
+
     return {
       id: product.id,
       name: product.name,
-      imageUrl: product.thumbnailUrl ?? undefined,
+      imageUrl: thumbnailImage?.imageUrl,
       originalPrice: product.basePrice,
       discountPercent: product.isDiscounted ? product.discountRate : 0,
       discountedPrice,
@@ -77,12 +79,14 @@ export class ProductService {
       sortOrder: image.sortOrder,
     }));
 
+    const thumbnailImage = product.images?.find((img) => img.isThumbnail);
+
     return {
       id: product.id,
       name: product.name,
       summary: product.summary ?? undefined,
       description: product.description ?? undefined,
-      thumbnailUrl: product.thumbnailUrl ?? undefined,
+      thumbnailUrl: thumbnailImage?.imageUrl,
       basePrice: product.basePrice,
       discountRate: product.discountRate,
       isDiscounted: product.isDiscounted,
