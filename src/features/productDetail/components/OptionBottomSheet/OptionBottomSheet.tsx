@@ -49,16 +49,15 @@ export default function OptionBottomSheet({
     setSelectedSubOption(option);
   }, []);
 
-  const canAddToList = selectedMainOption && (!hasSubOptions || selectedSubOption);
+  const canAddToList = selectedMainOption !== null;
 
   const addToSelectedItems = useCallback(() => {
     if (!selectedMainOption) return;
-    if (hasSubOptions && !selectedSubOption) return;
 
     const existingIndex = selectedItems.findIndex(
       (item) =>
         item.mainOption.id === selectedMainOption.id &&
-        (hasSubOptions ? item.subOption?.id === selectedSubOption?.id : true)
+        item.subOption?.id === selectedSubOption?.id
     );
 
     if (existingIndex >= 0) {
