@@ -150,6 +150,18 @@ Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈
 ### Product Detail Tabs (상품 상세 탭)
 상품 상세페이지의 탭 네비게이션 컴포넌트로 "상품정보", "후기 N", "문의" 탭으로 구성됩니다. ProductService는 ReviewService를 주입받아 리뷰 통계를 가져옵니다.
 
+### Two-Level Product Options (2단계 상품 옵션)
+상품 옵션은 2단계 구조로 관리됩니다:
+- **MainOption**: 중량/용량 선택 (예: 소 300g, 중 500g, 대 1kg) - 기본 가격 결정
+- **SubOption**: 맛/스타일 선택 (예: 양념, 간장) - 추가 금액
+- **lowestPrice**: 활성화된 MainOption 중 최저가 자동 계산
+- **OptionBottomSheet**: 구매 버튼 클릭 시 2단계 옵션 선택 바텀시트 표시
+- **레거시 지원**: mainOptions가 없는 상품은 기존 ProductOptions 컴포넌트 사용
+
+**DB 테이블:**
+- `product_main_options`: groupName, name, price, compareAtPrice, stockQty
+- `product_sub_options`: groupName, name, additionalPrice, stockQty
+
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
 - **Vite**: 빌드 도구
