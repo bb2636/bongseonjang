@@ -7,6 +7,25 @@ export interface ProductOption {
   isDefault: boolean;
 }
 
+export interface MainOption {
+  id: string;
+  groupName: string;
+  name: string;
+  price: number;
+  compareAtPrice?: number;
+  stockQty: number;
+  isDefault: boolean;
+}
+
+export interface SubOption {
+  id: string;
+  groupName: string;
+  name: string;
+  additionalPrice: number;
+  stockQty: number;
+  isDefault: boolean;
+}
+
 export interface ProductImage {
   id: string;
   imageUrl: string;
@@ -37,6 +56,7 @@ export interface ProductDetail {
   discountRate: number;
   isDiscounted: boolean;
   discountedPrice: number;
+  lowestPrice: number;
   origin?: string;
   storageMethod?: string;
   expirationInfo?: string;
@@ -46,6 +66,8 @@ export interface ProductDetail {
   notice?: string;
   isOptionRequired: boolean;
   options: ProductOption[];
+  mainOptions: MainOption[];
+  subOptions: SubOption[];
   images: ProductImage[];
   reviewCount: number;
   averageRating: number;

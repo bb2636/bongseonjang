@@ -49,10 +49,14 @@ export class TypeORMProductRepository implements ProductRepository {
     return productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.options', 'options', 'options.isActive = :optionActive', { optionActive: true })
+      .leftJoinAndSelect('product.mainOptions', 'mainOptions', 'mainOptions.isActive = :mainOptionActive', { mainOptionActive: true })
+      .leftJoinAndSelect('product.subOptions', 'subOptions', 'subOptions.isActive = :subOptionActive', { subOptionActive: true })
       .leftJoinAndSelect('product.images', 'images')
       .where('product.id = :id', { id })
       .andWhere('product.isActive = :isActive', { isActive: true })
       .orderBy('options.sortOrder', 'ASC')
+      .addOrderBy('mainOptions.sortOrder', 'ASC')
+      .addOrderBy('subOptions.sortOrder', 'ASC')
       .addOrderBy('images.sortOrder', 'ASC')
       .getOne();
   }

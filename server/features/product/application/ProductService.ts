@@ -1,5 +1,5 @@
 import type { Product } from '../../../entity/Product';
-import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto } from '../domain/Product';
+import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, MainOptionDto, SubOptionDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
 
 export interface ReviewStats {
@@ -77,6 +77,29 @@ export class ProductService {
       isDefault: option.isDefault,
     }));
 
+    const mainOptions: MainOptionDto[] = (product.mainOptions || []).map((option) => ({
+      id: option.id,
+      groupName: option.groupName,
+      name: option.name,
+      price: option.price,
+      compareAtPrice: option.compareAtPrice ?? undefined,
+      stockQty: option.stockQty,
+      isDefault: option.isDefault,
+    }));
+
+    const subOptions: SubOptionDto[] = (product.subOptions || []).map((option) => ({
+      id: option.id,
+      groupName: option.groupName,
+      name: option.name,
+      additionalPrice: option.additionalPrice,
+      stockQty: option.stockQty,
+      isDefault: option.isDefault,
+    }));
+
+    const lowestPrice = mainOptions.length > 0
+      ? Math.min(...mainOptions.map((opt) => opt.price))
+      : discountedPrice;
+
     const images: ProductImageDto[] = (product.images || []).map((image) => ({
       id: image.id,
       imageUrl: image.imageUrl,
@@ -96,6 +119,7 @@ export class ProductService {
       discountRate: product.discountRate,
       isDiscounted: product.isDiscounted,
       discountedPrice,
+      lowestPrice,
       origin: product.origin ?? undefined,
       storageMethod: product.storageMethod ?? undefined,
       expirationInfo: product.expirationInfo ?? undefined,
@@ -105,6 +129,8 @@ export class ProductService {
       notice: product.notice ?? undefined,
       isOptionRequired: product.isOptionRequired,
       options,
+      mainOptions,
+      subOptions,
       images,
       reviewCount: reviewStats.reviewCount,
       averageRating: reviewStats.averageRating,
