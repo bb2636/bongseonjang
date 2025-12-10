@@ -4,6 +4,7 @@ import { CategoryCardGrid } from '../components/CategoryCardGrid';
 import BottomNav from '../../../components/BottomNav/BottomNav';
 import { Category } from '../types/category';
 import './CategoryView.css';
+import { AppBar } from '@/components/AppBar';
 
 interface CategoryViewProps {
   categories: Category[];
@@ -22,10 +23,7 @@ export default function CategoryView({
 }: CategoryViewProps) {
   return (
     <div className="category-page">
-      <CategoryAppBar 
-        onCartClick={onCartClick}
-        onLogoClick={onLogoClick}
-      />
+      <AppBar></AppBar>
       
       <main className="category-page__content">
         <div className="category-page__header">

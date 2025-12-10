@@ -34,8 +34,6 @@ export default function CategoryProductsView({
   return (
     <div className="category-products-page">
       <AppBar 
-        showBackButton
-        onBackClick={onBack}
         onLogoClick={onLogoClick}
         onCartClick={onCartClick}
       />
