@@ -1,12 +1,14 @@
 import { useState, useMemo } from 'react';
 import { useProductDetail } from './useProductDetail';
 import { useProductReviews } from './useProductReviews';
+import { useRelatedProducts } from './useRelatedProducts';
 import type { ProductOption } from '../types/productDetail';
 import type { TabType } from '../components/ProductDetailTabs';
 
 export function useProductDetailPage(productId: string) {
   const { product, isLoading, error } = useProductDetail(productId);
   const { reviews, isLoading: reviewsLoading } = useProductReviews(productId);
+  const { relatedProducts, isLoading: relatedProductsLoading } = useRelatedProducts(productId);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -59,6 +61,10 @@ export function useProductDetailPage(productId: string) {
     setActiveTab(tab);
   };
 
+  const handleAddToCart = (relatedProductId: string) => {
+    console.log('Add related product to cart:', relatedProductId);
+  };
+
   return {
     product,
     isLoading,
@@ -70,6 +76,8 @@ export function useProductDetailPage(productId: string) {
     activeTab,
     reviews,
     reviewsLoading,
+    relatedProducts,
+    relatedProductsLoading,
     handleOptionSelect,
     handleQuantityChange,
     handleWishlistClick,
@@ -77,5 +85,6 @@ export function useProductDetailPage(productId: string) {
     handleBuyClick,
     handleShare,
     handleTabChange,
+    handleAddToCart,
   };
 }

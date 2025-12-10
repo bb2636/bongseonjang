@@ -4,12 +4,14 @@ import ProductBenefits from '../components/ProductBenefits';
 import ProductOptions from '../components/ProductOptions';
 import ProductDescription from '../components/ProductDescription';
 import ProductDetailContent from '../components/ProductDetailContent';
+import RelatedProducts from '../components/RelatedProducts';
 import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
 import ProductDetailTabs from '../components/ProductDetailTabs';
 import type { TabType } from '../components/ProductDetailTabs';
 import type { ProductDetail, ProductOption, Review } from '../types/productDetail';
+import type { RelatedProduct } from '../api/productDetailApi';
 import './ProductDetailView.css';
 
 interface ProductDetailViewProps {
@@ -21,6 +23,8 @@ interface ProductDetailViewProps {
   activeTab: TabType;
   reviews: Review[];
   reviewsLoading: boolean;
+  relatedProducts: RelatedProduct[];
+  relatedProductsLoading: boolean;
   onOptionSelect: (option: ProductOption) => void;
   onQuantityChange: (quantity: number) => void;
   onWishlistClick: () => void;
@@ -28,6 +32,7 @@ interface ProductDetailViewProps {
   onBuyClick: () => void;
   onShare: () => void;
   onTabChange: (tab: TabType) => void;
+  onAddToCart: (productId: string) => void;
 }
 
 export default function ProductDetailView({
@@ -39,6 +44,8 @@ export default function ProductDetailView({
   activeTab,
   reviews,
   reviewsLoading,
+  relatedProducts,
+  relatedProductsLoading,
   onOptionSelect,
   onQuantityChange,
   onWishlistClick,
@@ -46,6 +53,7 @@ export default function ProductDetailView({
   onBuyClick,
   onShare,
   onTabChange,
+  onAddToCart,
 }: ProductDetailViewProps) {
   const sliderImages = product.images.filter(
     (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
@@ -109,6 +117,12 @@ export default function ProductDetailView({
             />
 
             <ProductDetailContent images={detailImages} />
+
+            <RelatedProducts 
+              products={relatedProducts}
+              isLoading={relatedProductsLoading}
+              onAddToCart={onAddToCart}
+            />
           </>
         )}
 

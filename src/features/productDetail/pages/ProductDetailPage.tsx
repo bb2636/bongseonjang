@@ -17,6 +17,8 @@ export default function ProductDetailPage() {
     activeTab,
     reviews,
     reviewsLoading,
+    relatedProducts,
+    relatedProductsLoading,
     handleOptionSelect,
     handleQuantityChange,
     handleWishlistClick,
@@ -24,6 +26,7 @@ export default function ProductDetailPage() {
     handleBuyClick,
     handleShare,
     handleTabChange,
+    handleAddToCart,
   } = useProductDetailPage(id || '');
 
   if (isLoading) {
@@ -60,6 +63,8 @@ export default function ProductDetailPage() {
       activeTab={activeTab}
       reviews={reviews}
       reviewsLoading={reviewsLoading}
+      relatedProducts={relatedProducts}
+      relatedProductsLoading={relatedProductsLoading}
       onOptionSelect={handleOptionSelect}
       onQuantityChange={handleQuantityChange}
       onWishlistClick={handleWishlistClick}
@@ -67,6 +72,7 @@ export default function ProductDetailPage() {
       onBuyClick={handleBuyClick}
       onShare={handleShare}
       onTabChange={handleTabChange}
+      onAddToCart={handleAddToCart}
     />
   );
 }
