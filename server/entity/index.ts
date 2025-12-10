@@ -4,6 +4,8 @@ export { ProductCategory } from './ProductCategory';
 export { DisplayCategory } from './DisplayCategory';
 export { Product } from './Product';
 export { ProductOption } from './ProductOption';
+export { ProductMainOption } from './ProductMainOption';
+export { ProductSubOption } from './ProductSubOption';
 export { ProductImage, ImageType } from './ProductImage';
 export { TimeDeal } from './TimeDeal';
 export { HeroBanner } from './HeroBanner';

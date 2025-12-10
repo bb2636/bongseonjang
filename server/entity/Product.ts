@@ -2,6 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import type { ProductCategory } from './ProductCategory';
 import type { DisplayCategory } from './DisplayCategory';
 import type { ProductOption } from './ProductOption';
+import type { ProductMainOption } from './ProductMainOption';
+import type { ProductSubOption } from './ProductSubOption';
 import type { ProductImage } from './ProductImage';
 import type { Review } from './Review';
 
@@ -86,6 +88,12 @@ export class Product {
 
   @OneToMany('ProductOption', 'product')
   options!: ProductOption[];
+
+  @OneToMany('ProductMainOption', 'product')
+  mainOptions!: ProductMainOption[];
+
+  @OneToMany('ProductSubOption', 'product')
+  subOptions!: ProductSubOption[];
 
   @OneToMany('ProductImage', 'product')
   images!: ProductImage[];
