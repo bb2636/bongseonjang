@@ -12,6 +12,19 @@ export interface ProductImage {
   imageUrl: string;
   imageType: 'THUMBNAIL' | 'DETAIL' | 'GALLERY';
   sortOrder: number;
+  isThumbnail: boolean;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  content: string;
+  imageUrls: string[];
+  isVerifiedPurchase: boolean;
+  createdAt: string;
 }
 
 export interface ProductDetail {

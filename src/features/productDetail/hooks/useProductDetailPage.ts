@@ -1,12 +1,16 @@
 import { useState, useMemo } from 'react';
 import { useProductDetail } from './useProductDetail';
+import { useProductReviews } from './useProductReviews';
 import type { ProductOption } from '../types/productDetail';
+import type { TabType } from '../components/ProductDetailTabs';
 
 export function useProductDetailPage(productId: string) {
   const { product, isLoading, error } = useProductDetail(productId);
+  const { reviews, isLoading: reviewsLoading } = useProductReviews(productId);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('info');
 
   const handleOptionSelect = (option: ProductOption) => {
     setSelectedOption(option);
@@ -51,6 +55,10 @@ export function useProductDetailPage(productId: string) {
     return unitPrice * quantity;
   }, [product, selectedOption, quantity]);
 
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+  };
+
   return {
     product,
     isLoading,
@@ -59,11 +67,15 @@ export function useProductDetailPage(productId: string) {
     quantity,
     isWishlisted,
     totalPrice,
+    activeTab,
+    reviews,
+    reviewsLoading,
     handleOptionSelect,
     handleQuantityChange,
     handleWishlistClick,
     handleCartClick,
     handleBuyClick,
     handleShare,
+    handleTabChange,
   };
 }

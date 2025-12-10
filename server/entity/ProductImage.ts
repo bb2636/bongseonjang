@@ -24,6 +24,9 @@ export class ProductImage {
   @Column({ type: 'int', default: 0 })
   sortOrder!: number;
 
+  @Column({ type: 'boolean', default: false })
+  isThumbnail!: boolean;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 

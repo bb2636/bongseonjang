@@ -14,12 +14,16 @@ export default function ProductDetailPage() {
     quantity,
     isWishlisted,
     totalPrice,
+    activeTab,
+    reviews,
+    reviewsLoading,
     handleOptionSelect,
     handleQuantityChange,
     handleWishlistClick,
     handleCartClick,
     handleBuyClick,
     handleShare,
+    handleTabChange,
   } = useProductDetailPage(id || '');
 
   if (isLoading) {
@@ -53,12 +57,16 @@ export default function ProductDetailPage() {
       quantity={quantity}
       isWishlisted={isWishlisted}
       totalPrice={totalPrice}
+      activeTab={activeTab}
+      reviews={reviews}
+      reviewsLoading={reviewsLoading}
       onOptionSelect={handleOptionSelect}
       onQuantityChange={handleQuantityChange}
       onWishlistClick={handleWishlistClick}
       onCartClick={handleCartClick}
       onBuyClick={handleBuyClick}
       onShare={handleShare}
+      onTabChange={handleTabChange}
     />
   );
 }
