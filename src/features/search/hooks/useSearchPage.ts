@@ -97,10 +97,10 @@ export function useSearchPage() {
         setSearchResults(data.map((p: any) => ({
           id: String(p.id),
           name: p.name || '상품명 없음',
-          price: p.discountedPrice || p.originalPrice || 0,
-          originalPrice: p.originalPrice || undefined,
-          discountRate: p.discountPercent || 0,
           imageUrl: p.imageUrl || '',
+          originalPrice: p.originalPrice || 0,
+          discountPercent: p.discountPercent || 0,
+          discountedPrice: p.discountedPrice || p.originalPrice || 0,
           isFavorite: false,
         })));
       }
