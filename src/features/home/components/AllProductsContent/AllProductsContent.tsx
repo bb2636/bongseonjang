@@ -9,7 +9,7 @@ const DISPLAY_CATEGORY = '전체상품';
 
 export default function AllProductsContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const { products, isLoading, error } = useProductsByCategory(DISPLAY_CATEGORY);
+  const { products, isLoading, error } = useProductsByCategory(DISPLAY_CATEGORY, selectedCategory);
 
   const handleAddToCart = (productId: string) => {
     console.log('Add to cart:', productId);

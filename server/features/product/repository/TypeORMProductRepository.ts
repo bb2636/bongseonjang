@@ -1,29 +1,45 @@
 import { AppDataSource } from '../../../config/database';
 import { Product } from '../../../entity/Product';
 import type { ProductDto } from '../domain/Product';
-import type { ProductRepository } from './ProductRepository';
+import type { ProductRepository, ProductFilter } from './ProductRepository';
 
 export class TypeORMProductRepository implements ProductRepository {
-  async findByDisplayCategory(categoryName: string): Promise<ProductDto[]> {
+  async findByDisplayCategory(displayCategoryName: string, filter?: ProductFilter): Promise<ProductDto[]> {
     const productRepository = AppDataSource.getRepository(Product);
     
-    const products = await productRepository
+    const queryBuilder = productRepository
       .createQueryBuilder('product')
       .innerJoin('product.displayCategory', 'displayCategory')
-      .where('displayCategory.name = :name', { name: categoryName })
-      .andWhere('product.isActive = :isActive', { isActive: true })
+      .where('displayCategory.name = :displayName', { displayName: displayCategoryName })
+      .andWhere('product.isActive = :isActive', { isActive: true });
+
+    if (filter?.productCategory) {
+      queryBuilder
+        .innerJoin('product.productCategory', 'productCategory')
+        .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
+    }
+
+    const products = await queryBuilder
       .orderBy('product.sortOrder', 'ASC')
       .getMany();
 
     return products.map((product) => this.toDto(product));
   }
 
-  async findAll(): Promise<ProductDto[]> {
+  async findAll(filter?: ProductFilter): Promise<ProductDto[]> {
     const productRepository = AppDataSource.getRepository(Product);
     
-    const products = await productRepository
+    const queryBuilder = productRepository
       .createQueryBuilder('product')
-      .where('product.isActive = :isActive', { isActive: true })
+      .where('product.isActive = :isActive', { isActive: true });
+
+    if (filter?.productCategory) {
+      queryBuilder
+        .innerJoin('product.productCategory', 'productCategory')
+        .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
+    }
+
+    const products = await queryBuilder
       .orderBy('product.sortOrder', 'ASC')
       .getMany();
 

@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import type { ProductService } from '../application/ProductService';
+import type { ProductFilter } from '../repository/ProductRepository';
 
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -7,7 +8,14 @@ export class ProductController {
   async getProductsByDisplayCategory(req: Request, res: Response): Promise<void> {
     try {
       const { category } = req.params;
-      const products = await this.productService.getProductsByDisplayCategory(category);
+      const { productCategory } = req.query;
+      
+      const filter: ProductFilter = {};
+      if (productCategory && typeof productCategory === 'string') {
+        filter.productCategory = productCategory;
+      }
+
+      const products = await this.productService.getProductsByDisplayCategory(category, filter);
       res.json(products);
     } catch (error) {
       console.error('Error fetching products by category:', error);
@@ -15,9 +23,16 @@ export class ProductController {
     }
   }
 
-  async getAllProducts(_req: Request, res: Response): Promise<void> {
+  async getAllProducts(req: Request, res: Response): Promise<void> {
     try {
-      const products = await this.productService.getAllProducts();
+      const { productCategory } = req.query;
+      
+      const filter: ProductFilter = {};
+      if (productCategory && typeof productCategory === 'string') {
+        filter.productCategory = productCategory;
+      }
+
+      const products = await this.productService.getAllProducts(filter);
       res.json(products);
     } catch (error) {
       console.error('Error fetching all products:', error);

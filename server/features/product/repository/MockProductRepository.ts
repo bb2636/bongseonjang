@@ -1,5 +1,5 @@
 import type { ProductDto } from '../domain/Product';
-import type { ProductRepository } from './ProductRepository';
+import type { ProductRepository, ProductFilter } from './ProductRepository';
 
 const MOCK_PRODUCTS: ProductDto[] = [
   {
@@ -21,11 +21,11 @@ const MOCK_PRODUCTS: ProductDto[] = [
 ];
 
 export class MockProductRepository implements ProductRepository {
-  async findByDisplayCategory(_categoryName: string): Promise<ProductDto[]> {
+  async findByDisplayCategory(_displayCategoryName: string, _filter?: ProductFilter): Promise<ProductDto[]> {
     return MOCK_PRODUCTS;
   }
 
-  async findAll(): Promise<ProductDto[]> {
+  async findAll(_filter?: ProductFilter): Promise<ProductDto[]> {
     return MOCK_PRODUCTS;
   }
 }

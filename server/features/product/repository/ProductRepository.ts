@@ -1,6 +1,10 @@
 import type { ProductDto } from '../domain/Product';
 
+export interface ProductFilter {
+  productCategory?: string;
+}
+
 export interface ProductRepository {
-  findByDisplayCategory(categoryName: string): Promise<ProductDto[]>;
-  findAll(): Promise<ProductDto[]>;
+  findByDisplayCategory(displayCategoryName: string, filter?: ProductFilter): Promise<ProductDto[]>;
+  findAll(filter?: ProductFilter): Promise<ProductDto[]>;
 }

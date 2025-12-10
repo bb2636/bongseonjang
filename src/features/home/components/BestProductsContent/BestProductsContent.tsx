@@ -2,23 +2,14 @@ import { useState } from 'react';
 import { FilterChips } from '../FilterChips';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import { PRODUCT_CATEGORIES } from '../../constants/productCategories';
-import { useBestProducts } from '../../hooks/useBestProducts';
-import type { ProductCardData } from '@/components/ProductCard';
+import { useProductsByCategory } from '../../hooks/useProductsByCategory';
 import './BestProductsContent.css';
+
+const DISPLAY_CATEGORY = '베스트';
 
 export default function BestProductsContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const { bestProducts, isLoading, error } = useBestProducts();
-
-  const products: ProductCardData[] = bestProducts.map((product) => ({
-    id: product.id,
-    name: product.name,
-    imageUrl: product.imageUrl,
-    originalPrice: product.originalPrice,
-    discountPercent: product.discountPercent,
-    discountedPrice: product.discountedPrice,
-    isFavorite: false,
-  }));
+  const { products, isLoading, error } = useProductsByCategory(DISPLAY_CATEGORY, selectedCategory);
 
   const handleAddToCart = (productId: string) => {
     console.log('Add to cart:', productId);
