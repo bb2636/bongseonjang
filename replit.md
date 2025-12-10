@@ -147,6 +147,31 @@ server/
 └── index.ts                     # 서버 엔트리
 ```
 
+### Repository Pattern (Clean Architecture)
+**중요**: Repository는 TypeORM Entity를 반환하고, Service에서 DTO로 변환합니다.
+
+**레이어 책임:**
+- **Repository**: DB 접근, Entity 반환
+- **Service**: 비즈니스 로직, Entity → DTO 변환
+- **Controller**: HTTP 요청/응답 처리
+
+**예시 (Product feature):**
+```typescript
+// Repository - Entity 반환
+interface ProductRepository {
+  findById(id: string): Promise<Product | null>;
+}
+
+// Service - DTO 변환 + 비즈니스 로직
+class ProductService {
+  async getProductById(id: string): Promise<ProductDetailDto | null> {
+    const product = await this.productRepository.findById(id);
+    if (!product) return null;
+    return this.toDetailDto(product);
+  }
+}
+```
+
 ### Repository Pattern (Mock/Real 스위칭)
 목 데이터와 실제 DB 구현체를 쉽게 전환할 수 있는 Generic Factory + Map 캐싱 패턴:
 
@@ -264,6 +289,45 @@ src/features/home/
 **Home API:**
 - `GET /api/home/hero-images`: 히어로 배너 이미지 목록
 - Mock/Real Repository 스위칭 지원
+
+### Review Feature (리뷰 시스템)
+상품에 대한 리뷰 및 평점 관리 기능입니다.
+
+**Entity 구조 (reviews 테이블):**
+```
+reviews
+├── id (UUID, PK)
+├── productId (UUID, FK → products.id)
+├── userId (UUID, FK → users.id)
+├── rating (INTEGER, 1~5)
+├── content (TEXT)
+├── imageUrls (TEXT[], 선택)
+├── isVerifiedPurchase (BOOLEAN)
+├── helpfulCount (INTEGER)
+├── createdAt (TIMESTAMP)
+└── updatedAt (TIMESTAMP)
+```
+
+**API 엔드포인트:**
+- `GET /api/reviews/product/:productId` - 상품 리뷰 목록
+- `GET /api/reviews/product/:productId/stats` - 상품 리뷰 통계 (평균 평점, 분포)
+- `POST /api/reviews` - 리뷰 작성 (인증 필요)
+- `DELETE /api/reviews/:id` - 리뷰 삭제 (인증 필요)
+
+**Service 간 의존성 (ReviewStatsProvider):**
+ProductService가 리뷰 통계를 가져오기 위해 ReviewService를 주입받습니다.
+```typescript
+interface ReviewStatsProvider {
+  getReviewStatsByProductId(productId: string): Promise<ReviewStats>;
+}
+
+class ProductService {
+  constructor(
+    private productRepository: ProductRepository,
+    private reviewStatsProvider?: ReviewStatsProvider,
+  ) {}
+}
+```
 
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
