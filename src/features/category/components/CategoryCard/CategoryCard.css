@@ -17,36 +17,20 @@
 }
 
 .category-card__image {
-  position: absolute;
-  width: 149px;
-  height: 217px;
-  left: -1px;
-  top: -18px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .category-card__gradient {
   position: absolute;
-  width: 148px;
-  height: 159px;
+  width: 100%;
+  height: 100%;
   left: 0;
   top: 0;
   background: linear-gradient(180deg, rgba(12, 12, 12, 0) 45.77%, rgba(12, 12, 12, 0.54) 91.94%);
-}
-
-.category-card__brand-text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 12px;
-  font-family: 'Pretendard', sans-serif;
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 128%;
-  letter-spacing: -0.02em;
-  color: #FFFFFF;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-  white-space: nowrap;
+  pointer-events: none;
 }
 
 .category-card__info {

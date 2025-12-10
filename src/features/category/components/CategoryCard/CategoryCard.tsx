@@ -22,7 +22,6 @@ export function CategoryCard({
           className="category-card__image" 
         />
         <div className="category-card__gradient" />
-        <span className="category-card__brand-text">{name}</span>
       </div>
       <div className="category-card__info">
         <span className="category-card__name">{name}</span>
