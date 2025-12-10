@@ -56,4 +56,28 @@ export class TypeORMProductRepository implements ProductRepository {
       .addOrderBy('images.sortOrder', 'ASC')
       .getOne();
   }
+
+  async findRelatedProducts(productId: string, limit: number): Promise<Product[]> {
+    const productRepository = AppDataSource.getRepository(Product);
+
+    const currentProduct = await productRepository.findOne({
+      where: { id: productId },
+      select: ['productCategoryId'],
+    });
+
+    if (!currentProduct) {
+      return [];
+    }
+
+    return productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .where('product.productCategoryId = :categoryId', { categoryId: currentProduct.productCategoryId })
+      .andWhere('product.id != :productId', { productId })
+      .andWhere('product.isActive = :isActive', { isActive: true })
+      .orderBy('product.isDiscounted', 'DESC')
+      .addOrderBy('product.sortOrder', 'ASC')
+      .limit(limit)
+      .getMany();
+  }
 }

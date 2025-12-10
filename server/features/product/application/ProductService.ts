@@ -41,6 +41,11 @@ export class ProductService {
     return this.toDetailDto(product, reviewStats);
   }
 
+  async getRelatedProducts(productId: string, limit: number = 4): Promise<ProductDto[]> {
+    const products = await this.productRepository.findRelatedProducts(productId, limit);
+    return products.map((product) => this.toDto(product));
+  }
+
   private toDto(product: Product): ProductDto {
     const discountedPrice = product.isDiscounted
       ? Math.round(product.basePrice * (1 - product.discountRate / 100))

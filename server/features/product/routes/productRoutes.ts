@@ -13,6 +13,7 @@ const productService = new ProductService(productRepository, reviewService);
 const productController = new ProductController(productService);
 
 router.get('/category/:category', (req, res) => productController.getProductsByDisplayCategory(req, res));
+router.get('/:id/related', (req, res) => productController.getRelatedProducts(req, res));
 router.get('/:id', (req, res) => productController.getProductById(req, res));
 router.get('/', (req, res) => productController.getAllProducts(req, res));
 
