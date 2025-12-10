@@ -2,6 +2,7 @@ import type { Product } from '../../../entity/Product';
 
 export interface ProductFilter {
   productCategory?: string;
+  search?: string;
 }
 
 export interface ProductRepository {

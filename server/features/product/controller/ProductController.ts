@@ -25,11 +25,14 @@ export class ProductController {
 
   async getAllProducts(req: Request, res: Response): Promise<void> {
     try {
-      const { productCategory } = req.query;
+      const { productCategory, search } = req.query;
       
       const filter: ProductFilter = {};
       if (productCategory && typeof productCategory === 'string') {
         filter.productCategory = productCategory;
+      }
+      if (search && typeof search === 'string') {
+        filter.search = search;
       }
 
       const products = await this.productService.getAllProducts(filter);

@@ -38,6 +38,10 @@ export class TypeORMProductRepository implements ProductRepository {
         .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
     }
 
+    if (filter?.search) {
+      queryBuilder.andWhere('product.name ILIKE :search', { search: `%${filter.search}%` });
+    }
+
     return queryBuilder
       .orderBy('product.sortOrder', 'ASC')
       .getMany();
