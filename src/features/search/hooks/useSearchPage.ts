@@ -1,25 +1,37 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { ProductCardData } from '@/components/ProductCard';
 
-export interface SearchResult {
-  id: number;
-  name: string;
-  price: number;
-  discountRate: number;
-  imageUrl: string;
+const RECENT_SEARCHES_KEY = 'recentSearches';
+
+function loadRecentSearches(): string[] {
+  try {
+    const saved = localStorage.getItem(RECENT_SEARCHES_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRecentSearches(searches: string[]) {
+  try {
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+  } catch {
+    console.error('Failed to save recent searches');
+  }
 }
 
 export function useSearchPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [recentSearches, setRecentSearches] = useState<string[]>([
-    '오징어',
-    '새우',
-    '갈치'
-  ]);
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>(loadRecentSearches);
+  const [searchResults, setSearchResults] = useState<ProductCardData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  useEffect(() => {
+    saveRecentSearches(recentSearches);
+  }, [recentSearches]);
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
@@ -48,11 +60,13 @@ export function useSearchPage() {
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.map((p: any) => ({
-          id: p.id,
+          id: String(p.id),
           name: p.name || '상품명 없음',
           price: p.lowestPrice || p.basePrice || 0,
+          originalPrice: p.basePrice || undefined,
           discountRate: p.discountRate || 0,
           imageUrl: p.thumbnailUrl || '',
+          isFavorite: false,
         })));
       }
     } catch (error) {
@@ -65,9 +79,6 @@ export function useSearchPage() {
 
   const handleRecentSearchClick = useCallback((term: string) => {
     setSearchQuery(term);
-    setTimeout(() => {
-      setSearchQuery(term);
-    }, 0);
   }, []);
 
   const handleRecentSearchDelete = useCallback((term: string) => {
@@ -82,12 +93,16 @@ export function useSearchPage() {
     navigate('/cart');
   }, [navigate]);
 
-  const handleProductClick = useCallback((productId: number) => {
+  const handleProductClick = useCallback((productId: string) => {
     navigate(`/product/${productId}`);
   }, [navigate]);
 
-  const handleAddToCart = useCallback((productId: number) => {
+  const handleAddToCart = useCallback((productId: string) => {
     console.log('Add to cart:', productId);
+  }, []);
+
+  const handleToggleFavorite = useCallback((productId: string) => {
+    console.log('Toggle favorite:', productId);
   }, []);
 
   return {
@@ -105,6 +120,7 @@ export function useSearchPage() {
     onCartClick: handleCartClick,
     onProductClick: handleProductClick,
     onAddToCart: handleAddToCart,
+    onToggleFavorite: handleToggleFavorite,
   };
 }
 
