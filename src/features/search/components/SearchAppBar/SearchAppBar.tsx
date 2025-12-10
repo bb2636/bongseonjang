@@ -11,13 +11,7 @@ export default function SearchAppBar({
 }: SearchAppBarProps) {
   return (
     <header className="search-appbar">
-      <div className="search-appbar__logo">
-        <svg width="46" height="16" viewBox="0 0 46 16" fill="none">
-          <path d="M0 0.5H5V15.5H0V0.5Z" fill="#3B9BD5"/>
-          <path d="M15.33 0.5H20.33V15.5H15.33V0.5Z" fill="#3B9BD5"/>
-          <path d="M30.67 0.5H35.67V15.5H30.67V0.5Z" fill="#3B9BD5"/>
-        </svg>
-      </div>
+      <span className="search-appbar__title">봉선장</span>
       <button className="search-appbar__cart" onClick={onCartClick}>
         <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
           <path 
