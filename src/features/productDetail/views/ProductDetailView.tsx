@@ -143,10 +143,8 @@ export default function ProductDetailView({
       </div>
 
       <BottomActionBar
-        totalPrice={totalPrice}
         isWishlisted={isWishlisted}
         onWishlistClick={onWishlistClick}
-        onCartClick={onCartClick}
         onBuyClick={onBuyClick}
       />
     </div>
