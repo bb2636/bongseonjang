@@ -34,14 +34,19 @@
   background: linear-gradient(180deg, rgba(12, 12, 12, 0) 45.77%, rgba(12, 12, 12, 0.54) 91.94%);
 }
 
-.category-card__logo {
+.category-card__brand-text {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   bottom: 12px;
-  height: 25px;
-  width: auto;
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
 }
 
 .category-card__info {

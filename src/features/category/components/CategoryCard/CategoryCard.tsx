@@ -4,7 +4,6 @@ interface CategoryCardProps {
   name: string;
   subtitle: string;
   imageSrc: string;
-  logoSrc: string;
   onClick?: () => void;
 }
 
@@ -12,7 +11,6 @@ export function CategoryCard({
   name, 
   subtitle, 
   imageSrc, 
-  logoSrc,
   onClick 
 }: CategoryCardProps) {
   return (
@@ -24,11 +22,7 @@ export function CategoryCard({
           className="category-card__image" 
         />
         <div className="category-card__gradient" />
-        <img 
-          src={logoSrc} 
-          alt={`${name} 로고`} 
-          className="category-card__logo" 
-        />
+        <span className="category-card__brand-text">{name}</span>
       </div>
       <div className="category-card__info">
         <span className="category-card__name">{name}</span>

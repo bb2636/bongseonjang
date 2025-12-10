@@ -11,7 +11,6 @@ interface BrandCategory {
   name: string;
   subtitle: string;
   imageSrc: string;
-  logoSrc: string;
 }
 
 const brandCategories: BrandCategory[] = [
@@ -20,28 +19,24 @@ const brandCategories: BrandCategory[] = [
     name: '바담은',
     subtitle: '수산물',
     imageSrc: badameunImage,
-    logoSrc: badameunImage,
   },
   {
     id: 'obada',
     name: '오바다',
     subtitle: '수산물',
     imageSrc: obadaImage,
-    logoSrc: obadaImage,
   },
   {
     id: 'fourseason',
     name: '포시즌',
     subtitle: '수산물',
     imageSrc: fourseasonImage,
-    logoSrc: fourseasonImage,
   },
   {
     id: 'bongcook',
     name: '봉쿡',
     subtitle: '수산물',
     imageSrc: bongcookImage,
-    logoSrc: bongcookImage,
   },
 ];
 
@@ -61,7 +56,6 @@ export function CategoryCardGrid({ onCardClick }: CategoryCardGridProps) {
               name={brand.name}
               subtitle={brand.subtitle}
               imageSrc={brand.imageSrc}
-              logoSrc={brand.logoSrc}
               onClick={() => onCardClick?.(brand.id)}
             />
           ))}
