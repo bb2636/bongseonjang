@@ -1,11 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import './SortDropdown.css';
-import type { SortBy } from '../hooks/useSearchPage';
-
-interface SortOption {
-  value: SortBy;
-  label: string;
-}
+import type { SortBy, SortOption } from '../types/SortTypes';
 
 interface SortDropdownProps {
   value: SortBy;

@@ -1,18 +1,9 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ProductCardData } from '@/components/ProductCard';
+import type { SortBy } from '../types/SortTypes';
 
 const RECENT_SEARCHES_KEY = 'recentSearches';
-
-export type SortBy = 'default' | 'newest' | 'priceAsc' | 'priceDesc' | 'discountDesc';
-
-export const SORT_OPTIONS: { value: SortBy; label: string }[] = [
-  { value: 'default', label: '기본순' },
-  { value: 'newest', label: '신상품순' },
-  { value: 'priceAsc', label: '가격 낮은순' },
-  { value: 'priceDesc', label: '가격 높은순' },
-  { value: 'discountDesc', label: '할인율순' },
-];
 
 interface PopularSearchTerm {
   term: string;

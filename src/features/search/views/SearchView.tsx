@@ -5,7 +5,7 @@ import { ProductGridContent } from '@/components/ProductGridContent';
 import { BottomNav } from '@/components/BottomNav';
 import SortDropdown from '../components/SortDropdown';
 import type { SearchPageState } from '../hooks/useSearchPage';
-import { SORT_OPTIONS } from '../hooks/useSearchPage';
+import { SORT_OPTIONS } from '../types/SortTypes';
 
 interface SearchViewProps {
   state: SearchPageState;
