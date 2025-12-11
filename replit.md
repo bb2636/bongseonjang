@@ -169,6 +169,66 @@ Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈
 - **카테고리 목록**: 전체, 신상품, 베스트, 제철 수산물, 급랭 수산물, 손질 수산물, 바담은 절임류
 - **카테고리 클릭**: 홈페이지의 해당 탭으로 이동 (쿼리 파라미터 사용)
 
+### Profile Feature (봉크루/마이페이지)
+사용자 프로필 및 주문 관리 페이지입니다.
+- **ProfileAppBar**: 타이틀 + 장바구니 아이콘
+- **ProfileHeader**: 인사말, 등급, 프로필 수정 버튼
+- **SummaryCard**: 포인트/쿠폰/찜 현황 + 작성 가능한 리뷰
+- **RecentOrders**: 진행 중 주문 현황
+- **MenuList**: 쇼핑정보/고객센터 메뉴 섹션
+
+## Database Schema
+
+### 기존 테이블
+| 모듈 | 테이블 |
+|------|--------|
+| 사용자 | users, email_verification_tokens |
+| 상품 | products, product_categories, display_categories |
+| 상품 옵션 | product_main_options, product_sub_options, product_options |
+| 이미지 | product_images |
+| 리뷰 | reviews |
+| 콘텐츠 | hero_banners, middle_banners, bottom_banners, bongseonjang_tv |
+| 프로모션 | time_deals, events |
+| 검색 | search_terms |
+
+### 장바구니/주문 테이블 (2025.12.11 추가)
+- **carts**: 장바구니 (userId, guestToken, isActive)
+- **cart_items**: 장바구니 상품 (cartId, productId, mainOptionId, subOptionId, quantity)
+- **orders**: 주문 (orderNumber, userId, status, 금액 정보, 배송지 정보)
+- **order_items**: 주문 상품 - 스냅샷 저장 (productName, optionName, unitPrice)
+- **order_status_history**: 주문 상태 변경 이력
+
+### 배송 테이블
+- **shipping_addresses**: 배송지 목록 (userId, addressName, recipientName, address)
+- **shipments**: 배송 정보 (orderId, carrierCode, trackingNumber, status)
+- **shipment_events**: 배송 추적 이벤트
+
+### 결제 테이블
+- **payments**: 결제 정보 (orderId, method, amount, pgProvider)
+- **payment_refunds**: 환불 내역
+
+### 쿠폰 테이블
+- **coupons**: 쿠폰 정의 (code, discountType, discountValue, validFrom/To)
+- **coupon_issuances**: 사용자별 쿠폰 발급 내역
+
+### 포인트 테이블
+- **point_wallets**: 사용자별 포인트 잔액 (OneToOne with users)
+- **point_transactions**: 포인트 적립/사용 내역 (type, amount, expiresAt)
+
+### 찜 테이블
+- **wishlists**: 사용자별 찜 목록 (OneToOne with users)
+- **wishlist_items**: 찜한 상품 (Unique: wishlistId + productId)
+
+### 고객센터 테이블
+- **support_tickets**: 문의 티켓 (ticketNumber, category, status)
+- **support_messages**: 문의 메시지 (ticketId, senderType, content)
+
+### 설계 원칙
+- **스냅샷 저장**: 주문 시점의 가격/옵션을 OrderItem에 복사 저장
+- **상태 이력 관리**: order_status_history, shipment_events로 변경 추적
+- **포인트 만료**: point_transactions.expiresAt으로 만료 관리
+- **Soft Delete**: 배송지 등은 isActive 플래그로 논리 삭제
+
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
 - **Vite**: 빌드 도구
