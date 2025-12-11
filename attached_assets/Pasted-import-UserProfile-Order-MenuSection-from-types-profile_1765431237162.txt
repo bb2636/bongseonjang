@@ -1,5 +1,5 @@
 import { UserProfile, Order, MenuSection } from '../types/profile';
-import CategoryAppBar from '../../category/components/CategoryAppBar/CategoryAppBar';
+import ProfileAppBar from '../components/ProfileAppBar/ProfileAppBar';
 import ProfileHeader from '../components/ProfileHeader/ProfileHeader';
 import SummaryCard from '../components/SummaryCard/SummaryCard';
 import RecentOrders from '../components/RecentOrders/RecentOrders';
