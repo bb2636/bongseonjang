@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react';
 import { Coupon } from '../types/coupon';
 import './CouponDownloadBottomSheet.css';
 
@@ -49,7 +50,7 @@ export default function CouponDownloadBottomSheet({
 }: CouponDownloadBottomSheetProps) {
   if (!isOpen) return null;
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
+  const handleOverlayClick = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
