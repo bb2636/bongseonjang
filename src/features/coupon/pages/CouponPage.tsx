@@ -1,5 +1,5 @@
 import { useCouponPage } from '../hooks/useCouponPage';
-import CouponView from '../views/CouponView';
+import { CouponDownloadBottomSheet } from '../components';
 
 export default function CouponPage() {
   const {
@@ -12,12 +12,13 @@ export default function CouponPage() {
   } = useCouponPage();
 
   return (
-    <CouponView
+    <CouponDownloadBottomSheet
+      isOpen={true}
       coupons={coupons}
       totalCount={totalCount}
       isLoading={isLoading}
       isIssuing={isIssuing}
-      onBack={onBack}
+      onClose={onBack}
       onIssueCoupon={onIssueCoupon}
     />
   );
