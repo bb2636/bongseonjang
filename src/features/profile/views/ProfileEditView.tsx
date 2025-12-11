@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Input, PasswordInput } from '../../../components';
 import './ProfileEditView.css';
 
@@ -39,7 +38,6 @@ export default function ProfileEditView({
   onSubmit,
   onBack,
 }: ProfileEditViewProps) {
-  const [showPasswordFields, setShowPasswordFields] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,35 +98,23 @@ export default function ProfileEditView({
           />
 
           <div className="profile-edit__password-section">
-            <div className="profile-edit__password-header">
-              <span className="profile-edit__section-title">비밀번호 변경</span>
-              <button
-                type="button"
-                className="profile-edit__password-toggle"
-                onClick={() => setShowPasswordFields(!showPasswordFields)}
-              >
-                {showPasswordFields ? '취소' : '변경하기'}
-              </button>
+            <span className="profile-edit__section-title">비밀번호 변경</span>
+            <div className="profile-edit__password-fields">
+              <PasswordInput
+                label="새 비밀번호"
+                placeholder="새 비밀번호를 입력해주세요"
+                value={newPassword}
+                onChange={(e) => onNewPasswordChange(e.target.value)}
+                error={passwordError}
+              />
+              <PasswordInput
+                label="새 비밀번호 확인"
+                placeholder="새 비밀번호를 다시 입력해주세요"
+                value={newPasswordConfirm}
+                onChange={(e) => onNewPasswordConfirmChange(e.target.value)}
+                error={passwordConfirmError}
+              />
             </div>
-
-            {showPasswordFields && (
-              <div className="profile-edit__password-fields">
-                <PasswordInput
-                  label="새 비밀번호"
-                  placeholder="새 비밀번호를 입력해주세요"
-                  value={newPassword}
-                  onChange={(e) => onNewPasswordChange(e.target.value)}
-                  error={passwordError}
-                />
-                <PasswordInput
-                  label="새 비밀번호 확인"
-                  placeholder="새 비밀번호를 다시 입력해주세요"
-                  value={newPasswordConfirm}
-                  onChange={(e) => onNewPasswordConfirmChange(e.target.value)}
-                  error={passwordConfirmError}
-                />
-              </div>
-            )}
           </div>
         </form>
       </div>
