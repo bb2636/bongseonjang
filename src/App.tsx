@@ -9,6 +9,7 @@ import { CategoryPage } from './features/category';
 import { CategoryProductsPage } from './features/categoryProducts';
 import { SearchPage } from './features/search';
 import { ProfilePage } from './features/profile';
+import { PointPage } from './features/point';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
       <Route path="/category/:slug" element={<CategoryProductsPage />} />
       <Route path="/search" element={<SearchPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/points" element={<PointPage />} />
       <Route
         path="*"
         element={

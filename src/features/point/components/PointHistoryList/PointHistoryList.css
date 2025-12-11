@@ -1,0 +1,161 @@
+.point-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
+}
+
+.point-history-list__empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 0;
+}
+
+.point-history-list__empty-text {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.4);
+  margin: 0;
+}
+
+.point-history-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.point-history-group__date {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.point-history-group__items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.point-history-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.08);
+}
+
+.point-history-item:last-child {
+  border-bottom: none;
+}
+
+.point-history-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.point-history-item__type {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 150%;
+  letter-spacing: -0.01em;
+}
+
+.point-history-item__type--earn {
+  color: #3B9BD5;
+}
+
+.point-history-item__type--use {
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.point-history-item__type--expire {
+  color: #E53935;
+}
+
+.point-history-item__type--refund {
+  color: #FF9800;
+}
+
+.point-history-item__type--admin_add {
+  color: #4CAF50;
+}
+
+.point-history-item__type--admin_deduct {
+  color: #9E9E9E;
+}
+
+.point-history-item__description {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.point-history-item__amount {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: -0.01em;
+}
+
+.point-history-item__amount.point-history-item__type--earn {
+  color: #3B9BD5;
+}
+
+.point-history-item__amount.point-history-item__type--use {
+  color: #0C0C0C;
+}
+
+.point-history-item__amount.point-history-item__type--expire {
+  color: #E53935;
+}
+
+.point-history-item__amount.point-history-item__type--refund {
+  color: #FF9800;
+}
+
+.point-history-item__amount.point-history-item__type--admin_add {
+  color: #4CAF50;
+}
+
+.point-history-item__amount.point-history-item__type--admin_deduct {
+  color: #9E9E9E;
+}
+
+.point-history-list__load-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(12, 12, 12, 0.04);
+  border: none;
+  border-radius: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.6);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.point-history-list__load-more:hover:not(:disabled) {
+  background: rgba(12, 12, 12, 0.08);
+}
+
+.point-history-list__load-more:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
