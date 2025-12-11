@@ -179,10 +179,47 @@ Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈
 
 ## Database Schema
 
+### Social Login (소셜 로그인, 2025.12.11 추가)
+듀얼 테이블 구조로 소셜 로그인을 지원합니다:
+- **users**: 기본 사용자 정보 (email UNIQUE, password nullable)
+- **user_social_accounts**: 소셜 계정 연동 정보 (provider, providerUserId, emailFromProvider)
+
+**지원 플랫폼:**
+- 카카오 (Kakao)
+- 네이버 (Naver)
+
+**필요한 환경 변수:**
+```
+# 백엔드
+KAKAO_CLIENT_ID=
+KAKAO_CLIENT_SECRET=
+KAKAO_REDIRECT_URI=
+
+NAVER_CLIENT_ID=
+NAVER_CLIENT_SECRET=
+
+# 프론트엔드 (.env)
+VITE_KAKAO_CLIENT_ID=
+VITE_KAKAO_REDIRECT_URI=
+VITE_NAVER_CLIENT_ID=
+VITE_NAVER_REDIRECT_URI=
+```
+
+**OAuth 플로우:**
+1. 프론트엔드에서 OAuth 인증 URL로 리다이렉트
+2. 사용자가 로그인 완료 후 /auth/callback/:provider로 리다이렉트
+3. 프론트엔드에서 code를 백엔드로 POST 전송
+4. 백엔드에서 access token 획득 및 사용자 정보 조회
+5. JWT 토큰 발급 및 응답
+
+**이메일 필수 정책:**
+- 소셜 로그인 시 이메일이 없으면 requiresEmail 응답 반환
+- 프론트엔드에서 이메일 수집 페이지로 리다이렉트
+
 ### 기존 테이블
 | 모듈 | 테이블 |
 |------|--------|
-| 사용자 | users, email_verification_tokens |
+| 사용자 | users, email_verification_tokens, user_social_accounts |
 | 상품 | products, product_categories, display_categories |
 | 상품 옵션 | product_main_options, product_sub_options, product_options |
 | 이미지 | product_images |
