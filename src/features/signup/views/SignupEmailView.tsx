@@ -19,7 +19,6 @@ interface EmailStepProps {
     email: string | null;
     verificationCode: string | null;
   };
-  showSnackbar: boolean;
   showErrorModal: boolean;
   errorModalMessage: string;
   timer: string;
@@ -167,12 +166,6 @@ export default function SignupEmailView({
         title={profileStep.errorModalMessage}
         onConfirm={profileStep.onCloseErrorModal}
       />
-
-      {emailStep.showSnackbar && (
-        <div className="signup-snackbar">
-          <span className="signup-snackbar-text">작성하신 이메일로 인증코드를 보냈어요</span>
-        </div>
-      )}
 
       <header className="signup-header">
         <button className="signup-back-button" onClick={onBack} aria-label="뒤로가기">

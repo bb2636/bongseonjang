@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useSignupFormState } from './useSignupFormState';
 import { SIGNUP_MESSAGES, SIGNUP_VALIDATION } from '../constants';
 import { signupService } from '../services/signupService';
+import { useToast } from '../../../contexts';
 
 const TIMER_DURATION = 180;
 
@@ -13,13 +14,13 @@ interface TouchedFields {
 
 export function useSignupEmailStep() {
   const { formData, updateFormData } = useSignupFormState();
+  const { showToast } = useToast();
 
   const [touched, setTouched] = useState<TouchedFields>({
     email: false,
     verificationCode: false,
   });
 
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState('');
   const [timer, setTimer] = useState(0);
@@ -34,8 +35,7 @@ export function useSignupEmailStep() {
     onSuccess: () => {
       updateFormData({ isCodeSent: true });
       setTimer(TIMER_DURATION);
-      setShowSnackbar(true);
-      setTimeout(() => setShowSnackbar(false), 3000);
+      showToast('작성하신 이메일로 인증코드를 보냈어요');
     },
     onError: (error: Error) => {
       setErrorModalMessage(error.message || '이메일 전송에 실패했습니다');
@@ -185,7 +185,6 @@ export function useSignupEmailStep() {
     isEmailValid,
     isCodeValid,
     errors,
-    showSnackbar,
     showErrorModal,
     errorModalMessage,
     timer: formatTimer(timer),
