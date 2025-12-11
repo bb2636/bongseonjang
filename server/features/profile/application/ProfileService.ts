@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { ProfileRepository } from '../repository/ProfileRepository';
 import { UserProfile, Order } from '../domain/Profile';
 
@@ -10,5 +11,15 @@ export class ProfileService {
 
   async getRecentOrders(userId: string, limit: number = 3): Promise<Order[]> {
     return this.profileRepository.getRecentOrders(userId, limit);
+  }
+
+  async verifyPassword(userId: string, password: string): Promise<boolean> {
+    const passwordHash = await this.profileRepository.getUserPasswordHash(userId);
+    
+    if (!passwordHash) {
+      return false;
+    }
+
+    return bcrypt.compare(password, passwordHash);
   }
 }

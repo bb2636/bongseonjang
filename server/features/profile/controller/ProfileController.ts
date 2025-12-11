@@ -46,4 +46,33 @@ export class ProfileController {
       res.status(500).json({ error: 'Failed to fetch orders' });
     }
   }
+
+  async verifyPassword(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      const { password } = req.body;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      if (!password) {
+        res.status(400).json({ error: '비밀번호를 입력해주세요' });
+        return;
+      }
+
+      const isValid = await this.profileService.verifyPassword(userId, password);
+      
+      if (!isValid) {
+        res.status(400).json({ error: '비밀번호가 일치하지 않습니다' });
+        return;
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error verifying password:', error);
+      res.status(500).json({ error: '비밀번호 확인에 실패했습니다' });
+    }
+  }
 }

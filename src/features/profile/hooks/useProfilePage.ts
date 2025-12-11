@@ -51,7 +51,7 @@ export function useProfilePage() {
   }, []);
 
   const handleEditProfileClick = useCallback(() => {
-    navigate('/profile/edit');
+    navigate('/profile/verify');
   }, [navigate]);
 
   const handlePointsClick = useCallback(() => {

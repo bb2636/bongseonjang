@@ -27,3 +27,30 @@ export async function fetchRecentOrders(): Promise<Order[]> {
   }
   return response.json();
 }
+
+interface VerifyPasswordResponse {
+  success: boolean;
+  message?: string;
+}
+
+export async function verifyPassword(password: string): Promise<VerifyPasswordResponse> {
+  const response = await fetch('/api/profile/verify-password', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ password }),
+  });
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    return { success: false, message: data.error || '비밀번호 확인에 실패했습니다' };
+  }
+  
+  return { success: true };
+}
+
+export const profileApi = {
+  fetchUserProfile,
+  fetchRecentOrders,
+  verifyPassword,
+};

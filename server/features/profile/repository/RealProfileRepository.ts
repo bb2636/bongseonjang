@@ -100,4 +100,13 @@ export class RealProfileRepository implements ProfileRepository {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${year}.${month}.${day} ${hours}:${minutes}`;
   }
+
+  async getUserPasswordHash(userId: string): Promise<string | null> {
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ 
+      where: { id: userId },
+      select: ['id', 'password'] 
+    });
+    return user?.password || null;
+  }
 }
