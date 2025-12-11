@@ -26,6 +26,10 @@ export function useSignupProfileStep() {
 
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralModalMessage, setReferralModalMessage] = useState('');
+  
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [phoneModalMessage, setPhoneModalMessage] = useState('');
+  const [isPhoneVerifySuccess, setIsPhoneVerifySuccess] = useState(false);
 
   const referralMutation = useMutation({
     mutationFn: (referralId: string) => signupService.verifyReferralId(referralId),
@@ -133,7 +137,7 @@ export function useSignupProfileStep() {
   const isReferralIdValid = !validateReferralId(formData.referralId);
   const isAgreementValid = formData.isOver14 && formData.termsAgreed && formData.privacyAgreed;
   
-  const isValid = isNameValid && isPhoneValid && isBirthDateValid && isGenderValid && isReferralIdValid && isAgreementValid;
+  const isValid = isNameValid && isPhoneValid && formData.isPhoneVerified && isBirthDateValid && isGenderValid && isReferralIdValid && isAgreementValid;
 
   const onNameChange = useCallback((value: string) => {
     updateFormData({ name: value });
@@ -154,10 +158,25 @@ export function useSignupProfileStep() {
 
   const onPhoneVerify = useCallback(() => {
     setTouched(prev => ({ ...prev, phone: true }));
-    if (isPhoneValid) {
-      updateFormData({ isPhoneVerified: true });
+    
+    if (!isPhoneValid) {
+      setPhoneModalMessage('올바른 휴대폰 번호를 입력해주세요');
+      setIsPhoneVerifySuccess(false);
+      setShowPhoneModal(true);
+      return;
     }
+    
+    // Mock: 휴대폰 인증 성공 처리 (나중에 Solapi 연동 시 실제 인증으로 대체)
+    updateFormData({ isPhoneVerified: true });
+    setPhoneModalMessage('휴대폰 인증이 완료되었습니다');
+    setIsPhoneVerifySuccess(true);
+    setShowPhoneModal(true);
   }, [isPhoneValid, updateFormData]);
+  
+  const onClosePhoneModal = useCallback(() => {
+    setShowPhoneModal(false);
+    setPhoneModalMessage('');
+  }, []);
 
   const onBirthYearChange = useCallback((value: string) => {
     const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 4);
@@ -274,6 +293,9 @@ export function useSignupProfileStep() {
     errors,
     showReferralModal,
     referralModalMessage,
+    showPhoneModal,
+    phoneModalMessage,
+    isPhoneVerifySuccess,
     onNameChange,
     onPhoneChange,
     onNameBlur,
@@ -288,6 +310,7 @@ export function useSignupProfileStep() {
     onReferralIdBlur,
     onReferralIdVerify,
     onCloseReferralModal,
+    onClosePhoneModal,
     onOver14Change,
     onTermsAgreedChange,
     onPrivacyAgreedChange,

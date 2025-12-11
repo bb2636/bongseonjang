@@ -87,6 +87,9 @@ interface ProfileStepProps {
   };
   showReferralModal: boolean;
   referralModalMessage: string;
+  showPhoneModal: boolean;
+  phoneModalMessage: string;
+  isPhoneVerifySuccess: boolean;
   onNameChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
   onNameBlur: () => void;
@@ -101,6 +104,7 @@ interface ProfileStepProps {
   onReferralIdBlur: () => void;
   onReferralIdVerify: () => void;
   onCloseReferralModal: () => void;
+  onClosePhoneModal: () => void;
   onOver14Change: (value: boolean) => void;
   onTermsAgreedChange: (value: boolean) => void;
   onPrivacyAgreedChange: (value: boolean) => void;
@@ -147,6 +151,12 @@ export default function SignupEmailView({
         isOpen={profileStep.showReferralModal}
         message={profileStep.referralModalMessage}
         onConfirm={profileStep.onCloseReferralModal}
+      />
+      
+      <AlertModal
+        isOpen={profileStep.showPhoneModal}
+        title={profileStep.phoneModalMessage}
+        onConfirm={profileStep.onClosePhoneModal}
       />
 
       {emailStep.showSnackbar && (

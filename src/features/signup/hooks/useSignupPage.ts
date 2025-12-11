@@ -17,7 +17,7 @@ export function useSignupPage() {
     navigate(-1);
   }, [navigate]);
 
-  const currentStep = formData.isPasswordSet 
+  const currentStep: 'email' | 'password' | 'profile' = formData.isPasswordSet 
     ? 'profile' 
     : formData.isEmailVerified 
       ? 'password' 
