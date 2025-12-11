@@ -33,6 +33,22 @@ export class AuthController {
     }
   }
 
+  async checkEmail(req: Request, res: Response): Promise<void> {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        res.status(400).json({ message: 'Email is required' });
+        return;
+      }
+
+      const exists = await userService.checkEmailExists(email);
+      res.json({ exists });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to check email' });
+    }
+  }
+
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;

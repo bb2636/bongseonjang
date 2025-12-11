@@ -192,6 +192,11 @@ export class UserApplicationService {
     };
   }
 
+  async checkEmailExists(email: string): Promise<boolean> {
+    const existingUser = await this.userRepository.findByEmail(email);
+    return !!existingUser;
+  }
+
   async getUserById(id: string): Promise<UserResponse | null> {
     const user = await this.userRepository.findById(id);
     
