@@ -22,6 +22,15 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   phone!: string | null;
 
+  @Column({ type: 'date', nullable: true })
+  birthDate!: Date | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  gender!: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  referralId!: string | null;
+
   @Column({ type: 'boolean', default: false })
   isEmailVerified!: boolean;
 

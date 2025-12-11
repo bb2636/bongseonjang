@@ -8,6 +8,10 @@ interface RegisterInput {
   email: string;
   password: string;
   name: string;
+  phone?: string;
+  birthDate?: string;
+  gender?: string;
+  referralId?: string;
 }
 
 interface LoginInput {
@@ -35,6 +39,9 @@ interface UserResponse {
   name: string;
   profileImage: string | null;
   phone: string | null;
+  birthDate: Date | null;
+  gender: string | null;
+  referralId: string | null;
   isEmailVerified: boolean;
   lastLoginAt: Date | null;
   createdAt: Date;
@@ -53,6 +60,9 @@ function toUserResponse(user: User): UserResponse {
     name: user.name,
     profileImage: user.profileImage,
     phone: user.phone,
+    birthDate: user.birthDate,
+    gender: user.gender,
+    referralId: user.referralId,
     isEmailVerified: user.isEmailVerified,
     lastLoginAt: user.lastLoginAt,
     createdAt: user.createdAt,
@@ -84,6 +94,10 @@ export class UserApplicationService {
       email: input.email,
       password: hashedPassword,
       name: input.name,
+      phone: input.phone || null,
+      birthDate: input.birthDate ? new Date(input.birthDate) : null,
+      gender: input.gender || null,
+      referralId: input.referralId || null,
     });
 
     const token = this.authService.generateToken(user.id);
