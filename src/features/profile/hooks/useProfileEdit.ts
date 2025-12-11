@@ -12,8 +12,6 @@ export function useProfileEdit() {
   
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [addressDetail, setAddressDetail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
   
@@ -39,8 +37,6 @@ export function useProfileEdit() {
         const profile = await profileApi.fetchUserProfile();
         setName(profile.name || '');
         setPhone(profile.phone || '');
-        setAddress(profile.address || '');
-        setAddressDetail(profile.addressDetail || '');
         setIsLoading(false);
       } catch {
         showToast('프로필 정보를 불러오는데 실패했습니다', 'error');
@@ -61,14 +57,6 @@ export function useProfileEdit() {
     if (phoneError) setPhoneError(null);
   };
 
-  const handleAddressChange = (value: string) => {
-    setAddress(value);
-  };
-
-  const handleAddressDetailChange = (value: string) => {
-    setAddressDetail(value);
-  };
-
   const handleNewPasswordChange = (value: string) => {
     setNewPassword(value);
     if (passwordError) setPasswordError(null);
@@ -77,10 +65,6 @@ export function useProfileEdit() {
   const handleNewPasswordConfirmChange = (value: string) => {
     setNewPasswordConfirm(value);
     if (passwordConfirmError) setPasswordConfirmError(null);
-  };
-
-  const handleAddressSearch = () => {
-    showToast('주소 검색 기능은 준비 중입니다', 'info');
   };
 
   const validateForm = (): boolean => {
@@ -114,14 +98,10 @@ export function useProfileEdit() {
       const updateData: {
         name: string;
         phone?: string;
-        address?: string;
-        addressDetail?: string;
         newPassword?: string;
       } = { name };
 
       if (phone) updateData.phone = phone;
-      if (address) updateData.address = address;
-      if (addressDetail) updateData.addressDetail = addressDetail;
       if (newPassword) updateData.newPassword = newPassword;
 
       const result = await profileApi.updateProfile(updateData);
@@ -147,8 +127,6 @@ export function useProfileEdit() {
     email,
     name,
     phone,
-    address,
-    addressDetail,
     newPassword,
     newPasswordConfirm,
     nameError,
@@ -159,11 +137,8 @@ export function useProfileEdit() {
     isLoading,
     handleNameChange,
     handlePhoneChange,
-    handleAddressChange,
-    handleAddressDetailChange,
     handleNewPasswordChange,
     handleNewPasswordConfirmChange,
-    handleAddressSearch,
     handleSubmit,
     handleBack,
   };

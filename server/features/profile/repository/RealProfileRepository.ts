@@ -52,8 +52,6 @@ export class RealProfileRepository implements ProfileRepository {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      address: user.address,
-      addressDetail: user.addressDetail,
       grade: GRADE_DISPLAY_MAP[user.membershipGrade] || '브론즈',
       points: pointWallet?.balance || 0,
       couponCount,
@@ -123,12 +121,6 @@ export class RealProfileRepository implements ProfileRepository {
 
     if (data.phone !== undefined) {
       updateData.phone = data.phone;
-    }
-    if (data.address !== undefined) {
-      updateData.address = data.address;
-    }
-    if (data.addressDetail !== undefined) {
-      updateData.addressDetail = data.addressDetail;
     }
     if (data.password !== undefined) {
       updateData.password = data.password;

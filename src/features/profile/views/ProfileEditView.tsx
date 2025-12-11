@@ -6,8 +6,6 @@ interface ProfileEditViewProps {
   email: string;
   name: string;
   phone: string;
-  address: string;
-  addressDetail: string;
   newPassword: string;
   newPasswordConfirm: string;
   nameError: string | null;
@@ -17,11 +15,8 @@ interface ProfileEditViewProps {
   isSubmitting: boolean;
   onNameChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
-  onAddressChange: (value: string) => void;
-  onAddressDetailChange: (value: string) => void;
   onNewPasswordChange: (value: string) => void;
   onNewPasswordConfirmChange: (value: string) => void;
-  onAddressSearch: () => void;
   onSubmit: () => void;
   onBack: () => void;
 }
@@ -30,8 +25,6 @@ export default function ProfileEditView({
   email,
   name,
   phone,
-  address,
-  addressDetail,
   newPassword,
   newPasswordConfirm,
   nameError,
@@ -41,11 +34,8 @@ export default function ProfileEditView({
   isSubmitting,
   onNameChange,
   onPhoneChange,
-  onAddressChange,
-  onAddressDetailChange,
   onNewPasswordChange,
   onNewPasswordConfirmChange,
-  onAddressSearch,
   onSubmit,
   onBack,
 }: ProfileEditViewProps) {
@@ -108,34 +98,6 @@ export default function ProfileEditView({
             onChange={(e) => onPhoneChange(e.target.value)}
             error={phoneError}
           />
-
-          <div className="profile-edit__section">
-            <span className="profile-edit__section-title">주소</span>
-            <div className="profile-edit__address-row">
-              <div className="profile-edit__address-input">
-                <Input
-                  type="text"
-                  placeholder="주소를 검색해주세요"
-                  value={address}
-                  onChange={(e) => onAddressChange(e.target.value)}
-                  readOnly
-                />
-              </div>
-              <button
-                type="button"
-                className="profile-edit__address-button"
-                onClick={onAddressSearch}
-              >
-                주소 검색
-              </button>
-            </div>
-            <Input
-              type="text"
-              placeholder="상세 주소를 입력해주세요"
-              value={addressDetail}
-              onChange={(e) => onAddressDetailChange(e.target.value)}
-            />
-          </div>
 
           <div className="profile-edit__password-section">
             <div className="profile-edit__password-header">

@@ -38,12 +38,6 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   referralId!: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
-  address!: string | null;
-
-  @Column({ type: 'varchar', nullable: true })
-  addressDetail!: string | null;
-
   @Column({ 
     type: 'varchar', 
     default: MembershipGrade.BRONZE,

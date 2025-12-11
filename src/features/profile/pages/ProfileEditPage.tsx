@@ -6,8 +6,6 @@ export default function ProfileEditPage() {
     email,
     name,
     phone,
-    address,
-    addressDetail,
     newPassword,
     newPasswordConfirm,
     nameError,
@@ -18,11 +16,8 @@ export default function ProfileEditPage() {
     isLoading,
     handleNameChange,
     handlePhoneChange,
-    handleAddressChange,
-    handleAddressDetailChange,
     handleNewPasswordChange,
     handleNewPasswordConfirmChange,
-    handleAddressSearch,
     handleSubmit,
     handleBack,
   } = useProfileEdit();
@@ -53,8 +48,6 @@ export default function ProfileEditPage() {
       email={email}
       name={name}
       phone={phone}
-      address={address}
-      addressDetail={addressDetail}
       newPassword={newPassword}
       newPasswordConfirm={newPasswordConfirm}
       nameError={nameError}
@@ -64,11 +57,8 @@ export default function ProfileEditPage() {
       isSubmitting={isSubmitting}
       onNameChange={handleNameChange}
       onPhoneChange={handlePhoneChange}
-      onAddressChange={handleAddressChange}
-      onAddressDetailChange={handleAddressDetailChange}
       onNewPasswordChange={handleNewPasswordChange}
       onNewPasswordConfirmChange={handleNewPasswordConfirmChange}
-      onAddressSearch={handleAddressSearch}
       onSubmit={handleSubmit}
       onBack={handleBack}
     />
