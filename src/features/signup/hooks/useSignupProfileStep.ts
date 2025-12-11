@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useSignupFormState, clearFormDataFromStorage } from './useSignupFormState';
 import { signupService } from '../services/signupService';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface TouchedFields {
   name: boolean;
@@ -14,6 +15,7 @@ interface TouchedFields {
 
 export function useSignupProfileStep() {
   const navigate = useNavigate();
+  const { loginWithToken } = useAuth();
   const { formData, updateFormData } = useSignupFormState();
 
   const [touched, setTouched] = useState<TouchedFields>({
@@ -67,8 +69,17 @@ export function useSignupProfileStep() {
       gender: formData.gender,
       referralId: formData.referralId || undefined,
     }),
-    onSuccess: () => {
+    onSuccess: (result) => {
       clearFormDataFromStorage();
+      
+      if (result.token && result.user) {
+        loginWithToken(result.token, {
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.name,
+        });
+      }
+      
       navigate('/signup/complete');
     },
     onError: (error: Error) => {

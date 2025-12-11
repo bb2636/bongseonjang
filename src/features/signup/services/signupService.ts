@@ -8,10 +8,17 @@ function translateErrorMessage(message: string): string {
   return ERROR_MESSAGES[message] || message;
 }
 
+export interface SignupUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
 export interface SignupResponse {
   success: boolean;
   message?: string;
   token?: string;
+  user?: SignupUser;
 }
 
 export interface SignupData {
@@ -129,6 +136,10 @@ export const signupService = {
       throw new Error(errorMessage);
     }
 
-    return { success: true, token: result.token };
+    return { 
+      success: true, 
+      token: result.token,
+      user: result.user,
+    };
   },
 };
