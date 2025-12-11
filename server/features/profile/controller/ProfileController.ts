@@ -1,12 +1,19 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { ProfileService } from '../application/ProfileService';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  async getProfile(req: Request, res: Response): Promise<void> {
+  async getProfile(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const userId = 'user-1';
+      const userId = req.userId;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
       const profile = await this.profileService.getUserProfile(userId);
       
       if (!profile) {
@@ -21,9 +28,15 @@ export class ProfileController {
     }
   }
 
-  async getRecentOrders(req: Request, res: Response): Promise<void> {
+  async getRecentOrders(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const userId = 'user-1';
+      const userId = req.userId;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
       const limit = parseInt(req.query.limit as string) || 3;
       
       const orders = await this.profileService.getRecentOrders(userId, limit);
