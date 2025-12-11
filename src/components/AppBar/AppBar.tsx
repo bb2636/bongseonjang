@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../contexts';
 import './AppBar.css';
 
 interface AppBarProps {
@@ -6,7 +8,6 @@ interface AppBarProps {
   showLogo?: boolean;
   onLogoClick?: () => void;
   showCart?: boolean;
-  cartCount?: number;
   onCartClick?: () => void;
 }
 
@@ -16,9 +17,27 @@ export default function AppBar({
   showLogo = true,
   onLogoClick,
   showCart = true,
-  cartCount = 0,
   onCartClick,
 }: AppBarProps) {
+  const navigate = useNavigate();
+  const { cartCount } = useCart();
+
+  const handleLogoClick = () => {
+    if (onLogoClick) {
+      onLogoClick();
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleCartClick = () => {
+    if (onCartClick) {
+      onCartClick();
+    } else {
+      navigate('/cart');
+    }
+  };
+
   return (
     <header className="app-bar">
       <div className="app-bar__left">
@@ -44,7 +63,7 @@ export default function AppBar({
           <button 
             type="button"
             className="app-bar__logo-button"
-            onClick={onLogoClick}
+            onClick={handleLogoClick}
           >
             <span className="app-bar__title">봉선장</span>
           </button>
@@ -56,7 +75,7 @@ export default function AppBar({
           <button 
             type="button"
             className="app-bar__cart-button" 
-            onClick={onCartClick}
+            onClick={handleCartClick}
             aria-label="장바구니"
           >
             <svg 

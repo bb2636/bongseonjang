@@ -6,8 +6,6 @@ export default function CategoryPage() {
     categories,
     handleCategoryClick,
     handleBrandClick,
-    handleCartClick,
-    handleLogoClick,
   } = useCategoryPage();
 
   return (
@@ -15,8 +13,6 @@ export default function CategoryPage() {
       categories={categories}
       onCategoryClick={handleCategoryClick}
       onBrandClick={handleBrandClick}
-      onCartClick={handleCartClick}
-      onLogoClick={handleLogoClick}
     />
   );
 }

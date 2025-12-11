@@ -18,6 +18,7 @@ import { reviewRoutes } from '../features/review';
 import { searchRoutes } from '../features/search';
 import { profileRoutes } from '../features/profile';
 import { pointRoutes } from '../features/point';
+import { cartRoutes } from '../features/cart';
 
 const router = Router();
 
@@ -40,5 +41,6 @@ router.use('/reviews', reviewRoutes);
 router.use('/search', searchRoutes);
 router.use('/profile', profileRoutes);
 router.use('/points', pointRoutes);
+router.use('/cart', cartRoutes);
 
 export default router;

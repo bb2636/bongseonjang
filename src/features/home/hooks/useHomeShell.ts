@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import type { CategoryTab } from '../types/navigation';
 
 const CATEGORY_TO_TAB_MAP: Record<string, CategoryTab> = {
@@ -14,7 +14,6 @@ const CATEGORY_TO_TAB_MAP: Record<string, CategoryTab> = {
 };
 
 export function useHomeShell() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
   
@@ -32,19 +31,9 @@ export function useHomeShell() {
     setActiveTab(tab);
   }, []);
 
-  const handleLogoClick = useCallback(() => {
-    setActiveTab('default');
-  }, []);
-
-  const handleCartClick = useCallback(() => {
-    navigate('/cart');
-  }, [navigate]);
-
   return {
     activeTab,
     onTabChange: handleTabChange,
-    onLogoClick: handleLogoClick,
-    onCartClick: handleCartClick,
   };
 }
 

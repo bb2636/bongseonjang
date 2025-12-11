@@ -149,14 +149,6 @@ export function useSearchPage() {
     setRecentSearches([]);
   }, []);
 
-  const handleCartClick = useCallback(() => {
-    navigate('/cart');
-  }, [navigate]);
-
-  const handleLogoClick = useCallback(() => {
-    navigate('/');
-  }, [navigate]);
-
   const handleProductClick = useCallback((productId: string) => {
     navigate(`/product/${productId}`);
   }, [navigate]);
@@ -185,8 +177,6 @@ export function useSearchPage() {
     onSortChange: handleSortChange,
     onRecentSearchDelete: handleRecentSearchDelete,
     onClearAllRecent: handleClearAllRecent,
-    onCartClick: handleCartClick,
-    onLogoClick: handleLogoClick,
     onProductClick: handleProductClick,
     onAddToCart: handleAddToCart,
     onToggleFavorite: handleToggleFavorite,

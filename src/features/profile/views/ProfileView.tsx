@@ -14,8 +14,6 @@ interface ProfileViewProps {
     menuSections: MenuSection[];
     isLoading: boolean;
     error: string | null;
-    onCartClick: () => void;
-    onLogoClick: () => void;
     onEditProfileClick: () => void;
     onPointsClick: () => void;
     onCouponsClick: () => void;
@@ -32,7 +30,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
   if (state.isLoading) {
     return (
       <div className="profile-view">
-        <AppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartCount={0} />
+        <AppBar />
         <div className="profile-view__loading">
           <div className="profile-view__loading-spinner" />
         </div>
@@ -44,7 +42,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
   if (state.error) {
     return (
       <div className="profile-view">
-        <AppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartCount={0} />
+        <AppBar />
         <div className="profile-view__error">
           <p className="profile-view__error-message">{state.error}</p>
           <button
@@ -62,7 +60,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
 
   return (
     <div className="profile-view">
-      <AppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartCount={1} />
+      <AppBar />
       
       <main className="profile-view__content">
         <ProfileHeader
