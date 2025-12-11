@@ -54,6 +54,10 @@ export function useProfilePage() {
     navigate('/cart');
   }, [navigate]);
 
+  const handleLogoClick = useCallback(() => {
+    navigate('/');
+  }, [navigate]);
+
   const handleEditProfileClick = useCallback(() => {
     navigate('/profile/edit');
   }, [navigate]);
@@ -97,6 +101,7 @@ export function useProfilePage() {
     isLoading,
     error,
     onCartClick: handleCartClick,
+    onLogoClick: handleLogoClick,
     onEditProfileClick: handleEditProfileClick,
     onPointsClick: handlePointsClick,
     onCouponsClick: handleCouponsClick,
