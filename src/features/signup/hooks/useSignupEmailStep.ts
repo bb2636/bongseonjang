@@ -25,6 +25,10 @@ export function useSignupEmailStep() {
   const [timer, setTimer] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const checkEmailMutation = useMutation({
+    mutationFn: (email: string) => signupService.checkEmail(email),
+  });
+
   const sendCodeMutation = useMutation({
     mutationFn: (email: string) => signupService.sendVerificationCode(email),
     onSuccess: () => {
@@ -34,7 +38,8 @@ export function useSignupEmailStep() {
       setTimeout(() => setShowSnackbar(false), 3000);
     },
     onError: (error: Error) => {
-      alert(error.message || '이메일 전송에 실패했습니다');
+      setErrorModalMessage(error.message || '이메일 전송에 실패했습니다');
+      setShowErrorModal(true);
     },
   });
 
@@ -123,15 +128,28 @@ export function useSignupEmailStep() {
     setTouched(prev => ({ ...prev, verificationCode: true }));
   }, []);
 
-  const onVerifyEmail = useCallback(() => {
+  const onVerifyEmail = useCallback(async () => {
     setTouched(prev => ({ ...prev, email: true }));
     
-    if (!isEmailValid || sendCodeMutation.isPending) {
+    if (!isEmailValid || checkEmailMutation.isPending || sendCodeMutation.isPending) {
       return;
     }
 
-    sendCodeMutation.mutate(formData.email);
-  }, [formData.email, isEmailValid, sendCodeMutation]);
+    try {
+      const result = await checkEmailMutation.mutateAsync(formData.email);
+      
+      if (result.exists) {
+        setErrorModalMessage('이미 가입된 이메일입니다');
+        setShowErrorModal(true);
+        return;
+      }
+
+      sendCodeMutation.mutate(formData.email);
+    } catch {
+      setErrorModalMessage('이메일 확인에 실패했습니다');
+      setShowErrorModal(true);
+    }
+  }, [formData.email, isEmailValid, checkEmailMutation, sendCodeMutation]);
 
   const onResendCode = useCallback(() => {
     if (!isEmailValid || sendCodeMutation.isPending) {
@@ -162,7 +180,7 @@ export function useSignupEmailStep() {
     verificationCode: formData.verificationCode,
     isCodeSent: formData.isCodeSent,
     isEmailVerified: formData.isEmailVerified,
-    isVerifying: sendCodeMutation.isPending,
+    isVerifying: checkEmailMutation.isPending || sendCodeMutation.isPending,
     isConfirming: verifyCodeMutation.isPending,
     isEmailValid,
     isCodeValid,

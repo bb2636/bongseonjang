@@ -31,12 +31,32 @@ export interface EmailVerificationResponse {
   message: string;
 }
 
+export interface CheckEmailResponse {
+  exists: boolean;
+}
+
 export interface ReferralVerifyResponse {
   exists: boolean;
   message: string;
 }
 
 export const signupService = {
+  async checkEmail(email: string): Promise<CheckEmailResponse> {
+    const response = await fetch(`${API_BASE_URL}/auth/check-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error('이메일 확인에 실패했습니다');
+    }
+
+    return data;
+  },
+
   async sendVerificationCode(email: string): Promise<EmailVerificationResponse> {
     const response = await fetch(`${API_BASE_URL}/email-verification/send`, {
       method: 'POST',
