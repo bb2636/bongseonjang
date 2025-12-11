@@ -21,9 +21,19 @@ export function useSignupPage() {
 
   const onBack = useCallback(() => {
     if (currentStep === 'profile') {
-      updateFormData({ isPasswordSet: false });
+      updateFormData({ 
+        isPasswordSet: false,
+        isPhoneVerified: false,
+        isReferralIdVerified: false,
+      });
     } else if (currentStep === 'password') {
-      updateFormData({ isEmailVerified: false, isCodeSent: false, verificationCode: '' });
+      updateFormData({ 
+        isEmailVerified: false, 
+        isCodeSent: false, 
+        verificationCode: '',
+        password: '',
+        passwordConfirm: '',
+      });
     } else {
       navigate(-1);
     }

@@ -1,5 +1,13 @@
 const API_BASE_URL = '/api';
 
+const ERROR_MESSAGES: Record<string, string> = {
+  'Email already in use': '이미 가입된 이메일입니다.',
+};
+
+function translateErrorMessage(message: string): string {
+  return ERROR_MESSAGES[message] || message;
+}
+
 export interface SignupResponse {
   success: boolean;
   message?: string;
@@ -97,7 +105,8 @@ export const signupService = {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.message || '회원가입에 실패했습니다');
+      const errorMessage = translateErrorMessage(result.message || '회원가입에 실패했습니다');
+      throw new Error(errorMessage);
     }
 
     return { success: true, token: result.token };
