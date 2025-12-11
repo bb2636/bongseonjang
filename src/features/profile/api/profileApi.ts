@@ -49,8 +49,38 @@ export async function verifyPassword(password: string): Promise<VerifyPasswordRe
   return { success: true };
 }
 
+interface UpdateProfileData {
+  name: string;
+  phone?: string;
+  address?: string;
+  addressDetail?: string;
+  newPassword?: string;
+}
+
+interface UpdateProfileResponse {
+  success: boolean;
+  message?: string;
+}
+
+export async function updateProfile(data: UpdateProfileData): Promise<UpdateProfileResponse> {
+  const response = await fetch('/api/profile', {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  
+  const result = await response.json();
+  
+  if (!response.ok) {
+    return { success: false, message: result.error || '프로필 수정에 실패했습니다' };
+  }
+  
+  return { success: true };
+}
+
 export const profileApi = {
   fetchUserProfile,
   fetchRecentOrders,
   verifyPassword,
+  updateProfile,
 };

@@ -22,4 +22,26 @@ export class ProfileService {
 
     return bcrypt.compare(password, passwordHash);
   }
+
+  async updateProfile(userId: string, data: {
+    name: string;
+    phone?: string;
+    address?: string;
+    addressDetail?: string;
+    newPassword?: string;
+  }): Promise<void> {
+    let hashedPassword: string | undefined;
+    
+    if (data.newPassword) {
+      hashedPassword = await bcrypt.hash(data.newPassword, 10);
+    }
+
+    await this.profileRepository.updateProfile(userId, {
+      name: data.name,
+      phone: data.phone,
+      address: data.address,
+      addressDetail: data.addressDetail,
+      password: hashedPassword,
+    });
+  }
 }

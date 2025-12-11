@@ -75,4 +75,34 @@ export class ProfileController {
       res.status(500).json({ error: '비밀번호 확인에 실패했습니다' });
     }
   }
+
+  async updateProfile(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      const { name, phone, address, addressDetail, newPassword } = req.body;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      if (!name || !name.trim()) {
+        res.status(400).json({ error: '성함을 입력해주세요' });
+        return;
+      }
+
+      await this.profileService.updateProfile(userId, {
+        name: name.trim(),
+        phone,
+        address,
+        addressDetail,
+        newPassword,
+      });
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      res.status(500).json({ error: '프로필 수정에 실패했습니다' });
+    }
+  }
 }

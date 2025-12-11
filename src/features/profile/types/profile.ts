@@ -1,6 +1,10 @@
 export interface UserProfile {
   id: string;
   name: string;
+  email: string;
+  phone: string | null;
+  address: string | null;
+  addressDetail: string | null;
   grade: string;
   points: number;
   couponCount: number;
