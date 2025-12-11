@@ -1,0 +1,102 @@
+import { UserProfile, Order, MenuSection } from '../types/profile';
+import ProfileAppBar from '../components/ProfileAppBar/ProfileAppBar';
+import ProfileHeader from '../components/ProfileHeader/ProfileHeader';
+import SummaryCard from '../components/SummaryCard/SummaryCard';
+import RecentOrders from '../components/RecentOrders/RecentOrders';
+import MenuList from '../components/MenuList/MenuList';
+import BottomNav from '../../../components/BottomNav/BottomNav';
+import './ProfileView.css';
+
+interface ProfileViewProps {
+  state: {
+    profile: UserProfile | null;
+    recentOrders: Order[];
+    menuSections: MenuSection[];
+    isLoading: boolean;
+    error: string | null;
+    onCartClick: () => void;
+    onEditProfileClick: () => void;
+    onPointsClick: () => void;
+    onCouponsClick: () => void;
+    onFavoritesClick: () => void;
+    onPendingReviewsClick: () => void;
+    onOrderClick: (orderId: string) => void;
+    onReturnClick: (orderId: string) => void;
+    onReorderClick: (orderId: string) => void;
+    onMenuItemClick: (path: string) => void;
+  };
+}
+
+export default function ProfileView({ state }: ProfileViewProps) {
+  if (state.isLoading) {
+    return (
+      <div className="profile-view">
+        <ProfileAppBar onCartClick={state.onCartClick} cartCount={0} />
+        <div className="profile-view__loading">
+          <div className="profile-view__loading-spinner" />
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (state.error) {
+    return (
+      <div className="profile-view">
+        <ProfileAppBar onCartClick={state.onCartClick} cartCount={0} />
+        <div className="profile-view__error">
+          <p className="profile-view__error-message">{state.error}</p>
+          <button
+            type="button"
+            className="profile-view__retry-button"
+            onClick={() => window.location.reload()}
+          >
+            다시 시도
+          </button>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  return (
+    <div className="profile-view">
+      <ProfileAppBar onCartClick={state.onCartClick} cartCount={1} />
+      
+      <main className="profile-view__content">
+        <ProfileHeader
+          name={state.profile?.name || ''}
+          grade={state.profile?.grade || ''}
+          onEditClick={state.onEditProfileClick}
+        />
+
+        <SummaryCard
+          points={state.profile?.points || 0}
+          couponCount={state.profile?.couponCount || 0}
+          favoriteCount={state.profile?.favoriteCount || 0}
+          pendingReviewCount={state.profile?.pendingReviewCount || 0}
+          onPointsClick={state.onPointsClick}
+          onCouponsClick={state.onCouponsClick}
+          onFavoritesClick={state.onFavoritesClick}
+          onPendingReviewsClick={state.onPendingReviewsClick}
+        />
+
+        <RecentOrders
+          orders={state.recentOrders}
+          onOrderClick={state.onOrderClick}
+          onReturnClick={state.onReturnClick}
+          onReorderClick={state.onReorderClick}
+        />
+
+        <div className="profile-view__divider" />
+
+        <MenuList
+          sections={state.menuSections}
+          onItemClick={state.onMenuItemClick}
+        />
+      </main>
+
+      <BottomNav />
+    </div>
+  );
+}

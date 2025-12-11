@@ -1,0 +1,162 @@
+.order-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.order-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-card__date {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.order-card__number {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.order-card__status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 16px;
+}
+
+.order-card__status-label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.order-card__status-label--delivered {
+  color: #3B9BD5;
+}
+
+.order-card__status-date {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.order-card__status-date--delivered {
+  color: #3B9BD5;
+}
+
+.order-card__items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-card__item {
+  display: flex;
+  gap: 12px;
+}
+
+.order-card__item-image {
+  width: 62px;
+  height: 62px;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.order-card__item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-card__item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.order-card__item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-card__item-name {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.order-card__item-quantity {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.order-card__item-price {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.order-card__actions {
+  display: flex;
+  gap: 4px;
+  padding-top: 16px;
+}
+
+.order-card__action-button {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.9);
+  cursor: pointer;
+}
+
+.order-card__action-button:active {
+  background: rgba(12, 12, 12, 0.04);
+}

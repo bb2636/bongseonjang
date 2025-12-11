@@ -8,6 +8,7 @@ import { ProductDetailPage } from './features/productDetail';
 import { CategoryPage } from './features/category';
 import { CategoryProductsPage } from './features/categoryProducts';
 import { SearchPage } from './features/search';
+import { ProfilePage } from './features/profile';
 
 export default function App() {
   return (
@@ -24,14 +25,7 @@ export default function App() {
       <Route path="/category" element={<CategoryPage />} />
       <Route path="/category/:slug" element={<CategoryProductsPage />} />
       <Route path="/search" element={<SearchPage />} />
-      <Route
-        path="/profile"
-        element={
-          <MainLayout>
-            <div style={{ padding: '80px 16px 16px' }}>봉크루 페이지</div>
-          </MainLayout>
-        }
-      />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route
         path="*"
         element={

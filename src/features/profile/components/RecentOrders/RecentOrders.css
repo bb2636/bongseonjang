@@ -1,0 +1,21 @@
+.recent-orders {
+  padding: 16px 0;
+}
+
+.recent-orders__title {
+  padding: 10px 16px;
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.recent-orders__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 15px;
+}

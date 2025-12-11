@@ -16,6 +16,7 @@ import { productRoutes } from '../features/product';
 import { eventRoutes } from '../features/event';
 import { reviewRoutes } from '../features/review';
 import { searchRoutes } from '../features/search';
+import { profileRoutes } from '../features/profile';
 
 const router = Router();
 
@@ -36,5 +37,6 @@ router.use('/products', productRoutes);
 router.use('/events', eventRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/search', searchRoutes);
+router.use('/profile', profileRoutes);
 
 export default router;
