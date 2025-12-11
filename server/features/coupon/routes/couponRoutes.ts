@@ -6,7 +6,7 @@ const router = Router();
 const controller = new CouponController();
 
 router.get('/', authMiddleware, (req, res) => controller.getCoupons(req, res));
-router.post('/:couponId/issue', authMiddleware, (req, res) => controller.issueCoupon(req, res));
 router.get('/my', authMiddleware, (req, res) => controller.getMyCoupons(req, res));
+router.post('/:couponId/issue', authMiddleware, (req, res) => controller.issueCoupon(req, res));
 
 export default router;

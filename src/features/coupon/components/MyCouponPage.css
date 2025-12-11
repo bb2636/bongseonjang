@@ -1,0 +1,162 @@
+.my-coupon-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.my-coupon-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.my-coupon-page-back {
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-coupon-page-title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 128%;
+  color: #0C0C0C;
+  margin: 0;
+}
+
+.my-coupon-page-download-btn {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  color: #3B9BD5;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.my-coupon-page-summary {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 10px;
+}
+
+.my-coupon-page-summary-text {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.my-coupon-page-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
+.my-coupon-page-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.my-coupon-page-loading,
+.my-coupon-page-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 16px;
+}
+
+.my-coupon-page-loading-text,
+.my-coupon-page-empty-text {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.my-coupon-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+  background: rgba(12, 12, 12, 0.02);
+  border: 1px solid rgba(12, 12, 12, 0.06);
+  border-radius: 12px;
+}
+
+.my-coupon-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-coupon-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.my-coupon-card-name {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #3B9BD5;
+}
+
+.my-coupon-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.my-coupon-card-discount {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.my-coupon-card-condition {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.my-coupon-card-expiry {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+}
