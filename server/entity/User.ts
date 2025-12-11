@@ -2,6 +2,13 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import type { Review } from './Review';
 import type { UserSocialAccount } from './UserSocialAccount';
 
+export enum MembershipGrade {
+  BRONZE = 'bronze',
+  SILVER = 'silver',
+  GOLD = 'gold',
+  VIP = 'vip',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -30,6 +37,12 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true })
   referralId!: string | null;
+
+  @Column({ 
+    type: 'varchar', 
+    default: MembershipGrade.BRONZE,
+  })
+  membershipGrade!: MembershipGrade;
 
   @Column({ type: 'boolean', default: false })
   isEmailVerified!: boolean;

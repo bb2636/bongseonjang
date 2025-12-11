@@ -1,7 +1,7 @@
 import { UserRepository } from '../repository/UserRepository';
 import { SocialAccountRepository } from '../repository/SocialAccountRepository';
 import { AuthService } from '../domain/AuthService';
-import { User } from '../../../entity/User';
+import { User, MembershipGrade } from '../../../entity/User';
 import { SocialProvider } from '../../../entity/UserSocialAccount';
 
 interface RegisterInput {
@@ -42,6 +42,7 @@ interface UserResponse {
   birthDate: Date | null;
   gender: string | null;
   referralId: string | null;
+  membershipGrade: MembershipGrade;
   isEmailVerified: boolean;
   lastLoginAt: Date | null;
   createdAt: Date;
@@ -63,6 +64,7 @@ function toUserResponse(user: User): UserResponse {
     birthDate: user.birthDate,
     gender: user.gender,
     referralId: user.referralId,
+    membershipGrade: user.membershipGrade,
     isEmailVerified: user.isEmailVerified,
     lastLoginAt: user.lastLoginAt,
     createdAt: user.createdAt,
