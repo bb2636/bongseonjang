@@ -8,3 +8,4 @@ export type { NavItem } from './BottomNav';
 export { ProductCard } from './ProductCard';
 export type { ProductCardData } from './ProductCard';
 export { ProductGridContent } from './ProductGridContent';
+export { ProtectedRoute } from './ProtectedRoute';
