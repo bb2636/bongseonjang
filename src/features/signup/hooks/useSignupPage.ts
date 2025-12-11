@@ -7,21 +7,27 @@ import { useSignupProfileStep } from './useSignupProfileStep';
 
 export function useSignupPage() {
   const navigate = useNavigate();
-  const { formData } = useSignupFormState();
+  const { formData, updateFormData } = useSignupFormState();
   
   const emailStep = useSignupEmailStep();
   const passwordStep = useSignupPasswordStep();
   const profileStep = useSignupProfileStep();
-
-  const onBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
 
   const currentStep: 'email' | 'password' | 'profile' = formData.isPasswordSet 
     ? 'profile' 
     : formData.isEmailVerified 
       ? 'password' 
       : 'email';
+
+  const onBack = useCallback(() => {
+    if (currentStep === 'profile') {
+      updateFormData({ isPasswordSet: false });
+    } else if (currentStep === 'password') {
+      updateFormData({ isEmailVerified: false, isCodeSent: false, verificationCode: '' });
+    } else {
+      navigate(-1);
+    }
+  }, [currentStep, updateFormData, navigate]);
 
   return {
     currentStep,

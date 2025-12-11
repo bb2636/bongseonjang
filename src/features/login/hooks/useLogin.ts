@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LOGIN_ROUTES } from '../constants';
 import { getKakaoAuthUrl, getNaverAuthUrl } from '../api/socialAuthApi';
+import { clearFormDataFromStorage } from '../../signup/hooks/useSignupFormState';
 
 export function useLogin() {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ export function useLogin() {
   }, [navigate]);
 
   const onEmailSignup = useCallback(() => {
+    clearFormDataFromStorage();
     navigate(LOGIN_ROUTES.EMAIL_SIGNUP);
   }, [navigate]);
 
