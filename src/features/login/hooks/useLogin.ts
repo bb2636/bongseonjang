@@ -1,16 +1,27 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LOGIN_ROUTES, SOCIAL_PROVIDERS } from '../constants';
+import { LOGIN_ROUTES } from '../constants';
+import { getKakaoAuthUrl, getNaverAuthUrl } from '../api/socialAuthApi';
 
 export function useLogin() {
   const navigate = useNavigate();
 
   const onKakaoLogin = useCallback(() => {
-    console.log(`${SOCIAL_PROVIDERS.KAKAO} 로그인 시도`);
+    try {
+      const authUrl = getKakaoAuthUrl();
+      window.location.href = authUrl;
+    } catch {
+      console.error('카카오 로그인 설정이 올바르지 않습니다.');
+    }
   }, []);
 
   const onNaverLogin = useCallback(() => {
-    console.log(`${SOCIAL_PROVIDERS.NAVER} 로그인 시도`);
+    try {
+      const authUrl = getNaverAuthUrl();
+      window.location.href = authUrl;
+    } catch {
+      console.error('네이버 로그인 설정이 올바르지 않습니다.');
+    }
   }, []);
 
   const onEmailLogin = useCallback(() => {

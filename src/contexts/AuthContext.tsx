@@ -11,6 +11,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithToken: (token: string, userData: User) => void;
   logout: () => void;
   register: (email: string, password: string, name: string) => Promise<void>;
 }
@@ -77,6 +78,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
+  const loginWithToken = useCallback((token: string, userData: User) => {
+    localStorage.setItem('token', token);
+    setUser(userData);
+  }, []);
+
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('token');
@@ -108,6 +114,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: !!user,
     isLoading,
     login,
+    loginWithToken,
     logout,
     register,
   };

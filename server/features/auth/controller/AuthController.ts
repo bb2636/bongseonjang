@@ -70,8 +70,8 @@ export class AuthController {
       }
 
       if (!socialUserInfo.email) {
-        res.status(400).json({ 
-          message: 'Email is required',
+        res.status(200).json({ 
+          success: false,
           requiresEmail: true,
           tempData: {
             provider: socialUserInfo.provider,

@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { MainLayout } from './layouts';
 import HomePage from './features/home/pages/HomePage';
-import { LoginPage, EmailLoginPage } from './features/login';
+import { LoginPage, EmailLoginPage, SocialAuthCallbackPage } from './features/login';
 import { SignupEmailPage, TermsPage, PrivacyPage, SignupCompletePage } from './features/signup';
 import { GuestOrderLookupPage } from './features/orders';
 import { ProductDetailPage } from './features/productDetail';
@@ -20,6 +20,7 @@ export default function App() {
       <Route path="/product/:id" element={<ProtectedRoute><ProductDetailPage /></ProtectedRoute>} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/login/email" element={<EmailLoginPage />} />
+      <Route path="/auth/callback/:provider" element={<SocialAuthCallbackPage />} />
       <Route path="/signup/email" element={<SignupEmailPage />} />
       <Route path="/signup/complete" element={<SignupCompletePage />} />
       <Route path="/signup/terms" element={<TermsPage />} />
