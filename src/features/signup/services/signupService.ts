@@ -76,10 +76,22 @@ export const signupService = {
   },
 
   async signup(data: SignupData): Promise<SignupResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+    const birthDate = `${data.birthYear}-${data.birthMonth.padStart(2, '0')}-${data.birthDay.padStart(2, '0')}`;
+    
+    const requestBody = {
+      email: data.email,
+      password: data.password,
+      name: data.name,
+      phone: data.phone,
+      birthDate,
+      gender: data.gender,
+      referralId: data.referralId || undefined,
+    };
+
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(requestBody),
     });
 
     const result = await response.json();
@@ -88,6 +100,6 @@ export const signupService = {
       throw new Error(result.message || '회원가입에 실패했습니다');
     }
 
-    return result;
+    return { success: true, token: result.token };
   },
 };
