@@ -1,5 +1,5 @@
 import { UserProfile, Order, MenuSection } from '../types/profile';
-import CategoryAppBar from '../../category/components/CategoryAppBar/CategoryAppBar';
+import AppBar from '../../../components/AppBar/AppBar';
 import ProfileHeader from '../components/ProfileHeader/ProfileHeader';
 import SummaryCard from '../components/SummaryCard/SummaryCard';
 import RecentOrders from '../components/RecentOrders/RecentOrders';
@@ -32,7 +32,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
   if (state.isLoading) {
     return (
       <div className="profile-view">
-        <ProfileAppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartItemCount={0} />
+        <AppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartCount={0} />
         <div className="profile-view__loading">
           <div className="profile-view__loading-spinner" />
         </div>
@@ -44,7 +44,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
   if (state.error) {
     return (
       <div className="profile-view">
-        <ProfileAppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartItemCount={0} />
+        <AppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartCount={0} />
         <div className="profile-view__error">
           <p className="profile-view__error-message">{state.error}</p>
           <button
@@ -62,7 +62,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
 
   return (
     <div className="profile-view">
-      <ProfileAppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartItemCount={1} />
+      <AppBar onCartClick={state.onCartClick} onLogoClick={state.onLogoClick} cartCount={1} />
       
       <main className="profile-view__content">
         <ProfileHeader
