@@ -1,4 +1,6 @@
 export { User } from './User';
+export { UserSocialAccount } from './UserSocialAccount';
+export type { SocialProvider } from './UserSocialAccount';
 export { EmailVerificationToken } from './EmailVerificationToken';
 export { ProductCategory } from './ProductCategory';
 export { DisplayCategory } from './DisplayCategory';
