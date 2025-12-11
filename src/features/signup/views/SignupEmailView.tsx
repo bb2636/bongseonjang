@@ -90,6 +90,9 @@ interface ProfileStepProps {
   showPhoneModal: boolean;
   phoneModalMessage: string;
   isPhoneVerifySuccess: boolean;
+  showErrorModal: boolean;
+  errorModalMessage: string;
+  onCloseErrorModal: () => void;
   onNameChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
   onNameBlur: () => void;
@@ -157,6 +160,12 @@ export default function SignupEmailView({
         isOpen={profileStep.showPhoneModal}
         title={profileStep.phoneModalMessage}
         onConfirm={profileStep.onClosePhoneModal}
+      />
+
+      <AlertModal
+        isOpen={profileStep.showErrorModal}
+        title={profileStep.errorModalMessage}
+        onConfirm={profileStep.onCloseErrorModal}
       />
 
       {emailStep.showSnackbar && (

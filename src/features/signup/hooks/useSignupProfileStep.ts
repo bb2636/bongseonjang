@@ -31,6 +31,11 @@ export function useSignupProfileStep() {
   const [phoneModalMessage, setPhoneModalMessage] = useState('');
   const [isPhoneVerifySuccess, setIsPhoneVerifySuccess] = useState(false);
 
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState('');
+  
+  const onCloseErrorModal = useCallback(() => setShowErrorModal(false), []);
+
   const referralMutation = useMutation({
     mutationFn: (referralId: string) => signupService.verifyReferralId(referralId),
     onSuccess: (result) => {
@@ -68,6 +73,9 @@ export function useSignupProfileStep() {
     },
     onError: (error: Error) => {
       console.error('Signup failed:', error);
+      const message = error.message || '회원가입에 실패했습니다. 다시 시도해주세요.';
+      setErrorModalMessage(message);
+      setShowErrorModal(true);
     },
   });
 
@@ -296,6 +304,9 @@ export function useSignupProfileStep() {
     showPhoneModal,
     phoneModalMessage,
     isPhoneVerifySuccess,
+    showErrorModal,
+    errorModalMessage,
+    onCloseErrorModal,
     onNameChange,
     onPhoneChange,
     onNameBlur,
