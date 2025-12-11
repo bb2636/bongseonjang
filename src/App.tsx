@@ -10,12 +10,14 @@ import { CategoryProductsPage } from './features/categoryProducts';
 import { SearchPage } from './features/search';
 import { ProfilePage } from './features/profile';
 import { PointPage } from './features/point';
+import { ProtectedRoute } from './components';
+import './components/ProtectedRoute/ProtectedRoute.css';
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/product/:id" element={<ProductDetailPage />} />
+      <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+      <Route path="/product/:id" element={<ProtectedRoute><ProductDetailPage /></ProtectedRoute>} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/login/email" element={<EmailLoginPage />} />
       <Route path="/signup/email" element={<SignupEmailPage />} />
@@ -23,11 +25,11 @@ export default function App() {
       <Route path="/signup/terms" element={<TermsPage />} />
       <Route path="/signup/privacy" element={<PrivacyPage />} />
       <Route path="/orders/guest" element={<GuestOrderLookupPage />} />
-      <Route path="/category" element={<CategoryPage />} />
-      <Route path="/category/:slug" element={<CategoryProductsPage />} />
-      <Route path="/search" element={<SearchPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/points" element={<PointPage />} />
+      <Route path="/category" element={<ProtectedRoute><CategoryPage /></ProtectedRoute>} />
+      <Route path="/category/:slug" element={<ProtectedRoute><CategoryProductsPage /></ProtectedRoute>} />
+      <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/points" element={<ProtectedRoute><PointPage /></ProtectedRoute>} />
       <Route
         path="*"
         element={
