@@ -142,6 +142,12 @@ export default function ProductDetailView({
       </div>
 
       <BottomActionBar
+        product={{
+          id: product.id,
+          name: product.name,
+          basePrice: product.basePrice,
+          discountedPrice: product.discountedPrice,
+        }}
         mainOptions={product.mainOptions}
         onAddToCart={onAddToCartFromBar}
         onBuyNow={onBuyNowFromBar}

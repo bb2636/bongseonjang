@@ -225,6 +225,47 @@
   text-align: center;
 }
 
+.bottom-action-bar__no-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  margin: 0 16px;
+}
+
+.bottom-action-bar__no-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bottom-action-bar__no-option-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0C0C0C;
+}
+
+.bottom-action-bar__no-option-price-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bottom-action-bar__no-option-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0C0C0C;
+}
+
+.bottom-action-bar__no-option-original {
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.4);
+  text-decoration: line-through;
+}
+
 .bottom-action-bar__buttons {
   display: flex;
   flex-direction: row;

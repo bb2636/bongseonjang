@@ -41,10 +41,17 @@ export class RealCartRepository implements CartRepository {
     const productImages = await this.getProductThumbnails(productIds);
 
     const cartItems: CartItemDto[] = items.map(item => {
-      const basePrice = item.mainOption?.price ?? item.product?.basePrice ?? 0;
+      let basePrice = item.mainOption?.price ?? 0;
+      if (!item.mainOption && item.product) {
+        const productBasePrice = item.product.basePrice;
+        const discountRate = item.product.discountRate ?? 0;
+        basePrice = item.product.isDiscounted 
+          ? Math.round(productBasePrice * (1 - discountRate / 100))
+          : productBasePrice;
+      }
       const additionalPrice = item.subOption?.additionalPrice ?? 0;
       const unitPrice = basePrice + additionalPrice;
-      const compareAtPrice = item.mainOption?.compareAtPrice ?? null;
+      const compareAtPrice = item.mainOption?.compareAtPrice ?? (item.product?.isDiscounted ? item.product.basePrice : null);
       const totalPrice = unitPrice * item.quantity;
 
       return {
@@ -118,7 +125,14 @@ export class RealCartRepository implements CartRepository {
     }
 
     const productImages = await this.getProductThumbnails([productId]);
-    const basePrice = existingItem.mainOption?.price ?? existingItem.product?.basePrice ?? 0;
+    let basePrice = existingItem.mainOption?.price ?? 0;
+    if (!existingItem.mainOption && existingItem.product) {
+      const productBasePrice = existingItem.product.basePrice;
+      const discountRate = existingItem.product.discountRate ?? 0;
+      basePrice = existingItem.product.isDiscounted 
+        ? Math.round(productBasePrice * (1 - discountRate / 100))
+        : productBasePrice;
+    }
     const additionalPrice = existingItem.subOption?.additionalPrice ?? 0;
     const unitPrice = basePrice + additionalPrice;
 
@@ -133,7 +147,7 @@ export class RealCartRepository implements CartRepository {
       subOptionName: existingItem.subOption?.name ?? null,
       quantity: existingItem.quantity,
       unitPrice,
-      compareAtPrice: existingItem.mainOption?.compareAtPrice ?? null,
+      compareAtPrice: existingItem.mainOption?.compareAtPrice ?? (existingItem.product?.isDiscounted ? existingItem.product.basePrice : null),
       additionalPrice,
       totalPrice: unitPrice * existingItem.quantity,
     };
@@ -161,7 +175,14 @@ export class RealCartRepository implements CartRepository {
     await cartItemRepository.save(item);
 
     const productImages = await this.getProductThumbnails([item.productId]);
-    const basePrice = item.mainOption?.price ?? item.product?.basePrice ?? 0;
+    let basePrice = item.mainOption?.price ?? 0;
+    if (!item.mainOption && item.product) {
+      const productBasePrice = item.product.basePrice;
+      const discountRate = item.product.discountRate ?? 0;
+      basePrice = item.product.isDiscounted 
+        ? Math.round(productBasePrice * (1 - discountRate / 100))
+        : productBasePrice;
+    }
     const additionalPrice = item.subOption?.additionalPrice ?? 0;
     const unitPrice = basePrice + additionalPrice;
 
@@ -176,7 +197,7 @@ export class RealCartRepository implements CartRepository {
       subOptionName: item.subOption?.name ?? null,
       quantity: item.quantity,
       unitPrice,
-      compareAtPrice: item.mainOption?.compareAtPrice ?? null,
+      compareAtPrice: item.mainOption?.compareAtPrice ?? (item.product?.isDiscounted ? item.product.basePrice : null),
       additionalPrice,
       totalPrice: unitPrice * item.quantity,
     };
