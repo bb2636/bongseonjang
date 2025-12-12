@@ -273,7 +273,7 @@ export default function OptionBottomSheet({
             disabled={selectedItems.length === 0}
           >
             {selectedItems.length > 0
-              ? `${formatPrice(totalPrice)} 구매하기`
+              ? `${formatPrice(totalPrice)} 장바구니 담기`
               : '옵션을 선택해주세요'}
           </button>
         </div>
