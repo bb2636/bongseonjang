@@ -73,6 +73,8 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     const orderNumber = generateOrderNumber();
     const finalAmount = totalProductPrice;
 
+    const cartItemIds = cartItems.map(item => item.id);
+
     const order = orderRepository.create({
       orderNumber,
       userId,
@@ -89,6 +91,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       address,
       addressDetail: addressDetail || null,
       deliveryRequest: deliveryRequest || null,
+      cartItemIdsSnapshot: cartItemIds,
     });
 
     await orderRepository.save(order);
@@ -197,16 +200,9 @@ router.post('/callback', async (req: Request, res: Response) => {
         await paymentRepository.save(payment);
       }
 
-      const cartRepository = AppDataSource.getRepository(Cart);
-      const cart = await cartRepository.findOne({ where: { userId: order.userId, isActive: true } });
-      if (cart) {
-        const orderItems = await AppDataSource.getRepository(OrderItem).find({ where: { orderId: order.id } });
-        const productIds = orderItems.map(item => item.productId);
-        
-        if (productIds.length > 0) {
-          const { In } = await import('typeorm');
-          await cartItemRepository.delete({ cartId: cart.id, productId: In(productIds) });
-        }
+      if (order.cartItemIdsSnapshot && order.cartItemIdsSnapshot.length > 0) {
+        const { In } = await import('typeorm');
+        await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
       }
 
       return res.redirect(`/payment/success?orderNumber=${order.orderNumber}`);

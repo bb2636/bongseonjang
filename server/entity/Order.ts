@@ -73,6 +73,9 @@ export class Order {
   @Column({ type: 'timestamp', nullable: true })
   deliveredAt!: Date | null;
 
+  @Column({ type: 'simple-array', nullable: true })
+  cartItemIdsSnapshot!: string[] | null;
+
   @ManyToOne('User', { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user!: User;
