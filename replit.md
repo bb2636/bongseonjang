@@ -1,7 +1,7 @@
 # 프로젝트명
 
 ## Overview
-본 프로젝트는 사용자 친화적인 웹 애플리케이션을 구축하는 것을 목표로 합니다. 핵심 기능은 효율적인 사용자 인증 및 계정 관리 시스템을 포함하며, 확장 가능하고 유지보수하기 쉬운 아키텍처를 통해 견고한 서비스를 제공합니다. 비즈니스적으로는 사용자 경험을 최우선으로 하여 시장에서의 경쟁력을 확보하고, 지속적인 기능 확장을 통해 서비스 범위를 넓혀나갈 것입니다.
+본 프로젝트는 사용자 친화적인 웹 애플리케이션 구축을 목표로 합니다. 효율적인 사용자 인증 및 계정 관리 시스템을 포함하며, 확장 가능하고 유지보수하기 쉬운 아키텍처를 통해 견고한 서비스를 제공합니다. 사용자 경험을 최우선으로 하여 시장 경쟁력을 확보하고, 지속적인 기능 확장을 통해 서비스 범위를 넓혀나갈 것입니다.
 
 ## User Preferences
 
@@ -90,181 +90,30 @@ feat: 간단한 제목
 ## System Architecture
 
 ### Frontend Architecture (Hook-First Pattern)
-프론트엔드는 Hook-First 패턴을 따르며, Context, Api, Service, Hook, Page, View 레이어로 구성됩니다. Page는 Hook 호출 후 View에 props를 전달하고, View는 UI 렌더링만 담당합니다. 모든 페이지는 Hook과 View로 분리되어야 하며, Page 파일에는 CSS import를 금지하고, View는 순수 프레젠테이션 컴포넌트여야 합니다.
-
-**프론트엔드 폴더 구조:**
-`src/` 아래에 `features/`, `components/`, `contexts/`, `hooks/`, `layouts/`, `services/`, `api/`, `assets/`, `styles/` 등의 폴더를 가집니다.
-
-### State Management
-- **전역 상태**: React Context 사용.
-- **서버 상태**: React Query 사용 (5분 staleTime 캐싱, `keepPreviousData`, Query Key에 사용자 ID 포함).
-- **기능별 상태**: Custom Hook으로 캡슐화.
-- **멀티 스텝 폼**: Context Provider와 Step별 Hook 분리 패턴 사용.
-
-### React Query 패턴
-`useQuery`는 데이터 조회에, `useMutation`은 데이터 변경에 사용되며, 로딩 상태는 `mutation.isPending`으로 관리합니다.
+프론트엔드는 Hook-First 패턴을 따르며, Context, Api, Service, Hook, Page, View 레이어로 구성됩니다. Page는 Hook 호출 후 View에 props를 전달하고, View는 UI 렌더링만 담당합니다. 모든 페이지는 Hook과 View로 분리되어야 하며, Page 파일에는 CSS import를 금지하고, View는 순수 프레젠테이션 컴포넌트여야 합니다. 전역 상태는 React Context, 서버 상태는 React Query, 기능별 상태는 Custom Hook으로 관리합니다.
 
 ### Backend Architecture (Clean Architecture + Feature-Based)
-백엔드는 Clean Architecture를 따르며, 기능(Feature)별로 폴더를 구성합니다. 각 Feature 내에서 Controller, Application, Domain, Repository, Routes 레이어가 단방향 의존성을 유지합니다.
-
-**백엔드 폴더 구조:**
-```
-server/
-├── features/                    # 기능별 모듈 (auth, emailVerification, referral, home 등)
-│   ├── [feature_name]/
-│   │   ├── controller/
-│   │   ├── application/
-│   │   ├── domain/
-│   │   ├── repository/
-│   │   ├── routes/
-│   │   └── index.ts
-├── common/                      # 공통 모듈 (middleware, services)
-├── config/                      # 설정 (database, repositories)
-├── entity/                      # TypeORM 엔티티
-├── routes/                      # 라우트 집계
-└── index.ts                     # 서버 엔트리
-```
-
-### Repository Pattern (Clean Architecture)
-Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈니스 로직 처리 및 DTO로 변환합니다. Mock/Real 스위칭을 지원하는 Generic Factory + Map 캐싱 패턴을 사용합니다.
+백엔드는 Clean Architecture를 따르며, 기능(Feature)별로 폴더를 구성합니다. 각 Feature 내에서 Controller, Application, Domain, Repository, Routes 레이어가 단방향 의존성을 유지합니다. Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈니스 로직 처리 및 DTO로 변환합니다. Mock/Real 스위칭을 지원하는 Generic Factory + Map 캐싱 패턴을 사용합니다.
 
 ### UI/UX Patterns
-- **CSS 변수**: 일관된 테마 적용.
-- **전역 토스트 알림 시스템**.
-- **공통 Input/PasswordInput 컴포넌트**: 일관된 폼 스타일링.
-- **반응형 디자인**: 공통 컴포넌트를 활용.
-- **스켈레톤 로딩**: UX 개선.
+CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통 Input/PasswordInput 컴포넌트, 반응형 디자인, 스켈레톤 로딩 등을 통해 사용자 경험을 개선합니다. 완료 화면은 `CompletionScreen` 공용 컴포넌트를 사용합니다.
 
-### CompletionScreen 공용 컴포넌트
-회원가입 완료, 비밀번호 변경 완료 등 완료 화면에서 재사용되는 공용 컴포넌트입니다.
+### Core Features
+- **홈 화면**: Feature-first 레이아웃, 자체 AppBar/BottomNav, Swiper.js 기반 HeroBanner.
+- **상품 상세**: "상품정보", "후기 N", "문의" 탭 네비게이션. ReviewService 주입을 통한 리뷰 통계 제공.
+- **2단계 상품 옵션**: MainOption(기본 가격)과 SubOption(추가 금액)으로 구성. lowestPrice 자동 계산. OptionBottomSheet로 선택. 레거시 상품 지원.
+- **카테고리 페이지**: 바텀 네비게이션에서 접근. CategoryAppBar, CategoryList를 포함하며, 카테고리 클릭 시 해당 탭으로 이동.
+- **프로필/마이페이지**: ProfileAppBar, ProfileHeader, SummaryCard, RecentOrders, MenuList로 구성.
+- **소셜 로그인**: 카카오, 네이버 지원. `users` (기본), `user_social_accounts` (연동) 듀얼 테이블 구조. 이메일 필수 정책.
+- **장바구니/주문**: `carts`, `cart_items`, `orders`, `order_items`, `order_status_history` 테이블로 관리. 주문 시 상품 가격/옵션 스냅샷 저장.
+- **배송**: `shipping_addresses`, `shipments`, `shipment_events` 테이블.
+- **결제**: `payments`, `payment_refunds` 테이블. NicePayments v1 API 연동. 장바구니 항목 ID 스냅샷(`cartItemIdsSnapshot`)을 통해 결제 완료 후 선택된 항목만 삭제.
+- **쿠폰/포인트**: `coupons`, `coupon_issuances`, `point_wallets`, `point_transactions` 테이블. 포인트 만료 관리.
+- **찜**: `wishlists`, `wishlist_items` 테이블.
+- **고객센터**: `support_tickets`, `support_messages` 테이블.
 
-### Home Feature (홈 화면)
-홈 화면은 feature-first 레이아웃 전략을 사용하며, 자체 AppBar/BottomNav를 가집니다. HeroBanner는 Swiper.js를 사용하여 자동 재생, 무한 루프, 페이지네이션 dots 기능을 제공합니다.
-
-### Product Image (상품 이미지)
-상품 이미지는 `product_images` 테이블에서 관리되며, `isThumbnail` 플래그와 Partial Unique Index를 사용하여 상품당 하나의 썸네일만 허용합니다.
-
-### Review Feature (리뷰 시스템)
-상품에 대한 리뷰 및 평점 관리 기능으로, `reviews` 테이블에 저장되며 상품 리뷰 목록, 통계 조회, 작성, 삭제 API를 제공합니다.
-
-### Product Detail Tabs (상품 상세 탭)
-상품 상세페이지의 탭 네비게이션 컴포넌트로 "상품정보", "후기 N", "문의" 탭으로 구성됩니다. ProductService는 ReviewService를 주입받아 리뷰 통계를 가져옵니다.
-
-### Two-Level Product Options (2단계 상품 옵션)
-상품 옵션은 2단계 구조로 관리됩니다:
-- **MainOption**: 중량/용량 선택 (예: 소 300g, 중 500g, 대 1kg) - 기본 가격 결정
-- **SubOption**: 맛/스타일 선택 (예: 양념, 간장) - 추가 금액
-- **lowestPrice**: 활성화된 MainOption 중 최저가 자동 계산
-- **OptionBottomSheet**: 구매 버튼 클릭 시 2단계 옵션 선택 바텀시트 표시
-- **레거시 지원**: mainOptions가 없는 상품은 기존 ProductOptions 컴포넌트 사용
-
-**DB 테이블:**
-- `product_main_options`: groupName, name, price, compareAtPrice, stockQty
-- `product_sub_options`: groupName, name, additionalPrice, stockQty
-
-### Category Feature (카테고리 페이지)
-바텀 네비게이션에서 카테고리 탭 클릭 시 표시되는 전용 페이지입니다.
-- **CategoryAppBar**: 봉선장 로고 + 장바구니 아이콘 (개수 배지 지원)
-- **CategoryList**: 51px 높이 항목, 15px medium 폰트, 구분선
-- **카테고리 목록**: 전체, 신상품, 베스트, 제철 수산물, 급랭 수산물, 손질 수산물, 바담은 절임류
-- **카테고리 클릭**: 홈페이지의 해당 탭으로 이동 (쿼리 파라미터 사용)
-
-### Profile Feature (봉크루/마이페이지)
-사용자 프로필 및 주문 관리 페이지입니다.
-- **ProfileAppBar**: 타이틀 + 장바구니 아이콘
-- **ProfileHeader**: 인사말, 등급, 프로필 수정 버튼
-- **SummaryCard**: 포인트/쿠폰/찜 현황 + 작성 가능한 리뷰
-- **RecentOrders**: 진행 중 주문 현황
-- **MenuList**: 쇼핑정보/고객센터 메뉴 섹션
-
-## Database Schema
-
-### Social Login (소셜 로그인, 2025.12.11 추가)
-듀얼 테이블 구조로 소셜 로그인을 지원합니다:
-- **users**: 기본 사용자 정보 (email UNIQUE, password nullable)
-- **user_social_accounts**: 소셜 계정 연동 정보 (provider, providerUserId, emailFromProvider)
-
-**지원 플랫폼:**
-- 카카오 (Kakao)
-- 네이버 (Naver)
-
-**필요한 환경 변수:**
-```
-# 백엔드
-KAKAO_CLIENT_ID=
-KAKAO_CLIENT_SECRET=
-KAKAO_REDIRECT_URI=
-
-NAVER_CLIENT_ID=
-NAVER_CLIENT_SECRET=
-
-# 프론트엔드 (.env)
-VITE_KAKAO_CLIENT_ID=
-VITE_KAKAO_REDIRECT_URI=
-VITE_NAVER_CLIENT_ID=
-VITE_NAVER_REDIRECT_URI=
-```
-
-**OAuth 플로우:**
-1. 프론트엔드에서 OAuth 인증 URL로 리다이렉트
-2. 사용자가 로그인 완료 후 /auth/callback/:provider로 리다이렉트
-3. 프론트엔드에서 code를 백엔드로 POST 전송
-4. 백엔드에서 access token 획득 및 사용자 정보 조회
-5. JWT 토큰 발급 및 응답
-
-**이메일 필수 정책:**
-- 소셜 로그인 시 이메일이 없으면 requiresEmail 응답 반환
-- 프론트엔드에서 이메일 수집 페이지로 리다이렉트
-
-### 기존 테이블
-| 모듈 | 테이블 |
-|------|--------|
-| 사용자 | users, email_verification_tokens, user_social_accounts |
-| 상품 | products, product_categories, display_categories |
-| 상품 옵션 | product_main_options, product_sub_options, product_options |
-| 이미지 | product_images |
-| 리뷰 | reviews |
-| 콘텐츠 | hero_banners, middle_banners, bottom_banners, bongseonjang_tv |
-| 프로모션 | time_deals, events |
-| 검색 | search_terms |
-
-### 장바구니/주문 테이블 (2025.12.11 추가)
-- **carts**: 장바구니 (userId, guestToken, isActive)
-- **cart_items**: 장바구니 상품 (cartId, productId, mainOptionId, subOptionId, quantity)
-- **orders**: 주문 (orderNumber, userId, status, 금액 정보, 배송지 정보)
-- **order_items**: 주문 상품 - 스냅샷 저장 (productName, optionName, unitPrice)
-- **order_status_history**: 주문 상태 변경 이력
-
-### 배송 테이블
-- **shipping_addresses**: 배송지 목록 (userId, addressName, recipientName, address)
-- **shipments**: 배송 정보 (orderId, carrierCode, trackingNumber, status)
-- **shipment_events**: 배송 추적 이벤트
-
-### 결제 테이블
-- **payments**: 결제 정보 (orderId, method, amount, pgProvider)
-- **payment_refunds**: 환불 내역
-
-### 쿠폰 테이블
-- **coupons**: 쿠폰 정의 (code, discountType, discountValue, validFrom/To)
-- **coupon_issuances**: 사용자별 쿠폰 발급 내역
-
-### 포인트 테이블
-- **point_wallets**: 사용자별 포인트 잔액 (OneToOne with users)
-- **point_transactions**: 포인트 적립/사용 내역 (type, amount, expiresAt)
-
-### 찜 테이블
-- **wishlists**: 사용자별 찜 목록 (OneToOne with users)
-- **wishlist_items**: 찜한 상품 (Unique: wishlistId + productId)
-
-### 고객센터 테이블
-- **support_tickets**: 문의 티켓 (ticketNumber, category, status)
-- **support_messages**: 문의 메시지 (ticketId, senderType, content)
-
-### 설계 원칙
-- **스냅샷 저장**: 주문 시점의 가격/옵션을 OrderItem에 복사 저장
-- **상태 이력 관리**: order_status_history, shipment_events로 변경 추적
-- **포인트 만료**: point_transactions.expiresAt으로 만료 관리
-- **Soft Delete**: 배송지 등은 isActive 플래그로 논리 삭제
+### Database Schema Principles
+주문 시점의 가격/옵션 스냅샷 저장, 상태 변경 이력 관리 (`order_status_history`, `shipment_events`), 포인트 만료 관리 (`point_transactions.expiresAt`), Soft Delete를 위한 `isActive` 플래그 사용.
 
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
@@ -277,3 +126,4 @@ VITE_NAVER_REDIRECT_URI=
 - **PostgreSQL**: 데이터베이스
 - **bcrypt**: 비밀번호 해싱
 - **jsonwebtoken**: JWT 토큰
+- **NicePayments v1**: PG 결제 연동
