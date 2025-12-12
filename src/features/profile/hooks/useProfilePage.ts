@@ -63,7 +63,7 @@ export function useProfilePage() {
   }, [navigate]);
 
   const handleFavoritesClick = useCallback(() => {
-    navigate('/favorites');
+    navigate('/wishlist');
   }, [navigate]);
 
   const handlePendingReviewsClick = useCallback(() => {

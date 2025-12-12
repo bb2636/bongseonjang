@@ -11,6 +11,7 @@ import { SearchPage } from './features/search';
 import { ProfilePage, ProfilePasswordVerifyPage, ProfileEditPage } from './features/profile';
 import { PointPage } from './features/point';
 import { MyCouponPage, CouponDownloadPage } from './features/coupon';
+import { WishlistPage } from './features/wishlist';
 import { ProtectedRoute } from './components';
 import './components/ProtectedRoute/ProtectedRoute.css';
 
@@ -36,6 +37,7 @@ export default function App() {
       <Route path="/points" element={<ProtectedRoute><PointPage /></ProtectedRoute>} />
       <Route path="/coupons" element={<ProtectedRoute><MyCouponPage /></ProtectedRoute>} />
       <Route path="/coupons/download" element={<ProtectedRoute><CouponDownloadPage /></ProtectedRoute>} />
+      <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
       <Route
         path="*"
         element={
