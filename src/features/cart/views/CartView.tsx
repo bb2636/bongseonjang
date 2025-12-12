@@ -99,8 +99,6 @@ export function CartView({
       </div>
       <CartSummary
         subtotal={selectedSummary.subtotal}
-        shippingFee={selectedSummary.shippingFee}
-        totalAmount={selectedSummary.totalAmount}
         itemCount={selectedSummary.itemCount}
         onOrder={onOrder}
       />
