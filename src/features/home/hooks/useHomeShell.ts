@@ -31,9 +31,15 @@ export function useHomeShell() {
     setActiveTab(tab);
   }, []);
 
+  const handleLogoClick = useCallback(() => {
+    setActiveTab('default');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return {
     activeTab,
     onTabChange: handleTabChange,
+    onLogoClick: handleLogoClick,
   };
 }
 

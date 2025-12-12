@@ -13,7 +13,7 @@ interface HomeShellViewProps {
 }
 
 export default function HomeShellView({ shell }: HomeShellViewProps) {
-  const { activeTab, onTabChange } = shell;
+  const { activeTab, onTabChange, onLogoClick } = shell;
 
   const renderContent = () => {
     switch (activeTab) {
@@ -34,7 +34,7 @@ export default function HomeShellView({ shell }: HomeShellViewProps) {
 
   return (
     <div className="home-shell">
-      <AppBar />
+      <AppBar onLogoClick={onLogoClick} />
       
       <main className="home-shell__content">
         <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />
