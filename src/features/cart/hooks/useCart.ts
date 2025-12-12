@@ -101,17 +101,8 @@ export function useCart() {
   }, [cart, selectedItems]);
 
   const selectedSummary = useMemo(() => {
-    if (!cart) {
+    if (!cart || selectedItems.size === 0) {
       return { subtotal: 0, shippingFee: 0, totalAmount: 0, itemCount: 0 };
-    }
-
-    if (selectedItems.size === 0) {
-      return {
-        subtotal: cart.subtotal,
-        shippingFee: cart.totalShippingFee,
-        totalAmount: cart.totalAmount,
-        itemCount: cart.itemCount,
-      };
     }
 
     const selectedCartItems = cart.items.filter(item => selectedItems.has(item.id));
