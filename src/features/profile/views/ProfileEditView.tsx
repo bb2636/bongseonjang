@@ -1,4 +1,4 @@
-import { Input, PasswordInput } from '../../../components';
+import { Input, PasswordInput, AlertModal } from '../../../components';
 import './ProfileEditView.css';
 
 interface ProfileEditViewProps {
@@ -12,12 +12,14 @@ interface ProfileEditViewProps {
   passwordError: string | null;
   passwordConfirmError: string | null;
   isSubmitting: boolean;
+  showSuccessModal: boolean;
   onNameChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
   onNewPasswordChange: (value: string) => void;
   onNewPasswordConfirmChange: (value: string) => void;
   onSubmit: () => void;
   onBack: () => void;
+  onModalConfirm: () => void;
 }
 
 export default function ProfileEditView({
@@ -31,12 +33,14 @@ export default function ProfileEditView({
   passwordError,
   passwordConfirmError,
   isSubmitting,
+  showSuccessModal,
   onNameChange,
   onPhoneChange,
   onNewPasswordChange,
   onNewPasswordConfirmChange,
   onSubmit,
   onBack,
+  onModalConfirm,
 }: ProfileEditViewProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -129,6 +133,12 @@ export default function ProfileEditView({
           {isSubmitting ? '저장 중...' : '저장'}
         </button>
       </div>
+
+      <AlertModal
+        isOpen={showSuccessModal}
+        title="수정되었습니다."
+        onConfirm={onModalConfirm}
+      />
     </div>
   );
 }

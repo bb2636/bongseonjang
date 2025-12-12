@@ -14,12 +14,14 @@ export default function ProfileEditPage() {
     passwordConfirmError,
     isSubmitting,
     isLoading,
+    showSuccessModal,
     handleNameChange,
     handlePhoneChange,
     handleNewPasswordChange,
     handleNewPasswordConfirmChange,
     handleSubmit,
     handleBack,
+    handleModalConfirm,
   } = useProfileEdit();
 
   if (isLoading) {
@@ -55,12 +57,14 @@ export default function ProfileEditPage() {
       passwordError={passwordError}
       passwordConfirmError={passwordConfirmError}
       isSubmitting={isSubmitting}
+      showSuccessModal={showSuccessModal}
       onNameChange={handleNameChange}
       onPhoneChange={handlePhoneChange}
       onNewPasswordChange={handleNewPasswordChange}
       onNewPasswordConfirmChange={handleNewPasswordConfirmChange}
       onSubmit={handleSubmit}
       onBack={handleBack}
+      onModalConfirm={handleModalConfirm}
     />
   );
 }

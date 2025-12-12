@@ -22,6 +22,7 @@ export function useProfileEdit() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const email = user?.email || '';
 
@@ -107,8 +108,7 @@ export function useProfileEdit() {
       const result = await profileApi.updateProfile(updateData);
 
       if (result.success) {
-        showToast('프로필이 수정되었습니다', 'success');
-        navigate('/profile', { replace: true });
+        setShowSuccessModal(true);
       } else {
         showToast(result.message || '프로필 수정에 실패했습니다', 'error');
       }
@@ -123,6 +123,11 @@ export function useProfileEdit() {
     navigate(-1);
   };
 
+  const handleModalConfirm = () => {
+    setShowSuccessModal(false);
+    navigate('/profile', { replace: true });
+  };
+
   return {
     email,
     name,
@@ -135,11 +140,13 @@ export function useProfileEdit() {
     passwordConfirmError,
     isSubmitting,
     isLoading,
+    showSuccessModal,
     handleNameChange,
     handlePhoneChange,
     handleNewPasswordChange,
     handleNewPasswordConfirmChange,
     handleSubmit,
     handleBack,
+    handleModalConfirm,
   };
 }
