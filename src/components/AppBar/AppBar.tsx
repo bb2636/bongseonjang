@@ -3,6 +3,7 @@ import { useCart } from '../../contexts';
 import './AppBar.css';
 
 interface AppBarProps {
+  title?: string;
   showBackButton?: boolean;
   onBackClick?: () => void;
   showLogo?: boolean;
@@ -12,6 +13,7 @@ interface AppBarProps {
 }
 
 export default function AppBar({
+  title,
   showBackButton = false,
   onBackClick,
   showLogo = true,
@@ -59,7 +61,9 @@ export default function AppBar({
             </svg>
           </button>
         )}
-        {showLogo && (
+        {title ? (
+          <span className="app-bar__title">{title}</span>
+        ) : showLogo ? (
           <button 
             type="button"
             className="app-bar__logo-button"
@@ -67,7 +71,7 @@ export default function AppBar({
           >
             <span className="app-bar__title">봉선장</span>
           </button>
-        )}
+        ) : null}
       </div>
 
       <div className="app-bar__right">

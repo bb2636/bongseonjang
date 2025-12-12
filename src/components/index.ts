@@ -10,3 +10,4 @@ export { ProductCard } from './ProductCard';
 export type { ProductCardData } from './ProductCard';
 export { ProductGridContent } from './ProductGridContent';
 export { ProtectedRoute } from './ProtectedRoute';
+export { default as AppBar } from './AppBar/AppBar';

@@ -18,6 +18,7 @@ import { CartPage } from './features/cart/pages/CartPage';
 import { CheckoutPage } from './features/payment/pages/CheckoutPage';
 import { PaymentSuccessPage } from './features/payment/pages/PaymentSuccessPage';
 import { PaymentFailPage } from './features/payment/pages/PaymentFailPage';
+import { NoticeListPage } from './features/notice';
 import { ProtectedRoute } from './components';
 import './components/ProtectedRoute/ProtectedRoute.css';
 
@@ -51,6 +52,7 @@ export default function App() {
       <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
       <Route path="/payment/success" element={<PaymentSuccessPage />} />
       <Route path="/payment/fail" element={<PaymentFailPage />} />
+      <Route path="/notice" element={<ProtectedRoute><NoticeListPage /></ProtectedRoute>} />
       <Route
         path="*"
         element={
