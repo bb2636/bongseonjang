@@ -63,10 +63,7 @@ export default function ProductDetailView({
 
   return (
     <div className="product-detail-view">
-      <DetailAppBar 
-        productName={product.name} 
-        onShare={onShare} 
-      />
+      <DetailAppBar productName={product.name} />
       
       <div className="product-detail-view__content">
         <ProductDetailTabs

@@ -13,7 +13,7 @@
 }
 
 .detail-app-bar__back,
-.detail-app-bar__share {
+.detail-app-bar__cart {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,6 +23,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
+  position: relative;
 }
 
 .detail-app-bar__title {
@@ -38,4 +39,21 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 0 12px;
+}
+
+.detail-app-bar__cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #3B9BD5;
+  border-radius: 9px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  color: #ffffff;
 }
