@@ -140,64 +140,68 @@ export default function BottomActionBar({
 
   return (
     <div className="bottom-action-bar">
-      <div className="bottom-action-bar__options">
-        <div className="bottom-action-bar__dropdown-wrapper">
-          <button
-            className="bottom-action-bar__dropdown-trigger"
-            onClick={() => setIsMainDropdownOpen(!isMainDropdownOpen)}
-          >
-            <span>{selectedMainOption ? selectedMainOption.name : mainOptionGroupName}</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          {isMainDropdownOpen && (
-            <div className="bottom-action-bar__dropdown-menu">
-              {safeMainOptions.map((option) => (
-                <button
-                  key={option.id}
-                  className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
-                  onClick={() => option.stockQty > 0 && handleMainOptionSelect(option)}
-                  disabled={option.stockQty <= 0}
-                >
-                  <span>{option.name}</span>
-                  <span className="bottom-action-bar__dropdown-price">{formatPrice(option.price)}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+      <div className="bottom-action-bar__drag-handle">
+        <div className="bottom-action-bar__drag-handle-bar" />
+      </div>
 
-        {hasSubOptions && selectedMainOption && (
+      <div className="bottom-action-bar__options">
           <div className="bottom-action-bar__dropdown-wrapper">
             <button
               className="bottom-action-bar__dropdown-trigger"
-              onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}
+              onClick={() => setIsMainDropdownOpen(!isMainDropdownOpen)}
             >
-              <span>{selectedSubOption ? selectedSubOption.name : subOptionGroupName}</span>
+              <span>{selectedMainOption ? selectedMainOption.name : mainOptionGroupName}</span>
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            {isSubDropdownOpen && (
+            {isMainDropdownOpen && (
               <div className="bottom-action-bar__dropdown-menu">
-                {safeSubOptions.map((option) => (
+                {safeMainOptions.map((option) => (
                   <button
                     key={option.id}
                     className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
-                    onClick={() => option.stockQty > 0 && handleSubOptionSelect(option)}
+                    onClick={() => option.stockQty > 0 && handleMainOptionSelect(option)}
                     disabled={option.stockQty <= 0}
                   >
                     <span>{option.name}</span>
-                    <span className="bottom-action-bar__dropdown-price">
-                      {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : '추가금액 없음'}
-                    </span>
+                    <span className="bottom-action-bar__dropdown-price">{formatPrice(option.price)}</span>
                   </button>
                 ))}
               </div>
             )}
           </div>
-        )}
+
+          {hasSubOptions && selectedMainOption && (
+            <div className="bottom-action-bar__dropdown-wrapper">
+              <button
+                className="bottom-action-bar__dropdown-trigger"
+                onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}
+              >
+                <span>{selectedSubOption ? selectedSubOption.name : subOptionGroupName}</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              {isSubDropdownOpen && (
+                <div className="bottom-action-bar__dropdown-menu">
+                  {safeSubOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
+                      onClick={() => option.stockQty > 0 && handleSubOptionSelect(option)}
+                      disabled={option.stockQty <= 0}
+                    >
+                      <span>{option.name}</span>
+                      <span className="bottom-action-bar__dropdown-price">
+                        {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : '추가금액 없음'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
       </div>
 
       {selectedItems.length > 0 && (
@@ -234,8 +238,8 @@ export default function BottomActionBar({
                       onClick={() => updateQuantity(item.id, -1)}
                       disabled={item.quantity <= 1}
                     >
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M3 8H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M4.583 10H15.417" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
                       </svg>
                     </button>
                     <span className="bottom-action-bar__quantity">{item.quantity}</span>
@@ -243,8 +247,8 @@ export default function BottomActionBar({
                       className="bottom-action-bar__quantity-btn"
                       onClick={() => updateQuantity(item.id, 1)}
                     >
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 4.583V15.417M4.583 10H15.417" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
                       </svg>
                     </button>
                   </div>
