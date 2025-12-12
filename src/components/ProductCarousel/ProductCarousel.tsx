@@ -1,4 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { useNavigate } from 'react-router-dom';
 import { useQuickCart } from '@/contexts/QuickCartContext';
 import 'swiper/css';
 import './ProductCarousel.css';
@@ -29,7 +30,12 @@ export default function ProductCarousel({
   cardWidth = 167.5,
   cardHeight = 175,
 }: ProductCarouselProps) {
+  const navigate = useNavigate();
   const { openQuickCart } = useQuickCart();
+
+  const handleCardClick = (productId: string) => {
+    navigate(`/product/${productId}`);
+  };
 
   const handleAddToCart = (e: React.MouseEvent, productId: string) => {
     e.stopPropagation();
@@ -60,7 +66,7 @@ export default function ProductCarousel({
             className="product-carousel__slide"
             style={{ width: `${cardWidth}px` }}
           >
-            <div className="product-carousel__card">
+            <div className="product-carousel__card" onClick={() => handleCardClick(product.id)}>
               <div
                 className="product-carousel__image"
                 style={{ height: `${cardHeight}px` }}
