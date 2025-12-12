@@ -4,6 +4,7 @@ import { useProductDetail } from './useProductDetail';
 import { useProductReviews } from './useProductReviews';
 import { useRelatedProducts } from './useRelatedProducts';
 import { useToast } from '../../../contexts/ToastContext';
+import { useCart } from '../../../contexts/CartContext';
 import type { ProductOption } from '../types/productDetail';
 import type { TabType } from '../components/ProductDetailTabs';
 import type { SelectedItem } from '../components/OptionBottomSheet';
@@ -11,6 +12,7 @@ import type { SelectedItem } from '../components/OptionBottomSheet';
 export function useProductDetailPage(productId: string) {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { refreshCart } = useCart();
   const { product, isLoading, error } = useProductDetail(productId);
   const { reviews, isLoading: reviewsLoading } = useProductReviews(productId);
   const { relatedProducts, isLoading: relatedProductsLoading } = useRelatedProducts(productId);
@@ -93,6 +95,7 @@ export function useProductDetailPage(productId: string) {
       if (response.ok && result.success) {
         showToast('장바구니에 담았습니다', 'success');
         setIsBottomSheetOpen(false);
+        await refreshCart();
         navigate('/cart');
       } else {
         showToast(result.error || '장바구니 추가에 실패했습니다', 'error');
@@ -103,7 +106,7 @@ export function useProductDetailPage(productId: string) {
     } finally {
       setIsAddingToCart(false);
     }
-  }, [productId, isAddingToCart, navigate, showToast]);
+  }, [productId, isAddingToCart, navigate, showToast, refreshCart]);
 
   const handleShare = () => {
     if (navigator.share) {
