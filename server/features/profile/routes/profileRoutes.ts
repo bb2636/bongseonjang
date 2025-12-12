@@ -14,5 +14,6 @@ router.get('/', authMiddleware, (req, res) => profileController.getProfile(req, 
 router.put('/', authMiddleware, (req, res) => profileController.updateProfile(req, res));
 router.get('/orders', authMiddleware, (req, res) => profileController.getRecentOrders(req, res));
 router.post('/verify-password', authMiddleware, (req, res) => profileController.verifyPassword(req, res));
+router.post('/withdraw', authMiddleware, (req, res) => profileController.withdrawAccount(req, res));
 
 export default router;

@@ -105,4 +105,22 @@ export class ProfileController {
       res.status(500).json({ error: '프로필 수정에 실패했습니다' });
     }
   }
+
+  async withdrawAccount(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      await this.profileService.withdrawAccount(userId);
+      
+      res.json({ success: true, message: '회원 탈퇴가 완료되었습니다' });
+    } catch (error) {
+      console.error('Error withdrawing account:', error);
+      res.status(500).json({ error: '회원 탈퇴에 실패했습니다' });
+    }
+  }
 }

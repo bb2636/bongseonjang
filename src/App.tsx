@@ -8,7 +8,7 @@ import { ProductDetailPage } from './features/productDetail';
 import { CategoryPage } from './features/category';
 import { CategoryProductsPage } from './features/categoryProducts';
 import { SearchPage } from './features/search';
-import { ProfilePage, ProfilePasswordVerifyPage, ProfileEditPage } from './features/profile';
+import { ProfilePage, ProfilePasswordVerifyPage, ProfileEditPage, ProfileWithdrawPage } from './features/profile';
 import { PointPage } from './features/point';
 import { MyCouponPage, CouponDownloadPage } from './features/coupon';
 import { WishlistPage } from './features/wishlist';
@@ -34,6 +34,7 @@ export default function App() {
       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       <Route path="/profile/verify" element={<ProtectedRoute><ProfilePasswordVerifyPage /></ProtectedRoute>} />
       <Route path="/profile/edit" element={<ProtectedRoute><ProfileEditPage /></ProtectedRoute>} />
+      <Route path="/profile/withdraw" element={<ProtectedRoute><ProfileWithdrawPage /></ProtectedRoute>} />
       <Route path="/points" element={<ProtectedRoute><PointPage /></ProtectedRoute>} />
       <Route path="/coupons" element={<ProtectedRoute><MyCouponPage /></ProtectedRoute>} />
       <Route path="/coupons/download" element={<ProtectedRoute><CouponDownloadPage /></ProtectedRoute>} />

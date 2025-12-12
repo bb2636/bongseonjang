@@ -4,6 +4,8 @@ import { UserProfile, Order } from '../domain/Profile';
 const MOCK_PROFILE: UserProfile = {
   id: 'user-1',
   name: '김블락',
+  email: 'test@example.com',
+  phone: '01012345678',
   grade: '실버',
   points: 15000,
   couponCount: 423,
@@ -71,5 +73,17 @@ export class MockProfileRepository implements ProfileRepository {
 
   async getRecentOrders(_userId: string, limit: number): Promise<Order[]> {
     return MOCK_ORDERS.slice(0, limit);
+  }
+
+  async getUserPasswordHash(_userId: string): Promise<string | null> {
+    return null;
+  }
+
+  async updateProfile(_userId: string, _data: any): Promise<void> {
+    return;
+  }
+
+  async deleteUser(_userId: string): Promise<void> {
+    return;
   }
 }

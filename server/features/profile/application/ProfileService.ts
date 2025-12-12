@@ -44,4 +44,8 @@ export class ProfileService {
       password: hashedPassword,
     });
   }
+
+  async withdrawAccount(userId: string): Promise<void> {
+    await this.profileRepository.deleteUser(userId);
+  }
 }

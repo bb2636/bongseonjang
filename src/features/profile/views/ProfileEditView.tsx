@@ -20,6 +20,7 @@ interface ProfileEditViewProps {
   onSubmit: () => void;
   onBack: () => void;
   onModalConfirm: () => void;
+  onWithdrawClick: () => void;
 }
 
 export default function ProfileEditView({
@@ -41,6 +42,7 @@ export default function ProfileEditView({
   onSubmit,
   onBack,
   onModalConfirm,
+  onWithdrawClick,
 }: ProfileEditViewProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -119,6 +121,25 @@ export default function ProfileEditView({
                 error={passwordConfirmError}
               />
             </div>
+          </div>
+
+          <div className="profile-edit__withdraw-container">
+            <button
+              type="button"
+              className="profile-edit__withdraw-button"
+              onClick={onWithdrawClick}
+            >
+              <span className="profile-edit__withdraw-text">탈퇴하기</span>
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <path
+                  d="M4.875 9.75L8.125 6.5L4.875 3.25"
+                  stroke="#3B9BD5"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
           </div>
         </form>
       </div>

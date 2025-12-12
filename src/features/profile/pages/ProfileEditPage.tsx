@@ -22,6 +22,7 @@ export default function ProfileEditPage() {
     handleSubmit,
     handleBack,
     handleModalConfirm,
+    handleWithdrawClick,
   } = useProfileEdit();
 
   if (isLoading) {
@@ -65,6 +66,7 @@ export default function ProfileEditPage() {
       onSubmit={handleSubmit}
       onBack={handleBack}
       onModalConfirm={handleModalConfirm}
+      onWithdrawClick={handleWithdrawClick}
     />
   );
 }

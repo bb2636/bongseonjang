@@ -123,6 +123,10 @@ export function useProfileEdit() {
     navigate(-1);
   };
 
+  const handleWithdrawClick = () => {
+    navigate('/profile/withdraw');
+  };
+
   const handleModalConfirm = () => {
     setShowSuccessModal(false);
     navigate('/profile', { replace: true });
@@ -148,5 +152,6 @@ export function useProfileEdit() {
     handleSubmit,
     handleBack,
     handleModalConfirm,
+    handleWithdrawClick,
   };
 }

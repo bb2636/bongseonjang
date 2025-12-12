@@ -190,3 +190,38 @@
   gap: 16px;
   width: 100%;
 }
+
+.profile-edit__withdraw-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 16px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.profile-edit__withdraw-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-edit__withdraw-text {
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #3B9BD5;
+}
+
+.profile-edit__withdraw-button:hover .profile-edit__withdraw-text {
+  text-decoration: underline;
+}

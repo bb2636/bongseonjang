@@ -128,4 +128,9 @@ export class RealProfileRepository implements ProfileRepository {
 
     await userRepository.update({ id: userId }, updateData);
   }
+
+  async deleteUser(userId: string): Promise<void> {
+    const userRepository = AppDataSource.getRepository(User);
+    await userRepository.delete({ id: userId });
+  }
 }
