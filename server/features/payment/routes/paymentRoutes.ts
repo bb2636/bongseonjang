@@ -146,11 +146,22 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-router.post('/callback', async (req: Request, res: Response) => {
+async function handlePaymentCallback(req: Request, res: Response) {
   try {
-    const { authResultCode, authResultMsg, tid, orderId, amount, signature } = req.body;
+    const data = { ...req.query, ...req.body };
+    const { authResultCode, authResultMsg, tid, orderId, amount } = data as {
+      authResultCode?: string;
+      authResultMsg?: string;
+      tid?: string;
+      orderId?: string;
+      amount?: string;
+    };
 
-    console.log('Payment callback received:', { authResultCode, authResultMsg, tid, orderId, amount });
+    console.log('Payment callback received:', { authResultCode, authResultMsg, tid, orderId, amount, method: req.method });
+
+    if (!tid || !orderId || !amount) {
+      return res.redirect(`/payment/fail?message=${encodeURIComponent('결제 정보가 누락되었습니다')}`);
+    }
 
     if (authResultCode !== '0000') {
       return res.redirect(`/payment/fail?orderId=${orderId}&message=${encodeURIComponent(authResultMsg || '결제 인증 실패')}`);
@@ -222,7 +233,10 @@ router.post('/callback', async (req: Request, res: Response) => {
     console.error('Payment callback error:', error);
     return res.redirect(`/payment/fail?message=${encodeURIComponent('결제 처리 중 오류가 발생했습니다')}`);
   }
-});
+}
+
+router.get('/callback', handlePaymentCallback);
+router.post('/callback', handlePaymentCallback);
 
 router.get('/order/:orderId', authMiddleware, async (req: Request, res: Response) => {
   try {
