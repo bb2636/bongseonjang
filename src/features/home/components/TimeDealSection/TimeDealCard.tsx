@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { TimeDeal } from '../../types/timeDeal';
 import { useQuickCart } from '@/contexts/QuickCartContext';
 import './TimeDealCard.css';
@@ -25,10 +26,15 @@ function formatPrice(price: number): string {
 }
 
 export function TimeDealCard({ deal }: TimeDealCardProps) {
+  const navigate = useNavigate();
   const { openQuickCart } = useQuickCart();
   const [remainingSeconds, setRemainingSeconds] = useState(() => 
     calculateRemainingSeconds(deal.saleEndAt)
   );
+
+  const handleCardClick = () => {
+    navigate(`/product/${deal.id}`);
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -46,7 +52,7 @@ export function TimeDealCard({ deal }: TimeDealCardProps) {
   }, [deal.saleEndAt, remainingSeconds]);
 
   return (
-    <div className="time-deal-card">
+    <div className="time-deal-card" onClick={handleCardClick}>
       <div className="time-deal-card__image-container">
         <div className="time-deal-card__image">
           {deal.imageUrl && (

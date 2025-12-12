@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import type { LargeProduct } from './types';
 import { useQuickCart } from '@/contexts/QuickCartContext';
 import './LargeProductCard.css';
@@ -11,14 +12,20 @@ function formatPrice(price: number): string {
 }
 
 export default function LargeProductCard({ product }: LargeProductCardProps) {
+  const navigate = useNavigate();
   const { openQuickCart } = useQuickCart();
+
+  const handleCardClick = () => {
+    navigate(`/product/${product.id}`);
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     openQuickCart(product.id);
   };
+
   return (
-    <div className="large-product-card">
+    <div className="large-product-card" onClick={handleCardClick}>
       <div className="large-product-card__image">
         {product.imageUrl && (
           <img src={product.imageUrl} alt={product.name} />
