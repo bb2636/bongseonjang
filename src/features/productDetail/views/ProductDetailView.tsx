@@ -143,7 +143,6 @@ export default function ProductDetailView({
 
       <BottomActionBar
         mainOptions={product.mainOptions}
-        subOptions={product.subOptions}
         onAddToCart={onAddToCartFromBar}
         onBuyNow={onBuyNowFromBar}
       />

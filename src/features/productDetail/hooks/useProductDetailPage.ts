@@ -140,7 +140,7 @@ export function useProductDetailPage(productId: string) {
     try {
       const cartItems = items.map((item) => ({
         mainOptionId: item.mainOption.id,
-        subOptionId: item.subOption?.id || null,
+        subOptionId: null,
         quantity: item.quantity,
       }));
 
@@ -188,7 +188,7 @@ export function useProductDetailPage(productId: string) {
     try {
       const cartItems = items.map((item) => ({
         mainOptionId: item.mainOption.id,
-        subOptionId: item.subOption?.id || null,
+        subOptionId: null,
         quantity: item.quantity,
       }));
 

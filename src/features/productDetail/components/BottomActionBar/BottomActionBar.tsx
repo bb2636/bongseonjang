@@ -1,74 +1,33 @@
 import { useState, useCallback } from 'react';
-import type { MainOption, SubOption } from '../../types/productDetail';
+import type { MainOption } from '../../types/productDetail';
 import './BottomActionBar.css';
 
 interface SelectedItem {
   id: string;
   mainOption: MainOption;
-  subOption: SubOption | null;
   quantity: number;
 }
 
 interface BottomActionBarProps {
   mainOptions: MainOption[];
-  subOptions: SubOption[];
   onAddToCart: (items: SelectedItem[]) => Promise<void>;
   onBuyNow: (items: SelectedItem[]) => Promise<void>;
 }
 
 export default function BottomActionBar({
   mainOptions,
-  subOptions,
   onAddToCart,
   onBuyNow,
 }: BottomActionBarProps) {
-  const [selectedMainOption, setSelectedMainOption] = useState<MainOption | null>(null);
-  const [selectedSubOption, setSelectedSubOption] = useState<SubOption | null>(null);
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-  const [isMainDropdownOpen, setIsMainDropdownOpen] = useState(false);
-  const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const safeMainOptions = mainOptions || [];
-  const safeSubOptions = subOptions || [];
+  const optionGroupName = safeMainOptions[0]?.groupName || '옵션 선택';
 
-  const hasSubOptions = safeSubOptions.length > 0;
-  const mainOptionGroupName = safeMainOptions[0]?.groupName || '옵션 선택';
-  const subOptionGroupName = safeSubOptions[0]?.groupName || '추가 선택';
-
-  const handleMainOptionSelect = useCallback((option: MainOption) => {
-    setSelectedMainOption(option);
-    setSelectedSubOption(null);
-    setIsMainDropdownOpen(false);
-
-    if (!hasSubOptions) {
-      const existingIndex = selectedItems.findIndex(
-        (item) => item.mainOption.id === option.id && item.subOption === null
-      );
-
-      if (existingIndex >= 0) {
-        const newItems = [...selectedItems];
-        newItems[existingIndex].quantity += 1;
-        setSelectedItems(newItems);
-      } else {
-        const newItem: SelectedItem = {
-          id: `${option.id}-none-${Date.now()}`,
-          mainOption: option,
-          subOption: null,
-          quantity: 1,
-        };
-        setSelectedItems([...selectedItems, newItem]);
-      }
-      setSelectedMainOption(null);
-    }
-  }, [hasSubOptions, selectedItems]);
-
-  const handleSubOptionSelect = useCallback((option: SubOption) => {
-    if (!selectedMainOption) return;
-
+  const handleOptionSelect = useCallback((option: MainOption) => {
     const existingIndex = selectedItems.findIndex(
-      (item) =>
-        item.mainOption.id === selectedMainOption.id &&
-        item.subOption?.id === option.id
+      (item) => item.mainOption.id === option.id
     );
 
     if (existingIndex >= 0) {
@@ -77,18 +36,14 @@ export default function BottomActionBar({
       setSelectedItems(newItems);
     } else {
       const newItem: SelectedItem = {
-        id: `${selectedMainOption.id}-${option.id}-${Date.now()}`,
-        mainOption: selectedMainOption,
-        subOption: option,
+        id: `${option.id}-${Date.now()}`,
+        mainOption: option,
         quantity: 1,
       };
       setSelectedItems([...selectedItems, newItem]);
     }
-
-    setSelectedMainOption(null);
-    setSelectedSubOption(null);
-    setIsSubDropdownOpen(false);
-  }, [selectedMainOption, selectedItems]);
+    setIsDropdownOpen(false);
+  }, [selectedItems]);
 
   const updateQuantity = useCallback((itemId: string, delta: number) => {
     setSelectedItems((prev) =>
@@ -109,9 +64,7 @@ export default function BottomActionBar({
   }, []);
 
   const calculateItemPrice = (item: SelectedItem): number => {
-    const basePrice = item.mainOption.price;
-    const additionalPrice = item.subOption?.additionalPrice || 0;
-    return (basePrice + additionalPrice) * item.quantity;
+    return item.mainOption.price * item.quantity;
   };
 
   const formatPrice = (price: number): string => {
@@ -145,63 +98,32 @@ export default function BottomActionBar({
       </div>
 
       <div className="bottom-action-bar__options">
-          <div className="bottom-action-bar__dropdown-wrapper">
-            <button
-              className="bottom-action-bar__dropdown-trigger"
-              onClick={() => setIsMainDropdownOpen(!isMainDropdownOpen)}
-            >
-              <span>{selectedMainOption ? selectedMainOption.name : mainOptionGroupName}</span>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-            {isMainDropdownOpen && (
-              <div className="bottom-action-bar__dropdown-menu">
-                {safeMainOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
-                    onClick={() => option.stockQty > 0 && handleMainOptionSelect(option)}
-                    disabled={option.stockQty <= 0}
-                  >
-                    <span>{option.name}</span>
-                    <span className="bottom-action-bar__dropdown-price">{formatPrice(option.price)}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {hasSubOptions && selectedMainOption && (
-            <div className="bottom-action-bar__dropdown-wrapper">
-              <button
-                className="bottom-action-bar__dropdown-trigger"
-                onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}
-              >
-                <span>{selectedSubOption ? selectedSubOption.name : subOptionGroupName}</span>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              {isSubDropdownOpen && (
-                <div className="bottom-action-bar__dropdown-menu">
-                  {safeSubOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
-                      onClick={() => option.stockQty > 0 && handleSubOptionSelect(option)}
-                      disabled={option.stockQty <= 0}
-                    >
-                      <span>{option.name}</span>
-                      <span className="bottom-action-bar__dropdown-price">
-                        {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : '추가금액 없음'}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
+        <div className="bottom-action-bar__dropdown-wrapper">
+          <button
+            className="bottom-action-bar__dropdown-trigger"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <span>{optionGroupName}</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          {isDropdownOpen && (
+            <div className="bottom-action-bar__dropdown-menu">
+              {safeMainOptions.map((option) => (
+                <button
+                  key={option.id}
+                  className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
+                  onClick={() => option.stockQty > 0 && handleOptionSelect(option)}
+                  disabled={option.stockQty <= 0}
+                >
+                  <span>{option.name}</span>
+                  <span className="bottom-action-bar__dropdown-price">{formatPrice(option.price)}</span>
+                </button>
+              ))}
             </div>
           )}
+        </div>
       </div>
 
       {selectedItems.length > 0 && (
@@ -209,16 +131,13 @@ export default function BottomActionBar({
           {selectedItems.map((item) => {
             const itemPrice = calculateItemPrice(item);
             const originalPrice = item.mainOption.compareAtPrice
-              ? (item.mainOption.compareAtPrice + (item.subOption?.additionalPrice || 0)) * item.quantity
+              ? item.mainOption.compareAtPrice * item.quantity
               : null;
-            const optionLabel = item.subOption
-              ? `${item.mainOption.name} / ${item.subOption.name}`
-              : item.mainOption.name;
 
             return (
               <div key={item.id} className="bottom-action-bar__selected-item">
                 <div className="bottom-action-bar__selected-header">
-                  <span className="bottom-action-bar__selected-name">{optionLabel}</span>
+                  <span className="bottom-action-bar__selected-name">{item.mainOption.name}</span>
                   <button className="bottom-action-bar__remove-btn" onClick={() => removeItem(item.id)}>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                       <path d="M15 5L5 15M5 5L15 15" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
