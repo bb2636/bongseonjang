@@ -76,6 +76,9 @@ export class Order {
   @Column({ type: 'simple-array', nullable: true })
   cartItemIdsSnapshot!: string[] | null;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  returnUrl!: string | null;
+
   @ManyToOne('User', { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user!: User;
