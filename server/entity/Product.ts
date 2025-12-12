@@ -45,9 +45,6 @@ export class Product {
   @Column({ type: 'varchar', length: 200, nullable: true })
   expirationInfo!: string | null;
 
-  @Column({ type: 'int', default: 0 })
-  shippingFee!: number;
-
   @Column({ type: 'varchar', length: 50, nullable: true })
   shippingMethod!: string | null;
 

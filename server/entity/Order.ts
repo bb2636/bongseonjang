@@ -29,9 +29,6 @@ export class Order {
   totalDiscountAmount!: number;
 
   @Column({ type: 'int', default: 0 })
-  shippingFee!: number;
-
-  @Column({ type: 'int', default: 0 })
   usedPoints!: number;
 
   @Column({ type: 'int', default: 0 })

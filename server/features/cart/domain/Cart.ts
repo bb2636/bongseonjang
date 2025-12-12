@@ -12,14 +12,11 @@ export interface CartItemDto {
   compareAtPrice: number | null;
   additionalPrice: number;
   totalPrice: number;
-  shippingFee: number;
 }
 
 export interface CartDto {
   id: string;
   items: CartItemDto[];
   subtotal: number;
-  totalShippingFee: number;
-  totalAmount: number;
   itemCount: number;
 }

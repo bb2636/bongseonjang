@@ -6,9 +6,6 @@ import { CartItem } from '../../../entity/CartItem';
 import { ProductImage } from '../../../entity/ProductImage';
 import { In } from 'typeorm';
 
-const DEFAULT_SHIPPING_FEE = 3000;
-const FREE_SHIPPING_THRESHOLD = 50000;
-
 export class RealCartRepository implements CartRepository {
   private async getOrCreateCart(userId: string): Promise<Cart> {
     const cartRepository = AppDataSource.getRepository(Cart);
@@ -64,20 +61,15 @@ export class RealCartRepository implements CartRepository {
         compareAtPrice,
         additionalPrice,
         totalPrice,
-        shippingFee: DEFAULT_SHIPPING_FEE,
       };
     });
 
     const subtotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
-    const totalShippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : (cartItems.length > 0 ? DEFAULT_SHIPPING_FEE : 0);
-    const totalAmount = subtotal + totalShippingFee;
 
     return {
       id: cart.id,
       items: cartItems,
       subtotal,
-      totalShippingFee,
-      totalAmount,
       itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
     };
   }
@@ -144,7 +136,6 @@ export class RealCartRepository implements CartRepository {
       compareAtPrice: existingItem.mainOption?.compareAtPrice ?? null,
       additionalPrice,
       totalPrice: unitPrice * existingItem.quantity,
-      shippingFee: DEFAULT_SHIPPING_FEE,
     };
   }
 
@@ -188,7 +179,6 @@ export class RealCartRepository implements CartRepository {
       compareAtPrice: item.mainOption?.compareAtPrice ?? null,
       additionalPrice,
       totalPrice: unitPrice * item.quantity,
-      shippingFee: DEFAULT_SHIPPING_FEE,
     };
   }
 

@@ -115,7 +115,7 @@ export function CartItem({
         </button>
       </div>
       <div className="cart-item__shipping">
-        <span>배송비 {formatPrice(item.shippingFee)}</span>
+        <span>배송비 선불</span>
       </div>
     </div>
   );

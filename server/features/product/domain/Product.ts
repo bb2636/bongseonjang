@@ -56,7 +56,6 @@ export interface ProductDetailDto {
   origin?: string;
   storageMethod?: string;
   expirationInfo?: string;
-  shippingFee: number;
   shippingMethod?: string;
   shippingRegion?: string;
   notice?: string;

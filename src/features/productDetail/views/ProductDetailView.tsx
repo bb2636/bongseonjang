@@ -101,7 +101,6 @@ export default function ProductDetailView({
 
             <ProductBenefits
               points={Math.floor(product.discountedPrice * 0.01)}
-              shippingFee={product.shippingFee}
               notice={product.notice}
             />
 
@@ -120,7 +119,6 @@ export default function ProductDetailView({
               origin={product.origin}
               storageMethod={product.storageMethod}
               expirationInfo={product.expirationInfo}
-              shippingFee={product.shippingFee}
               shippingMethod={product.shippingMethod}
               shippingRegion={product.shippingRegion}
               notice={product.notice}

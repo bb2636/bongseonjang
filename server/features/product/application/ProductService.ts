@@ -123,7 +123,6 @@ export class ProductService {
       origin: product.origin ?? undefined,
       storageMethod: product.storageMethod ?? undefined,
       expirationInfo: product.expirationInfo ?? undefined,
-      shippingFee: product.shippingFee,
       shippingMethod: product.shippingMethod ?? undefined,
       shippingRegion: product.shippingRegion ?? undefined,
       notice: product.notice ?? undefined,

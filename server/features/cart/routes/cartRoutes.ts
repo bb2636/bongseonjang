@@ -8,9 +8,6 @@ import { In } from 'typeorm';
 
 const router = Router();
 
-const DEFAULT_SHIPPING_FEE = 3000;
-const FREE_SHIPPING_THRESHOLD = 50000;
-
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
@@ -67,20 +64,15 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         compareAtPrice: item.mainOption?.compareAtPrice ?? null,
         additionalPrice,
         totalPrice,
-        shippingFee: DEFAULT_SHIPPING_FEE,
       };
     });
 
     const subtotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
-    const totalShippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : (cartItems.length > 0 ? DEFAULT_SHIPPING_FEE : 0);
-    const totalAmount = subtotal + totalShippingFee;
 
     return res.json({
       id: cart.id,
       items: cartItems,
       subtotal,
-      totalShippingFee,
-      totalAmount,
       itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
     });
   } catch (error) {

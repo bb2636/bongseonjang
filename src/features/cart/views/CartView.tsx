@@ -11,8 +11,6 @@ interface CartViewProps {
   isAllSelected: boolean;
   selectedSummary: {
     subtotal: number;
-    shippingFee: number;
-    totalAmount: number;
     itemCount: number;
   };
   onToggleSelectItem: (itemId: string) => void;

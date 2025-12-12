@@ -2,7 +2,6 @@ import './ProductBenefits.css';
 
 interface ProductBenefitsProps {
   points?: number;
-  shippingFee: number;
   notice?: string;
 }
 
@@ -12,11 +11,8 @@ function formatPrice(price: number): string {
 
 export default function ProductBenefits({
   points = 0,
-  shippingFee,
   notice,
 }: ProductBenefitsProps) {
-  const isFreeShipping = shippingFee === 0;
-
   return (
     <div className="product-benefits">
       <div className="product-benefits__info">
@@ -28,9 +24,7 @@ export default function ProductBenefits({
         <div className="product-benefits__row product-benefits__row--align-top">
           <span className="product-benefits__label">배송</span>
           <div className="product-benefits__shipping">
-            <span className="product-benefits__value">
-              {isFreeShipping ? '무료배송' : `${formatPrice(shippingFee)}원`}
-            </span>
+            <span className="product-benefits__value">배송비 선불</span>
             <span className="product-benefits__shipping-note">
               제주도/도서산간 3,500원 추가
             </span>

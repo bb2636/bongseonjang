@@ -102,16 +102,14 @@ export function useCart() {
 
   const selectedSummary = useMemo(() => {
     if (!cart || selectedItems.size === 0) {
-      return { subtotal: 0, shippingFee: 0, totalAmount: 0, itemCount: 0 };
+      return { subtotal: 0, itemCount: 0 };
     }
 
     const selectedCartItems = cart.items.filter(item => selectedItems.has(item.id));
     const subtotal = selectedCartItems.reduce((sum, item) => sum + item.totalPrice, 0);
-    const shippingFee = subtotal >= 50000 ? 0 : (selectedCartItems.length > 0 ? 3000 : 0);
-    const totalAmount = subtotal + shippingFee;
     const itemCount = selectedCartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-    return { subtotal, shippingFee, totalAmount, itemCount };
+    return { subtotal, itemCount };
   }, [cart, selectedItems]);
 
   return {
