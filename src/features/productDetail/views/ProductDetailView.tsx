@@ -7,10 +7,9 @@ import ProductDetailContent from '../components/ProductDetailContent';
 import RelatedProducts from '../components/RelatedProducts';
 import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
+import type { SelectedItem } from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
 import ProductDetailTabs from '../components/ProductDetailTabs';
-import OptionBottomSheet from '../components/OptionBottomSheet';
-import type { SelectedItem } from '../components/OptionBottomSheet';
 import type { TabType } from '../components/ProductDetailTabs';
 import type { ProductDetail, ProductOption, Review } from '../types/productDetail';
 import type { RelatedProduct } from '../api/productDetailApi';
@@ -20,50 +19,40 @@ interface ProductDetailViewProps {
   product: ProductDetail;
   selectedOption: ProductOption | null;
   quantity: number;
-  isWishlisted: boolean;
   totalPrice: number;
   activeTab: TabType;
   reviews: Review[];
   reviewsLoading: boolean;
   relatedProducts: RelatedProduct[];
   relatedProductsLoading: boolean;
-  isBottomSheetOpen: boolean;
   onOptionSelect: (option: ProductOption) => void;
   onQuantityChange: (quantity: number) => void;
-  onWishlistClick: () => void;
   onCartClick: () => void;
-  onBuyClick: () => void;
   onShare: () => void;
   onTabChange: (tab: TabType) => void;
   onAddToCart: (productId: string) => void;
-  onBottomSheetClose: () => void;
-  onAddToCartFromSheet: (items: SelectedItem[]) => void;
-  onBuyNowFromSheet: (items: SelectedItem[]) => void;
+  onAddToCartFromBar: (items: SelectedItem[]) => Promise<void>;
+  onBuyNowFromBar: (items: SelectedItem[]) => Promise<void>;
 }
 
 export default function ProductDetailView({
   product,
   selectedOption,
   quantity,
-  isWishlisted,
   totalPrice,
   activeTab,
   reviews,
   reviewsLoading,
   relatedProducts,
   relatedProductsLoading,
-  isBottomSheetOpen,
   onOptionSelect,
   onQuantityChange,
-  onWishlistClick,
   onCartClick,
-  onBuyClick,
   onShare,
   onTabChange,
   onAddToCart,
-  onBottomSheetClose,
-  onAddToCartFromSheet,
-  onBuyNowFromSheet,
+  onAddToCartFromBar,
+  onBuyNowFromBar,
 }: ProductDetailViewProps) {
   const sliderImages = product.images.filter(
     (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
@@ -153,19 +142,10 @@ export default function ProductDetailView({
       </div>
 
       <BottomActionBar
-        isWishlisted={isWishlisted}
-        onWishlistClick={onWishlistClick}
-        onBuyClick={onBuyClick}
-      />
-
-      <OptionBottomSheet
-        isOpen={isBottomSheetOpen}
-        onClose={onBottomSheetClose}
-        productName={product.name}
         mainOptions={product.mainOptions}
         subOptions={product.subOptions}
-        onAddToCart={onAddToCartFromSheet}
-        onBuyNow={onBuyNowFromSheet}
+        onAddToCart={onAddToCartFromBar}
+        onBuyNow={onBuyNowFromBar}
       />
     </div>
   );

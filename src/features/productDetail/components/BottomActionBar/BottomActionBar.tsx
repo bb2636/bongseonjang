@@ -1,39 +1,279 @@
+import { useState, useCallback } from 'react';
+import type { MainOption, SubOption } from '../../types/productDetail';
 import './BottomActionBar.css';
 
+interface SelectedItem {
+  id: string;
+  mainOption: MainOption;
+  subOption: SubOption | null;
+  quantity: number;
+}
+
 interface BottomActionBarProps {
-  isWishlisted: boolean;
-  onWishlistClick: () => void;
-  onBuyClick: () => void;
+  mainOptions: MainOption[];
+  subOptions: SubOption[];
+  onAddToCart: (items: SelectedItem[]) => Promise<void>;
+  onBuyNow: (items: SelectedItem[]) => Promise<void>;
 }
 
 export default function BottomActionBar({
-  isWishlisted,
-  onWishlistClick,
-  onBuyClick,
+  mainOptions,
+  subOptions,
+  onAddToCart,
+  onBuyNow,
 }: BottomActionBarProps) {
+  const [selectedMainOption, setSelectedMainOption] = useState<MainOption | null>(null);
+  const [selectedSubOption, setSelectedSubOption] = useState<SubOption | null>(null);
+  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
+  const [isMainDropdownOpen, setIsMainDropdownOpen] = useState(false);
+  const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
+
+  const hasSubOptions = subOptions.length > 0;
+  const mainOptionGroupName = mainOptions[0]?.groupName || '옵션 선택';
+  const subOptionGroupName = subOptions[0]?.groupName || '추가 선택';
+
+  const handleMainOptionSelect = useCallback((option: MainOption) => {
+    setSelectedMainOption(option);
+    setSelectedSubOption(null);
+    setIsMainDropdownOpen(false);
+
+    if (!hasSubOptions) {
+      const existingIndex = selectedItems.findIndex(
+        (item) => item.mainOption.id === option.id && item.subOption === null
+      );
+
+      if (existingIndex >= 0) {
+        const newItems = [...selectedItems];
+        newItems[existingIndex].quantity += 1;
+        setSelectedItems(newItems);
+      } else {
+        const newItem: SelectedItem = {
+          id: `${option.id}-none-${Date.now()}`,
+          mainOption: option,
+          subOption: null,
+          quantity: 1,
+        };
+        setSelectedItems([...selectedItems, newItem]);
+      }
+      setSelectedMainOption(null);
+    }
+  }, [hasSubOptions, selectedItems]);
+
+  const handleSubOptionSelect = useCallback((option: SubOption) => {
+    if (!selectedMainOption) return;
+
+    const existingIndex = selectedItems.findIndex(
+      (item) =>
+        item.mainOption.id === selectedMainOption.id &&
+        item.subOption?.id === option.id
+    );
+
+    if (existingIndex >= 0) {
+      const newItems = [...selectedItems];
+      newItems[existingIndex].quantity += 1;
+      setSelectedItems(newItems);
+    } else {
+      const newItem: SelectedItem = {
+        id: `${selectedMainOption.id}-${option.id}-${Date.now()}`,
+        mainOption: selectedMainOption,
+        subOption: option,
+        quantity: 1,
+      };
+      setSelectedItems([...selectedItems, newItem]);
+    }
+
+    setSelectedMainOption(null);
+    setSelectedSubOption(null);
+    setIsSubDropdownOpen(false);
+  }, [selectedMainOption, selectedItems]);
+
+  const updateQuantity = useCallback((itemId: string, delta: number) => {
+    setSelectedItems((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === itemId) {
+            const newQuantity = item.quantity + delta;
+            return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
+          }
+          return item;
+        })
+        .filter((item) => item.quantity > 0)
+    );
+  }, []);
+
+  const removeItem = useCallback((itemId: string) => {
+    setSelectedItems((prev) => prev.filter((item) => item.id !== itemId));
+  }, []);
+
+  const calculateItemPrice = (item: SelectedItem): number => {
+    const basePrice = item.mainOption.price;
+    const additionalPrice = item.subOption?.additionalPrice || 0;
+    return (basePrice + additionalPrice) * item.quantity;
+  };
+
+  const formatPrice = (price: number): string => {
+    return price.toLocaleString('ko-KR') + '원';
+  };
+
+  const handleAddToCart = async () => {
+    if (selectedItems.length === 0) return;
+    try {
+      await onAddToCart(selectedItems);
+      setSelectedItems([]);
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (selectedItems.length === 0) return;
+    try {
+      await onBuyNow(selectedItems);
+      setSelectedItems([]);
+    } catch (error) {
+      console.error('Failed to buy now:', error);
+    }
+  };
+
   return (
     <div className="bottom-action-bar">
-      <div className="bottom-action-bar__content">
-        <button 
-          className={`bottom-action-bar__wishlist ${isWishlisted ? 'bottom-action-bar__wishlist--active' : ''}`}
-          onClick={onWishlistClick}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path 
-              d="M20.84 4.61C20.3292 4.099 19.7228 3.69365 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69365 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.9083 3.57831 8.50903 2.99871 7.05 2.99871C5.59096 2.99871 4.19169 3.57831 3.16 4.61C2.1283 5.64169 1.54871 7.04097 1.54871 8.5C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.351 11.8792 21.7563 11.2728 22.0329 10.6054C22.3095 9.93789 22.4518 9.22249 22.4518 8.5C22.4518 7.77751 22.3095 7.0621 22.0329 6.39464C21.7563 5.72718 21.351 5.12075 20.84 4.61Z" 
-              stroke={isWishlisted ? '#E53935' : 'rgba(12, 12, 12, 0.9)'}
-              fill={isWishlisted ? '#E53935' : 'none'}
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+      <div className="bottom-action-bar__options">
+        <div className="bottom-action-bar__dropdown-wrapper">
+          <button
+            className="bottom-action-bar__dropdown-trigger"
+            onClick={() => setIsMainDropdownOpen(!isMainDropdownOpen)}
+          >
+            <span>{selectedMainOption ? selectedMainOption.name : mainOptionGroupName}</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          {isMainDropdownOpen && (
+            <div className="bottom-action-bar__dropdown-menu">
+              {mainOptions.map((option) => (
+                <button
+                  key={option.id}
+                  className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
+                  onClick={() => option.stockQty > 0 && handleMainOptionSelect(option)}
+                  disabled={option.stockQty <= 0}
+                >
+                  <span>{option.name}</span>
+                  <span className="bottom-action-bar__dropdown-price">{formatPrice(option.price)}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
-        <button className="bottom-action-bar__buy" onClick={onBuyClick}>
+        {hasSubOptions && selectedMainOption && (
+          <div className="bottom-action-bar__dropdown-wrapper">
+            <button
+              className="bottom-action-bar__dropdown-trigger"
+              onClick={() => setIsSubDropdownOpen(!isSubDropdownOpen)}
+            >
+              <span>{selectedSubOption ? selectedSubOption.name : subOptionGroupName}</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {isSubDropdownOpen && (
+              <div className="bottom-action-bar__dropdown-menu">
+                {subOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
+                    onClick={() => option.stockQty > 0 && handleSubOptionSelect(option)}
+                    disabled={option.stockQty <= 0}
+                  >
+                    <span>{option.name}</span>
+                    <span className="bottom-action-bar__dropdown-price">
+                      {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : '추가금액 없음'}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {selectedItems.length > 0 && (
+        <div className="bottom-action-bar__selected-items">
+          {selectedItems.map((item) => {
+            const itemPrice = calculateItemPrice(item);
+            const originalPrice = item.mainOption.compareAtPrice
+              ? (item.mainOption.compareAtPrice + (item.subOption?.additionalPrice || 0)) * item.quantity
+              : null;
+            const optionLabel = item.subOption
+              ? `${item.mainOption.name} / ${item.subOption.name}`
+              : item.mainOption.name;
+
+            return (
+              <div key={item.id} className="bottom-action-bar__selected-item">
+                <div className="bottom-action-bar__selected-header">
+                  <span className="bottom-action-bar__selected-name">{optionLabel}</span>
+                  <button className="bottom-action-bar__remove-btn" onClick={() => removeItem(item.id)}>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M15 5L5 15M5 5L15 15" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+                <div className="bottom-action-bar__selected-footer">
+                  <div className="bottom-action-bar__price-info">
+                    <span className="bottom-action-bar__selected-price">{formatPrice(itemPrice)}</span>
+                    {originalPrice && originalPrice > itemPrice && (
+                      <span className="bottom-action-bar__original-price">{formatPrice(originalPrice)}</span>
+                    )}
+                  </div>
+                  <div className="bottom-action-bar__quantity-controls">
+                    <button
+                      className="bottom-action-bar__quantity-btn"
+                      onClick={() => updateQuantity(item.id, -1)}
+                      disabled={item.quantity <= 1}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 8H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                    <span className="bottom-action-bar__quantity">{item.quantity}</span>
+                    <button
+                      className="bottom-action-bar__quantity-btn"
+                      onClick={() => updateQuantity(item.id, 1)}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="bottom-action-bar__buttons">
+        <button
+          className="bottom-action-bar__cart-btn"
+          onClick={handleAddToCart}
+          disabled={selectedItems.length === 0}
+        >
+          장바구니에 담기
+        </button>
+        <button
+          className="bottom-action-bar__buy-btn"
+          onClick={handleBuyNow}
+          disabled={selectedItems.length === 0}
+        >
           구매하기
         </button>
+      </div>
+
+      <div className="bottom-action-bar__home-indicator">
+        <div className="bottom-action-bar__home-indicator-bar" />
       </div>
     </div>
   );
 }
+
+export type { SelectedItem };

@@ -12,25 +12,20 @@ export default function ProductDetailPage() {
     error,
     selectedOption,
     quantity,
-    isWishlisted,
     totalPrice,
     activeTab,
     reviews,
     reviewsLoading,
     relatedProducts,
     relatedProductsLoading,
-    isBottomSheetOpen,
     handleOptionSelect,
     handleQuantityChange,
-    handleWishlistClick,
     handleCartClick,
-    handleBuyClick,
     handleShare,
     handleTabChange,
     handleAddToCart,
-    handleBottomSheetClose,
-    handleAddToCartFromSheet,
-    handleBuyNowFromSheet,
+    handleAddToCartFromBar,
+    handleBuyNowFromBar,
   } = useProductDetailPage(id || '');
 
   if (isLoading) {
@@ -62,25 +57,20 @@ export default function ProductDetailPage() {
       product={product}
       selectedOption={selectedOption}
       quantity={quantity}
-      isWishlisted={isWishlisted}
       totalPrice={totalPrice}
       activeTab={activeTab}
       reviews={reviews}
       reviewsLoading={reviewsLoading}
       relatedProducts={relatedProducts}
       relatedProductsLoading={relatedProductsLoading}
-      isBottomSheetOpen={isBottomSheetOpen}
       onOptionSelect={handleOptionSelect}
       onQuantityChange={handleQuantityChange}
-      onWishlistClick={handleWishlistClick}
       onCartClick={handleCartClick}
-      onBuyClick={handleBuyClick}
       onShare={handleShare}
       onTabChange={handleTabChange}
       onAddToCart={handleAddToCart}
-      onBottomSheetClose={handleBottomSheetClose}
-      onAddToCartFromSheet={handleAddToCartFromSheet}
-      onBuyNowFromSheet={handleBuyNowFromSheet}
+      onAddToCartFromBar={handleAddToCartFromBar}
+      onBuyNowFromBar={handleBuyNowFromBar}
     />
   );
 }

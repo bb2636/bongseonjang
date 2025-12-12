@@ -7,7 +7,7 @@ import { useToast } from '../../../contexts/ToastContext';
 import { useCart } from '../../../contexts/CartContext';
 import type { ProductOption } from '../types/productDetail';
 import type { TabType } from '../components/ProductDetailTabs';
-import type { SelectedItem } from '../components/OptionBottomSheet';
+import type { SelectedItem } from '../components/BottomActionBar';
 
 export function useProductDetailPage(productId: string) {
   const navigate = useNavigate();
@@ -250,24 +250,19 @@ export function useProductDetailPage(productId: string) {
     error,
     selectedOption,
     quantity,
-    isWishlisted,
     totalPrice,
     activeTab,
     reviews,
     reviewsLoading,
     relatedProducts,
     relatedProductsLoading,
-    isBottomSheetOpen,
     handleOptionSelect,
     handleQuantityChange,
-    handleWishlistClick,
     handleCartClick,
-    handleBuyClick,
     handleShare,
     handleTabChange,
     handleAddToCart,
-    handleBottomSheetClose,
-    handleAddToCartFromSheet,
-    handleBuyNowFromSheet,
+    handleAddToCartFromBar: handleAddToCartFromSheet,
+    handleBuyNowFromBar: handleBuyNowFromSheet,
   };
 }
