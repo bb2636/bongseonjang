@@ -10,7 +10,7 @@ export interface UpdateProfileData {
 
 export interface ProfileRepository {
   getUserProfile(userId: string): Promise<UserProfile | null>;
-  getRecentOrders(userId: string, limit: number): Promise<Order[]>;
+  getRecentOrders(userId: string, limit: number, onlyInProgress?: boolean): Promise<Order[]>;
   getUserPasswordHash(userId: string): Promise<string | null>;
   updateProfile(userId: string, data: UpdateProfileData): Promise<void>;
   deleteUser(userId: string): Promise<void>;

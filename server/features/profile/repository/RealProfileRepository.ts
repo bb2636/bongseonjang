@@ -60,15 +60,24 @@ export class RealProfileRepository implements ProfileRepository {
     };
   }
 
-  async getRecentOrders(userId: string, limit: number): Promise<Order[]> {
+  async getRecentOrders(userId: string, limit: number, onlyInProgress: boolean = false): Promise<Order[]> {
     const orderRepository = AppDataSource.getRepository(OrderEntity);
     
-    const orders = await orderRepository.find({
-      where: { userId },
-      relations: ['items'],
-      order: { createdAt: 'DESC' },
-      take: limit,
-    });
+    const inProgressStatuses = ['pending', 'paid', 'confirmed', 'preparing', 'shipping'];
+    
+    let queryBuilder = orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.items', 'items')
+      .where('order.userId = :userId', { userId });
+    
+    if (onlyInProgress) {
+      queryBuilder = queryBuilder.andWhere('order.status IN (:...statuses)', { statuses: inProgressStatuses });
+    }
+    
+    const orders = await queryBuilder
+      .orderBy('order.createdAt', 'DESC')
+      .take(limit)
+      .getMany();
 
     return orders.map(order => ({
       id: order.id,

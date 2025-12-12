@@ -9,8 +9,8 @@ export class ProfileService {
     return this.profileRepository.getUserProfile(userId);
   }
 
-  async getRecentOrders(userId: string, limit: number = 3): Promise<Order[]> {
-    return this.profileRepository.getRecentOrders(userId, limit);
+  async getRecentOrders(userId: string, limit: number = 3, onlyInProgress: boolean = false): Promise<Order[]> {
+    return this.profileRepository.getRecentOrders(userId, limit, onlyInProgress);
   }
 
   async verifyPassword(userId: string, password: string): Promise<boolean> {

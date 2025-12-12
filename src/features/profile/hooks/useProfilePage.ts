@@ -36,7 +36,7 @@ export function useProfilePage() {
       try {
         const [profileData, ordersData] = await Promise.all([
           fetchUserProfile(),
-          fetchRecentOrders(),
+          fetchRecentOrders(true),
         ]);
         setProfile(profileData);
         setRecentOrders(ordersData);
@@ -87,7 +87,7 @@ export function useProfilePage() {
   }, [navigate]);
 
   const handleViewAllOrdersClick = useCallback(() => {
-    navigate('/orders');
+    navigate('/orders/in-progress');
   }, [navigate]);
 
   return {

@@ -38,8 +38,9 @@ export class ProfileController {
       }
 
       const limit = parseInt(req.query.limit as string) || 3;
+      const onlyInProgress = req.query.status === 'in_progress';
       
-      const orders = await this.profileService.getRecentOrders(userId, limit);
+      const orders = await this.profileService.getRecentOrders(userId, limit, onlyInProgress);
       res.json(orders);
     } catch (error) {
       console.error('Error fetching orders:', error);

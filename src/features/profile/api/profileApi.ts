@@ -18,8 +18,14 @@ export async function fetchUserProfile(): Promise<UserProfile> {
   return response.json();
 }
 
-export async function fetchRecentOrders(): Promise<Order[]> {
-  const response = await fetch('/api/profile/orders?limit=3', {
+export async function fetchRecentOrders(onlyInProgress: boolean = false): Promise<Order[]> {
+  const params = new URLSearchParams();
+  params.set('limit', '1');
+  if (onlyInProgress) {
+    params.set('status', 'in_progress');
+  }
+  
+  const response = await fetch(`/api/profile/orders?${params.toString()}`, {
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
