@@ -9,6 +9,7 @@ import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
 import ProductDetailTabs from '../components/ProductDetailTabs';
+import CountdownTimer from '../components/CountdownTimer';
 import type { TabType } from '../components/ProductDetailTabs';
 import type { ProductDetail, ProductOption, Review } from '../types/productDetail';
 import type { RelatedProduct } from '../api/productDetailApi';
@@ -62,19 +63,24 @@ export default function ProductDetailView({
 
   return (
     <div className="product-detail-view">
-      <DetailAppBar onCartClick={onCartClick} />
+      <DetailAppBar 
+        productName={product.name} 
+        onShare={onShare} 
+      />
       
       <div className="product-detail-view__content">
-        <ProductImageSlider
-          images={sliderImages}
-          thumbnailUrl={product.thumbnailUrl}
-        />
-
         <ProductDetailTabs
           activeTab={activeTab}
           reviewCount={product.reviewCount}
           onTabChange={onTabChange}
         />
+
+        <ProductImageSlider
+          images={sliderImages}
+          thumbnailUrl={product.thumbnailUrl}
+        />
+
+        <CountdownTimer saleStartAt={product.saleStartAt} saleEndAt={product.saleEndAt} />
 
         {activeTab === 'info' && (
           <>

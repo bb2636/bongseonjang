@@ -66,6 +66,8 @@ export interface ProductDetailDto {
   shippingRegion?: string;
   notice?: string;
   isOptionRequired: boolean;
+  saleStartAt?: string;
+  saleEndAt?: string;
   options: ProductOptionDto[];
   mainOptions: MainOptionDto[];
   subOptions: SubOptionDto[];

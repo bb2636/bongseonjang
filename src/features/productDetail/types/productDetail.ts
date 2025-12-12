@@ -64,6 +64,8 @@ export interface ProductDetail {
   shippingRegion?: string;
   notice?: string;
   isOptionRequired: boolean;
+  saleStartAt?: string;
+  saleEndAt?: string;
   options: ProductOption[];
   mainOptions: MainOption[];
   subOptions: SubOption[];

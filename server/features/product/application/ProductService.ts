@@ -157,6 +157,8 @@ export class ProductService {
       shippingRegion: product.shippingRegion ?? undefined,
       notice: product.notice ?? undefined,
       isOptionRequired: product.isOptionRequired,
+      saleStartAt: product.saleStartAt ? new Date(product.saleStartAt).toISOString() : undefined,
+      saleEndAt: product.saleEndAt ? new Date(product.saleEndAt).toISOString() : undefined,
       options,
       mainOptions,
       subOptions,
