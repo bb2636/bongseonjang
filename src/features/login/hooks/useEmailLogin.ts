@@ -18,7 +18,10 @@ export function useEmailLogin() {
 
   const loginMutation = useMutation({
     mutationFn: (data: { email: string; password: string }) => loginService.loginWithEmail(data.email, data.password),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
       navigate('/');
     },
     onError: (error: Error) => {
