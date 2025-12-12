@@ -37,7 +37,8 @@ interface ProductDetailViewProps {
   onTabChange: (tab: TabType) => void;
   onAddToCart: (productId: string) => void;
   onBottomSheetClose: () => void;
-  onOptionConfirm: (items: SelectedItem[]) => void;
+  onAddToCartFromSheet: (items: SelectedItem[]) => void;
+  onBuyNowFromSheet: (items: SelectedItem[]) => void;
 }
 
 export default function ProductDetailView({
@@ -61,7 +62,8 @@ export default function ProductDetailView({
   onTabChange,
   onAddToCart,
   onBottomSheetClose,
-  onOptionConfirm,
+  onAddToCartFromSheet,
+  onBuyNowFromSheet,
 }: ProductDetailViewProps) {
   const sliderImages = product.images.filter(
     (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
@@ -162,7 +164,8 @@ export default function ProductDetailView({
         productName={product.name}
         mainOptions={product.mainOptions}
         subOptions={product.subOptions}
-        onConfirm={onOptionConfirm}
+        onAddToCart={onAddToCartFromSheet}
+        onBuyNow={onBuyNowFromSheet}
       />
     </div>
   );

@@ -29,7 +29,8 @@ export default function ProductDetailPage() {
     handleTabChange,
     handleAddToCart,
     handleBottomSheetClose,
-    handleOptionConfirm,
+    handleAddToCartFromSheet,
+    handleBuyNowFromSheet,
   } = useProductDetailPage(id || '');
 
   if (isLoading) {
@@ -78,7 +79,8 @@ export default function ProductDetailPage() {
       onTabChange={handleTabChange}
       onAddToCart={handleAddToCart}
       onBottomSheetClose={handleBottomSheetClose}
-      onOptionConfirm={handleOptionConfirm}
+      onAddToCartFromSheet={handleAddToCartFromSheet}
+      onBuyNowFromSheet={handleBuyNowFromSheet}
     />
   );
 }

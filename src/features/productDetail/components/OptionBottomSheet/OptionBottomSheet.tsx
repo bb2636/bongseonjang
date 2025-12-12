@@ -15,7 +15,8 @@ interface OptionBottomSheetProps {
   productName: string;
   mainOptions: MainOption[];
   subOptions: SubOption[];
-  onConfirm: (items: SelectedItem[]) => void;
+  onAddToCart: (items: SelectedItem[]) => void;
+  onBuyNow: (items: SelectedItem[]) => void;
 }
 
 export default function OptionBottomSheet({
@@ -24,7 +25,8 @@ export default function OptionBottomSheet({
   productName,
   mainOptions,
   subOptions,
-  onConfirm,
+  onAddToCart,
+  onBuyNow,
 }: OptionBottomSheetProps) {
   const [selectedMainOption, setSelectedMainOption] = useState<MainOption | null>(null);
   const [selectedSubOption, setSelectedSubOption] = useState<SubOption | null>(null);
@@ -108,9 +110,16 @@ export default function OptionBottomSheet({
     return price.toLocaleString('ko-KR') + '원';
   };
 
-  const handleConfirm = () => {
+  const handleAddToCart = () => {
     if (selectedItems.length === 0) return;
-    onConfirm(selectedItems);
+    onAddToCart(selectedItems);
+    setSelectedItems([]);
+    onClose();
+  };
+
+  const handleBuyNow = () => {
+    if (selectedItems.length === 0) return;
+    onBuyNow(selectedItems);
     setSelectedItems([]);
     onClose();
   };
@@ -267,15 +276,22 @@ export default function OptionBottomSheet({
         </div>
 
         <div className="option-bottom-sheet__footer">
-          <button
-            className="option-bottom-sheet__submit"
-            onClick={handleConfirm}
-            disabled={selectedItems.length === 0}
-          >
-            {selectedItems.length > 0
-              ? `${formatPrice(totalPrice)} 장바구니 담기`
-              : '옵션을 선택해주세요'}
-          </button>
+          <div className="option-bottom-sheet__buttons">
+            <button
+              className="option-bottom-sheet__cart-btn"
+              onClick={handleAddToCart}
+              disabled={selectedItems.length === 0}
+            >
+              장바구니에 담기
+            </button>
+            <button
+              className="option-bottom-sheet__buy-btn"
+              onClick={handleBuyNow}
+              disabled={selectedItems.length === 0}
+            >
+              구매하기
+            </button>
+          </div>
         </div>
 
         <div className="option-bottom-sheet__home-indicator">
