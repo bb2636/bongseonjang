@@ -74,6 +74,37 @@
   }
 }
 
+.quick-cart-sheet__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 16px;
+}
+
+.quick-cart-sheet__error-message {
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.6);
+  text-align: center;
+  margin: 0;
+}
+
+.quick-cart-sheet__error-close {
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #3B9BD5;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.quick-cart-sheet__error-close:active {
+  background-color: #2d85b8;
+}
+
 .quick-cart-sheet__options {
   margin-bottom: 16px;
 }

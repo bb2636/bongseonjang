@@ -31,7 +31,10 @@ export class CartController {
 
       const { productId, mainOptionId, subOptionId, quantity } = req.body;
 
+      console.log('[Cart] Add item request:', { productId, mainOptionId, subOptionId, quantity, userId });
+
       if (!productId) {
+        console.error('[Cart] Product ID is missing in request body:', req.body);
         res.status(400).json({ error: 'Product ID is required' });
         return;
       }

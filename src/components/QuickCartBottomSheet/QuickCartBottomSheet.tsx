@@ -13,7 +13,7 @@ interface SelectedItem {
 }
 
 export default function QuickCartBottomSheet() {
-  const { isOpen, product, isLoading, closeQuickCart } = useQuickCart();
+  const { isOpen, product, isLoading, error, closeQuickCart } = useQuickCart();
   const { incrementCart } = useCart();
   const { showToast } = useToast();
   const { isAuthenticated } = useAuth();
@@ -261,6 +261,16 @@ export default function QuickCartBottomSheet() {
         {isLoading ? (
           <div className="quick-cart-sheet__loading">
             <div className="quick-cart-sheet__spinner" />
+          </div>
+        ) : error ? (
+          <div className="quick-cart-sheet__error">
+            <p className="quick-cart-sheet__error-message">{error}</p>
+            <button 
+              className="quick-cart-sheet__error-close"
+              onClick={closeQuickCart}
+            >
+              닫기
+            </button>
           </div>
         ) : product ? (
           <>
