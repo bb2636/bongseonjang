@@ -18,14 +18,14 @@ export default function ProductDetailPage() {
     reviewsLoading,
     relatedProducts,
     relatedProductsLoading,
+    isWishlisted,
     handleOptionSelect,
     handleQuantityChange,
     handleCartClick,
     handleShare,
     handleTabChange,
     handleAddToCart,
-    handleAddToCartFromBar,
-    handleBuyNowFromBar,
+    handleToggleWishlist,
   } = useProductDetailPage(id || '');
 
   if (isLoading) {
@@ -63,14 +63,14 @@ export default function ProductDetailPage() {
       reviewsLoading={reviewsLoading}
       relatedProducts={relatedProducts}
       relatedProductsLoading={relatedProductsLoading}
+      isWishlisted={isWishlisted}
       onOptionSelect={handleOptionSelect}
       onQuantityChange={handleQuantityChange}
       onCartClick={handleCartClick}
       onShare={handleShare}
       onTabChange={handleTabChange}
       onAddToCart={handleAddToCart}
-      onAddToCartFromBar={handleAddToCartFromBar}
-      onBuyNowFromBar={handleBuyNowFromBar}
+      onToggleWishlist={handleToggleWishlist}
     />
   );
 }

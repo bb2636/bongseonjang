@@ -7,7 +7,6 @@ import ProductDetailContent from '../components/ProductDetailContent';
 import RelatedProducts from '../components/RelatedProducts';
 import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
-import type { SelectedItem } from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
 import ProductDetailTabs from '../components/ProductDetailTabs';
 import type { TabType } from '../components/ProductDetailTabs';
@@ -25,14 +24,14 @@ interface ProductDetailViewProps {
   reviewsLoading: boolean;
   relatedProducts: RelatedProduct[];
   relatedProductsLoading: boolean;
+  isWishlisted: boolean;
   onOptionSelect: (option: ProductOption) => void;
   onQuantityChange: (quantity: number) => void;
   onCartClick: () => void;
   onShare: () => void;
   onTabChange: (tab: TabType) => void;
   onAddToCart: (productId: string) => void;
-  onAddToCartFromBar: (items: SelectedItem[]) => Promise<void>;
-  onBuyNowFromBar: (items: SelectedItem[]) => Promise<void>;
+  onToggleWishlist: () => void;
 }
 
 export default function ProductDetailView({
@@ -45,14 +44,14 @@ export default function ProductDetailView({
   reviewsLoading,
   relatedProducts,
   relatedProductsLoading,
+  isWishlisted,
   onOptionSelect,
   onQuantityChange,
   onCartClick,
   onShare,
   onTabChange,
   onAddToCart,
-  onAddToCartFromBar,
-  onBuyNowFromBar,
+  onToggleWishlist,
 }: ProductDetailViewProps) {
   const sliderImages = product.images.filter(
     (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
@@ -142,15 +141,9 @@ export default function ProductDetailView({
       </div>
 
       <BottomActionBar
-        product={{
-          id: product.id,
-          name: product.name,
-          basePrice: product.basePrice,
-          discountedPrice: product.discountedPrice,
-        }}
-        mainOptions={product.mainOptions}
-        onAddToCart={onAddToCartFromBar}
-        onBuyNow={onBuyNowFromBar}
+        productId={product.id}
+        isWishlisted={isWishlisted}
+        onToggleWishlist={onToggleWishlist}
       />
     </div>
   );
