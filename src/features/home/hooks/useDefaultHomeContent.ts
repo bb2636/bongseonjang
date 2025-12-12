@@ -28,10 +28,6 @@ export function useDefaultHomeContent() {
     navigate(`/category/${categoryId}`);
   }, [navigate]);
 
-  const onAddToCart = useCallback((productId: string) => {
-    console.log('Add to cart:', productId);
-  }, []);
-
   const onHeartClick = useCallback((productId: string) => {
     console.log('Toggle favorite:', productId);
   }, []);
@@ -56,7 +52,6 @@ export function useDefaultHomeContent() {
     heroImages,
     isHeroImagesLoading,
     onSubCategoryClick,
-    onAddToCart,
     onHeartClick,
     timeDeals,
     isTimeDealsLoading,

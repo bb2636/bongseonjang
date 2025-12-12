@@ -5,7 +5,6 @@ interface ProductGridContentProps {
   products: ProductCardData[];
   isLoading: boolean;
   error?: Error | null;
-  onAddToCart?: (productId: string) => void;
   onProductClick?: (productId: string) => void;
 }
 
@@ -13,7 +12,6 @@ export default function ProductGridContent({
   products,
   isLoading,
   error,
-  onAddToCart,
   onProductClick,
 }: ProductGridContentProps) {
   if (error) {
@@ -56,7 +54,6 @@ export default function ProductGridContent({
           <ProductCard
             key={product.id}
             product={product}
-            onAddToCart={() => onAddToCart?.(product.id)}
             onClick={() => onProductClick?.(product.id)}
           />
         ))}

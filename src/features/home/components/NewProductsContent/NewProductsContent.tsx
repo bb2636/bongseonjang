@@ -13,14 +13,6 @@ export default function NewProductsContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const { products, isLoading, error } = useProductsByCategory(DISPLAY_CATEGORY, selectedCategory);
 
-  const handleAddToCart = (productId: string) => {
-    console.log('Add to cart:', productId);
-  };
-
-  const handleToggleFavorite = (productId: string) => {
-    console.log('Toggle favorite:', productId);
-  };
-
   const handleProductClick = (productId: string) => {
     navigate(`/product/${productId}`);
   };
@@ -36,8 +28,6 @@ export default function NewProductsContent() {
         products={products}
         isLoading={isLoading}
         error={error}
-        onAddToCart={handleAddToCart}
-        onToggleFavorite={handleToggleFavorite}
         onProductClick={handleProductClick}
       />
     </div>

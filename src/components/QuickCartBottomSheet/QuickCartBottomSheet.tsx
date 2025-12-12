@@ -23,6 +23,7 @@ export default function QuickCartBottomSheet() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [noOptionQuantity, setNoOptionQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
+  const [isBuying, setIsBuying] = useState(false);
 
   const hasOptions = product?.mainOptions && product.mainOptions.length > 0;
   const optionGroupName = product?.mainOptions?.[0]?.groupName || '옵션 선택';
@@ -187,6 +188,61 @@ export default function QuickCartBottomSheet() {
     }
   };
 
+  const handleBuyNow = async () => {
+    if (!isAuthenticated) {
+      showToast('로그인이 필요합니다', 'error');
+      closeQuickCart();
+      navigate('/login');
+      return;
+    }
+
+    if (selectedItems.length === 0 || !product) return;
+
+    setIsBuying(true);
+    const token = localStorage.getItem('token');
+    const addedItemIds: string[] = [];
+
+    try {
+      for (const item of selectedItems) {
+        const response = await fetch('/api/cart/items', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: product.id,
+            mainOptionId: item.option?.id || null,
+            subOptionId: null,
+            quantity: item.quantity,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add to cart');
+        }
+
+        const data = await response.json();
+        if (data.id) {
+          addedItemIds.push(data.id);
+        }
+      }
+
+      const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
+      for (let i = 0; i < totalQuantity; i++) {
+        incrementCart();
+      }
+
+      closeQuickCart();
+      navigate(`/checkout?items=${addedItemIds.join(',')}`);
+    } catch (error) {
+      console.error('Failed to proceed to order:', error);
+      showToast('구매 진행에 실패했습니다', 'error');
+    } finally {
+      setIsBuying(false);
+    }
+  };
+
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       closeQuickCart();
@@ -332,9 +388,16 @@ export default function QuickCartBottomSheet() {
               <button
                 className="quick-cart-sheet__cart-btn"
                 onClick={handleAddToCart}
-                disabled={selectedItems.length === 0 || isAdding}
+                disabled={selectedItems.length === 0 || isAdding || isBuying}
               >
-                {isAdding ? '담는 중...' : '장바구니에 담기'}
+                {isAdding ? '담는 중...' : '장바구니 담기'}
+              </button>
+              <button
+                className="quick-cart-sheet__buy-btn"
+                onClick={handleBuyNow}
+                disabled={selectedItems.length === 0 || isAdding || isBuying}
+              >
+                {isBuying ? '진행 중...' : '구매하기'}
               </button>
             </div>
           </>

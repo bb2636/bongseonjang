@@ -152,10 +152,6 @@ export function useSearchPage() {
     navigate(`/product/${productId}`);
   }, [navigate]);
 
-  const handleAddToCart = useCallback((productId: string) => {
-    console.log('Add to cart:', productId);
-  }, []);
-
   return {
     searchQuery,
     recentSearches,
@@ -173,7 +169,6 @@ export function useSearchPage() {
     onRecentSearchDelete: handleRecentSearchDelete,
     onClearAllRecent: handleClearAllRecent,
     onProductClick: handleProductClick,
-    onAddToCart: handleAddToCart,
   };
 }
 

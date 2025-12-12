@@ -19,7 +19,6 @@ export interface UseCategoryProductsPageReturn {
   error: Error | null;
   handleTabChange: (slug: string) => void;
   handleProductClick: (productId: string) => void;
-  handleAddToCart: (productId: string) => void;
   handleCartClick: () => void;
   handleBack: () => void;
   handleLogoClick: () => void;
@@ -41,10 +40,6 @@ export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
     navigate(`/product/${productId}`);
   };
 
-  const handleAddToCart = (productId: string) => {
-    console.log('Add to cart:', productId);
-  };
-
   const handleCartClick = () => {
     navigate('/cart');
   };
@@ -64,7 +59,6 @@ export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
     error: error as Error | null,
     handleTabChange,
     handleProductClick,
-    handleAddToCart,
     handleCartClick,
     handleBack,
     handleLogoClick,

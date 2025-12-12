@@ -15,7 +15,6 @@ export interface ProductCardData {
 
 interface ProductCardProps {
   product: ProductCardData;
-  onAddToCart?: () => void;
   onClick?: () => void;
 }
 
