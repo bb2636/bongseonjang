@@ -60,6 +60,10 @@ export default function QuickCartBottomSheet() {
     );
 
     if (existingIndex >= 0) {
+      const currentQty = selectedItems[existingIndex].quantity;
+      if (currentQty >= option.stockQty) {
+        return;
+      }
       const newItems = [...selectedItems];
       newItems[existingIndex].quantity += 1;
       setSelectedItems(newItems);
@@ -80,7 +84,13 @@ export default function QuickCartBottomSheet() {
         .map((item) => {
           if (item.id === itemId) {
             const newQuantity = item.quantity + delta;
-            return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
+            if (newQuantity <= 0) {
+              return item;
+            }
+            if (item.option && newQuantity > item.option.stockQty) {
+              return item;
+            }
+            return { ...item, quantity: newQuantity };
           }
           return item;
         })
@@ -266,6 +276,7 @@ export default function QuickCartBottomSheet() {
                               <button
                                 className="quick-cart-sheet__quantity-btn"
                                 onClick={() => updateQuantity(item.id, 1)}
+                                disabled={item.option ? item.quantity >= item.option.stockQty : false}
                               >
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                                   <path d="M10 4.583V15.417M4.583 10H15.417" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
