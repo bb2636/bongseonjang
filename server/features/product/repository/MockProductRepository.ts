@@ -1,31 +1,32 @@
-import type { ProductDto } from '../domain/Product';
+import type { Product } from '../../../entity/Product';
 import type { ProductRepository, ProductFilter } from './ProductRepository';
 
-const MOCK_PRODUCTS: ProductDto[] = [
-  {
-    id: '1',
-    name: '알배기 암꽃게 간장게장',
-    imageUrl: 'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=400&h=280&fit=crop',
-    originalPrice: 28000,
-    discountPercent: 22,
-    discountedPrice: 21900,
-  },
-  {
-    id: '2',
-    name: '제주 은갈치 대 3마리',
-    imageUrl: 'https://images.unsplash.com/photo-1534604973900-c43ab4c2e0ab?w=400&h=280&fit=crop',
-    originalPrice: 35000,
-    discountPercent: 15,
-    discountedPrice: 29750,
-  },
-];
-
 export class MockProductRepository implements ProductRepository {
-  async findByDisplayCategory(_displayCategoryName: string, _filter?: ProductFilter): Promise<ProductDto[]> {
-    return MOCK_PRODUCTS;
+  async findByDisplayCategory(_displayCategoryName: string, _filter?: ProductFilter): Promise<Product[]> {
+    return [];
   }
 
-  async findAll(_filter?: ProductFilter): Promise<ProductDto[]> {
-    return MOCK_PRODUCTS;
+  async findAll(_filter?: ProductFilter): Promise<Product[]> {
+    return [];
+  }
+
+  async findById(_id: string): Promise<Product | null> {
+    return null;
+  }
+
+  async findRelatedProducts(_productId: string, _limit: number): Promise<Product[]> {
+    return [];
+  }
+
+  async findTimeDeals(_limit?: number): Promise<Product[]> {
+    return [];
+  }
+
+  async findByTag(_tag: string, _limit?: number): Promise<Product[]> {
+    return [];
+  }
+
+  async findFreshProducts(_limit?: number): Promise<Product[]> {
+    return [];
   }
 }

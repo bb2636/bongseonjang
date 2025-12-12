@@ -69,6 +69,12 @@ export class Product {
   @Column({ type: 'timestamp', nullable: true })
   saleEndAt!: Date | null;
 
+  @Column({ type: 'int', nullable: true })
+  countdownDays!: number | null;
+
+  @Column({ type: 'simple-array', nullable: true })
+  tags!: string[] | null;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 

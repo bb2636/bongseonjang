@@ -5,6 +5,12 @@ export interface ProductDto {
   originalPrice: number;
   discountPercent: number;
   discountedPrice: number;
+  isFavorite?: boolean;
+}
+
+export interface TimeDealProductDto extends ProductDto {
+  saleEndAt: string;
+  remainingSeconds: number;
 }
 
 export interface ProductOptionDto {

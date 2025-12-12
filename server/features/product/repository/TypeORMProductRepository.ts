@@ -118,4 +118,48 @@ export class TypeORMProductRepository implements ProductRepository {
       .limit(limit)
       .getMany();
   }
+
+  async findTimeDeals(limit: number = 10): Promise<Product[]> {
+    const productRepository = AppDataSource.getRepository(Product);
+    const now = new Date();
+
+    return productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .where('product.isActive = :isActive', { isActive: true })
+      .andWhere('product.saleEndAt IS NOT NULL')
+      .andWhere('product.saleEndAt > :now', { now })
+      .andWhere('product.saleStartAt IS NULL OR product.saleStartAt <= :now', { now })
+      .orderBy('product.saleEndAt', 'ASC')
+      .limit(limit)
+      .getMany();
+  }
+
+  async findByTag(tag: string, limit: number = 10): Promise<Product[]> {
+    const productRepository = AppDataSource.getRepository(Product);
+
+    return productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .where('product.isActive = :isActive', { isActive: true })
+      .andWhere('product.tags LIKE :tag', { tag: `%${tag}%` })
+      .orderBy('product.sortOrder', 'ASC')
+      .limit(limit)
+      .getMany();
+  }
+
+  async findFreshProducts(limit: number = 10): Promise<Product[]> {
+    const productRepository = AppDataSource.getRepository(Product);
+
+    return productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .innerJoin('product.displayCategory', 'displayCategory')
+      .where('product.isActive = :isActive', { isActive: true })
+      .andWhere('displayCategory.name = :displayName', { displayName: '싱싱해산물' })
+      .orderBy('product.isDiscounted', 'DESC')
+      .addOrderBy('product.sortOrder', 'ASC')
+      .limit(limit)
+      .getMany();
+  }
 }

@@ -13,4 +13,7 @@ export interface ProductRepository {
   findAll(filter?: ProductFilter): Promise<Product[]>;
   findById(id: string): Promise<Product | null>;
   findRelatedProducts(productId: string, limit: number): Promise<Product[]>;
+  findTimeDeals(limit?: number): Promise<Product[]>;
+  findByTag(tag: string, limit?: number): Promise<Product[]>;
+  findFreshProducts(limit?: number): Promise<Product[]>;
 }
