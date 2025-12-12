@@ -71,3 +71,9 @@ outputType = "console"
 task = "shell.exec"
 args = "npm run dev:backend"
 waitForPort = 3001
+
+[userenv]
+
+[userenv.development]
+NICEPAY_CLIENT_KEY = "S2_51d9b926e7e4494cb805c76175c40f11"
+NICEPAY_SECRET_KEY = "e17c4f4a97974ccbbeae23c2bceeba1d"

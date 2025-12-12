@@ -92,8 +92,10 @@ export function useCart() {
   }, [selectedItems, removeSelectedMutation]);
 
   const handleOrder = useCallback(() => {
-    navigate('/orders/checkout');
-  }, [navigate]);
+    if (selectedItems.size === 0) return;
+    const itemIds = Array.from(selectedItems).join(',');
+    navigate(`/checkout?items=${itemIds}`);
+  }, [navigate, selectedItems]);
 
   const isAllSelected = useMemo(() => {
     if (!cart || cart.items.length === 0) return false;
