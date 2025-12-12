@@ -114,7 +114,6 @@ export default function SearchView({ state }: SearchViewProps) {
                 isLoading={state.isSearching}
                 error={null}
                 onAddToCart={state.onAddToCart}
-                onToggleFavorite={state.onToggleFavorite}
                 onProductClick={state.onProductClick}
               />
             )}

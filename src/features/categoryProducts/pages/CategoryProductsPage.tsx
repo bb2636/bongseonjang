@@ -10,7 +10,6 @@ export default function CategoryProductsPage() {
     handleTabChange,
     handleProductClick,
     handleAddToCart,
-    handleToggleFavorite,
     handleCartClick,
     handleBack,
     handleLogoClick,
@@ -25,7 +24,6 @@ export default function CategoryProductsPage() {
       onTabChange={handleTabChange}
       onProductClick={handleProductClick}
       onAddToCart={handleAddToCart}
-      onToggleFavorite={handleToggleFavorite}
       onCartClick={handleCartClick}
       onBack={handleBack}
       onLogoClick={handleLogoClick}

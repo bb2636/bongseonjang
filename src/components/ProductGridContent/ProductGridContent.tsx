@@ -6,7 +6,6 @@ interface ProductGridContentProps {
   isLoading: boolean;
   error?: Error | null;
   onAddToCart?: (productId: string) => void;
-  onToggleFavorite?: (productId: string) => void;
   onProductClick?: (productId: string) => void;
 }
 
@@ -15,7 +14,6 @@ export default function ProductGridContent({
   isLoading,
   error,
   onAddToCart,
-  onToggleFavorite,
   onProductClick,
 }: ProductGridContentProps) {
   if (error) {
@@ -59,7 +57,6 @@ export default function ProductGridContent({
             key={product.id}
             product={product}
             onAddToCart={() => onAddToCart?.(product.id)}
-            onToggleFavorite={() => onToggleFavorite?.(product.id)}
             onClick={() => onProductClick?.(product.id)}
           />
         ))}

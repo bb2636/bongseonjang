@@ -20,7 +20,6 @@ export interface UseCategoryProductsPageReturn {
   handleTabChange: (slug: string) => void;
   handleProductClick: (productId: string) => void;
   handleAddToCart: (productId: string) => void;
-  handleToggleFavorite: (productId: string) => void;
   handleCartClick: () => void;
   handleBack: () => void;
   handleLogoClick: () => void;
@@ -46,10 +45,6 @@ export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
     console.log('Add to cart:', productId);
   };
 
-  const handleToggleFavorite = (productId: string) => {
-    console.log('Toggle favorite:', productId);
-  };
-
   const handleCartClick = () => {
     navigate('/cart');
   };
@@ -70,7 +65,6 @@ export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
     handleTabChange,
     handleProductClick,
     handleAddToCart,
-    handleToggleFavorite,
     handleCartClick,
     handleBack,
     handleLogoClick,

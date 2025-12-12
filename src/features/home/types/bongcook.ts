@@ -5,5 +5,4 @@ export interface BongcookProduct {
   originalPrice: number;
   discountPercent: number;
   discountedPrice: number;
-  isFavorite: boolean;
 }

@@ -101,7 +101,6 @@ export function useSearchPage() {
           originalPrice: p.originalPrice || 0,
           discountPercent: p.discountPercent || 0,
           discountedPrice: p.discountedPrice || p.originalPrice || 0,
-          isFavorite: false,
         })));
       }
     } catch (error) {
@@ -157,10 +156,6 @@ export function useSearchPage() {
     console.log('Add to cart:', productId);
   }, []);
 
-  const handleToggleFavorite = useCallback((productId: string) => {
-    console.log('Toggle favorite:', productId);
-  }, []);
-
   return {
     searchQuery,
     recentSearches,
@@ -179,7 +174,6 @@ export function useSearchPage() {
     onClearAllRecent: handleClearAllRecent,
     onProductClick: handleProductClick,
     onAddToCart: handleAddToCart,
-    onToggleFavorite: handleToggleFavorite,
   };
 }
 

@@ -5,5 +5,4 @@ export interface FreshFood {
   originalPrice: number;
   discountPercent: number;
   discountedPrice: number;
-  isFavorite?: boolean;
 }

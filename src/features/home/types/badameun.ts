@@ -5,5 +5,4 @@ export interface BadameunProduct {
   originalPrice: number;
   discountPercent: number;
   discountedPrice: number;
-  isFavorite?: boolean;
 }

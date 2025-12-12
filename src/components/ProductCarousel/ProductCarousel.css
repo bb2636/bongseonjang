@@ -40,28 +40,6 @@
   object-fit: cover;
 }
 
-.product-carousel__heart-button {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 42px;
-  height: 42px;
-  padding: 10px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  box-sizing: border-box;
-}
-
-.product-carousel__heart-button svg {
-  width: 24px;
-  height: 24px;
-  backdrop-filter: blur(12px);
-}
-
 .product-carousel__info {
   display: flex;
   flex-direction: column;

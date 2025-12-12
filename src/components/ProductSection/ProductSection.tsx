@@ -7,9 +7,7 @@ interface ProductSectionProps {
   title: string;
   products: Product[];
   isLoading: boolean;
-  showHeartButton?: boolean;
   onAddToCart?: (productId: string) => void;
-  onHeartClick?: (productId: string) => void;
   onViewAll?: () => void;
 }
 
@@ -20,9 +18,7 @@ export default function ProductSection({
   title,
   products,
   isLoading,
-  showHeartButton = false,
   onAddToCart,
-  onHeartClick,
   onViewAll,
 }: ProductSectionProps) {
   if (isLoading) {
@@ -46,9 +42,7 @@ export default function ProductSection({
         isLoading={isLoading}
         cardWidth={CARD_WIDTH}
         cardHeight={CARD_HEIGHT}
-        showHeartButton={showHeartButton}
         onAddToCart={onAddToCart}
-        onHeartClick={onHeartClick}
       />
     </section>
   );

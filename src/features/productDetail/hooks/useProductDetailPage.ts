@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProductDetail } from './useProductDetail';
 import { useProductReviews } from './useProductReviews';
@@ -19,9 +19,30 @@ export function useProductDetailPage(productId: string) {
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('info');
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+
+  useEffect(() => {
+    async function checkWishlistStatus() {
+      const token = localStorage.getItem('token');
+      if (!token || !productId) return;
+      
+      try {
+        const response = await fetch(`/api/wishlist/check/${productId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setIsWishlisted(data.isWishlisted);
+        }
+      } catch (err) {
+        console.error('Failed to check wishlist status:', err);
+      }
+    }
+    checkWishlistStatus();
+  }, [productId]);
 
   const handleOptionSelect = (option: ProductOption) => {
     setSelectedOption(option);
@@ -31,9 +52,54 @@ export function useProductDetailPage(productId: string) {
     setQuantity(newQuantity);
   };
 
-  const handleWishlistClick = () => {
-    setIsWishlisted(!isWishlisted);
-  };
+  const handleWishlistClick = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      showToast('로그인이 필요합니다', 'error');
+      navigate('/login');
+      return;
+    }
+
+    if (isWishlistLoading) return;
+    setIsWishlistLoading(true);
+
+    try {
+      if (isWishlisted) {
+        const response = await fetch(`/api/wishlist/items/${productId}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const result = await response.json();
+        if (response.ok && result.success) {
+          setIsWishlisted(false);
+          showToast('찜 목록에서 삭제되었습니다', 'success');
+        } else {
+          showToast(result.error || '찜 삭제에 실패했습니다', 'error');
+        }
+      } else {
+        const response = await fetch('/api/wishlist/items', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ productId }),
+        });
+        const result = await response.json();
+        if (response.ok && result.success) {
+          setIsWishlisted(result.isWishlisted);
+          showToast('찜 목록에 추가되었습니다', 'success');
+        } else {
+          showToast(result.error || '찜 추가에 실패했습니다', 'error');
+        }
+      }
+    } catch (err) {
+      console.error('Failed to toggle wishlist:', err);
+      showToast('찜 처리에 실패했습니다', 'error');
+    } finally {
+      setIsWishlistLoading(false);
+    }
+  }, [productId, isWishlisted, isWishlistLoading, navigate, showToast]);
 
   const handleCartClick = () => {
     console.log('Add to cart:', {
