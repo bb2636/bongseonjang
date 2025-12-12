@@ -8,13 +8,11 @@ import './MdPickSection.css';
 interface MdPickSectionProps {
   products: MdPickProduct[];
   isLoading: boolean;
-  onAddToCart?: (productId: string) => void;
 }
 
 export default function MdPickSection({
   products,
   isLoading,
-  onAddToCart,
 }: MdPickSectionProps) {
   if (isLoading) {
     return (
@@ -42,7 +40,6 @@ export default function MdPickSection({
             <SwiperSlide key={product.id} className="md-pick-section__slide">
               <LargeProductCard
                 product={product}
-                onAddToCart={() => onAddToCart?.(product.id)}
               />
             </SwiperSlide>
           ))}

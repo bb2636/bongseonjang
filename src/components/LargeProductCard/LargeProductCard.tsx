@@ -1,16 +1,22 @@
 import type { LargeProduct } from './types';
+import { useQuickCart } from '@/contexts/QuickCartContext';
 import './LargeProductCard.css';
 
 interface LargeProductCardProps {
   product: LargeProduct;
-  onAddToCart?: () => void;
 }
 
 function formatPrice(price: number): string {
   return price.toLocaleString('ko-KR');
 }
 
-export default function LargeProductCard({ product, onAddToCart }: LargeProductCardProps) {
+export default function LargeProductCard({ product }: LargeProductCardProps) {
+  const { openQuickCart } = useQuickCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openQuickCart(product.id);
+  };
   return (
     <div className="large-product-card">
       <div className="large-product-card__image">
@@ -31,7 +37,7 @@ export default function LargeProductCard({ product, onAddToCart }: LargeProductC
         <button
           type="button"
           className="large-product-card__add-button"
-          onClick={onAddToCart}
+          onClick={handleAddToCart}
         >
           <svg
             className="large-product-card__cart-icon"

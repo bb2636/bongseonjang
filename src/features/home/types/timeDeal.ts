@@ -1,5 +1,6 @@
 export interface TimeDeal {
   id: string;
+  productId: string;
   name: string;
   imageUrl?: string;
   originalPrice: number;

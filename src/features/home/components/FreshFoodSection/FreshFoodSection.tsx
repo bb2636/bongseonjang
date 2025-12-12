@@ -4,7 +4,6 @@ import type { FreshFood } from '../../types/freshFood';
 interface FreshFoodSectionProps {
   products: FreshFood[];
   isLoading: boolean;
-  onAddToCart?: (productId: string) => void;
   onHeartClick?: (productId: string) => void;
   onViewAll?: () => void;
 }
@@ -12,7 +11,6 @@ interface FreshFoodSectionProps {
 export default function FreshFoodSection({
   products,
   isLoading,
-  onAddToCart,
   onHeartClick,
   onViewAll,
 }: FreshFoodSectionProps) {
@@ -21,9 +19,6 @@ export default function FreshFoodSection({
       title="신선식품"
       products={products}
       isLoading={isLoading}
-      showHeartButton
-      onAddToCart={onAddToCart}
-      onHeartClick={onHeartClick}
       onViewAll={onViewAll}
     />
   );

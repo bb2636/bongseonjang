@@ -19,7 +19,6 @@ export default function DefaultHomeContent() {
     heroImages,
     isHeroImagesLoading,
     onSubCategoryClick,
-    onAddToCart,
     onHeartClick,
     timeDeals,
     isTimeDealsLoading,
@@ -52,13 +51,11 @@ export default function DefaultHomeContent() {
       <TimeDealSection
         timeDeals={timeDeals}
         isLoading={isTimeDealsLoading}
-        onAddToCart={onAddToCart}
       />
       <Spacer height={20} />
       <BestProductSection
         products={bestProducts}
         isLoading={isBestProductsLoading}
-        onAddToCart={onAddToCart}
         onViewAll={onViewAllBestProducts}
       />
       <Spacer height={20} />
@@ -70,13 +67,11 @@ export default function DefaultHomeContent() {
       <MdPickSection
         products={mdPicks}
         isLoading={isMdPicksLoading}
-        onAddToCart={onAddToCart}
       />
       <Spacer height={20} />
       <FreshFoodSection
         products={freshFoods}
         isLoading={isFreshFoodsLoading}
-        onAddToCart={onAddToCart}
         onHeartClick={onHeartClick}
         onViewAll={onViewAllFreshFoods}
       />
@@ -84,7 +79,6 @@ export default function DefaultHomeContent() {
       <BadameunSection
         products={badameunProducts}
         isLoading={isBadameunLoading}
-        onAddToCart={onAddToCart}
         onViewAll={onViewAllBadameun}
       />
       <Spacer height={20} />
@@ -96,7 +90,6 @@ export default function DefaultHomeContent() {
       <BongcookSection
         products={bongcookProducts}
         isLoading={isBongcookLoading}
-        onAddToCart={onAddToCart}
         onViewAll={onViewAllBongcook}
       />
       <Spacer height={20} />

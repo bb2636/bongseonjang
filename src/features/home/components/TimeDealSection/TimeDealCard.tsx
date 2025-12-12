@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { TimeDeal } from '../../types/timeDeal';
+import { useQuickCart } from '@/contexts/QuickCartContext';
 import './TimeDealCard.css';
 
 interface TimeDealCardProps {
   deal: TimeDeal;
-  onAddToCart?: () => void;
 }
 
 function calculateRemainingSeconds(endTime: string): number {
@@ -24,10 +24,16 @@ function formatPrice(price: number): string {
   return price.toLocaleString('ko-KR');
 }
 
-export function TimeDealCard({ deal, onAddToCart }: TimeDealCardProps) {
+export function TimeDealCard({ deal }: TimeDealCardProps) {
+  const { openQuickCart } = useQuickCart();
   const [remainingSeconds, setRemainingSeconds] = useState(() => 
     calculateRemainingSeconds(deal.endTime)
   );
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openQuickCart(deal.productId);
+  };
 
   useEffect(() => {
     if (remainingSeconds <= 0) return;
@@ -64,7 +70,7 @@ export function TimeDealCard({ deal, onAddToCart }: TimeDealCardProps) {
         <button
           type="button"
           className="time-deal-card__add-button"
-          onClick={onAddToCart}
+          onClick={handleAddToCart}
         >
           <svg
             className="time-deal-card__cart-icon"

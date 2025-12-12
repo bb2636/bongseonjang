@@ -7,7 +7,6 @@ interface ProductSectionProps {
   title: string;
   products: Product[];
   isLoading: boolean;
-  onAddToCart?: (productId: string) => void;
   onViewAll?: () => void;
 }
 
@@ -18,7 +17,6 @@ export default function ProductSection({
   title,
   products,
   isLoading,
-  onAddToCart,
   onViewAll,
 }: ProductSectionProps) {
   if (isLoading) {
@@ -42,7 +40,6 @@ export default function ProductSection({
         isLoading={isLoading}
         cardWidth={CARD_WIDTH}
         cardHeight={CARD_HEIGHT}
-        onAddToCart={onAddToCart}
       />
     </section>
   );

@@ -1,4 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { useQuickCart } from '@/contexts/QuickCartContext';
 import 'swiper/css';
 import './ProductCarousel.css';
 
@@ -16,7 +17,6 @@ interface ProductCarouselProps {
   isLoading: boolean;
   cardWidth?: number;
   cardHeight?: number;
-  onAddToCart?: (productId: string) => void;
 }
 
 function formatPrice(price: number): string {
@@ -28,8 +28,13 @@ export default function ProductCarousel({
   isLoading,
   cardWidth = 167.5,
   cardHeight = 175,
-  onAddToCart,
 }: ProductCarouselProps) {
+  const { openQuickCart } = useQuickCart();
+
+  const handleAddToCart = (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation();
+    openQuickCart(productId);
+  };
   if (isLoading) {
     return (
       <div className="product-carousel product-carousel--loading">
@@ -81,7 +86,7 @@ export default function ProductCarousel({
                 <button
                   type="button"
                   className="product-carousel__add-button"
-                  onClick={() => onAddToCart?.(product.id)}
+                  onClick={(e) => handleAddToCart(e, product.id)}
                 >
                   <svg
                     width="16"

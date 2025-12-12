@@ -8,14 +8,12 @@ import './BestProductSection.css';
 interface BestProductSectionProps {
   products: BestProduct[];
   isLoading: boolean;
-  onAddToCart?: (productId: string) => void;
   onViewAll?: () => void;
 }
 
 export default function BestProductSection({
   products,
   isLoading,
-  onAddToCart,
   onViewAll,
 }: BestProductSectionProps) {
   if (isLoading) {
@@ -44,7 +42,6 @@ export default function BestProductSection({
             <SwiperSlide key={product.id} className="best-product-section__slide">
               <LargeProductCard
                 product={product}
-                onAddToCart={() => onAddToCart?.(product.id)}
               />
             </SwiperSlide>
           ))}

@@ -5,13 +5,11 @@ import './TimeDealSection.css';
 interface TimeDealSectionProps {
   timeDeals: TimeDeal[];
   isLoading: boolean;
-  onAddToCart?: (productId: string) => void;
 }
 
 export default function TimeDealSection({ 
   timeDeals,
   isLoading,
-  onAddToCart 
 }: TimeDealSectionProps) {
   if (isLoading) {
     return (
@@ -34,7 +32,6 @@ export default function TimeDealSection({
           <TimeDealCard
             key={deal.id}
             deal={deal}
-            onAddToCart={() => onAddToCart?.(deal.id)}
           />
         ))}
       </div>
