@@ -162,7 +162,6 @@ export function useProductDetailPage(productId: string) {
         showToast('장바구니에 담았습니다', 'success');
         setIsBottomSheetOpen(false);
         await refreshCart();
-        navigate('/cart');
       } else {
         showToast(result.error || '장바구니 추가에 실패했습니다', 'error');
       }
