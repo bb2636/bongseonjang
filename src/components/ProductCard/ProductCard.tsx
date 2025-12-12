@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuickCart } from '@/contexts/QuickCartContext';
 import './ProductCard.css';
 
 const FALLBACK_IMAGE = 'https://placehold.co/400x280/f5f5f5/999999?text=No+Image';
@@ -24,10 +25,10 @@ function formatPrice(price: number): string {
 
 export default function ProductCard({
   product,
-  onAddToCart,
   onClick,
 }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
+  const { openQuickCart } = useQuickCart();
 
   const handleImageError = () => {
     setImageError(true);
@@ -35,7 +36,7 @@ export default function ProductCard({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onAddToCart?.();
+    openQuickCart(product.id);
   };
 
   return (

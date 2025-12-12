@@ -1,0 +1,338 @@
+import { useState, useCallback, useEffect } from 'react';
+import { useQuickCart, QuickCartOption } from '@/contexts/QuickCartContext';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/contexts/ToastContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import './QuickCartBottomSheet.css';
+
+interface SelectedItem {
+  id: string;
+  option: QuickCartOption | null;
+  quantity: number;
+}
+
+export default function QuickCartBottomSheet() {
+  const { isOpen, product, isLoading, closeQuickCart } = useQuickCart();
+  const { incrementCart } = useCart();
+  const { showToast } = useToast();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [noOptionQuantity, setNoOptionQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
+
+  const hasOptions = product?.mainOptions && product.mainOptions.length > 0;
+  const optionGroupName = product?.mainOptions?.[0]?.groupName || '옵션 선택';
+
+  useEffect(() => {
+    if (isOpen && product) {
+      if (!hasOptions) {
+        setSelectedItems([{
+          id: `product-${product.id}`,
+          option: null,
+          quantity: 1,
+        }]);
+        setNoOptionQuantity(1);
+      } else {
+        setSelectedItems([]);
+      }
+      setIsDropdownOpen(false);
+    }
+  }, [isOpen, product, hasOptions]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  const handleOptionSelect = useCallback((option: QuickCartOption) => {
+    const existingIndex = selectedItems.findIndex(
+      (item) => item.option?.id === option.id
+    );
+
+    if (existingIndex >= 0) {
+      const newItems = [...selectedItems];
+      newItems[existingIndex].quantity += 1;
+      setSelectedItems(newItems);
+    } else {
+      const newItem: SelectedItem = {
+        id: `${option.id}-${Date.now()}`,
+        option,
+        quantity: 1,
+      };
+      setSelectedItems([...selectedItems, newItem]);
+    }
+    setIsDropdownOpen(false);
+  }, [selectedItems]);
+
+  const updateQuantity = useCallback((itemId: string, delta: number) => {
+    setSelectedItems((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === itemId) {
+            const newQuantity = item.quantity + delta;
+            return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
+          }
+          return item;
+        })
+        .filter((item) => item.quantity > 0)
+    );
+  }, []);
+
+  const removeItem = useCallback((itemId: string) => {
+    setSelectedItems((prev) => prev.filter((item) => item.id !== itemId));
+  }, []);
+
+  const handleNoOptionQuantityChange = (delta: number) => {
+    const newQuantity = noOptionQuantity + delta;
+    if (newQuantity >= 1 && product) {
+      setNoOptionQuantity(newQuantity);
+      setSelectedItems([{
+        id: `product-${product.id}`,
+        option: null,
+        quantity: newQuantity,
+      }]);
+    }
+  };
+
+  const calculateItemPrice = (item: SelectedItem): number => {
+    if (item.option) {
+      return item.option.price * item.quantity;
+    }
+    if (product) {
+      return product.discountedPrice * item.quantity;
+    }
+    return 0;
+  };
+
+  const getOriginalPrice = (item: SelectedItem): number | null => {
+    if (item.option?.compareAtPrice) {
+      return item.option.compareAtPrice * item.quantity;
+    }
+    if (product && product.basePrice > product.discountedPrice) {
+      return product.basePrice * item.quantity;
+    }
+    return null;
+  };
+
+  const formatPrice = (price: number): string => {
+    return price.toLocaleString('ko-KR') + '원';
+  };
+
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      showToast('로그인이 필요합니다', 'error');
+      closeQuickCart();
+      navigate('/login');
+      return;
+    }
+
+    if (selectedItems.length === 0 || !product) return;
+
+    setIsAdding(true);
+    const token = localStorage.getItem('token');
+
+    try {
+      for (const item of selectedItems) {
+        const response = await fetch('/api/cart/items', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: product.id,
+            mainOptionId: item.option?.id || null,
+            subOptionId: null,
+            quantity: item.quantity,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add to cart');
+        }
+      }
+
+      const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
+      for (let i = 0; i < totalQuantity; i++) {
+        incrementCart();
+      }
+
+      showToast('장바구니에 담았습니다', 'success');
+      closeQuickCart();
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+      showToast('장바구니 담기에 실패했습니다', 'error');
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeQuickCart();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="quick-cart-overlay" onClick={handleOverlayClick}>
+      <div className="quick-cart-sheet">
+        <div className="quick-cart-sheet__drag-handle">
+          <div className="quick-cart-sheet__drag-handle-bar" />
+        </div>
+
+        {isLoading ? (
+          <div className="quick-cart-sheet__loading">
+            <div className="quick-cart-sheet__spinner" />
+          </div>
+        ) : product ? (
+          <>
+            {hasOptions ? (
+              <>
+                <div className="quick-cart-sheet__options">
+                  <div className="quick-cart-sheet__dropdown-wrapper">
+                    <button
+                      className="quick-cart-sheet__dropdown-trigger"
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    >
+                      <span>{optionGroupName}</span>
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                    {isDropdownOpen && (
+                      <div className="quick-cart-sheet__dropdown-menu">
+                        {product.mainOptions.map((option) => (
+                          <button
+                            key={option.id}
+                            className={`quick-cart-sheet__dropdown-item ${option.stockQty <= 0 ? 'quick-cart-sheet__dropdown-item--disabled' : ''}`}
+                            onClick={() => option.stockQty > 0 && handleOptionSelect(option)}
+                            disabled={option.stockQty <= 0}
+                          >
+                            <span>{option.name}</span>
+                            <span className="quick-cart-sheet__dropdown-price">{formatPrice(option.price)}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedItems.length > 0 && (
+                  <div className="quick-cart-sheet__selected-items">
+                    {selectedItems.map((item) => {
+                      const itemPrice = calculateItemPrice(item);
+                      const originalPrice = getOriginalPrice(item);
+
+                      return (
+                        <div key={item.id} className="quick-cart-sheet__selected-item">
+                          <div className="quick-cart-sheet__selected-header">
+                            <span className="quick-cart-sheet__selected-name">{item.option?.name}</span>
+                            <button className="quick-cart-sheet__remove-btn" onClick={() => removeItem(item.id)}>
+                              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M15 5L5 15M5 5L15 15" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </button>
+                          </div>
+                          <div className="quick-cart-sheet__selected-footer">
+                            <div className="quick-cart-sheet__price-info">
+                              <span className="quick-cart-sheet__selected-price">{formatPrice(itemPrice)}</span>
+                              {originalPrice && originalPrice > itemPrice && (
+                                <span className="quick-cart-sheet__original-price">{formatPrice(originalPrice)}</span>
+                              )}
+                            </div>
+                            <div className="quick-cart-sheet__quantity-controls">
+                              <button
+                                className="quick-cart-sheet__quantity-btn"
+                                onClick={() => updateQuantity(item.id, -1)}
+                                disabled={item.quantity <= 1}
+                              >
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                  <path d="M4.583 10H15.417" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
+                                </svg>
+                              </button>
+                              <span className="quick-cart-sheet__quantity">{item.quantity}</span>
+                              <button
+                                className="quick-cart-sheet__quantity-btn"
+                                onClick={() => updateQuantity(item.id, 1)}
+                              >
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                  <path d="M10 4.583V15.417M4.583 10H15.417" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="quick-cart-sheet__no-option">
+                <div className="quick-cart-sheet__no-option-info">
+                  <span className="quick-cart-sheet__no-option-name">{product.name}</span>
+                  <div className="quick-cart-sheet__no-option-price-row">
+                    <span className="quick-cart-sheet__no-option-price">
+                      {formatPrice(product.discountedPrice * noOptionQuantity)}
+                    </span>
+                    {product.basePrice > product.discountedPrice && (
+                      <span className="quick-cart-sheet__no-option-original">
+                        {formatPrice(product.basePrice * noOptionQuantity)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="quick-cart-sheet__quantity-controls">
+                  <button
+                    className="quick-cart-sheet__quantity-btn"
+                    onClick={() => handleNoOptionQuantityChange(-1)}
+                    disabled={noOptionQuantity <= 1}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M4.583 10H15.417" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                  <span className="quick-cart-sheet__quantity">{noOptionQuantity}</span>
+                  <button
+                    className="quick-cart-sheet__quantity-btn"
+                    onClick={() => handleNoOptionQuantityChange(1)}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M10 4.583V15.417M4.583 10H15.417" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="quick-cart-sheet__button-wrapper">
+              <button
+                className="quick-cart-sheet__cart-btn"
+                onClick={handleAddToCart}
+                disabled={selectedItems.length === 0 || isAdding}
+              >
+                {isAdding ? '담는 중...' : '장바구니에 담기'}
+              </button>
+            </div>
+          </>
+        ) : null}
+
+        <div className="quick-cart-sheet__home-indicator">
+          <div className="quick-cart-sheet__home-indicator-bar" />
+        </div>
+      </div>
+    </div>
+  );
+}

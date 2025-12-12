@@ -4,8 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './styles/global.css';
-import { AuthProvider, ToastProvider, CartProvider } from './contexts';
-import { ToastManager } from './components';
+import { AuthProvider, ToastProvider, CartProvider, QuickCartProvider } from './contexts';
+import { ToastManager, QuickCartBottomSheet } from './components';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,8 +23,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <AuthProvider>
           <CartProvider>
             <ToastProvider>
-              <App />
-              <ToastManager />
+              <QuickCartProvider>
+                <App />
+                <QuickCartBottomSheet />
+                <ToastManager />
+              </QuickCartProvider>
             </ToastProvider>
           </CartProvider>
         </AuthProvider>
