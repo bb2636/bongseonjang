@@ -83,8 +83,8 @@
 
 .app-bar__cart-badge {
   position: absolute;
-  right: -6px;
-  top: -4px;
+  right: 3px;
+  top: 3px;
   display: flex;
   flex-direction: column;
   justify-content: center;
