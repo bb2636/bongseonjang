@@ -2,9 +2,92 @@ import { Router, Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database';
 import { Cart } from '../../../entity/Cart';
 import { CartItem } from '../../../entity/CartItem';
+import { ProductImage } from '../../../entity/ProductImage';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+import { In } from 'typeorm';
 
 const router = Router();
+
+const DEFAULT_SHIPPING_FEE = 3000;
+const FREE_SHIPPING_THRESHOLD = 50000;
+
+router.get('/', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.userId;
+
+    const cartRepository = AppDataSource.getRepository(Cart);
+    const cartItemRepository = AppDataSource.getRepository(CartItem);
+    const imageRepository = AppDataSource.getRepository(ProductImage);
+
+    let cart = await cartRepository.findOne({
+      where: { userId, isActive: true },
+    });
+
+    if (!cart) {
+      cart = cartRepository.create({ userId, isActive: true });
+      await cartRepository.save(cart);
+    }
+
+    const items = await cartItemRepository.find({
+      where: { cartId: cart.id },
+      relations: ['product', 'mainOption', 'subOption'],
+      order: { createdAt: 'DESC' },
+    });
+
+    const productIds = items.map(item => item.productId);
+    const thumbnailMap = new Map<string, string>();
+    
+    if (productIds.length > 0) {
+      const thumbnails = await imageRepository.find({
+        where: { productId: In(productIds), isThumbnail: true },
+      });
+      for (const img of thumbnails) {
+        thumbnailMap.set(img.productId, img.imageUrl);
+      }
+    }
+
+    const cartItems = items.map(item => {
+      const basePrice = item.mainOption?.price ?? item.product?.basePrice ?? 0;
+      const additionalPrice = item.subOption?.additionalPrice ?? 0;
+      const unitPrice = basePrice + additionalPrice;
+      const totalPrice = unitPrice * item.quantity;
+
+      return {
+        id: item.id,
+        productId: item.productId,
+        productName: item.product?.name ?? '',
+        productImageUrl: thumbnailMap.get(item.productId) ?? 'https://placehold.co/58x58/f5f5f5/999999?text=No+Image',
+        mainOptionId: item.mainOptionId,
+        mainOptionName: item.mainOption?.name ?? null,
+        subOptionId: item.subOptionId,
+        subOptionName: item.subOption?.name ?? null,
+        quantity: item.quantity,
+        unitPrice,
+        compareAtPrice: item.mainOption?.compareAtPrice ?? null,
+        additionalPrice,
+        totalPrice,
+        shippingFee: DEFAULT_SHIPPING_FEE,
+      };
+    });
+
+    const subtotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    const totalShippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : (cartItems.length > 0 ? DEFAULT_SHIPPING_FEE : 0);
+    const totalAmount = subtotal + totalShippingFee;
+
+    return res.json({
+      id: cart.id,
+      items: cartItems,
+      subtotal,
+      totalShippingFee,
+      totalAmount,
+      itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    });
+  } catch (error) {
+    console.error('Failed to get cart:', error);
+    return res.status(500).json({ error: '장바구니 조회에 실패했습니다' });
+  }
+});
 
 router.post('/items', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -135,6 +218,121 @@ router.get('/count', authMiddleware, async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Failed to get cart count:', error);
     return res.status(500).json({ error: 'Failed to get cart count' });
+  }
+});
+
+router.patch('/items/:itemId', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.userId;
+    const { itemId } = req.params;
+    const { quantity } = req.body;
+
+    if (typeof quantity !== 'number' || quantity < 0) {
+      return res.status(400).json({ error: '유효한 수량이 필요합니다' });
+    }
+
+    const cartRepository = AppDataSource.getRepository(Cart);
+    const cartItemRepository = AppDataSource.getRepository(CartItem);
+
+    const cart = await cartRepository.findOne({
+      where: { userId, isActive: true },
+    });
+
+    if (!cart) {
+      return res.status(404).json({ error: '장바구니를 찾을 수 없습니다' });
+    }
+
+    const item = await cartItemRepository.findOne({
+      where: { id: itemId, cartId: cart.id },
+    });
+
+    if (!item) {
+      return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    }
+
+    if (quantity === 0) {
+      await cartItemRepository.remove(item);
+      return res.status(204).send();
+    }
+
+    item.quantity = quantity;
+    await cartItemRepository.save(item);
+
+    return res.json({ success: true, quantity: item.quantity });
+  } catch (error) {
+    console.error('Failed to update cart item:', error);
+    return res.status(500).json({ error: '수량 변경에 실패했습니다' });
+  }
+});
+
+router.delete('/items/:itemId', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.userId;
+    const { itemId } = req.params;
+
+    const cartRepository = AppDataSource.getRepository(Cart);
+    const cartItemRepository = AppDataSource.getRepository(CartItem);
+
+    const cart = await cartRepository.findOne({
+      where: { userId, isActive: true },
+    });
+
+    if (!cart) {
+      return res.status(404).json({ error: '장바구니를 찾을 수 없습니다' });
+    }
+
+    const item = await cartItemRepository.findOne({
+      where: { id: itemId, cartId: cart.id },
+    });
+
+    if (!item) {
+      return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    }
+
+    await cartItemRepository.remove(item);
+    return res.status(204).send();
+  } catch (error) {
+    console.error('Failed to remove cart item:', error);
+    return res.status(500).json({ error: '상품 삭제에 실패했습니다' });
+  }
+});
+
+router.post('/items/remove-selected', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.userId;
+    const { itemIds } = req.body;
+
+    if (!Array.isArray(itemIds) || itemIds.length === 0) {
+      return res.status(400).json({ error: '삭제할 상품을 선택해주세요' });
+    }
+
+    const cartRepository = AppDataSource.getRepository(Cart);
+    const cartItemRepository = AppDataSource.getRepository(CartItem);
+
+    const cart = await cartRepository.findOne({
+      where: { userId, isActive: true },
+    });
+
+    if (!cart) {
+      return res.status(404).json({ error: '장바구니를 찾을 수 없습니다' });
+    }
+
+    const items = await cartItemRepository.find({
+      where: { id: In(itemIds), cartId: cart.id },
+    });
+
+    if (items.length === 0) {
+      return res.status(404).json({ error: '삭제할 상품을 찾을 수 없습니다' });
+    }
+
+    await cartItemRepository.remove(items);
+    return res.json({ removedCount: items.length });
+  } catch (error) {
+    console.error('Failed to remove selected cart items:', error);
+    return res.status(500).json({ error: '선택 삭제에 실패했습니다' });
   }
 });
 
