@@ -153,24 +153,27 @@ export default function QuickCartBottomSheet() {
     const token = localStorage.getItem('token');
 
     try {
-      for (const item of selectedItems) {
-        const response = await fetch('/api/cart/items', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            productId: product.id,
-            mainOptionId: item.option?.id || null,
-            subOptionId: null,
-            quantity: item.quantity,
-          }),
-        });
+      const items = selectedItems.map(item => ({
+        mainOptionId: item.option?.id || null,
+        subOptionId: null,
+        quantity: item.quantity,
+      }));
 
-        if (!response.ok) {
-          throw new Error('Failed to add to cart');
-        }
+      const response = await fetch('/api/cart/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          items,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to add to cart');
       }
 
       const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -200,32 +203,29 @@ export default function QuickCartBottomSheet() {
 
     setIsBuying(true);
     const token = localStorage.getItem('token');
-    const addedItemIds: string[] = [];
 
     try {
-      for (const item of selectedItems) {
-        const response = await fetch('/api/cart/items', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            productId: product.id,
-            mainOptionId: item.option?.id || null,
-            subOptionId: null,
-            quantity: item.quantity,
-          }),
-        });
+      const items = selectedItems.map(item => ({
+        mainOptionId: item.option?.id || null,
+        subOptionId: null,
+        quantity: item.quantity,
+      }));
 
-        if (!response.ok) {
-          throw new Error('Failed to add to cart');
-        }
+      const response = await fetch('/api/cart/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          items,
+        }),
+      });
 
-        const data = await response.json();
-        if (data.id) {
-          addedItemIds.push(data.id);
-        }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to add to cart');
       }
 
       const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -234,7 +234,7 @@ export default function QuickCartBottomSheet() {
       }
 
       closeQuickCart();
-      navigate(`/checkout?items=${addedItemIds.join(',')}`);
+      navigate('/cart');
     } catch (error) {
       console.error('Failed to proceed to order:', error);
       showToast('구매 진행에 실패했습니다', 'error');
