@@ -14,6 +14,7 @@ import { MyCouponPage, CouponDownloadPage } from './features/coupon';
 import { WishlistPage } from './features/wishlist';
 import { OrderHistoryPage } from './features/orderHistory/pages/OrderHistoryPage';
 import { InProgressOrdersPage } from './features/orderHistory/pages/InProgressOrdersPage';
+import { CartPage } from './features/cart/pages/CartPage';
 import { ProtectedRoute } from './components';
 import './components/ProtectedRoute/ProtectedRoute.css';
 
@@ -41,6 +42,7 @@ export default function App() {
       <Route path="/coupons" element={<ProtectedRoute><MyCouponPage /></ProtectedRoute>} />
       <Route path="/coupons/download" element={<ProtectedRoute><CouponDownloadPage /></ProtectedRoute>} />
       <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
+      <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
       <Route path="/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
       <Route path="/orders/in-progress" element={<ProtectedRoute><InProgressOrdersPage /></ProtectedRoute>} />
       <Route
