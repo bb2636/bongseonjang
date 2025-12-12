@@ -1,6 +1,6 @@
 import type { TimeDeal } from '../types/timeDeal';
 
-const API_BASE_URL = '/api/time-deals';
+const API_BASE_URL = '/api/products/time-deals';
 
 export async function fetchTimeDeals(): Promise<TimeDeal[]> {
   const response = await fetch(API_BASE_URL);

@@ -1,6 +1,6 @@
 import type { BongcookProduct } from '../types/bongcook';
 
-const API_BASE_URL = '/api/bongcook';
+const API_BASE_URL = '/api/products/tag/bongcook';
 
 export async function fetchBongcookProducts(): Promise<BongcookProduct[]> {
   const response = await fetch(API_BASE_URL);

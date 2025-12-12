@@ -1,6 +1,6 @@
 import type { MdPickProduct } from '../types/mdPick';
 
-const API_BASE_URL = '/api/md-picks';
+const API_BASE_URL = '/api/products/tag/md_pick';
 
 export async function fetchMdPicks(): Promise<MdPickProduct[]> {
   const response = await fetch(API_BASE_URL);

@@ -1,5 +1,5 @@
 import type { Product } from '../../../entity/Product';
-import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, MainOptionDto, SubOptionDto } from '../domain/Product';
+import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, MainOptionDto, SubOptionDto, TimeDealProductDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
 
 export interface ReviewStats {
@@ -44,6 +44,36 @@ export class ProductService {
   async getRelatedProducts(productId: string, limit: number = 4): Promise<ProductDto[]> {
     const products = await this.productRepository.findRelatedProducts(productId, limit);
     return products.map((product) => this.toDto(product));
+  }
+
+  async getTimeDeals(limit: number = 10): Promise<TimeDealProductDto[]> {
+    const products = await this.productRepository.findTimeDeals(limit);
+    const now = Date.now();
+    return products.map((product) => this.toTimeDealDto(product, now));
+  }
+
+  async getProductsByTag(tag: string, limit: number = 10): Promise<ProductDto[]> {
+    const products = await this.productRepository.findByTag(tag, limit);
+    return products.map((product) => this.toDto(product));
+  }
+
+  async getFreshProducts(limit: number = 10): Promise<ProductDto[]> {
+    const products = await this.productRepository.findFreshProducts(limit);
+    return products.map((product) => this.toDto(product));
+  }
+
+  private toTimeDealDto(product: Product, now: number): TimeDealProductDto {
+    const baseDto = this.toDto(product);
+    const saleEndAt = product.saleEndAt ? new Date(product.saleEndAt).toISOString() : '';
+    const remainingSeconds = product.saleEndAt 
+      ? Math.max(0, Math.floor((new Date(product.saleEndAt).getTime() - now) / 1000))
+      : 0;
+
+    return {
+      ...baseDto,
+      saleEndAt,
+      remainingSeconds,
+    };
   }
 
   private toDto(product: Product): ProductDto {

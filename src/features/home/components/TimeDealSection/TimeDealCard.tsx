@@ -27,23 +27,23 @@ function formatPrice(price: number): string {
 export function TimeDealCard({ deal }: TimeDealCardProps) {
   const { openQuickCart } = useQuickCart();
   const [remainingSeconds, setRemainingSeconds] = useState(() => 
-    calculateRemainingSeconds(deal.endTime)
+    calculateRemainingSeconds(deal.saleEndAt)
   );
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    openQuickCart(deal.productId);
+    openQuickCart(deal.id);
   };
 
   useEffect(() => {
     if (remainingSeconds <= 0) return;
 
     const timer = setInterval(() => {
-      setRemainingSeconds(calculateRemainingSeconds(deal.endTime));
+      setRemainingSeconds(calculateRemainingSeconds(deal.saleEndAt));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [deal.endTime, remainingSeconds]);
+  }, [deal.saleEndAt, remainingSeconds]);
 
   return (
     <div className="time-deal-card">

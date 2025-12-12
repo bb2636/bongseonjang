@@ -78,4 +78,38 @@ export class ProductController {
       res.status(500).json({ error: 'Failed to fetch related products' });
     }
   }
+
+  async getTimeDeals(req: Request, res: Response): Promise<void> {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+      const products = await this.productService.getTimeDeals(limit);
+      res.json(products);
+    } catch (error) {
+      console.error('Error fetching time deals:', error);
+      res.status(500).json({ error: 'Failed to fetch time deals' });
+    }
+  }
+
+  async getProductsByTag(req: Request, res: Response): Promise<void> {
+    try {
+      const { tag } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+      const products = await this.productService.getProductsByTag(tag, limit);
+      res.json(products);
+    } catch (error) {
+      console.error('Error fetching products by tag:', error);
+      res.status(500).json({ error: 'Failed to fetch products by tag' });
+    }
+  }
+
+  async getFreshProducts(req: Request, res: Response): Promise<void> {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
+      const products = await this.productService.getFreshProducts(limit);
+      res.json(products);
+    } catch (error) {
+      console.error('Error fetching fresh products:', error);
+      res.status(500).json({ error: 'Failed to fetch fresh products' });
+    }
+  }
 }
