@@ -43,7 +43,7 @@ export function CartSummary({
         onClick={onOrder}
         disabled={itemCount === 0}
       >
-        {itemCount > 0 ? `${formatPrice(totalAmount)} 주문하기` : '상품을 담아주세요'}
+        {itemCount > 0 ? `${formatPrice(totalAmount)} 구매하기 (${itemCount}개)` : '상품을 담아주세요'}
       </button>
     </div>
   );
