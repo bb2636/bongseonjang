@@ -12,6 +12,40 @@ const router = Router();
 const NICEPAY_CLIENT_KEY = process.env.NICEPAY_CLIENT_KEY || '';
 const NICEPAY_SECRET_KEY = process.env.NICEPAY_SECRET_KEY || '';
 
+function getFrontendUrl(req?: Request): string {
+  if (req) {
+    const origin = req.headers.origin;
+    if (origin) {
+      return origin;
+    }
+    
+    const referer = req.headers.referer;
+    if (referer) {
+      try {
+        const url = new URL(referer);
+        return url.origin;
+      } catch {
+      }
+    }
+    
+    const host = req.headers.host;
+    const protocol = req.headers['x-forwarded-proto'] || 'https';
+    if (host) {
+      return `${protocol}://${host}`;
+    }
+  }
+  
+  if (process.env.FRONTEND_URL) {
+    return process.env.FRONTEND_URL;
+  }
+  
+  if (process.env.REPLIT_DEV_DOMAIN) {
+    return `https://${process.env.REPLIT_DEV_DOMAIN}`;
+  }
+  
+  return 'http://localhost:5000';
+}
+
 function generateOrderNumber(): string {
   const now = new Date();
   const year = now.getFullYear().toString().slice(-2);
@@ -25,7 +59,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.userId;
-    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest } = req.body;
+    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl } = req.body;
 
     if (!selectedItemIds || !Array.isArray(selectedItemIds) || selectedItemIds.length === 0) {
       return res.status(400).json({ error: '결제할 상품을 선택해주세요' });
@@ -33,6 +67,10 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
 
     if (!recipientName || !recipientPhone || !postalCode || !address) {
       return res.status(400).json({ error: '배송지 정보를 입력해주세요' });
+    }
+
+    if (!clientReturnUrl) {
+      return res.status(400).json({ error: '콜백 URL이 필요합니다' });
     }
 
     const cartRepository = AppDataSource.getRepository(Cart);
@@ -130,7 +168,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       ? `${goodsNames[0]} 외 ${goodsNames.length - 1}건` 
       : goodsNames[0];
 
-    const returnUrl = `${process.env.REPLIT_DEV_DOMAIN ? 'https://' + process.env.REPLIT_DEV_DOMAIN : 'http://localhost:3001'}/api/payment/callback`;
+    console.log('[NicePay] Prepare payment - returnUrl:', clientReturnUrl);
 
     return res.json({
       orderId: order.id,
@@ -138,7 +176,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       clientKey: NICEPAY_CLIENT_KEY,
       amount: finalAmount,
       goodsName,
-      returnUrl,
+      returnUrl: clientReturnUrl,
     });
   } catch (error) {
     console.error('Failed to prepare payment:', error);
@@ -148,6 +186,10 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
 
 async function handlePaymentCallback(req: Request, res: Response) {
   try {
+    console.log('[NicePay Callback] Method:', req.method);
+    console.log('[NicePay Callback] Body:', req.body);
+    console.log('[NicePay Callback] Query:', req.query);
+
     const data = { ...req.query, ...req.body };
     const { authResultCode, authResultMsg, tid, orderId, amount } = data as {
       authResultCode?: string;
@@ -157,14 +199,17 @@ async function handlePaymentCallback(req: Request, res: Response) {
       amount?: string;
     };
 
-    console.log('Payment callback received:', { authResultCode, authResultMsg, tid, orderId, amount, method: req.method });
+    const frontendUrl = getFrontendUrl(req);
+
+    console.log('[NicePay Callback] Parsed data:', { authResultCode, authResultMsg, tid, orderId, amount });
+    console.log('[NicePay Callback] Frontend URL:', frontendUrl);
 
     if (!tid || !orderId || !amount) {
-      return res.redirect(`/payment/fail?message=${encodeURIComponent('결제 정보가 누락되었습니다')}`);
+      return res.redirect(`${frontendUrl}/payment/fail?message=${encodeURIComponent('결제 정보가 누락되었습니다')}`);
     }
 
     if (authResultCode !== '0000') {
-      return res.redirect(`/payment/fail?orderId=${orderId}&message=${encodeURIComponent(authResultMsg || '결제 인증 실패')}`);
+      return res.redirect(`${frontendUrl}/payment/fail?orderId=${orderId}&message=${encodeURIComponent(authResultMsg || '결제 인증 실패')}`);
     }
 
     const credentials = Buffer.from(`${NICEPAY_CLIENT_KEY}:${NICEPAY_SECRET_KEY}`).toString('base64');
@@ -192,12 +237,14 @@ async function handlePaymentCallback(req: Request, res: Response) {
 
     const order = await orderRepository.findOne({ where: { id: orderId } });
     if (!order) {
-      return res.redirect(`/payment/fail?message=${encodeURIComponent('주문을 찾을 수 없습니다')}`);
+      return res.redirect(`${frontendUrl}/payment/fail?message=${encodeURIComponent('주문을 찾을 수 없습니다')}`);
     }
 
     const payment = await paymentRepository.findOne({ where: { orderId } });
 
     if (result.resultCode === '0000') {
+      console.log('[NicePay Callback] Payment approved successfully');
+      
       order.status = 'paid';
       order.paidAt = new Date();
       await orderRepository.save(order);
@@ -216,8 +263,11 @@ async function handlePaymentCallback(req: Request, res: Response) {
         await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
       }
 
-      return res.redirect(`/payment/success?orderNumber=${order.orderNumber}`);
+      console.log('[NicePay Callback] Redirecting to success page');
+      return res.redirect(`${frontendUrl}/payment/success?orderNumber=${order.orderNumber}`);
     } else {
+      console.log('[NicePay Callback] Payment approval failed:', result.resultMsg);
+      
       order.status = 'cancelled';
       await orderRepository.save(order);
 
@@ -227,11 +277,12 @@ async function handlePaymentCallback(req: Request, res: Response) {
         await paymentRepository.save(payment);
       }
 
-      return res.redirect(`/payment/fail?orderNumber=${order.orderNumber}&message=${encodeURIComponent(result.resultMsg || '결제 승인 실패')}`);
+      return res.redirect(`${frontendUrl}/payment/fail?orderNumber=${order.orderNumber}&message=${encodeURIComponent(result.resultMsg || '결제 승인 실패')}`);
     }
   } catch (error) {
-    console.error('Payment callback error:', error);
-    return res.redirect(`/payment/fail?message=${encodeURIComponent('결제 처리 중 오류가 발생했습니다')}`);
+    console.error('[NicePay Callback] Error:', error);
+    const frontendUrl = getFrontendUrl(req);
+    return res.redirect(`${frontendUrl}/payment/fail?message=${encodeURIComponent('결제 처리 중 오류가 발생했습니다')}`);
   }
 }
 

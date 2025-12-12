@@ -1,0 +1,181 @@
+import { Request, Response } from 'express';
+import { PaymentApplicationService } from '../application/PaymentApplicationService';
+
+interface AuthRequest extends Request {
+  userId?: number;
+}
+
+function getFrontendUrl(): string {
+  if (process.env.FRONTEND_URL) {
+    return process.env.FRONTEND_URL;
+  }
+  
+  if (process.env.REPLIT_DEV_DOMAIN) {
+    return `https://${process.env.REPLIT_DEV_DOMAIN}`;
+  }
+  
+  return 'http://localhost:5000';
+}
+
+export class PaymentController {
+  private paymentService: PaymentApplicationService;
+
+  constructor() {
+    this.paymentService = new PaymentApplicationService();
+  }
+
+  createMatchingCheckout = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const userId = req.userId;
+      const { productId, returnUrl } = req.body;
+
+      if (!userId) {
+        res.status(401).json({ success: false, message: '로그인이 필요합니다.' });
+        return;
+      }
+
+      if (!productId || !returnUrl) {
+        res.status(400).json({ success: false, message: '필수 정보가 누락되었습니다.' });
+        return;
+      }
+
+      const result = await this.paymentService.createMatchingCheckout(userId, productId, returnUrl);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).json(result);
+      }
+    } catch (error) {
+      console.error('매칭권 결제 생성 에러:', error);
+      res.status(500).json({ success: false, message: '결제 생성에 실패했습니다.' });
+    }
+  };
+
+  createPtCheckout = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const userId = req.userId;
+      const { productId, returnUrl } = req.body;
+
+      if (!userId) {
+        res.status(401).json({ success: false, message: '로그인이 필요합니다.' });
+        return;
+      }
+
+      if (!productId || !returnUrl) {
+        res.status(400).json({ success: false, message: '필수 정보가 누락되었습니다.' });
+        return;
+      }
+
+      const result = await this.paymentService.createPtCheckout(userId, productId, returnUrl);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).json(result);
+      }
+    } catch (error) {
+      console.error('PT권 결제 생성 에러:', error);
+      res.status(500).json({ success: false, message: '결제 생성에 실패했습니다.' });
+    }
+  };
+
+  handleNicepayCallback = async (req: Request, res: Response): Promise<void> => {
+    try {
+      console.log('[NicePay Callback] Method:', req.method);
+      console.log('[NicePay Callback] Body:', req.body);
+      console.log('[NicePay Callback] Query:', req.query);
+
+      const callbackData = req.method === 'GET' ? req.query : req.body;
+
+      const { authResultCode, authResultMsg, tid, orderId, amount, authToken, signature } = callbackData;
+
+      const frontendUrl = getFrontendUrl();
+      const isPtPayment = orderId && orderId.toString().startsWith('PT-');
+      const redirectPath = isPtPayment ? '/payment/complete' : '/shop';
+      const failRedirectPath = isPtPayment ? '/map' : '/shop';
+
+      if (!tid || !orderId) {
+        res.redirect(`${frontendUrl}${failRedirectPath}?paymentResult=fail&message=${encodeURIComponent('결제 정보가 없습니다.')}`);
+        return;
+      }
+
+      const result = await this.paymentService.handleNicepayCallback({
+        resultCode: authResultCode as string,
+        resultMsg: authResultMsg as string,
+        tid: tid as string,
+        orderId: orderId as string,
+        amount: amount as string,
+        authToken: authToken as string,
+        signature: signature as string
+      });
+
+      if (!result.success) {
+        res.redirect(`${frontendUrl}${failRedirectPath}?paymentResult=fail&orderId=${orderId}&message=${encodeURIComponent(result.message || '결제 실패')}`);
+        return;
+      }
+
+      const payment = await this.paymentService.getPaymentByOrderId(orderId as string);
+      const productName = payment?.productName || '상품';
+      const productType = orderId.toString().startsWith('MATCH-') ? 'matching' : 'pt';
+      
+      if (isPtPayment) {
+        res.redirect(`${frontendUrl}${redirectPath}`);
+      } else {
+        res.redirect(`${frontendUrl}${redirectPath}?paymentResult=success&orderId=${orderId}&productName=${encodeURIComponent(productName)}&productType=${productType}`);
+      }
+    } catch (error) {
+      console.error('NicePay 콜백 처리 에러:', error);
+      const frontendUrl = getFrontendUrl();
+      res.redirect(`${frontendUrl}/shop?paymentResult=fail&message=${encodeURIComponent('결제 처리 중 오류가 발생했습니다.')}`);
+    }
+  };
+
+  getPaymentResult = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { orderId } = req.query;
+
+      if (!orderId) {
+        res.status(400).json({ success: false, message: '주문번호가 필요합니다.' });
+        return;
+      }
+
+      const payment = await this.paymentService.getPaymentByOrderId(orderId as string);
+
+      if (payment) {
+        res.json({
+          success: true,
+          payment: {
+            orderId: payment.merchantOrderId,
+            productName: payment.productName,
+            amount: payment.amount,
+            status: payment.status,
+            paidAt: payment.paidAt
+          }
+        });
+      } else {
+        res.status(404).json({ success: false, message: '결제 정보를 찾을 수 없습니다.' });
+      }
+    } catch (error) {
+      console.error('결제 결과 조회 에러:', error);
+      res.status(500).json({ success: false, message: '조회에 실패했습니다.' });
+    }
+  };
+
+  getPaymentHistory = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const userId = req.userId;
+
+      if (!userId) {
+        res.status(401).json({ success: false, message: '로그인이 필요합니다.' });
+        return;
+      }
+
+      const payments = await this.paymentService.getPaymentHistory(userId);
+      res.json({ success: true, payments });
+    } catch (error) {
+      console.error('결제 내역 조회 에러:', error);
+      res.status(500).json({ success: false, message: '조회에 실패했습니다.' });
+    }
+  };
+}

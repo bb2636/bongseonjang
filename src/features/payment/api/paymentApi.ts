@@ -17,8 +17,13 @@ interface PreparePaymentResponse {
   returnUrl: string;
 }
 
+function getCallbackUrl(): string {
+  return `${window.location.origin}/api/payment/callback`;
+}
+
 export async function preparePayment(data: PreparePaymentRequest): Promise<PreparePaymentResponse> {
   const token = localStorage.getItem('token');
+  const returnUrl = getCallbackUrl();
   
   const response = await fetch('/api/payment/prepare', {
     method: 'POST',
@@ -26,7 +31,7 @@ export async function preparePayment(data: PreparePaymentRequest): Promise<Prepa
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ ...data, returnUrl }),
   });
 
   if (!response.ok) {
@@ -35,4 +40,23 @@ export async function preparePayment(data: PreparePaymentRequest): Promise<Prepa
   }
 
   return response.json();
+}
+
+export async function getPaymentResult(orderId: string): Promise<{ success: boolean; order?: { orderNumber: string; status: string } }> {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch(`/api/payment/order/${orderId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    return { success: false };
+  }
+
+  const order = await response.json();
+  return { success: true, order };
 }
