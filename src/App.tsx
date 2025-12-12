@@ -12,6 +12,7 @@ import { ProfilePage, ProfilePasswordVerifyPage, ProfileEditPage, ProfileWithdra
 import { PointPage } from './features/point';
 import { MyCouponPage, CouponDownloadPage } from './features/coupon';
 import { WishlistPage } from './features/wishlist';
+import { OrderHistoryPage } from './features/orderHistory/pages/OrderHistoryPage';
 import { ProtectedRoute } from './components';
 import './components/ProtectedRoute/ProtectedRoute.css';
 
@@ -39,6 +40,7 @@ export default function App() {
       <Route path="/coupons" element={<ProtectedRoute><MyCouponPage /></ProtectedRoute>} />
       <Route path="/coupons/download" element={<ProtectedRoute><CouponDownloadPage /></ProtectedRoute>} />
       <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
+      <Route path="/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
       <Route
         path="*"
         element={

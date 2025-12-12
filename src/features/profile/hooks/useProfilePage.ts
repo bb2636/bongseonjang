@@ -86,6 +86,10 @@ export function useProfilePage() {
     navigate(path);
   }, [navigate]);
 
+  const handleViewAllOrdersClick = useCallback(() => {
+    navigate('/orders');
+  }, [navigate]);
+
   return {
     profile,
     recentOrders,
@@ -101,5 +105,6 @@ export function useProfilePage() {
     onReturnClick: handleReturnClick,
     onReorderClick: handleReorderClick,
     onMenuItemClick: handleMenuItemClick,
+    onViewAllOrdersClick: handleViewAllOrdersClick,
   };
 }

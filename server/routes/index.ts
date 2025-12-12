@@ -21,6 +21,7 @@ import { pointRoutes } from '../features/point';
 import { cartRoutes } from '../features/cart';
 import { couponRoutes } from '../features/coupon';
 import { wishlistRoutes } from '../features/wishlist';
+import { orderHistoryRoutes } from '../features/orderHistory';
 
 const router = Router();
 
@@ -46,5 +47,6 @@ router.use('/points', pointRoutes);
 router.use('/cart', cartRoutes);
 router.use('/coupons', couponRoutes);
 router.use('/wishlist', wishlistRoutes);
+router.use('/orders', orderHistoryRoutes);
 
 export default router;

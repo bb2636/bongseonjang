@@ -23,6 +23,7 @@ interface ProfileViewProps {
     onReturnClick: (orderId: string) => void;
     onReorderClick: (orderId: string) => void;
     onMenuItemClick: (path: string) => void;
+    onViewAllOrdersClick: () => void;
   };
 }
 
@@ -85,6 +86,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
           onOrderClick={state.onOrderClick}
           onReturnClick={state.onReturnClick}
           onReorderClick={state.onReorderClick}
+          onViewAllClick={state.onViewAllOrdersClick}
         />
 
         <div className="profile-view__divider" />
