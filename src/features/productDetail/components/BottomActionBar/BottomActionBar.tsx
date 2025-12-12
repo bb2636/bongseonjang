@@ -28,9 +28,12 @@ export default function BottomActionBar({
   const [isMainDropdownOpen, setIsMainDropdownOpen] = useState(false);
   const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
 
-  const hasSubOptions = subOptions.length > 0;
-  const mainOptionGroupName = mainOptions[0]?.groupName || '옵션 선택';
-  const subOptionGroupName = subOptions[0]?.groupName || '추가 선택';
+  const safeMainOptions = mainOptions || [];
+  const safeSubOptions = subOptions || [];
+
+  const hasSubOptions = safeSubOptions.length > 0;
+  const mainOptionGroupName = safeMainOptions[0]?.groupName || '옵션 선택';
+  const subOptionGroupName = safeSubOptions[0]?.groupName || '추가 선택';
 
   const handleMainOptionSelect = useCallback((option: MainOption) => {
     setSelectedMainOption(option);
@@ -150,7 +153,7 @@ export default function BottomActionBar({
           </button>
           {isMainDropdownOpen && (
             <div className="bottom-action-bar__dropdown-menu">
-              {mainOptions.map((option) => (
+              {safeMainOptions.map((option) => (
                 <button
                   key={option.id}
                   className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
@@ -178,7 +181,7 @@ export default function BottomActionBar({
             </button>
             {isSubDropdownOpen && (
               <div className="bottom-action-bar__dropdown-menu">
-                {subOptions.map((option) => (
+                {safeSubOptions.map((option) => (
                   <button
                     key={option.id}
                     className={`bottom-action-bar__dropdown-item ${option.stockQty <= 0 ? 'bottom-action-bar__dropdown-item--disabled' : ''}`}
