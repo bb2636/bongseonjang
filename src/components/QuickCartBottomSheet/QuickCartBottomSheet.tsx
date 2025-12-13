@@ -14,7 +14,7 @@ interface SelectedItem {
 
 export default function QuickCartBottomSheet() {
   const { isOpen, product, isLoading, error, closeQuickCart } = useQuickCart();
-  const { incrementCart } = useCart();
+  const { refreshCart } = useCart();
   const { showToast } = useToast();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -176,10 +176,7 @@ export default function QuickCartBottomSheet() {
         throw new Error(errorData.error || 'Failed to add to cart');
       }
 
-      const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
-      for (let i = 0; i < totalQuantity; i++) {
-        incrementCart();
-      }
+      refreshCart();
 
       showToast('장바구니에 담았습니다', 'success');
       closeQuickCart();
@@ -228,10 +225,7 @@ export default function QuickCartBottomSheet() {
         throw new Error(errorData.error || 'Failed to add to cart');
       }
 
-      const totalQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
-      for (let i = 0; i < totalQuantity; i++) {
-        incrementCart();
-      }
+      refreshCart();
 
       closeQuickCart();
       navigate('/cart');
