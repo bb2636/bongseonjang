@@ -1,0 +1,528 @@
+/* Frame 1707492439 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 16px 0px;
+
+width: 375px;
+height: 184px;
+
+border-bottom: 1px solid rgba(12, 12, 12, 0.12);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492437 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: flex-start;
+padding: 0px;
+gap: 40px;
+
+width: 343px;
+height: 111px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492436 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+margin: 0 auto;
+width: 261.5px;
+height: 111px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492425 */
+
+width: 16.5px;
+height: 16.5px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Rectangle 107 */
+
+position: absolute;
+left: 12.12%;
+right: 15.15%;
+top: 18.18%;
+bottom: 9.09%;
+
+background: #FDFDFD;
+
+
+/* check_box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #3B9BD5;
+
+
+/* Frame 1707492435 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+width: 233px;
+height: 111px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707492434 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+padding: 0px;
+gap: 4px;
+
+width: 233px;
+height: 37px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 중하 새우로 만든 살로만 새우장 양념 360g */
+
+width: 233px;
+height: 18px;
+
+/* pretendard/regular/14 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 128%;
+/* identical to box height, or 18px */
+text-align: right;
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 중하 새우로 만든 살로만 새우장 */
+
+width: 145px;
+height: 15px;
+
+/* pretendard/regular/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+text-align: right;
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.5);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707492433 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+width: 179px;
+height: 58px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707492426 */
+
+box-sizing: border-box;
+
+width: 58px;
+height: 58px;
+
+border-radius: 2px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 0_1 1 */
+
+position: absolute;
+width: 108.75px;
+left: calc(50% - 108.75px/2 - 4.5px);
+top: -48.86%;
+bottom: -38.64%;
+
+background: url(0_1.jpg);
+
+
+/* Frame 1707492432 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 113px;
+height: 57px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491629 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 6px;
+
+width: 113px;
+height: 19px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 12,900원 */
+
+width: 60px;
+height: 19px;
+
+/* pretendard/semibold/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.02em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 12,900원 */
+
+width: 47px;
+height: 15px;
+
+/* pretendard/regular/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+text-decoration-line: line-through;
+
+color: rgba(12, 12, 12, 0.4);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491829 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 6px 4px;
+gap: 8px;
+
+width: 78px;
+height: 30px;
+
+border: 1px solid rgba(12, 12, 12, 0.12);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* remove */
+
+width: 18px;
+height: 18px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* remove */
+
+position: absolute;
+left: 22.92%;
+right: 22.92%;
+top: 46.88%;
+bottom: 46.88%;
+
+background: rgba(12, 12, 12, 0.7);
+
+
+/* Frame 1707491631 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 18px;
+height: 18px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 1 */
+
+width: 6px;
+height: 17px;
+
+/* pretendard/medium/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* icons */
+
+width: 18px;
+height: 18px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* add */
+
+position: absolute;
+left: 22.92%;
+right: 22.92%;
+top: 22.92%;
+bottom: 22.92%;
+
+background: rgba(12, 12, 12, 0.7);
+
+
+/* icons */
+
+margin: 0 auto;
+width: 22px;
+height: 22px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* close_small */
+
+position: absolute;
+left: 31.16%;
+right: 31.22%;
+top: 31.24%;
+bottom: 31.11%;
+
+background: rgba(12, 12, 12, 0.6);
+
+
+/* Frame 1707492438 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: flex-end;
+align-items: center;
+padding: 12px 10px;
+gap: 10px;
+
+width: 375px;
+height: 41px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 배송비 선불 */
+
+width: 59px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
