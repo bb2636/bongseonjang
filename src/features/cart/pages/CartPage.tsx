@@ -10,7 +10,6 @@ export function CartPage() {
     selectedSummary,
     toggleSelectItem,
     toggleSelectAll,
-    handleQuantityChange,
     handleRemoveItem,
     handleRemoveSelected,
     handleOrder,
@@ -25,7 +24,6 @@ export function CartPage() {
       selectedSummary={selectedSummary}
       onToggleSelectItem={toggleSelectItem}
       onToggleSelectAll={toggleSelectAll}
-      onQuantityChange={handleQuantityChange}
       onRemoveItem={handleRemoveItem}
       onRemoveSelected={handleRemoveSelected}
       onOrder={handleOrder}

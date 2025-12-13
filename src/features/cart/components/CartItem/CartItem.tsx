@@ -5,7 +5,6 @@ interface CartItemProps {
   item: CartItemDto;
   isSelected: boolean;
   onToggleSelect: (itemId: string) => void;
-  onQuantityChange: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
 }
 
@@ -13,7 +12,6 @@ export function CartItem({
   item,
   isSelected,
   onToggleSelect,
-  onQuantityChange,
   onRemove,
 }: CartItemProps) {
   const formatPrice = (price: number) => {
@@ -29,16 +27,6 @@ export function CartItem({
       parts.push(item.subOptionName);
     }
     return parts.join(' / ');
-  };
-
-  const handleDecrease = () => {
-    if (item.quantity > 1) {
-      onQuantityChange(item.id, item.quantity - 1);
-    }
-  };
-
-  const handleIncrease = () => {
-    onQuantityChange(item.id, item.quantity + 1);
   };
 
   return (
@@ -75,33 +63,11 @@ export function CartItem({
                 className="cart-item__image"
               />
             </div>
-            <div className="cart-item__price-quantity">
-              <div className="cart-item__price-row">
-                <span className="cart-item__price">{formatPrice(item.unitPrice)}</span>
-                {item.compareAtPrice && item.compareAtPrice > item.unitPrice && (
-                  <span className="cart-item__compare-price">{formatPrice(item.compareAtPrice)}</span>
-                )}
-              </div>
-              <div className="cart-item__quantity-control">
-                <button
-                  className="cart-item__quantity-button"
-                  onClick={handleDecrease}
-                  disabled={item.quantity <= 1}
-                >
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                    <path d="M4 9H14" stroke="rgba(12, 12, 12, 0.7)" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </button>
-                <span className="cart-item__quantity">{item.quantity}</span>
-                <button
-                  className="cart-item__quantity-button"
-                  onClick={handleIncrease}
-                >
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                    <path d="M9 4V14M4 9H14" stroke="rgba(12, 12, 12, 0.7)" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </div>
+            <div className="cart-item__price-info">
+              <span className="cart-item__price">{formatPrice(item.unitPrice)}</span>
+              {item.compareAtPrice && item.compareAtPrice > item.unitPrice && (
+                <span className="cart-item__compare-price">{formatPrice(item.compareAtPrice)}</span>
+              )}
             </div>
           </div>
         </div>

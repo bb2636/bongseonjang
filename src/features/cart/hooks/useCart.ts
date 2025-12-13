@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   fetchCart,
-  updateItemQuantity,
   removeItem,
   removeSelectedItems,
   type CartDto,
@@ -23,14 +22,6 @@ export function useCart() {
     queryKey: ['cart'],
     queryFn: fetchCart,
     staleTime: 0,
-  });
-
-  const updateQuantityMutation = useMutation({
-    mutationFn: ({ itemId, quantity }: { itemId: string; quantity: number }) =>
-      updateItemQuantity(itemId, quantity),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    },
   });
 
   const removeItemMutation = useMutation({
@@ -78,10 +69,6 @@ export function useCart() {
     }
   }, [cart, selectedItems]);
 
-  const handleQuantityChange = useCallback((itemId: string, quantity: number) => {
-    updateQuantityMutation.mutate({ itemId, quantity });
-  }, [updateQuantityMutation]);
-
   const handleRemoveItem = useCallback((itemId: string) => {
     removeItemMutation.mutate(itemId);
   }, [removeItemMutation]);
@@ -123,11 +110,10 @@ export function useCart() {
     selectedSummary,
     toggleSelectItem,
     toggleSelectAll,
-    handleQuantityChange,
     handleRemoveItem,
     handleRemoveSelected,
     handleOrder,
     refetch,
-    isUpdating: updateQuantityMutation.isPending || removeItemMutation.isPending || removeSelectedMutation.isPending,
+    isUpdating: removeItemMutation.isPending || removeSelectedMutation.isPending,
   };
 }

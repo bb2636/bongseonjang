@@ -15,7 +15,6 @@ interface CartViewProps {
   };
   onToggleSelectItem: (itemId: string) => void;
   onToggleSelectAll: () => void;
-  onQuantityChange: (itemId: string, quantity: number) => void;
   onRemoveItem: (itemId: string) => void;
   onRemoveSelected: () => void;
   onOrder: () => void;
@@ -29,7 +28,6 @@ export function CartView({
   selectedSummary,
   onToggleSelectItem,
   onToggleSelectAll,
-  onQuantityChange,
   onRemoveItem,
   onRemoveSelected,
   onOrder,
@@ -89,7 +87,6 @@ export function CartView({
               item={item}
               isSelected={selectedItems.has(item.id)}
               onToggleSelect={onToggleSelectItem}
-              onQuantityChange={onQuantityChange}
               onRemove={onRemoveItem}
             />
           ))
