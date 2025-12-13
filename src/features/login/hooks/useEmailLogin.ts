@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { LOGIN_ROUTES } from '../constants';
 import { loginService } from '../services/loginService';
+import { useAuth } from '../../../contexts/AuthContext';
 
 interface FieldError {
   email: string | null;
@@ -11,6 +12,7 @@ interface FieldError {
 
 export function useEmailLogin() {
   const navigate = useNavigate();
+  const { loginWithToken } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FieldError>({ email: null, password: null });
@@ -19,8 +21,12 @@ export function useEmailLogin() {
   const loginMutation = useMutation({
     mutationFn: (data: { email: string; password: string }) => loginService.loginWithEmail(data.email, data.password),
     onSuccess: (data) => {
-      if (data.token) {
-        localStorage.setItem('token', data.token);
+      if (data.token && data.user) {
+        loginWithToken(data.token, {
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.name,
+        });
       }
       navigate('/');
     },

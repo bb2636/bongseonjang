@@ -1,9 +1,16 @@
 const API_BASE_URL = '/api';
 
+interface LoginUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
 export interface LoginResponse {
   success: boolean;
   message?: string;
   token?: string;
+  user?: LoginUser;
 }
 
 export const loginService = {
