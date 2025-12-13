@@ -8,49 +8,6 @@ import { In } from 'typeorm';
 
 const router = Router();
 
-async function migrateCartItemsToSingleQuantity(cartId: string): Promise<void> {
-  const cartItemRepository = AppDataSource.getRepository(CartItem);
-  
-  const itemsToSplit = await cartItemRepository.find({
-    where: { cartId },
-    select: ['id', 'cartId', 'productId', 'mainOptionId', 'subOptionId', 'quantity', 'createdAt', 'updatedAt'],
-  });
-  
-  const itemsNeedingSplit = itemsToSplit.filter(item => item.quantity > 1);
-  if (itemsNeedingSplit.length === 0) return;
-  
-  await AppDataSource.transaction(async transactionalManager => {
-    const txCartItemRepo = transactionalManager.getRepository(CartItem);
-    
-    for (const item of itemsNeedingSplit) {
-      const freshItem = await txCartItemRepo.findOne({ where: { id: item.id } });
-      if (!freshItem || freshItem.quantity <= 1) continue;
-      
-      const originalCreatedAt = freshItem.createdAt;
-      const extraCount = freshItem.quantity - 1;
-      freshItem.quantity = 1;
-      await txCartItemRepo.save(freshItem);
-      
-      for (let i = 0; i < extraCount; i++) {
-        await transactionalManager
-          .createQueryBuilder()
-          .insert()
-          .into(CartItem)
-          .values({
-            cartId: freshItem.cartId,
-            productId: freshItem.productId,
-            mainOptionId: freshItem.mainOptionId,
-            subOptionId: freshItem.subOptionId,
-            quantity: 1,
-            createdAt: originalCreatedAt,
-            updatedAt: originalCreatedAt,
-          })
-          .execute();
-      }
-    }
-  });
-}
-
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
@@ -68,8 +25,6 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       cart = cartRepository.create({ userId, isActive: true });
       await cartRepository.save(cart);
     }
-
-    await migrateCartItemsToSingleQuantity(cart.id);
 
     const items = await cartItemRepository.find({
       where: { cartId: cart.id },
@@ -113,12 +68,13 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
     });
 
     const subtotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     return res.json({
       id: cart.id,
       items: cartItems,
       subtotal,
-      itemCount: cartItems.length,
+      itemCount,
     });
   } catch (error) {
     console.error('Failed to get cart:', error);
@@ -198,13 +154,25 @@ router.post('/items', authMiddleware, async (req: Request, res: Response) => {
       const { mainOptionId, subOptionId, quantity } = item;
       const validQuantity = Math.max(1, Math.floor(quantity || 1));
 
-      for (let i = 0; i < validQuantity; i++) {
+      const existingItem = await cartItemRepository.findOne({
+        where: {
+          cartId: cart.id,
+          productId,
+          mainOptionId: mainOptionId || null,
+          subOptionId: subOptionId || null,
+        },
+      });
+
+      if (existingItem) {
+        existingItem.quantity += validQuantity;
+        await cartItemRepository.save(existingItem);
+      } else {
         const newItem = cartItemRepository.create({
           cartId: cart.id,
           productId,
           mainOptionId: mainOptionId || null,
           subOptionId: subOptionId || null,
-          quantity: 1,
+          quantity: validQuantity,
         });
         await cartItemRepository.save(newItem);
       }
@@ -233,11 +201,13 @@ router.get('/count', authMiddleware, async (req: Request, res: Response) => {
       return res.json({ count: 0 });
     }
 
-    await migrateCartItemsToSingleQuantity(cart.id);
+    const result = await cartItemRepository
+      .createQueryBuilder('item')
+      .select('SUM(item.quantity)', 'total')
+      .where('item.cartId = :cartId', { cartId: cart.id })
+      .getRawOne();
 
-    const count = await cartItemRepository.count({
-      where: { cartId: cart.id },
-    });
+    const count = parseInt(result?.total || '0', 10);
 
     return res.json({ count });
   } catch (error) {
@@ -253,8 +223,8 @@ router.patch('/items/:itemId', authMiddleware, async (req: Request, res: Respons
     const { itemId } = req.params;
     const { quantity } = req.body;
 
-    if (quantity !== 0 && quantity !== 1) {
-      return res.status(400).json({ error: '수량은 0(삭제) 또는 1만 가능합니다' });
+    if (typeof quantity !== 'number' || !Number.isInteger(quantity) || quantity < 0) {
+      return res.status(400).json({ error: '유효한 수량을 입력해주세요' });
     }
 
     const cartRepository = AppDataSource.getRepository(Cart);
@@ -281,12 +251,10 @@ router.patch('/items/:itemId', authMiddleware, async (req: Request, res: Respons
       return res.status(204).send();
     }
 
-    if (item.quantity !== 1) {
-      item.quantity = 1;
-      await cartItemRepository.save(item);
-    }
+    item.quantity = quantity;
+    await cartItemRepository.save(item);
 
-    return res.json({ success: true, quantity: 1 });
+    return res.json({ success: true, quantity: item.quantity });
   } catch (error) {
     console.error('Failed to update cart item:', error);
     return res.status(500).json({ error: '수량 변경에 실패했습니다' });
