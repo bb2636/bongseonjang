@@ -13,6 +13,9 @@ export interface SignupFormData {
   name: string;
   phone: string;
   isPhoneVerified: boolean;
+  zonecode: string;
+  address: string;
+  addressDetail: string;
   birthYear: string;
   birthMonth: string;
   birthDay: string;
@@ -39,6 +42,9 @@ const defaultFormData: SignupFormData = {
   name: '',
   phone: '',
   isPhoneVerified: false,
+  zonecode: '',
+  address: '',
+  addressDetail: '',
   birthYear: '',
   birthMonth: '',
   birthDay: '',

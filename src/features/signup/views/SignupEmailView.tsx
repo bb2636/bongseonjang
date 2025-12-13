@@ -59,6 +59,9 @@ interface ProfileStepProps {
   name: string;
   phone: string;
   isPhoneVerified: boolean;
+  zonecode: string;
+  address: string;
+  addressDetail: string;
   birthYear: string;
   birthMonth: string;
   birthDay: string;
@@ -97,6 +100,8 @@ interface ProfileStepProps {
   onNameBlur: () => void;
   onPhoneBlur: () => void;
   onPhoneVerify: () => void;
+  onAddressSearch: () => void;
+  onAddressDetailChange: (value: string) => void;
   onBirthYearChange: (value: string) => void;
   onBirthMonthChange: (value: string) => void;
   onBirthDayChange: (value: string) => void;
@@ -385,6 +390,42 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
             )}
           </div>
           <button className="signup-black-verify-button" onClick={profileStep.onPhoneVerify}>인증</button>
+        </div>
+      </div>
+
+      <div className="signup-text-field">
+        <label className="signup-label">배송지</label>
+        <div className="signup-address-section">
+          <div className="signup-verify-input-row">
+            <div className="signup-address-input-box">
+              <input
+                className="signup-form-input"
+                type="text"
+                placeholder="우편번호"
+                value={profileStep.zonecode}
+                readOnly
+              />
+            </div>
+            <button className="signup-black-verify-button" onClick={profileStep.onAddressSearch}>주소 검색</button>
+          </div>
+          <div className="signup-address-input-box signup-address-input-box--full">
+            <input
+              className="signup-form-input"
+              type="text"
+              placeholder="기본주소"
+              value={profileStep.address}
+              readOnly
+            />
+          </div>
+          <div className="signup-address-input-box signup-address-input-box--full">
+            <input
+              className="signup-form-input"
+              type="text"
+              placeholder="상세주소를 입력해주세요"
+              value={profileStep.addressDetail}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onAddressDetailChange(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
