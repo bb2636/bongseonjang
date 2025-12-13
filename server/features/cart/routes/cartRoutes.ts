@@ -68,13 +68,12 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
     });
 
     const subtotal = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
-    const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     return res.json({
       id: cart.id,
       items: cartItems,
       subtotal,
-      itemCount,
+      itemCount: cartItems.length,
     });
   } catch (error) {
     console.error('Failed to get cart:', error);
@@ -201,13 +200,9 @@ router.get('/count', authMiddleware, async (req: Request, res: Response) => {
       return res.json({ count: 0 });
     }
 
-    const result = await cartItemRepository
-      .createQueryBuilder('item')
-      .select('SUM(item.quantity)', 'total')
-      .where('item.cartId = :cartId', { cartId: cart.id })
-      .getRawOne();
-
-    const count = parseInt(result?.total || '0', 10);
+    const count = await cartItemRepository.count({
+      where: { cartId: cart.id },
+    });
 
     return res.json({ count });
   } catch (error) {
