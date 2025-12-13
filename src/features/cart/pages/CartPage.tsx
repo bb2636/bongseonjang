@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useCart } from '../hooks/useCart';
 import { CartView } from '../views/CartView';
 
@@ -16,6 +17,21 @@ export function CartPage() {
     handleOrder,
   } = useCart();
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const handleDeleteClick = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    handleRemoveSelected();
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
+  };
+
   return (
     <CartView
       cart={cart}
@@ -27,8 +43,11 @@ export function CartPage() {
       onToggleSelectAll={toggleSelectAll}
       onQuantityChange={handleQuantityChange}
       onRemoveItem={handleRemoveItem}
-      onRemoveSelected={handleRemoveSelected}
+      onRemoveSelected={handleDeleteClick}
       onOrder={handleOrder}
+      isDeleteModalOpen={isDeleteModalOpen}
+      onConfirmDelete={handleConfirmDelete}
+      onCancelDelete={handleCancelDelete}
     />
   );
 }

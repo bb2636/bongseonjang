@@ -2,6 +2,7 @@ import type { CartDto, CartItemDto } from '../api/cartApi';
 import { CartAppBar } from '../components/CartAppBar';
 import { CartItem } from '../components/CartItem';
 import { CartSummary } from '../components/CartSummary';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 import './CartView.css';
 
 interface CartViewProps {
@@ -19,6 +20,9 @@ interface CartViewProps {
   onRemoveItem: (itemId: string) => void;
   onRemoveSelected: () => void;
   onOrder: () => void;
+  isDeleteModalOpen: boolean;
+  onConfirmDelete: () => void;
+  onCancelDelete: () => void;
 }
 
 export function CartView({
@@ -33,6 +37,9 @@ export function CartView({
   onRemoveItem,
   onRemoveSelected,
   onOrder,
+  isDeleteModalOpen,
+  onConfirmDelete,
+  onCancelDelete,
 }: CartViewProps) {
   if (isLoading) {
     return (
@@ -99,6 +106,15 @@ export function CartView({
         subtotal={selectedSummary.subtotal}
         itemCount={selectedSummary.itemCount}
         onOrder={onOrder}
+      />
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        title="선택된 상품을 삭제하시겠어요?"
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
+        cancelText="취소"
+        confirmText="삭제"
+        confirmColor="danger"
       />
     </div>
   );
