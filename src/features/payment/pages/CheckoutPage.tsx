@@ -5,6 +5,7 @@ import { fetchCart } from '../../cart/api/cartApi';
 import { fetchDefaultAddress } from '../../address/api/addressApi';
 import { preparePayment } from '../api/paymentApi';
 import { useToast } from '../../../contexts/ToastContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import './CheckoutPage.css';
 
 declare global {
@@ -26,6 +27,7 @@ declare global {
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const selectedItemIds = searchParams.get('items')?.split(',') || [];
 
@@ -43,8 +45,9 @@ export function CheckoutPage() {
   });
 
   const { data: defaultAddress, isLoading: isAddressLoading } = useQuery({
-    queryKey: ['defaultAddress'],
+    queryKey: ['defaultAddress', user?.id],
     queryFn: fetchDefaultAddress,
+    enabled: !!user,
   });
 
   const isLoading = isCartLoading || isAddressLoading;

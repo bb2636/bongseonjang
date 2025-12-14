@@ -12,7 +12,7 @@ export interface DefaultAddressResponse {
 }
 
 export async function fetchDefaultAddress(): Promise<DefaultAddressResponse | null> {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('token');
   
   if (!token) {
     return null;
