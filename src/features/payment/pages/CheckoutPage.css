@@ -452,3 +452,107 @@
   background-color: rgba(12, 12, 12, 0.2);
   cursor: not-allowed;
 }
+
+.checkout-payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.checkout-payment-method {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checkout-payment-method input[type="radio"] {
+  display: none;
+}
+
+.checkout-payment-method-radio {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(12, 12, 12, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.checkout-payment-method-radio::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.checkout-payment-method input[type="radio"]:checked + .checkout-payment-method-radio {
+  border-color: #3B9BD5;
+}
+
+.checkout-payment-method input[type="radio"]:checked + .checkout-payment-method-radio::after {
+  background-color: #3B9BD5;
+}
+
+.checkout-payment-method-label {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+}
+
+.checkout-section--terms {
+  border-bottom: none;
+  padding-bottom: 80px;
+}
+
+.checkout-terms-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checkout-terms-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.checkout-terms-checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(12, 12, 12, 0.2);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.checkout-terms-checkmark::after {
+  content: '';
+  width: 6px;
+  height: 10px;
+  border: solid transparent;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.checkout-terms-checkbox input[type="checkbox"]:checked + .checkout-terms-checkmark {
+  background-color: #3B9BD5;
+  border-color: #3B9BD5;
+}
+
+.checkout-terms-checkbox input[type="checkbox"]:checked + .checkout-terms-checkmark::after {
+  border-color: #fff;
+}
+
+.checkout-terms-text {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.8);
+}

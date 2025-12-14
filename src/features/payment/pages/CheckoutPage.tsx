@@ -46,6 +46,8 @@ export function CheckoutPage() {
   const [pointInput, setPointInput] = useState('');
   const [usedPoints, setUsedPoints] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'kakaopay' | 'naverpay' | 'tosspay' | 'vbank'>('card');
+  const [termsAgreed, setTermsAgreed] = useState(false);
 
   const { data: cart, isLoading: isCartLoading } = useQuery({
     queryKey: ['cart'],
@@ -137,7 +139,7 @@ export function CheckoutPage() {
 
       window.AUTHNICE.requestPay({
         clientId: paymentData.clientKey,
-        method: 'card',
+        method: paymentMethod,
         orderId: paymentData.orderId,
         amount: paymentData.amount,
         goodsName: paymentData.goodsName,
@@ -381,10 +383,96 @@ export function CheckoutPage() {
           </div>
         </section>
 
+        <section className="checkout-section">
+          <div className="checkout-section-header">
+            <h2 className="checkout-section-title">결제수단</h2>
+          </div>
+          <div className="checkout-payment-methods">
+            <label className="checkout-payment-method">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="card"
+                checked={paymentMethod === 'card'}
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+              />
+              <span className="checkout-payment-method-radio"></span>
+              <span className="checkout-payment-method-label">카드</span>
+            </label>
+            <label className="checkout-payment-method">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="bank"
+                checked={paymentMethod === 'bank'}
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+              />
+              <span className="checkout-payment-method-radio"></span>
+              <span className="checkout-payment-method-label">계좌이체</span>
+            </label>
+            <label className="checkout-payment-method">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="kakaopay"
+                checked={paymentMethod === 'kakaopay'}
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+              />
+              <span className="checkout-payment-method-radio"></span>
+              <span className="checkout-payment-method-label">카카오페이</span>
+            </label>
+            <label className="checkout-payment-method">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="naverpay"
+                checked={paymentMethod === 'naverpay'}
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+              />
+              <span className="checkout-payment-method-radio"></span>
+              <span className="checkout-payment-method-label">네이버페이</span>
+            </label>
+            <label className="checkout-payment-method">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="tosspay"
+                checked={paymentMethod === 'tosspay'}
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+              />
+              <span className="checkout-payment-method-radio"></span>
+              <span className="checkout-payment-method-label">토스페이</span>
+            </label>
+            <label className="checkout-payment-method">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="vbank"
+                checked={paymentMethod === 'vbank'}
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+              />
+              <span className="checkout-payment-method-radio"></span>
+              <span className="checkout-payment-method-label">무통장입금</span>
+            </label>
+          </div>
+        </section>
+
+        <section className="checkout-section checkout-section--terms">
+          <label className="checkout-terms-checkbox">
+            <input
+              type="checkbox"
+              checked={termsAgreed}
+              onChange={(e) => setTermsAgreed(e.target.checked)}
+            />
+            <span className="checkout-terms-checkmark"></span>
+            <span className="checkout-terms-text">주문 내용을 확인하였으며, 결제에 동의합니다</span>
+          </label>
+        </section>
+
         <button
           type="submit"
           className="checkout-submit-button"
-          disabled={isProcessing || !defaultAddress}
+          disabled={isProcessing || !defaultAddress || !termsAgreed}
         >
           {isProcessing ? '처리 중...' : `${finalAmount.toLocaleString()}원 결제하기`}
         </button>

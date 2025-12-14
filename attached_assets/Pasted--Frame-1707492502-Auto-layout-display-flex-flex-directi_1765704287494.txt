@@ -1,0 +1,800 @@
+/* Frame 1707492502 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+
+width: 375px;
+height: 341px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492468 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 375px;
+height: 49px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Rectangle 109 */
+
+width: 375px;
+height: 6px;
+
+background: rgba(12, 12, 12, 0.06);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492465 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 12px 16px;
+gap: 10px;
+
+width: 375px;
+height: 43px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 결제수단 */
+
+width: 51px;
+height: 19px;
+
+/* pretendard/semibold/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.02em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492499 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 10px;
+
+width: 343px;
+height: 292px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707492496 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 343px;
+height: 146px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492494 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 343px;
+height: 136px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492490 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 9px;
+
+width: 343px;
+height: 32px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492454 */
+
+width: 19px;
+height: 19px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* radio */
+
+position: absolute;
+width: 15px;
+height: 15px;
+left: calc(50% - 15px/2);
+top: calc(50% - 15px/2);
+
+
+
+/* Ellipse 568 */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #3B9BD5;
+
+
+/* Ellipse 569 */
+
+position: absolute;
+left: 27.78%;
+right: 27.78%;
+top: 27.78%;
+bottom: 27.78%;
+
+background: #FDFDFD;
+
+
+/* 카드 */
+
+width: 26px;
+height: 19px;
+
+/* pretendard/regular/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707492495 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 343px;
+height: 104px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491675 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 16px 12px 16px 16px;
+gap: 10px;
+
+width: 343px;
+height: 48px;
+
+border: 1px solid rgba(12, 12, 12, 0.12);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 카드를 선택해주세요 */
+
+margin: 0 auto;
+width: 112px;
+height: 18px;
+
+/* pretendard/regular/14 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 128%;
+/* identical to box height, or 18px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.6);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* icons */
+
+margin: 0 auto;
+width: 20px;
+height: 20px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* arrow_drop_down */
+
+position: absolute;
+left: 34.29%;
+right: 34.29%;
+top: 42.71%;
+bottom: 40.07%;
+
+background: rgba(12, 12, 12, 0.5);
+
+
+/* Frame 1707492491 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 16px 12px 16px 16px;
+gap: 10px;
+
+width: 343px;
+height: 48px;
+
+background: rgba(12, 12, 12, 0.04);
+border: 1px solid rgba(12, 12, 12, 0.12);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 일시불 */
+
+margin: 0 auto;
+width: 37px;
+height: 18px;
+
+/* pretendard/regular/14 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 128%;
+/* identical to box height, or 18px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.6);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* icons */
+
+margin: 0 auto;
+width: 20px;
+height: 20px;
+
+opacity: 0;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* arrow_drop_down */
+
+position: absolute;
+left: 34.29%;
+right: 34.29%;
+top: 42.71%;
+bottom: 40.07%;
+
+background: rgba(12, 12, 12, 0.5);
+
+
+/* Line 6 */
+
+width: 343px;
+height: 0px;
+
+border: 1px solid rgba(12, 12, 12, 0.06);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492497 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 10px;
+
+width: 343px;
+height: 42px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492491 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 9px;
+
+width: 343px;
+height: 32px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492454 */
+
+width: 19px;
+height: 19px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* radio */
+
+position: absolute;
+width: 15px;
+height: 15px;
+left: calc(50% - 15px/2);
+top: calc(50% - 15px/2);
+
+
+
+/* Ellipse 567 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #FDFDFD;
+border: 1px solid rgba(12, 12, 12, 0.3);
+
+
+/* 계좌이체 */
+
+width: 52px;
+height: 19px;
+
+/* pretendard/regular/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Line 6 */
+
+width: 343px;
+height: 0px;
+
+border: 1px solid rgba(12, 12, 12, 0.06);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492498 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 10px;
+
+width: 343px;
+height: 42px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492492 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 9px;
+
+width: 343px;
+height: 32px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492454 */
+
+width: 19px;
+height: 19px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* radio */
+
+position: absolute;
+width: 15px;
+height: 15px;
+left: calc(50% - 15px/2);
+top: calc(50% - 15px/2);
+
+
+
+/* Ellipse 567 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #FDFDFD;
+border: 1px solid rgba(12, 12, 12, 0.3);
+
+
+/* Frame 1707492500 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 6px;
+
+width: 76px;
+height: 19px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 간편결제 */
+
+width: 52px;
+height: 19px;
+
+/* pretendard/regular/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Component 35 */
+
+width: 18px;
+height: 18px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* keyboard_arrow_down */
+
+position: absolute;
+left: 27.75%;
+right: 27.73%;
+top: 36.07%;
+bottom: 38.84%;
+
+background: rgba(12, 12, 12, 0.6);
+
+
+/* Line 6 */
+
+width: 343px;
+height: 0px;
+
+border: 1px solid rgba(12, 12, 12, 0.06);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492493 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 9px;
+
+width: 343px;
+height: 32px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492454 */
+
+width: 19px;
+height: 19px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* radio */
+
+position: absolute;
+width: 15px;
+height: 15px;
+left: calc(50% - 15px/2);
+top: calc(50% - 15px/2);
+
+
+
+/* Ellipse 567 */
+
+box-sizing: border-box;
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #FDFDFD;
+border: 1px solid rgba(12, 12, 12, 0.3);
+
+
+/* 무통장입금 */
+
+width: 65px;
+height: 19px;
+
+/* pretendard/regular/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
