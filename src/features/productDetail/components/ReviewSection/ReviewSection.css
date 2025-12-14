@@ -307,3 +307,45 @@
   align-items: center;
   gap: 2px;
 }
+
+.review-list-header__filter-wrapper {
+  position: relative;
+}
+
+.review-list-header__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  min-width: 80px;
+  overflow: hidden;
+}
+
+.review-list-header__dropdown-item {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  color: #0C0C0C;
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.review-list-header__dropdown-item:hover {
+  background: rgba(12, 12, 12, 0.04);
+}
+
+.review-list-header__dropdown-item--active {
+  color: #3B9BD5;
+  font-weight: 500;
+}

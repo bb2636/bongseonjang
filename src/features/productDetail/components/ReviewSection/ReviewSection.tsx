@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Review } from '../../types/productDetail';
 import './ReviewSection.css';
 
@@ -152,17 +153,61 @@ function DropdownArrowIcon() {
   );
 }
 
+type RatingFilter = 'all' | 1 | 2 | 3 | 4 | 5;
+
 interface ReviewListHeaderProps {
   reviewCount: number;
+  selectedFilter: RatingFilter;
+  onFilterChange: (filter: RatingFilter) => void;
   onWriteReviewClick?: () => void;
-  onFilterClick?: () => void;
+}
+
+function FilterStarIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg 
+      width="10" 
+      height="10" 
+      viewBox="0 0 16 16" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8 1.33L9.8 5.17L14 5.85L11 8.76L11.78 13.01L8 11.01L4.22 13.01L5 8.76L2 5.85L6.2 5.17L8 1.33Z"
+        fill={filled ? '#3B9BD5' : 'rgba(12, 12, 12, 0.3)'}
+      />
+    </svg>
+  );
 }
 
 function ReviewListHeader({ 
   reviewCount, 
-  onWriteReviewClick,
-  onFilterClick 
+  selectedFilter,
+  onFilterChange,
+  onWriteReviewClick
 }: ReviewListHeaderProps) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const filterOptions: { value: RatingFilter; label: string }[] = [
+    { value: 'all', label: '전체' },
+    { value: 5, label: '5점' },
+    { value: 4, label: '4점' },
+    { value: 3, label: '3점' },
+    { value: 2, label: '2점' },
+    { value: 1, label: '1점' },
+  ];
+
+  const handleFilterSelect = (filter: RatingFilter) => {
+    onFilterChange(filter);
+    setIsDropdownOpen(false);
+  };
+
+  const getDisplayStars = () => {
+    if (selectedFilter === 'all') {
+      return 5;
+    }
+    return selectedFilter;
+  };
+
   return (
     <div className="review-list-header">
       <div className="review-list-header__title-row">
@@ -176,18 +221,34 @@ function ReviewListHeader({
         </button>
       </div>
       <div className="review-list-header__filter-row">
-        <button 
-          className="review-list-header__filter-btn" 
-          onClick={onFilterClick}
-          type="button"
-        >
-          <div className="review-list-header__filter-stars">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <TinyStarIcon key={star} />
-            ))}
-          </div>
-          <DropdownArrowIcon />
-        </button>
+        <div className="review-list-header__filter-wrapper">
+          <button 
+            className="review-list-header__filter-btn" 
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            type="button"
+          >
+            <div className="review-list-header__filter-stars">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <FilterStarIcon key={star} filled={star <= getDisplayStars()} />
+              ))}
+            </div>
+            <DropdownArrowIcon />
+          </button>
+          {isDropdownOpen && (
+            <div className="review-list-header__dropdown">
+              {filterOptions.map((option) => (
+                <button
+                  key={option.value}
+                  className={`review-list-header__dropdown-item ${selectedFilter === option.value ? 'review-list-header__dropdown-item--active' : ''}`}
+                  onClick={() => handleFilterSelect(option.value)}
+                  type="button"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -247,7 +308,12 @@ export default function ReviewSection({
   isLoading,
   onViewAllClick,
 }: ReviewSectionProps) {
+  const [ratingFilter, setRatingFilter] = useState<RatingFilter>('all');
   const photoUrls = extractPhotoUrls(reviews);
+
+  const filteredReviews = ratingFilter === 'all' 
+    ? reviews 
+    : reviews.filter((review) => Math.round(review.rating) === ratingFilter);
 
   return (
     <div className="review-section">
@@ -260,20 +326,28 @@ export default function ReviewSection({
 
       <div className="review-section__divider" />
 
-      <ReviewListHeader reviewCount={reviewCount} />
+      <ReviewListHeader 
+        reviewCount={reviewCount} 
+        selectedFilter={ratingFilter}
+        onFilterChange={setRatingFilter}
+      />
 
       {isLoading ? (
         <div className="review-section__loading">
           <div className="review-section__spinner" />
         </div>
-      ) : reviews.length === 0 ? (
+      ) : filteredReviews.length === 0 ? (
         <div className="review-section__empty">
-          <p className="review-section__empty-text">아직 작성된 리뷰가 없습니다.</p>
-          <p className="review-section__empty-subtext">첫 번째 리뷰를 작성해보세요!</p>
+          <p className="review-section__empty-text">
+            {ratingFilter === 'all' ? '아직 작성된 리뷰가 없습니다.' : `${ratingFilter}점 리뷰가 없습니다.`}
+          </p>
+          <p className="review-section__empty-subtext">
+            {ratingFilter === 'all' ? '첫 번째 리뷰를 작성해보세요!' : '다른 별점을 선택해보세요.'}
+          </p>
         </div>
       ) : (
         <div className="review-section__list">
-          {reviews.map((review) => (
+          {filteredReviews.map((review) => (
             <ReviewItem key={review.id} review={review} />
           ))}
         </div>
