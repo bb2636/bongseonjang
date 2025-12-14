@@ -30,8 +30,11 @@ export class ShippingAddress {
   @Column({ type: 'boolean', default: false })
   isDefault!: boolean;
 
-  @Column({ type: 'boolean', default: true })
-  isActive!: boolean;
+  @Column({ type: 'boolean', default: false })
+  isDeleted!: boolean;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  deletedAt!: Date | null;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
