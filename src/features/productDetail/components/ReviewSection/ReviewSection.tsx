@@ -268,33 +268,29 @@ function ReviewItem({ review }: { review: Review }) {
 
   return (
     <div className="review-item">
-      <div className="review-item__header">
+      <div className="review-item__top">
         <div className="review-item__user-info">
           <span className="review-item__user-name">{review.userName}</span>
+          <div className="review-item__rating">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <SmallStarIcon key={star} filled={star <= filledStars} />
+            ))}
+          </div>
         </div>
-        <span className="review-item__date">{formatDate(review.createdAt)}</span>
       </div>
 
-      <div className="review-item__rating">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <SmallStarIcon key={star} filled={star <= filledStars} />
-        ))}
+      <div className="review-item__body">
+        {review.imageUrls.length > 0 && (
+          <img
+            src={review.imageUrls[0]}
+            alt="리뷰 이미지"
+            className="review-item__image"
+          />
+        )}
+        <p className="review-item__content">{review.content}</p>
       </div>
 
-      <p className="review-item__content">{review.content}</p>
-
-      {review.imageUrls.length > 0 && (
-        <div className="review-item__images">
-          {review.imageUrls.map((url, index) => (
-            <img
-              key={index}
-              src={url}
-              alt={`리뷰 이미지 ${index + 1}`}
-              className="review-item__image"
-            />
-          ))}
-        </div>
-      )}
+      <span className="review-item__date">{formatDate(review.createdAt)}</span>
     </div>
   );
 }

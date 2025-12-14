@@ -155,9 +155,12 @@
 }
 
 .review-item {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   padding: 16px 0;
+  gap: 20px;
   border-bottom: 1px solid rgba(12, 12, 12, 0.06);
 }
 
@@ -165,71 +168,74 @@
   border-bottom: none;
 }
 
-.review-item__header {
+.review-item__top {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .review-item__user-info {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .review-item__user-name {
   font-family: 'Pretendard';
-  font-weight: 600;
-  font-size: 14px;
-  color: #0C0C0C;
-}
-
-.review-item__verified-badge {
-  font-family: 'Pretendard';
+  font-style: normal;
   font-weight: 500;
-  font-size: 11px;
-  color: #3B9BD5;
-  background: rgba(59, 155, 213, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.review-item__date {
-  font-family: 'Pretendard';
-  font-weight: 400;
-  font-size: 12px;
-  color: rgba(12, 12, 12, 0.5);
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
 }
 
 .review-item__rating {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 2px;
-  margin-bottom: 8px;
+}
+
+.review-item__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.review-item__image {
+  width: 81.25px;
+  height: 81.25px;
+  object-fit: cover;
+  background: rgba(12, 12, 12, 0.06);
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .review-item__content {
   font-family: 'Pretendard';
+  font-style: normal;
   font-weight: 400;
   font-size: 14px;
-  line-height: 160%;
-  color: rgba(12, 12, 12, 0.9);
+  line-height: 148%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.7);
   margin: 0;
+  width: 100%;
 }
 
-.review-item__images {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  overflow-x: auto;
-}
-
-.review-item__image {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  flex-shrink: 0;
+.review-item__date {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 148%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.5);
 }
 
 .review-list-header {
