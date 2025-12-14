@@ -46,7 +46,7 @@ export function CheckoutPage() {
   const [pointInput, setPointInput] = useState('');
   const [usedPoints, setUsedPoints] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'kakaopay' | 'naverpayCard' | 'vbank'>('card');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
   const [termsAgreed, setTermsAgreed] = useState(false);
 
   const { data: cart, isLoading: isCartLoading } = useQuery({
@@ -409,28 +409,6 @@ export function CheckoutPage() {
               />
               <span className="checkout-payment-method-radio"></span>
               <span className="checkout-payment-method-label">계좌이체</span>
-            </label>
-            <label className="checkout-payment-method">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="kakaopay"
-                checked={paymentMethod === 'kakaopay'}
-                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
-              />
-              <span className="checkout-payment-method-radio"></span>
-              <span className="checkout-payment-method-label">카카오페이</span>
-            </label>
-            <label className="checkout-payment-method">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="naverpayCard"
-                checked={paymentMethod === 'naverpayCard'}
-                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
-              />
-              <span className="checkout-payment-method-radio"></span>
-              <span className="checkout-payment-method-label">네이버페이</span>
             </label>
             <label className="checkout-payment-method">
               <input
