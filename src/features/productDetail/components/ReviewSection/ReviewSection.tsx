@@ -115,6 +115,84 @@ function SmallStarIcon({ filled }: { filled: boolean }) {
   );
 }
 
+function TinyStarIcon() {
+  return (
+    <svg 
+      width="10" 
+      height="10" 
+      viewBox="0 0 16 16" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8 1.33L9.8 5.17L14 5.85L11 8.76L11.78 13.01L8 11.01L4.22 13.01L5 8.76L2 5.85L6.2 5.17L8 1.33Z"
+        fill="rgba(12, 12, 12, 0.3)"
+      />
+    </svg>
+  );
+}
+
+function DropdownArrowIcon() {
+  return (
+    <svg 
+      width="20" 
+      height="20" 
+      viewBox="0 0 20 20" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M6 8L10 12L14 8"
+        stroke="rgba(12, 12, 12, 0.5)"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+interface ReviewListHeaderProps {
+  reviewCount: number;
+  onWriteReviewClick?: () => void;
+  onFilterClick?: () => void;
+}
+
+function ReviewListHeader({ 
+  reviewCount, 
+  onWriteReviewClick,
+  onFilterClick 
+}: ReviewListHeaderProps) {
+  return (
+    <div className="review-list-header">
+      <div className="review-list-header__title-row">
+        <span className="review-list-header__title">후기 {reviewCount}개</span>
+        <button 
+          className="review-list-header__write-btn" 
+          onClick={onWriteReviewClick}
+          type="button"
+        >
+          리뷰남기기
+        </button>
+      </div>
+      <div className="review-list-header__filter-row">
+        <button 
+          className="review-list-header__filter-btn" 
+          onClick={onFilterClick}
+          type="button"
+        >
+          <div className="review-list-header__filter-stars">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <TinyStarIcon key={star} />
+            ))}
+          </div>
+          <DropdownArrowIcon />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -181,6 +259,8 @@ export default function ReviewSection({
       />
 
       <div className="review-section__divider" />
+
+      <ReviewListHeader reviewCount={reviewCount} />
 
       {isLoading ? (
         <div className="review-section__loading">
