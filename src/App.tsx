@@ -20,6 +20,7 @@ import { CheckoutPage } from './features/payment/pages/CheckoutPage';
 import { PaymentSuccessPage } from './features/payment/pages/PaymentSuccessPage';
 import { PaymentFailPage } from './features/payment/pages/PaymentFailPage';
 import { NoticeListPage } from './features/notice';
+import { AddressFormPage } from './features/address';
 import { ProtectedRoute } from './components';
 import './components/ProtectedRoute/ProtectedRoute.css';
 
@@ -56,6 +57,8 @@ export default function App() {
       <Route path="/payment/success" element={<PaymentSuccessPage />} />
       <Route path="/payment/fail" element={<PaymentFailPage />} />
       <Route path="/notice" element={<ProtectedRoute><NoticeListPage /></ProtectedRoute>} />
+      <Route path="/address/add" element={<ProtectedRoute><AddressFormPage /></ProtectedRoute>} />
+      <Route path="/address/edit/:id" element={<ProtectedRoute><AddressFormPage /></ProtectedRoute>} />
       <Route
         path="*"
         element={

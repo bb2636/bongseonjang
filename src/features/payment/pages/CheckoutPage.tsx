@@ -510,6 +510,7 @@ export function CheckoutPage() {
           hasUserSelectedAddress.current = true;
           setSelectedAddress(address);
         }}
+        onEdit={(address) => navigate(`/address/edit/${address.id}`)}
         onAddNew={() => navigate('/address/add')}
       />
     </div>
