@@ -187,14 +187,7 @@ function ReviewListHeader({
 }: ReviewListHeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const filterOptions: { value: RatingFilter; label: string }[] = [
-    { value: 'all', label: '전체' },
-    { value: 5, label: '5점' },
-    { value: 4, label: '4점' },
-    { value: 3, label: '3점' },
-    { value: 2, label: '2점' },
-    { value: 1, label: '1점' },
-  ];
+  const filterOptions: RatingFilter[] = ['all', 5, 4, 3, 2, 1];
 
   const handleFilterSelect = (filter: RatingFilter) => {
     onFilterChange(filter);
@@ -238,12 +231,20 @@ function ReviewListHeader({
             <div className="review-list-header__dropdown">
               {filterOptions.map((option) => (
                 <button
-                  key={option.value}
-                  className={`review-list-header__dropdown-item ${selectedFilter === option.value ? 'review-list-header__dropdown-item--active' : ''}`}
-                  onClick={() => handleFilterSelect(option.value)}
+                  key={option}
+                  className={`review-list-header__dropdown-item ${selectedFilter === option ? 'review-list-header__dropdown-item--active' : ''}`}
+                  onClick={() => handleFilterSelect(option)}
                   type="button"
                 >
-                  {option.label}
+                  {option === 'all' ? (
+                    '전체'
+                  ) : (
+                    <div className="review-list-header__dropdown-stars">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <FilterStarIcon key={star} filled={star <= option} />
+                      ))}
+                    </div>
+                  )}
                 </button>
               ))}
             </div>

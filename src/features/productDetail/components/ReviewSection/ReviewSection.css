@@ -348,4 +348,12 @@
 .review-list-header__dropdown-item--active {
   color: #3B9BD5;
   font-weight: 500;
+  background: rgba(59, 155, 213, 0.08);
+}
+
+.review-list-header__dropdown-stars {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
 }
