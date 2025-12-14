@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
 import { fetchDefaultAddress } from '../../address/api/addressApi';
+import { fetchUserProfile } from '../../profile/api/profileApi';
 import { preparePayment } from '../api/paymentApi';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -65,11 +66,19 @@ export function CheckoutPage() {
     staleTime: 1000 * 60 * 5,
   });
 
-  const isLoading = isCartLoading || isAddressLoading;
+  const { data: userProfile, isLoading: isProfileLoading } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: fetchUserProfile,
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const isLoading = isCartLoading || isAddressLoading || isProfileLoading;
 
   const selectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
   const productAmount = selectedItems.reduce((sum, item) => sum + item.totalPrice, 0);
-  const availablePoints = 3000;
+  const availablePoints = userProfile?.points ?? 0;
+  const couponCount = userProfile?.couponCount ?? 0;
   const finalAmount = productAmount - usedPoints;
 
   useEffect(() => {
@@ -370,7 +379,7 @@ export function CheckoutPage() {
               <option>적용할 수 있는 쿠폰이 없습니다</option>
             </select>
             <p className="checkout-coupon-available">
-              보유쿠폰 <span className="checkout-coupon-value">3장</span>
+              보유쿠폰 <span className="checkout-coupon-value">{couponCount}장</span>
             </p>
           </div>
         </section>
