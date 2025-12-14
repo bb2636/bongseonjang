@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LOGIN_ROUTES } from '../constants';
-import { getKakaoAuthUrl, getNaverAuthUrl } from '../api/socialAuthApi';
+import { kakaoAuthorize, naverAuthorize } from '../services/socialSdkService';
 import { clearFormDataFromStorage } from '../../signup/hooks/useSignupFormState';
 
 export function useLogin() {
@@ -9,19 +9,17 @@ export function useLogin() {
 
   const onKakaoLogin = useCallback(() => {
     try {
-      const authUrl = getKakaoAuthUrl();
-      window.location.href = authUrl;
-    } catch {
-      console.error('카카오 로그인 설정이 올바르지 않습니다.');
+      kakaoAuthorize();
+    } catch (error) {
+      console.error('카카오 로그인 설정이 올바르지 않습니다.', error);
     }
   }, []);
 
   const onNaverLogin = useCallback(() => {
     try {
-      const authUrl = getNaverAuthUrl();
-      window.location.href = authUrl;
-    } catch {
-      console.error('네이버 로그인 설정이 올바르지 않습니다.');
+      naverAuthorize();
+    } catch (error) {
+      console.error('네이버 로그인 설정이 올바르지 않습니다.', error);
     }
   }, []);
 
