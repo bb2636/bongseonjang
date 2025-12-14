@@ -8,6 +8,7 @@ import { preparePayment } from '../api/paymentApi';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
+import { DeliveryRequestBottomSheet } from '../components/DeliveryRequestBottomSheet';
 import './CheckoutPage.css';
 
 declare global {
@@ -28,10 +29,10 @@ declare global {
 }
 
 const DELIVERY_REQUEST_OPTIONS = [
-  '배송 메세지를 선택해주세요',
-  '문 앞에 놓아주세요',
+  '조심히 안전하게 와주세요 :)',
+  '문 앞에 두고 가세요',
+  '도착 전에 전화주세요',
   '경비실에 맡겨주세요',
-  '배송 전 연락 부탁드립니다',
   '부재 시 연락 주세요',
   '직접 입력',
 ];
@@ -45,6 +46,7 @@ export function CheckoutPage() {
 
   const [deliveryRequest, setDeliveryRequest] = useState('');
   const [customDeliveryRequest, setCustomDeliveryRequest] = useState('');
+  const [isDeliverySheetOpen, setIsDeliverySheetOpen] = useState(false);
   const [isProductsExpanded, setIsProductsExpanded] = useState(true);
   const [pointInput, setPointInput] = useState('');
   const [usedPoints, setUsedPoints] = useState(0);
@@ -249,17 +251,18 @@ export function CheckoutPage() {
             <h2 className="checkout-section-title">배송 요청사항</h2>
           </div>
           <div className="checkout-delivery-request">
-            <select
-              className="checkout-select"
-              value={deliveryRequest}
-              onChange={(e) => handleDeliveryRequestChange(e.target.value)}
+            <button
+              type="button"
+              className="checkout-delivery-select-button"
+              onClick={() => setIsDeliverySheetOpen(true)}
             >
-              {DELIVERY_REQUEST_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+              <span className={deliveryRequest ? 'checkout-delivery-select-text--selected' : 'checkout-delivery-select-text'}>
+                {deliveryRequest || '배송 메세지를 선택해주세요'}
+              </span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
             {deliveryRequest === '직접 입력' && (
               <input
                 type="text"
@@ -466,6 +469,14 @@ export function CheckoutPage() {
           {isProcessing ? '처리 중...' : `${finalAmount.toLocaleString()}원 결제하기`}
         </button>
       </form>
+
+      <DeliveryRequestBottomSheet
+        isOpen={isDeliverySheetOpen}
+        onClose={() => setIsDeliverySheetOpen(false)}
+        options={DELIVERY_REQUEST_OPTIONS}
+        selectedOption={deliveryRequest}
+        onSelect={handleDeliveryRequestChange}
+      />
     </div>
   );
 }

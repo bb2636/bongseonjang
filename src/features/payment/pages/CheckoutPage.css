@@ -224,6 +224,37 @@
   border-color: #3B9BD5;
 }
 
+.checkout-delivery-select-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.12);
+  border-radius: 4px;
+  cursor: pointer;
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.checkout-delivery-select-button:focus {
+  outline: none;
+  border-color: #3B9BD5;
+}
+
+.checkout-delivery-select-text {
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.checkout-delivery-select-text--selected {
+  color: rgba(12, 12, 12, 0.9);
+}
+
 .checkout-input {
   width: 100%;
   padding: 12px 16px;
