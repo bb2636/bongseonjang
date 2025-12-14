@@ -1,6 +1,6 @@
 const API_BASE_URL = '/api/address';
 
-export interface DefaultAddressResponse {
+export interface AddressResponse {
   id: string;
   addressName: string;
   recipientName: string;
@@ -9,6 +9,28 @@ export interface DefaultAddressResponse {
   address: string;
   addressDetail: string;
   isDefault: boolean;
+}
+
+export type DefaultAddressResponse = AddressResponse;
+
+export async function fetchAddresses(): Promise<AddressResponse[]> {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    return [];
+  }
+
+  const response = await fetch(`${API_BASE_URL}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch addresses');
+  }
+
+  return response.json();
 }
 
 export async function fetchDefaultAddress(): Promise<DefaultAddressResponse | null> {

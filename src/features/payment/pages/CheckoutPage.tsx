@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
-import { fetchDefaultAddress } from '../../address/api/addressApi';
+import { fetchDefaultAddress, fetchAddresses, AddressResponse } from '../../address/api/addressApi';
 import { fetchUserProfile } from '../../profile/api/profileApi';
 import { preparePayment } from '../api/paymentApi';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
 import { DeliveryRequestBottomSheet } from '../components/DeliveryRequestBottomSheet';
+import { AddressSelectBottomSheet } from '../components/AddressSelectBottomSheet';
 import './CheckoutPage.css';
 
 declare global {
@@ -47,6 +48,9 @@ export function CheckoutPage() {
   const [deliveryRequest, setDeliveryRequest] = useState('');
   const [customDeliveryRequest, setCustomDeliveryRequest] = useState('');
   const [isDeliverySheetOpen, setIsDeliverySheetOpen] = useState(false);
+  const [isAddressSheetOpen, setIsAddressSheetOpen] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
+  const hasUserSelectedAddress = useRef(false);
   const [isProductsExpanded, setIsProductsExpanded] = useState(true);
   const [pointInput, setPointInput] = useState('');
   const [usedPoints, setUsedPoints] = useState(0);
@@ -68,6 +72,13 @@ export function CheckoutPage() {
     staleTime: 1000 * 60 * 5,
   });
 
+  const { data: addresses = [], isLoading: isAddressesLoading } = useQuery({
+    queryKey: ['addresses'],
+    queryFn: fetchAddresses,
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5,
+  });
+
   const { data: userProfile, isLoading: isProfileLoading } = useQuery({
     queryKey: ['userProfile'],
     queryFn: fetchUserProfile,
@@ -75,7 +86,15 @@ export function CheckoutPage() {
     staleTime: 1000 * 60 * 5,
   });
 
-  const isLoading = isCartLoading || isAddressLoading || isProfileLoading;
+  const isLoading = isCartLoading || isAddressLoading || isAddressesLoading || isProfileLoading;
+
+  useEffect(() => {
+    if (defaultAddress && !hasUserSelectedAddress.current) {
+      setSelectedAddress(defaultAddress);
+    }
+  }, [defaultAddress]);
+
+  const currentAddress = selectedAddress || defaultAddress;
 
   const selectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
   const productAmount = selectedItems.reduce((sum, item) => sum + item.totalPrice, 0);
@@ -118,7 +137,7 @@ export function CheckoutPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!defaultAddress) {
+    if (!currentAddress) {
       showToast('배송지를 등록해주세요', 'error');
       return;
     }
@@ -140,11 +159,11 @@ export function CheckoutPage() {
     try {
       const paymentData = await preparePayment({
         selectedItemIds,
-        recipientName: defaultAddress.recipientName,
-        recipientPhone: defaultAddress.recipientPhone,
-        postalCode: defaultAddress.postalCode,
-        address: defaultAddress.address,
-        addressDetail: defaultAddress.addressDetail,
+        recipientName: currentAddress.recipientName,
+        recipientPhone: currentAddress.recipientPhone,
+        postalCode: currentAddress.postalCode,
+        address: currentAddress.address,
+        addressDetail: currentAddress.addressDetail,
         deliveryRequest: finalDeliveryRequest,
         paymentMethod,
       });
@@ -166,7 +185,7 @@ export function CheckoutPage() {
         amount: paymentData.amount,
         goodsName: paymentData.goodsName,
         returnUrl: paymentData.returnUrl,
-        ...(paymentMethod === 'vbank' && { vbankHolder: defaultAddress.recipientName }),
+        ...(paymentMethod === 'vbank' && { vbankHolder: currentAddress.recipientName }),
         fnError: (result) => {
           showToast(`결제 오류: ${result.errorMsg}`, 'error');
           setIsProcessing(false);
@@ -211,26 +230,30 @@ export function CheckoutPage() {
 
       <form className="checkout-form" onSubmit={handleSubmit}>
         <section className="checkout-address-card">
-          {defaultAddress ? (
+          {currentAddress ? (
             <>
               <div className="checkout-address-header">
                 <div className="checkout-address-name-row">
-                  <span className="checkout-address-name">{defaultAddress.addressName}</span>
-                  {defaultAddress.isDefault && (
+                  <span className="checkout-address-name">{currentAddress.addressName}</span>
+                  {currentAddress.isDefault && (
                     <span className="checkout-address-default-label">기본배송지</span>
                   )}
                 </div>
-                <button type="button" className="checkout-address-change-button">
+                <button 
+                  type="button" 
+                  className="checkout-address-change-button"
+                  onClick={() => setIsAddressSheetOpen(true)}
+                >
                   변경
                 </button>
               </div>
               <div className="checkout-address-details">
-                <p className="checkout-address-detail-text">{defaultAddress.recipientName}</p>
+                <p className="checkout-address-detail-text">{currentAddress.recipientName}</p>
                 <p className="checkout-address-detail-text">
-                  ({defaultAddress.postalCode}) {defaultAddress.address} {defaultAddress.addressDetail}
+                  ({currentAddress.postalCode}) {currentAddress.address} {currentAddress.addressDetail}
                 </p>
                 <p className="checkout-address-detail-text">
-                  {formatPhoneNumber(defaultAddress.recipientPhone)}
+                  {formatPhoneNumber(currentAddress.recipientPhone)}
                 </p>
               </div>
             </>
@@ -464,7 +487,7 @@ export function CheckoutPage() {
         <button
           type="submit"
           className="checkout-submit-button"
-          disabled={isProcessing || !defaultAddress || !termsAgreed}
+          disabled={isProcessing || !currentAddress || !termsAgreed}
         >
           {isProcessing ? '처리 중...' : `${finalAmount.toLocaleString()}원 결제하기`}
         </button>
@@ -476,6 +499,17 @@ export function CheckoutPage() {
         options={DELIVERY_REQUEST_OPTIONS}
         selectedOption={deliveryRequest}
         onSelect={handleDeliveryRequestChange}
+      />
+
+      <AddressSelectBottomSheet
+        isOpen={isAddressSheetOpen}
+        onClose={() => setIsAddressSheetOpen(false)}
+        addresses={addresses}
+        selectedAddressId={currentAddress?.id || null}
+        onSelect={(address) => {
+          hasUserSelectedAddress.current = true;
+          setSelectedAddress(address);
+        }}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { authMiddleware } from '../../../common/middleware/authMiddleware';
 const router = Router();
 const addressController = new AddressController();
 
+router.get('/', authMiddleware, (req, res) => addressController.getAllAddresses(req, res));
 router.get('/default', authMiddleware, (req, res) => addressController.getDefaultAddress(req, res));
 
 export { router as addressRoutes };

@@ -12,6 +12,33 @@ export class AddressController {
     this.shippingAddressRepository = new RealShippingAddressRepository();
   }
 
+  async getAllAddresses(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+
+      if (!userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+
+      const addresses = await this.shippingAddressRepository.findByUserId(userId);
+
+      res.json(addresses.map(address => ({
+        id: address.id,
+        addressName: address.addressName,
+        recipientName: address.recipientName,
+        recipientPhone: address.recipientPhone,
+        postalCode: address.postalCode,
+        address: address.address,
+        addressDetail: address.addressDetail,
+        isDefault: address.isDefault,
+      })));
+    } catch (error) {
+      console.error('Failed to get addresses:', error);
+      res.status(500).json({ message: 'Failed to get addresses' });
+    }
+  }
+
   async getDefaultAddress(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const userId = req.userId;
