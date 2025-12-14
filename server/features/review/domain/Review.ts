@@ -6,7 +6,6 @@ export interface ReviewDto {
   rating: number;
   content: string;
   imageUrls: string[];
-  isVerifiedPurchase: boolean;
   createdAt: string;
 }
 

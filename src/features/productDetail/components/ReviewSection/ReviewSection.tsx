@@ -271,9 +271,6 @@ function ReviewItem({ review }: { review: Review }) {
       <div className="review-item__header">
         <div className="review-item__user-info">
           <span className="review-item__user-name">{review.userName}</span>
-          {review.isVerifiedPurchase && (
-            <span className="review-item__verified-badge">구매인증</span>
-          )}
         </div>
         <span className="review-item__date">{formatDate(review.createdAt)}</span>
       </div>

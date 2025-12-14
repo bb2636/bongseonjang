@@ -42,7 +42,6 @@ export interface Review {
   rating: number;
   content: string;
   imageUrls: string[];
-  isVerifiedPurchase: boolean;
   createdAt: string;
 }
 

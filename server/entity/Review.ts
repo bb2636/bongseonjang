@@ -22,9 +22,6 @@ export class Review {
   @Column({ type: 'text', array: true, nullable: true })
   imageUrls!: string[] | null;
 
-  @Column({ type: 'boolean', default: false })
-  isVerifiedPurchase!: boolean;
-
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 
