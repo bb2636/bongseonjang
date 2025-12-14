@@ -31,6 +31,9 @@ export interface SignupData {
   birthDay: string;
   gender: string;
   referralId?: string;
+  zonecode: string;
+  address: string;
+  addressDetail: string;
 }
 
 export interface EmailVerificationResponse {
@@ -121,6 +124,9 @@ export const signupService = {
       birthDate,
       gender: data.gender,
       referralId: data.referralId || undefined,
+      zonecode: data.zonecode,
+      address: data.address,
+      addressDetail: data.addressDetail,
     };
 
     const response = await fetch(`${API_BASE_URL}/auth/register`, {

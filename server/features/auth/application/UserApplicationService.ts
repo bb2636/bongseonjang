@@ -3,6 +3,7 @@ import { SocialAccountRepository } from '../repository/SocialAccountRepository';
 import { AuthService } from '../domain/AuthService';
 import { User, MembershipGrade } from '../../../entity/User';
 import { SocialProvider } from '../../../entity/UserSocialAccount';
+import { RealShippingAddressRepository } from '../../address/repository/RealShippingAddressRepository';
 
 interface RegisterInput {
   email: string;
@@ -12,6 +13,9 @@ interface RegisterInput {
   birthDate?: string;
   gender?: string;
   referralId?: string;
+  zonecode?: string;
+  address?: string;
+  addressDetail?: string;
 }
 
 interface LoginInput {
@@ -75,11 +79,13 @@ function toUserResponse(user: User): UserResponse {
 export class UserApplicationService {
   private userRepository: UserRepository;
   private socialAccountRepository: SocialAccountRepository;
+  private shippingAddressRepository: RealShippingAddressRepository;
   private authService: AuthService;
 
   constructor() {
     this.userRepository = new UserRepository();
     this.socialAccountRepository = new SocialAccountRepository();
+    this.shippingAddressRepository = new RealShippingAddressRepository();
     this.authService = new AuthService();
   }
 
@@ -101,6 +107,19 @@ export class UserApplicationService {
       gender: input.gender || null,
       referralId: input.referralId || null,
     });
+
+    if (input.zonecode && input.address && input.addressDetail) {
+      await this.shippingAddressRepository.create({
+        userId: user.id,
+        addressName: '기본 배송지',
+        recipientName: input.name,
+        recipientPhone: input.phone || '',
+        postalCode: input.zonecode,
+        address: input.address,
+        addressDetail: input.addressDetail,
+        isDefault: true,
+      });
+    }
 
     const token = this.authService.generateToken(user.id);
     

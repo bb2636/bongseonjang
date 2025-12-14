@@ -78,6 +78,7 @@ interface ProfileStepProps {
   isBirthDateValid: boolean;
   isGenderValid: boolean;
   isReferralIdValid: boolean;
+  isAddressValid: boolean;
   isAgreementValid: boolean;
   isValid: boolean;
   errors: {
@@ -86,6 +87,7 @@ interface ProfileStepProps {
     birthDate: string | null;
     gender: string | null;
     referralId: string | null;
+    address: string | null;
   };
   showReferralModal: boolean;
   referralModalMessage: string;
@@ -102,6 +104,7 @@ interface ProfileStepProps {
   onPhoneVerify: () => void;
   onAddressSearch: () => void;
   onAddressDetailChange: (value: string) => void;
+  onAddressDetailBlur: () => void;
   onBirthYearChange: (value: string) => void;
   onBirthMonthChange: (value: string) => void;
   onBirthDayChange: (value: string) => void;
@@ -209,7 +212,7 @@ export default function SignupEmailView({
             onClick={profileStep.onSubmit}
             disabled={!profileStep.isValid || profileStep.isLoading}
           >
-            {profileStep.isLoading ? "처리 중..." : "다음"}
+            {profileStep.isLoading ? "처리 중..." : "회원가입 완료"}
           </button>
         ) : currentStep === 'password' ? (
           <button
@@ -397,7 +400,7 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
         <label className="signup-label">배송지</label>
         <div className="signup-address-section">
           <div className="signup-verify-input-row">
-            <div className="signup-address-input-box">
+            <div className={`signup-address-input-box ${profileStep.errors.address ? 'signup-address-input-box--error' : ''}`}>
               <input
                 className="signup-form-input"
                 type="text"
@@ -408,7 +411,7 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
             </div>
             <button className="signup-black-verify-button" onClick={profileStep.onAddressSearch}>주소 검색</button>
           </div>
-          <div className="signup-address-input-box signup-address-input-box--full">
+          <div className={`signup-address-input-box signup-address-input-box--full ${profileStep.errors.address ? 'signup-address-input-box--error' : ''}`}>
             <input
               className="signup-form-input"
               type="text"
@@ -417,15 +420,19 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
               readOnly
             />
           </div>
-          <div className="signup-address-input-box signup-address-input-box--full">
+          <div className={`signup-address-input-box signup-address-input-box--full ${profileStep.errors.address ? 'signup-address-input-box--error' : ''}`}>
             <input
               className="signup-form-input"
               type="text"
               placeholder="상세주소를 입력해주세요"
               value={profileStep.addressDetail}
               onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onAddressDetailChange(e.target.value)}
+              onBlur={profileStep.onAddressDetailBlur}
             />
           </div>
+          {profileStep.errors.address && (
+            <span className="signup-error">{profileStep.errors.address}</span>
+          )}
         </div>
       </div>
 

@@ -10,7 +10,7 @@ const socialAuthService = new SocialAuthService();
 export class AuthController {
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password, name, phone, birthDate, gender, referralId } = req.body;
+      const { email, password, name, phone, birthDate, gender, referralId, zonecode, address, addressDetail } = req.body;
 
       if (!email || !password || !name) {
         res.status(400).json({ message: 'Email, password, and name are required' });
@@ -25,6 +25,9 @@ export class AuthController {
         birthDate,
         gender,
         referralId,
+        zonecode,
+        address,
+        addressDetail,
       });
       res.status(201).json(result);
     } catch (error) {
