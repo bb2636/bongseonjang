@@ -13,6 +13,7 @@ interface RegisterInput {
   birthDate?: string;
   gender?: string;
   referralId?: string;
+  addressName?: string;
   zonecode?: string;
   address?: string;
   addressDetail?: string;
@@ -111,7 +112,7 @@ export class UserApplicationService {
     if (input.zonecode && input.address && input.addressDetail) {
       await this.shippingAddressRepository.create({
         userId: user.id,
-        addressName: '기본 배송지',
+        addressName: input.addressName || '기본 배송지',
         recipientName: input.name,
         recipientPhone: input.phone || '',
         postalCode: input.zonecode,

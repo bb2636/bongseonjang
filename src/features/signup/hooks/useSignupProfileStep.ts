@@ -11,6 +11,7 @@ interface TouchedFields {
   birthDate: boolean;
   gender: boolean;
   referralId: boolean;
+  addressName: boolean;
   address: boolean;
 }
 
@@ -25,6 +26,7 @@ export function useSignupProfileStep() {
     birthDate: false,
     gender: false,
     referralId: false,
+    addressName: false,
     address: false,
   });
 
@@ -70,6 +72,7 @@ export function useSignupProfileStep() {
       birthDay: formData.birthDay,
       gender: formData.gender,
       referralId: formData.referralId || undefined,
+      addressName: formData.addressName,
       zonecode: formData.zonecode,
       address: formData.address,
       addressDetail: formData.addressDetail,
@@ -146,6 +149,13 @@ export function useSignupProfileStep() {
     return null;
   }, []);
 
+  const validateAddressName = useCallback((value: string): string | null => {
+    if (!value.trim()) {
+      return '배송지 이름을 입력해주세요';
+    }
+    return null;
+  }, []);
+
   const validateAddress = useCallback((zonecode: string, address: string, addressDetail: string): string | null => {
     if (!zonecode.trim() || !address.trim()) {
       return '주소를 검색해주세요';
@@ -162,6 +172,7 @@ export function useSignupProfileStep() {
     birthDate: touched.birthDate ? validateBirthDate(formData.birthYear, formData.birthMonth, formData.birthDay) : null,
     gender: touched.gender ? validateGender(formData.gender) : null,
     referralId: touched.referralId ? validateReferralId(formData.referralId) : null,
+    addressName: touched.addressName ? validateAddressName(formData.addressName) : null,
     address: touched.address ? validateAddress(formData.zonecode, formData.address, formData.addressDetail) : null,
   };
 
@@ -170,10 +181,11 @@ export function useSignupProfileStep() {
   const isBirthDateValid = !validateBirthDate(formData.birthYear, formData.birthMonth, formData.birthDay);
   const isGenderValid = !validateGender(formData.gender);
   const isReferralIdValid = !validateReferralId(formData.referralId);
+  const isAddressNameValid = !validateAddressName(formData.addressName);
   const isAddressValid = !validateAddress(formData.zonecode, formData.address, formData.addressDetail);
   const isAgreementValid = formData.isOver14 && formData.termsAgreed && formData.privacyAgreed;
   
-  const isValid = isNameValid && isPhoneValid && formData.isPhoneVerified && isBirthDateValid && isGenderValid && isReferralIdValid && isAddressValid && isAgreementValid;
+  const isValid = isNameValid && isPhoneValid && formData.isPhoneVerified && isBirthDateValid && isGenderValid && isReferralIdValid && isAddressNameValid && isAddressValid && isAgreementValid;
 
   const onNameChange = useCallback((value: string) => {
     updateFormData({ name: value });
@@ -287,6 +299,15 @@ export function useSignupProfileStep() {
     updateFormData({ addressDetail: value });
   }, [updateFormData]);
 
+  const onAddressNameChange = useCallback((value: string) => {
+    updateFormData({ addressName: value });
+    setTouched(prev => ({ ...prev, addressName: true }));
+  }, [updateFormData]);
+
+  const onAddressNameBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, addressName: true }));
+  }, []);
+
   const onOver14Change = useCallback((value: boolean) => {
     updateFormData({ isOver14: value });
   }, [updateFormData]);
@@ -320,7 +341,7 @@ export function useSignupProfileStep() {
   }, []);
 
   const onSubmit = useCallback(() => {
-    setTouched({ name: true, phone: true, birthDate: true, gender: true, referralId: true, address: true });
+    setTouched({ name: true, phone: true, birthDate: true, gender: true, referralId: true, addressName: true, address: true });
 
     if (!isValid || signupMutation.isPending) {
       return;
@@ -334,6 +355,7 @@ export function useSignupProfileStep() {
     name: formData.name,
     phone: formData.phone,
     isPhoneVerified: formData.isPhoneVerified,
+    addressName: formData.addressName,
     zonecode: formData.zonecode,
     address: formData.address,
     addressDetail: formData.addressDetail,
@@ -353,6 +375,7 @@ export function useSignupProfileStep() {
     isBirthDateValid,
     isGenderValid,
     isReferralIdValid,
+    isAddressNameValid,
     isAddressValid,
     isAgreementValid,
     isValid,
@@ -383,6 +406,8 @@ export function useSignupProfileStep() {
     onAddressSearch,
     onAddressDetailChange,
     onAddressDetailBlur,
+    onAddressNameChange,
+    onAddressNameBlur,
     onOver14Change,
     onTermsAgreedChange,
     onPrivacyAgreedChange,

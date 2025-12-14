@@ -31,6 +31,7 @@ export interface SignupData {
   birthDay: string;
   gender: string;
   referralId?: string;
+  addressName: string;
   zonecode: string;
   address: string;
   addressDetail: string;
@@ -124,6 +125,7 @@ export const signupService = {
       birthDate,
       gender: data.gender,
       referralId: data.referralId || undefined,
+      addressName: data.addressName,
       zonecode: data.zonecode,
       address: data.address,
       addressDetail: data.addressDetail,

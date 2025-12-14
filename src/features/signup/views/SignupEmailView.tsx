@@ -59,6 +59,7 @@ interface ProfileStepProps {
   name: string;
   phone: string;
   isPhoneVerified: boolean;
+  addressName: string;
   zonecode: string;
   address: string;
   addressDetail: string;
@@ -78,6 +79,7 @@ interface ProfileStepProps {
   isBirthDateValid: boolean;
   isGenderValid: boolean;
   isReferralIdValid: boolean;
+  isAddressNameValid: boolean;
   isAddressValid: boolean;
   isAgreementValid: boolean;
   isValid: boolean;
@@ -87,6 +89,7 @@ interface ProfileStepProps {
     birthDate: string | null;
     gender: string | null;
     referralId: string | null;
+    addressName: string | null;
     address: string | null;
   };
   showReferralModal: boolean;
@@ -105,6 +108,8 @@ interface ProfileStepProps {
   onAddressSearch: () => void;
   onAddressDetailChange: (value: string) => void;
   onAddressDetailBlur: () => void;
+  onAddressNameChange: (value: string) => void;
+  onAddressNameBlur: () => void;
   onBirthYearChange: (value: string) => void;
   onBirthMonthChange: (value: string) => void;
   onBirthDayChange: (value: string) => void;
@@ -399,6 +404,19 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
       <div className="signup-text-field">
         <label className="signup-label">배송지</label>
         <div className="signup-address-section">
+          <div className={`signup-address-input-box signup-address-input-box--full ${profileStep.errors.addressName ? 'signup-address-input-box--error' : ''}`}>
+            <input
+              className="signup-form-input"
+              type="text"
+              placeholder="배송지 이름 (예: 집, 회사)"
+              value={profileStep.addressName}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onAddressNameChange(e.target.value)}
+              onBlur={profileStep.onAddressNameBlur}
+            />
+          </div>
+          {profileStep.errors.addressName && (
+            <span className="signup-error">{profileStep.errors.addressName}</span>
+          )}
           <div className="signup-verify-input-row">
             <div className={`signup-address-input-box ${profileStep.errors.address ? 'signup-address-input-box--error' : ''}`}>
               <input

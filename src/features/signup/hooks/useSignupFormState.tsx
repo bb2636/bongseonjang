@@ -13,6 +13,7 @@ export interface SignupFormData {
   name: string;
   phone: string;
   isPhoneVerified: boolean;
+  addressName: string;
   zonecode: string;
   address: string;
   addressDetail: string;
@@ -42,6 +43,7 @@ const defaultFormData: SignupFormData = {
   name: '',
   phone: '',
   isPhoneVerified: false,
+  addressName: '',
   zonecode: '',
   address: '',
   addressDetail: '',
