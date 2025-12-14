@@ -46,9 +46,9 @@ export interface SocialUserInfo {
 
 export class SocialAuthService {
   async getKakaoUserInfo(code: string): Promise<SocialUserInfo> {
-    const clientId = process.env.KAKAO_JS_KEY;
+    const clientId = process.env.KAKAO_REST_API_KEY;
     const clientSecret = process.env.KAKAO_CLIENT_SECRET;
-    const redirectUri = `${process.env.SOCIAL_REDIRECT_BASE_URL}/auth/kakao/callback`;
+    const redirectUri = `${process.env.SOCIAL_REDIRECT_BASE_URL}/oauth/kakao/callback`;
 
     if (!clientId || !redirectUri) {
       throw new Error('Kakao OAuth configuration is missing');

@@ -33,7 +33,7 @@ export function kakaoAuthorize(): void {
     throw new Error('카카오 SDK 초기화에 실패했습니다.');
   }
 
-  const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/auth/kakao/callback`;
+  const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/kakao/callback`;
 
   window.Kakao.Auth.authorize({
     redirectUri,
@@ -56,7 +56,7 @@ export function initNaverSdk(): naver.LoginWithNaverId | null {
     return null;
   }
 
-  const callbackUrl = `${SOCIAL_REDIRECT_BASE_URL}/auth/naver/callback`;
+  const callbackUrl = `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
 
   naverLoginInstance = new window.naver.LoginWithNaverId({
     clientId: NAVER_CLIENT_ID,
@@ -92,9 +92,9 @@ function generateRandomState(): string {
 }
 
 export function getKakaoRedirectUri(): string {
-  return `${SOCIAL_REDIRECT_BASE_URL}/auth/kakao/callback`;
+  return `${SOCIAL_REDIRECT_BASE_URL}/oauth/kakao/callback`;
 }
 
 export function getNaverRedirectUri(): string {
-  return `${SOCIAL_REDIRECT_BASE_URL}/auth/naver/callback`;
+  return `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
 }

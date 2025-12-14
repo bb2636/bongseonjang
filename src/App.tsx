@@ -31,7 +31,7 @@ export default function App() {
       <Route path="/product/:id" element={<ProtectedRoute><ProductDetailPage /></ProtectedRoute>} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/login/email" element={<EmailLoginPage />} />
-      <Route path="/auth/callback/:provider" element={<SocialAuthCallbackPage />} />
+      <Route path="/oauth/:provider/callback" element={<SocialAuthCallbackPage />} />
       <Route path="/signup/email" element={<SignupEmailPage />} />
       <Route path="/signup/complete" element={<SignupCompletePage />} />
       <Route path="/signup/terms" element={<TermsPage />} />
