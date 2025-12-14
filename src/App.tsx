@@ -14,6 +14,7 @@ import { MyCouponPage, CouponDownloadPage } from './features/coupon';
 import { WishlistPage } from './features/wishlist';
 import { OrderHistoryPage } from './features/orderHistory/pages/OrderHistoryPage';
 import { InProgressOrdersPage } from './features/orderHistory/pages/InProgressOrdersPage';
+import { OrderDetailPage, PaymentCompletePage } from './features/orderDetail';
 import { CartPage } from './features/cart/pages/CartPage';
 import { CheckoutPage } from './features/payment/pages/CheckoutPage';
 import { PaymentSuccessPage } from './features/payment/pages/PaymentSuccessPage';
@@ -49,6 +50,8 @@ export default function App() {
       <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
       <Route path="/orders" element={<ProtectedRoute><OrderHistoryPage /></ProtectedRoute>} />
       <Route path="/orders/in-progress" element={<ProtectedRoute><InProgressOrdersPage /></ProtectedRoute>} />
+      <Route path="/orders/:orderId" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
+      <Route path="/payment/complete/:orderId" element={<PaymentCompletePage />} />
       <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
       <Route path="/payment/success" element={<PaymentSuccessPage />} />
       <Route path="/payment/fail" element={<PaymentFailPage />} />

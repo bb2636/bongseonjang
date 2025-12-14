@@ -273,8 +273,8 @@ async function handlePaymentCallback(req: Request, res: Response) {
         await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
       }
 
-      console.log('[NicePay Callback] Redirecting to success:', `${frontendUrl}/payment/success?orderNumber=${order.orderNumber}`);
-      return res.redirect(`${frontendUrl}/payment/success?orderNumber=${order.orderNumber}`);
+      console.log('[NicePay Callback] Redirecting to success:', `${frontendUrl}/payment/complete/${order.id}`);
+      return res.redirect(`${frontendUrl}/payment/complete/${order.id}`);
     } else {
       console.log('[NicePay Callback] Payment approval failed:', result.resultMsg);
       

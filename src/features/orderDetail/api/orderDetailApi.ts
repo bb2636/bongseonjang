@@ -1,33 +1,3 @@
-export type OrderStatusFilter = 'all' | 'shipping' | 'delivered' | 'cancelled';
-
-export interface OrderHistoryItem {
-  id: string;
-  productId: string | null;
-  productName: string;
-  productImageUrl: string;
-  mainOptionName: string | null;
-  subOptionName: string | null;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-}
-
-export interface OrderHistoryEntry {
-  id: string;
-  orderNumber: string;
-  orderDate: string;
-  status: string;
-  statusLabel: string;
-  statusDate: string;
-  items: OrderHistoryItem[];
-  totalAmount: number;
-}
-
-export interface OrderHistoryResponse {
-  orders: OrderHistoryEntry[];
-  totalCount: number;
-}
-
 export interface OrderDetailItem {
   id: string;
   productId: string | null;
@@ -69,4 +39,20 @@ export interface OrderDetail {
   finalAmount: number;
   payment: PaymentInfo | null;
   paidAt: string | null;
+}
+
+export async function fetchOrderDetail(orderId: string): Promise<OrderDetail> {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch(`/api/orders/${orderId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch order detail');
+  }
+
+  return response.json();
 }

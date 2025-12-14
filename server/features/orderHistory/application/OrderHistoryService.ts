@@ -1,5 +1,5 @@
 import { OrderHistoryRepository } from '../repository/OrderHistoryRepository';
-import { OrderHistoryResponse, OrderStatusFilter } from '../domain/OrderHistory';
+import { OrderHistoryResponse, OrderStatusFilter, OrderDetail } from '../domain/OrderHistory';
 
 export class OrderHistoryService {
   constructor(private readonly orderHistoryRepository: OrderHistoryRepository) {}
@@ -11,5 +11,9 @@ export class OrderHistoryService {
       orders,
       totalCount: orders.length,
     };
+  }
+
+  async getOrderDetail(orderId: string, userId: string): Promise<OrderDetail | null> {
+    return this.orderHistoryRepository.getOrderDetail(orderId, userId);
   }
 }

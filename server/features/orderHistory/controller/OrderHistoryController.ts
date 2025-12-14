@@ -30,4 +30,34 @@ export class OrderHistoryController {
       res.status(500).json({ error: 'Failed to fetch order history' });
     }
   }
+
+  async getOrderDetail(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      const orderId = req.params.orderId;
+      
+      if (!orderId) {
+        res.status(400).json({ error: 'Order ID is required' });
+        return;
+      }
+
+      const result = await this.orderHistoryService.getOrderDetail(orderId, userId);
+      
+      if (!result) {
+        res.status(404).json({ error: 'Order not found' });
+        return;
+      }
+
+      res.json(result);
+    } catch (error) {
+      console.error('Error fetching order detail:', error);
+      res.status(500).json({ error: 'Failed to fetch order detail' });
+    }
+  }
 }
