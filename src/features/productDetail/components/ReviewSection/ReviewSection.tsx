@@ -6,7 +6,10 @@ interface ReviewSectionProps {
   averageRating: number;
   reviews: Review[];
   isLoading: boolean;
+  onViewAllClick?: () => void;
 }
+
+const MAX_PHOTO_COUNT = 8;
 
 function StarIcon({ filled }: { filled: boolean }) {
   return (
@@ -22,6 +25,76 @@ function StarIcon({ filled }: { filled: boolean }) {
         fill={filled ? '#3B9BD5' : '#D9D9D9'}
       />
     </svg>
+  );
+}
+
+function extractPhotoUrls(reviews: Review[]): string[] {
+  const photoUrls: string[] = [];
+  for (const review of reviews) {
+    for (const url of review.imageUrls) {
+      if (photoUrls.length >= MAX_PHOTO_COUNT) {
+        return photoUrls;
+      }
+      photoUrls.push(url);
+    }
+  }
+  return photoUrls;
+}
+
+interface ReviewPhotoGridProps {
+  averageRating: number;
+  reviewCount: number;
+  photoUrls: string[];
+  onViewAllClick?: () => void;
+}
+
+function ReviewPhotoGrid({ 
+  averageRating, 
+  reviewCount, 
+  photoUrls,
+  onViewAllClick 
+}: ReviewPhotoGridProps) {
+  const filledStars = Math.round(averageRating);
+  const placeholderCount = MAX_PHOTO_COUNT - photoUrls.length;
+
+  return (
+    <div className="review-photo-grid">
+      <div className="review-photo-grid__header">
+        <div className="review-photo-grid__rating-info">
+          <span className="review-photo-grid__score">{averageRating.toFixed(1)}</span>
+          <div className="review-photo-grid__stars">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <StarIcon key={star} filled={star <= filledStars} />
+            ))}
+          </div>
+          <span className="review-photo-grid__count">({reviewCount})</span>
+        </div>
+        <button 
+          className="review-photo-grid__view-all" 
+          onClick={onViewAllClick}
+          type="button"
+        >
+          전체보기
+        </button>
+      </div>
+
+      <div className="review-photo-grid__grid">
+        {photoUrls.map((url, index) => (
+          <img
+            key={index}
+            src={url}
+            alt={`리뷰 사진 ${index + 1}`}
+            className="review-photo-grid__image"
+          />
+        ))}
+        {Array.from({ length: placeholderCount }).map((_, index) => (
+          <div 
+            key={`placeholder-${index}`} 
+            className="review-photo-grid__placeholder" 
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -94,26 +167,20 @@ export default function ReviewSection({
   averageRating,
   reviews,
   isLoading,
+  onViewAllClick,
 }: ReviewSectionProps) {
-  const filledStars = Math.round(averageRating);
+  const photoUrls = extractPhotoUrls(reviews);
 
   return (
     <div className="review-section">
-      <div className="review-section__header">
-        <h3 className="review-section__title">리뷰</h3>
-        <span className="review-section__count">{reviewCount}개</span>
-      </div>
+      <ReviewPhotoGrid
+        averageRating={averageRating}
+        reviewCount={reviewCount}
+        photoUrls={photoUrls}
+        onViewAllClick={onViewAllClick}
+      />
 
-      <div className="review-section__summary">
-        <div className="review-section__rating">
-          <span className="review-section__rating-value">{averageRating.toFixed(1)}</span>
-          <div className="review-section__stars">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <StarIcon key={star} filled={star <= filledStars} />
-            ))}
-          </div>
-        </div>
-      </div>
+      <div className="review-section__divider" />
 
       {isLoading ? (
         <div className="review-section__loading">
