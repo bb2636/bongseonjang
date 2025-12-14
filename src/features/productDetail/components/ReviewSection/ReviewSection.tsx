@@ -8,6 +8,7 @@ interface ReviewSectionProps {
   reviews: Review[];
   isLoading: boolean;
   onViewAllClick?: () => void;
+  onWriteReviewClick?: () => void;
 }
 
 const MAX_PHOTO_COUNT = 8;
@@ -301,6 +302,7 @@ export default function ReviewSection({
   reviews,
   isLoading,
   onViewAllClick,
+  onWriteReviewClick,
 }: ReviewSectionProps) {
   const [ratingFilter, setRatingFilter] = useState<RatingFilter>('all');
   const photoUrls = extractPhotoUrls(reviews);
@@ -324,6 +326,7 @@ export default function ReviewSection({
         reviewCount={reviewCount} 
         selectedFilter={ratingFilter}
         onFilterChange={setRatingFilter}
+        onWriteReviewClick={onWriteReviewClick}
       />
 
       {isLoading ? (

@@ -21,6 +21,7 @@ import { PaymentSuccessPage } from './features/payment/pages/PaymentSuccessPage'
 import { PaymentFailPage } from './features/payment/pages/PaymentFailPage';
 import { NoticeListPage } from './features/notice';
 import { AddressFormPage } from './features/address';
+import { WriteReviewPage } from './features/review';
 import { ProtectedRoute } from './components';
 import './components/ProtectedRoute/ProtectedRoute.css';
 
@@ -59,6 +60,7 @@ export default function App() {
       <Route path="/notice" element={<ProtectedRoute><NoticeListPage /></ProtectedRoute>} />
       <Route path="/address/add" element={<ProtectedRoute><AddressFormPage /></ProtectedRoute>} />
       <Route path="/address/edit/:id" element={<ProtectedRoute><AddressFormPage /></ProtectedRoute>} />
+      <Route path="/review/write/:productId" element={<ProtectedRoute><WriteReviewPage /></ProtectedRoute>} />
       <Route
         path="*"
         element={

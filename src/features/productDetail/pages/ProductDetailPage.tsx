@@ -52,6 +52,18 @@ export default function ProductDetailPage() {
     );
   }
 
+  const handleWriteReviewClick = () => {
+    navigate(`/review/write/${id}`, {
+      state: {
+        product: {
+          id: product.id,
+          name: product.name,
+          thumbnailUrl: product.thumbnailUrl,
+        },
+      },
+    });
+  };
+
   return (
     <ProductDetailView
       product={product}
@@ -71,6 +83,7 @@ export default function ProductDetailPage() {
       onTabChange={handleTabChange}
       onAddToCart={handleAddToCart}
       onToggleWishlist={handleToggleWishlist}
+      onWriteReviewClick={handleWriteReviewClick}
     />
   );
 }

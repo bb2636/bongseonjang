@@ -33,6 +33,7 @@ interface ProductDetailViewProps {
   onTabChange: (tab: TabType) => void;
   onAddToCart: (productId: string) => void;
   onToggleWishlist: () => void;
+  onWriteReviewClick: () => void;
 }
 
 export default function ProductDetailView({
@@ -53,6 +54,7 @@ export default function ProductDetailView({
   onTabChange,
   onAddToCart,
   onToggleWishlist,
+  onWriteReviewClick,
 }: ProductDetailViewProps) {
   const sliderImages = product.images.filter(
     (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
@@ -137,6 +139,7 @@ export default function ProductDetailView({
             averageRating={product.averageRating}
             reviews={reviews}
             isLoading={reviewsLoading}
+            onWriteReviewClick={onWriteReviewClick}
           />
         )}
 
