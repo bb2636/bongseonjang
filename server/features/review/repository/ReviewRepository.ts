@@ -18,4 +18,5 @@ export interface ReviewRepository {
   getStatsByProductId(productId: string): Promise<ReviewStats>;
   save(review: Partial<Review>): Promise<Review>;
   delete(id: string): Promise<void>;
+  hasUserReviewedProduct(userId: string, productId: string): Promise<boolean>;
 }

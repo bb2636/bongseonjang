@@ -3,4 +3,5 @@ import { OrderHistoryEntry, OrderStatusFilter, OrderDetail } from '../domain/Ord
 export interface OrderHistoryRepository {
   getOrderHistory(userId: string, statusFilter: OrderStatusFilter): Promise<OrderHistoryEntry[]>;
   getOrderDetail(orderId: string, userId: string): Promise<OrderDetail | null>;
+  hasPurchasedProduct(userId: string, productId: string): Promise<boolean>;
 }

@@ -43,3 +43,27 @@ export async function fetchOrderHistory(statusFilter: OrderStatusFilter): Promis
 
   return response.json();
 }
+
+export interface CheckPurchaseResponse {
+  hasPurchased: boolean;
+}
+
+export async function checkPurchase(productId: string): Promise<CheckPurchaseResponse> {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    return { hasPurchased: false };
+  }
+  
+  const response = await fetch(`/api/orders/check-purchase/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to check purchase');
+  }
+
+  return response.json();
+}

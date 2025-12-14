@@ -16,4 +16,8 @@ export class OrderHistoryService {
   async getOrderDetail(orderId: string, userId: string): Promise<OrderDetail | null> {
     return this.orderHistoryRepository.getOrderDetail(orderId, userId);
   }
+
+  async hasPurchasedProduct(userId: string, productId: string): Promise<boolean> {
+    return this.orderHistoryRepository.hasPurchasedProduct(userId, productId);
+  }
 }

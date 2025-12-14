@@ -92,4 +92,29 @@ export class ReviewController {
       res.status(500).json({ error: 'Failed to delete review' });
     }
   }
+
+  async checkUserReview(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Authentication required' });
+        return;
+      }
+
+      const { productId } = req.params;
+      
+      if (!productId) {
+        res.status(400).json({ error: 'Product ID is required' });
+        return;
+      }
+
+      const hasReviewed = await this.reviewService.hasUserReviewedProduct(userId, productId);
+      
+      res.json({ hasReviewed });
+    } catch (error) {
+      console.error('Error checking user review:', error);
+      res.status(500).json({ error: 'Failed to check user review' });
+    }
+  }
 }

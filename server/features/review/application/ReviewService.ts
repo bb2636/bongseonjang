@@ -46,6 +46,10 @@ export class ReviewService implements ReviewStatsProvider {
     await this.reviewRepository.delete(id);
   }
 
+  async hasUserReviewedProduct(userId: string, productId: string): Promise<boolean> {
+    return this.reviewRepository.hasUserReviewedProduct(userId, productId);
+  }
+
   private toDto(review: Review): ReviewDto {
     return {
       id: review.id,

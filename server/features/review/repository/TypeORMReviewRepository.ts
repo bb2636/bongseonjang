@@ -67,4 +67,14 @@ export class TypeORMReviewRepository implements ReviewRepository {
     const reviewRepository = AppDataSource.getRepository(Review);
     await reviewRepository.delete(id);
   }
+
+  async hasUserReviewedProduct(userId: string, productId: string): Promise<boolean> {
+    const reviewRepository = AppDataSource.getRepository(Review);
+    
+    const review = await reviewRepository.findOne({
+      where: { userId, productId },
+    });
+
+    return !!review;
+  }
 }

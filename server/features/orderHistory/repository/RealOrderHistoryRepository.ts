@@ -157,4 +157,20 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
       paidAt: order.paidAt ? this.formatDateTime(order.paidAt) : null,
     };
   }
+
+  async hasPurchasedProduct(userId: string, productId: string): Promise<boolean> {
+    const orderRepository = AppDataSource.getRepository(Order);
+    
+    const completedStatuses: OrderStatus[] = ['paid', 'preparing', 'shipping', 'delivered'];
+    
+    const order = await orderRepository
+      .createQueryBuilder('order')
+      .innerJoin('order.items', 'item')
+      .where('order.userId = :userId', { userId })
+      .andWhere('order.status IN (:...statuses)', { statuses: completedStatuses })
+      .andWhere('item.productId = :productId', { productId })
+      .getOne();
+
+    return !!order;
+  }
 }

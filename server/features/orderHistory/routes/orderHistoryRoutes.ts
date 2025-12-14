@@ -11,6 +11,7 @@ const orderHistoryService = new OrderHistoryService(orderHistoryRepository);
 const orderHistoryController = new OrderHistoryController(orderHistoryService);
 
 router.get('/', authMiddleware, (req, res) => orderHistoryController.getOrderHistory(req, res));
+router.get('/check-purchase/:productId', authMiddleware, (req, res) => orderHistoryController.checkPurchase(req, res));
 router.get('/:orderId', authMiddleware, (req, res) => orderHistoryController.getOrderDetail(req, res));
 
 export default router;
