@@ -72,12 +72,16 @@ export default function ProductDetailView({
           onTabChange={onTabChange}
         />
 
-        <ProductImageSlider
-          images={sliderImages}
-          thumbnailUrl={product.thumbnailUrl}
-        />
+        {activeTab !== 'review' && (
+          <>
+            <ProductImageSlider
+              images={sliderImages}
+              thumbnailUrl={product.thumbnailUrl}
+            />
 
-        <CountdownTimer saleStartAt={product.saleStartAt} saleEndAt={product.saleEndAt} />
+            <CountdownTimer saleStartAt={product.saleStartAt} saleEndAt={product.saleEndAt} />
+          </>
+        )}
 
         {activeTab === 'info' && (
           <>
