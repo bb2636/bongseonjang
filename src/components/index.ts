@@ -14,3 +14,5 @@ export { default as AppBar } from './AppBar/AppBar';
 export { default as QuickCartBottomSheet } from './QuickCartBottomSheet';
 export { PaymentLoadingOverlay } from './PaymentLoadingOverlay';
 export type { PaymentStep } from './PaymentLoadingOverlay';
+export { AddressInputForm } from './AddressInputForm';
+export type { AddressData } from './AddressInputForm';

@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchAddresses, AddressResponse } from '../api/addressApi';
 import { fetchUserProfile } from '../../profile/api/profileApi';
 import { useToast } from '../../../contexts/ToastContext';
+import { AddressInputForm } from '@components';
 import './AddressFormPage.css';
 
 interface AddressFormData {
@@ -79,21 +80,16 @@ export function AddressFormPage() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleAddressSearch = useCallback(() => {
-    if (!window.daum?.Postcode) {
-      showToast('주소 검색 서비스를 불러오지 못했습니다. 페이지를 새로고침 해주세요.', 'error');
-      return;
-    }
-    new window.daum.Postcode({
-      oncomplete: (data) => {
-        const address = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-        setFormData(prev => ({
-          ...prev,
-          postalCode: data.zonecode,
-          address: address,
-        }));
-      },
-    }).open();
+  const handleAddressSearchResult = useCallback((postalCode: string, address: string) => {
+    setFormData(prev => ({
+      ...prev,
+      postalCode: postalCode,
+      address: address,
+    }));
+  }, []);
+
+  const handleAddressSearchError = useCallback((message: string) => {
+    showToast(message, 'error');
   }, [showToast]);
 
   const saveAddressMutation = useMutation({
@@ -225,58 +221,17 @@ export function AddressFormPage() {
           </div>
         </div>
 
-        <div className="address-form-field">
-          <label className="address-form-field__label">배송지명</label>
-          <div className="address-form-field__input-wrapper">
-            <input
-              type="text"
-              className="address-form-field__input"
-              placeholder="배송지 이름 (예: 집, 회사)"
-              value={formData.addressName}
-              onChange={(e) => handleInputChange('addressName', e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="address-form-field">
-          <label className="address-form-field__label">주소</label>
-          <div className="address-form-field__address-row">
-            <div className="address-form-field__input-wrapper address-form-field__input-wrapper--postal">
-              <input
-                type="text"
-                className="address-form-field__input"
-                placeholder="우편번호"
-                value={formData.postalCode}
-                readOnly
-              />
-            </div>
-            <button
-              type="button"
-              className="address-form-field__search-button"
-              onClick={handleAddressSearch}
-            >
-              주소 검색
-            </button>
-          </div>
-          <div className="address-form-field__input-wrapper">
-            <input
-              type="text"
-              className="address-form-field__input"
-              placeholder="기본주소"
-              value={formData.address}
-              readOnly
-            />
-          </div>
-          <div className="address-form-field__input-wrapper">
-            <input
-              type="text"
-              className="address-form-field__input"
-              placeholder="상세주소를 입력해주세요"
-              value={formData.addressDetail}
-              onChange={(e) => handleInputChange('addressDetail', e.target.value)}
-            />
-          </div>
-        </div>
+        <AddressInputForm
+          addressName={formData.addressName}
+          postalCode={formData.postalCode}
+          address={formData.address}
+          addressDetail={formData.addressDetail}
+          onAddressNameChange={(value) => handleInputChange('addressName', value)}
+          onAddressDetailChange={(value) => handleInputChange('addressDetail', value)}
+          onAddressSearch={handleAddressSearchResult}
+          onSearchError={handleAddressSearchError}
+          showLabel={false}
+        />
 
         <div className="address-form-field address-form-field--checkbox">
           <label className="address-form-checkbox">

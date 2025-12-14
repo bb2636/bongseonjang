@@ -277,23 +277,18 @@ export function useSignupProfileStep() {
     setReferralModalMessage('');
   }, []);
 
-  const onAddressSearch = useCallback(() => {
-    if (!window.daum?.Postcode) {
-      setErrorModalMessage('주소 검색 서비스를 불러오지 못했습니다. 페이지를 새로고침 해주세요.');
-      setShowErrorModal(true);
-      return;
-    }
-    new window.daum.Postcode({
-      oncomplete: (data) => {
-        const address = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-        updateFormData({
-          zonecode: data.zonecode,
-          address: address,
-        });
-        setTouched(prev => ({ ...prev, address: true }));
-      },
-    }).open();
+  const onAddressSearchResult = useCallback((postalCode: string, address: string) => {
+    updateFormData({
+      zonecode: postalCode,
+      address: address,
+    });
+    setTouched(prev => ({ ...prev, address: true }));
   }, [updateFormData]);
+
+  const onAddressSearchError = useCallback((message: string) => {
+    setErrorModalMessage(message);
+    setShowErrorModal(true);
+  }, []);
 
   const onAddressDetailChange = useCallback((value: string) => {
     updateFormData({ addressDetail: value });
@@ -403,7 +398,8 @@ export function useSignupProfileStep() {
     onReferralIdVerify,
     onCloseReferralModal,
     onClosePhoneModal,
-    onAddressSearch,
+    onAddressSearchResult,
+    onAddressSearchError,
     onAddressDetailChange,
     onAddressDetailBlur,
     onAddressNameChange,

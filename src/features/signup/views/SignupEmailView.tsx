@@ -1,5 +1,5 @@
 import { ChangeEvent } from "react";
-import { AlertModal, Input, PasswordInput } from "@components";
+import { AlertModal, Input, PasswordInput, AddressInputForm } from "@components";
 import ReferralResultModal from "../../../components/ReferralResultModal";
 import AgreementSection from "../components/AgreementSection";
 import './SignupEmailView.css';
@@ -105,7 +105,8 @@ interface ProfileStepProps {
   onNameBlur: () => void;
   onPhoneBlur: () => void;
   onPhoneVerify: () => void;
-  onAddressSearch: () => void;
+  onAddressSearchResult: (postalCode: string, address: string) => void;
+  onAddressSearchError: (message: string) => void;
   onAddressDetailChange: (value: string) => void;
   onAddressDetailBlur: () => void;
   onAddressNameChange: (value: string) => void;
@@ -401,58 +402,22 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
         </div>
       </div>
 
-      <div className="signup-text-field">
-        <label className="signup-label">배송지</label>
-        <div className="signup-address-section">
-          <div className={`signup-address-input-box signup-address-input-box--full ${profileStep.errors.addressName ? 'signup-address-input-box--error' : ''}`}>
-            <input
-              className="signup-form-input"
-              type="text"
-              placeholder="배송지 이름 (예: 집, 회사)"
-              value={profileStep.addressName}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onAddressNameChange(e.target.value)}
-              onBlur={profileStep.onAddressNameBlur}
-            />
-          </div>
-          {profileStep.errors.addressName && (
-            <span className="signup-error">{profileStep.errors.addressName}</span>
-          )}
-          <div className="signup-verify-input-row">
-            <div className={`signup-address-input-box ${profileStep.errors.address ? 'signup-address-input-box--error' : ''}`}>
-              <input
-                className="signup-form-input"
-                type="text"
-                placeholder="우편번호"
-                value={profileStep.zonecode}
-                readOnly
-              />
-            </div>
-            <button className="signup-black-verify-button" onClick={profileStep.onAddressSearch}>주소 검색</button>
-          </div>
-          <div className={`signup-address-input-box signup-address-input-box--full ${profileStep.errors.address ? 'signup-address-input-box--error' : ''}`}>
-            <input
-              className="signup-form-input"
-              type="text"
-              placeholder="기본주소"
-              value={profileStep.address}
-              readOnly
-            />
-          </div>
-          <div className={`signup-address-input-box signup-address-input-box--full ${profileStep.errors.address ? 'signup-address-input-box--error' : ''}`}>
-            <input
-              className="signup-form-input"
-              type="text"
-              placeholder="상세주소를 입력해주세요"
-              value={profileStep.addressDetail}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onAddressDetailChange(e.target.value)}
-              onBlur={profileStep.onAddressDetailBlur}
-            />
-          </div>
-          {profileStep.errors.address && (
-            <span className="signup-error">{profileStep.errors.address}</span>
-          )}
-        </div>
-      </div>
+      <AddressInputForm
+        addressName={profileStep.addressName}
+        postalCode={profileStep.zonecode}
+        address={profileStep.address}
+        addressDetail={profileStep.addressDetail}
+        onAddressNameChange={profileStep.onAddressNameChange}
+        onAddressDetailChange={profileStep.onAddressDetailChange}
+        onAddressSearch={profileStep.onAddressSearchResult}
+        onAddressNameBlur={profileStep.onAddressNameBlur}
+        onAddressDetailBlur={profileStep.onAddressDetailBlur}
+        onSearchError={profileStep.onAddressSearchError}
+        errors={{
+          addressName: profileStep.errors.addressName || undefined,
+          address: profileStep.errors.address || undefined,
+        }}
+      />
 
       <div className="signup-text-field">
         <label className="signup-label">생년월일</label>
