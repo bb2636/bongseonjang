@@ -6,6 +6,7 @@ interface PreparePaymentRequest {
   address: string;
   addressDetail?: string;
   deliveryRequest?: string;
+  paymentMethod: 'card' | 'bank' | 'vbank';
 }
 
 interface PreparePaymentResponse {

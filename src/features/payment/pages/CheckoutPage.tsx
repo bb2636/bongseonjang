@@ -130,6 +130,7 @@ export function CheckoutPage() {
         address: defaultAddress.address,
         addressDetail: defaultAddress.addressDetail,
         deliveryRequest: finalDeliveryRequest,
+        paymentMethod,
       });
 
       if (!window.AUTHNICE) {

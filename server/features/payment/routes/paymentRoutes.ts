@@ -59,7 +59,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.userId;
-    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl } = req.body;
+    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod } = req.body;
 
     if (!selectedItemIds || !Array.isArray(selectedItemIds) || selectedItemIds.length === 0) {
       return res.status(400).json({ error: '결제할 상품을 선택해주세요' });
@@ -162,10 +162,17 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       await orderItemRepository.save(orderItem);
     }
 
+    const paymentMethodMap: Record<string, 'card' | 'bank_transfer' | 'virtual_account'> = {
+      'card': 'card',
+      'bank': 'bank_transfer',
+      'vbank': 'virtual_account',
+    };
+    const mappedMethod = paymentMethodMap[paymentMethod] || 'card';
+
     const payment = paymentRepository.create({
       orderId: order.id,
       status: 'pending',
-      method: 'card',
+      method: mappedMethod,
       amount: finalAmount,
       pgProvider: 'nicepay',
     });
