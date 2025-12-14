@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
+import { fetchDefaultAddress } from '../../address/api/addressApi';
 import { preparePayment } from '../api/paymentApi';
 import { useToast } from '../../../contexts/ToastContext';
 import './CheckoutPage.css';
@@ -36,13 +37,30 @@ export function CheckoutPage() {
   const [deliveryRequest, setDeliveryRequest] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const { data: cart, isLoading } = useQuery({
+  const { data: cart, isLoading: isCartLoading } = useQuery({
     queryKey: ['cart'],
     queryFn: fetchCart,
   });
 
+  const { data: defaultAddress, isLoading: isAddressLoading } = useQuery({
+    queryKey: ['defaultAddress'],
+    queryFn: fetchDefaultAddress,
+  });
+
+  const isLoading = isCartLoading || isAddressLoading;
+
   const selectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
   const totalAmount = selectedItems.reduce((sum, item) => sum + item.totalPrice, 0);
+
+  useEffect(() => {
+    if (defaultAddress) {
+      setRecipientName(defaultAddress.recipientName);
+      setRecipientPhone(defaultAddress.recipientPhone);
+      setPostalCode(defaultAddress.postalCode);
+      setAddress(defaultAddress.address);
+      setAddressDetail(defaultAddress.addressDetail || '');
+    }
+  }, [defaultAddress]);
 
   useEffect(() => {
     if (!isLoading && selectedItemIds.length === 0) {
