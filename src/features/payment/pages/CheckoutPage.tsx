@@ -6,6 +6,7 @@ import { fetchDefaultAddress } from '../../address/api/addressApi';
 import { preparePayment } from '../api/paymentApi';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
+import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
 import './CheckoutPage.css';
 
 declare global {
@@ -47,18 +48,21 @@ export function CheckoutPage() {
   const [pointInput, setPointInput] = useState('');
   const [usedPoints, setUsedPoints] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
   const [termsAgreed, setTermsAgreed] = useState(false);
 
   const { data: cart, isLoading: isCartLoading } = useQuery({
     queryKey: ['cart'],
     queryFn: fetchCart,
+    staleTime: 1000 * 60 * 5,
   });
 
   const { data: defaultAddress, isLoading: isAddressLoading } = useQuery({
-    queryKey: ['defaultAddress', user?.id],
+    queryKey: ['defaultAddress'],
     queryFn: fetchDefaultAddress,
     enabled: !!user,
+    staleTime: 1000 * 60 * 5,
   });
 
   const isLoading = isCartLoading || isAddressLoading;
@@ -114,6 +118,7 @@ export function CheckoutPage() {
     }
 
     setIsProcessing(true);
+    setPaymentStep('preparing');
 
     const finalDeliveryRequest = deliveryRequest === '직접 입력' 
       ? customDeliveryRequest 
@@ -133,11 +138,15 @@ export function CheckoutPage() {
         paymentMethod,
       });
 
+      setPaymentStep('connecting');
+
       if (!window.AUTHNICE) {
         showToast('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.', 'error');
         setIsProcessing(false);
         return;
       }
+
+      setPaymentStep('waiting');
 
       window.AUTHNICE.requestPay({
         clientId: paymentData.clientKey,
@@ -178,6 +187,7 @@ export function CheckoutPage() {
 
   return (
     <div className="checkout-page">
+      {isProcessing && <PaymentLoadingOverlay step={paymentStep} />}
       <header className="checkout-header">
         <button className="checkout-back-button" onClick={() => navigate(-1)}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">

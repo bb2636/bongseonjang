@@ -8,6 +8,7 @@ import {
   removeSelectedItems,
   type CartDto,
 } from '../api/cartApi';
+import { fetchDefaultAddress } from '../../address/api/addressApi';
 
 export function useCart() {
   const queryClient = useQueryClient();
@@ -93,9 +94,16 @@ export function useCart() {
 
   const handleOrder = useCallback(() => {
     if (selectedItems.size === 0) return;
+    
+    queryClient.prefetchQuery({
+      queryKey: ['defaultAddress'],
+      queryFn: fetchDefaultAddress,
+      staleTime: 1000 * 60 * 5,
+    });
+    
     const itemIds = Array.from(selectedItems).join(',');
     navigate(`/checkout?items=${itemIds}`);
-  }, [navigate, selectedItems]);
+  }, [navigate, selectedItems, queryClient]);
 
   const isAllSelected = useMemo(() => {
     if (!cart || cart.items.length === 0) return false;
