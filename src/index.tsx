@@ -16,6 +16,11 @@ const queryClient = new QueryClient({
   },
 });
 
+const initialLoader = document.getElementById('initial-loader');
+if (initialLoader) {
+  initialLoader.classList.add('hidden');
+}
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
