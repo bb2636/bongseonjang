@@ -8,6 +8,7 @@ interface AddressSelectBottomSheetProps {
   selectedAddressId: string | null;
   onSelect: (address: AddressResponse) => void;
   onEdit?: (address: AddressResponse) => void;
+  onAddNew?: () => void;
 }
 
 export default function AddressSelectBottomSheet({
@@ -17,6 +18,7 @@ export default function AddressSelectBottomSheet({
   selectedAddressId,
   onSelect,
   onEdit,
+  onAddNew,
 }: AddressSelectBottomSheetProps) {
   const handleAddressClick = (address: AddressResponse) => {
     onSelect(address);
@@ -105,6 +107,21 @@ export default function AddressSelectBottomSheet({
               </div>
             );
           })}
+        </div>
+
+        <div className="address-select-sheet__footer">
+          <button
+            type="button"
+            className="address-select-sheet__add-button"
+            onClick={() => {
+              onClose();
+              if (onAddNew) {
+                onAddNew();
+              }
+            }}
+          >
+            새 배송지 추가
+          </button>
         </div>
       </div>
     </>

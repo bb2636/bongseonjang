@@ -510,6 +510,7 @@ export function CheckoutPage() {
           hasUserSelectedAddress.current = true;
           setSelectedAddress(address);
         }}
+        onAddNew={() => navigate('/address/add')}
       />
     </div>
   );
