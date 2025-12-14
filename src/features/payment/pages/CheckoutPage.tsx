@@ -24,6 +24,15 @@ declare global {
   }
 }
 
+const DELIVERY_REQUEST_OPTIONS = [
+  '배송 메세지를 선택해주세요',
+  '문 앞에 놓아주세요',
+  '경비실에 맡겨주세요',
+  '배송 전 연락 부탁드립니다',
+  '부재 시 연락 주세요',
+  '직접 입력',
+];
+
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -31,12 +40,11 @@ export function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const selectedItemIds = searchParams.get('items')?.split(',') || [];
 
-  const [recipientName, setRecipientName] = useState('');
-  const [recipientPhone, setRecipientPhone] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [address, setAddress] = useState('');
-  const [addressDetail, setAddressDetail] = useState('');
   const [deliveryRequest, setDeliveryRequest] = useState('');
+  const [customDeliveryRequest, setCustomDeliveryRequest] = useState('');
+  const [isProductsExpanded, setIsProductsExpanded] = useState(true);
+  const [pointInput, setPointInput] = useState('');
+  const [usedPoints, setUsedPoints] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { data: cart, isLoading: isCartLoading } = useQuery({
@@ -53,17 +61,9 @@ export function CheckoutPage() {
   const isLoading = isCartLoading || isAddressLoading;
 
   const selectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
-  const totalAmount = selectedItems.reduce((sum, item) => sum + item.totalPrice, 0);
-
-  useEffect(() => {
-    if (defaultAddress) {
-      setRecipientName(defaultAddress.recipientName);
-      setRecipientPhone(defaultAddress.recipientPhone);
-      setPostalCode(defaultAddress.postalCode);
-      setAddress(defaultAddress.address);
-      setAddressDetail(defaultAddress.addressDetail || '');
-    }
-  }, [defaultAddress]);
+  const productAmount = selectedItems.reduce((sum, item) => sum + item.totalPrice, 0);
+  const availablePoints = 3000;
+  const finalAmount = productAmount - usedPoints;
 
   useEffect(() => {
     if (!isLoading && selectedItemIds.length === 0) {
@@ -72,11 +72,36 @@ export function CheckoutPage() {
     }
   }, [isLoading, selectedItemIds, navigate, showToast]);
 
+  const handleDeliveryRequestChange = (value: string) => {
+    setDeliveryRequest(value);
+    if (value !== '직접 입력') {
+      setCustomDeliveryRequest('');
+    }
+  };
+
+  const handlePointInputChange = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setPointInput(numericValue);
+  };
+
+  const handleUseAllPoints = () => {
+    const maxUsable = Math.min(availablePoints, productAmount);
+    setPointInput(maxUsable.toString());
+    setUsedPoints(maxUsable);
+  };
+
+  const handleApplyPoints = () => {
+    const points = parseInt(pointInput) || 0;
+    const maxUsable = Math.min(points, availablePoints, productAmount);
+    setUsedPoints(maxUsable);
+    setPointInput(maxUsable.toString());
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!recipientName || !recipientPhone || !postalCode || !address) {
-      showToast('배송지 정보를 모두 입력해주세요', 'error');
+    if (!defaultAddress) {
+      showToast('배송지를 등록해주세요', 'error');
       return;
     }
 
@@ -87,15 +112,21 @@ export function CheckoutPage() {
 
     setIsProcessing(true);
 
+    const finalDeliveryRequest = deliveryRequest === '직접 입력' 
+      ? customDeliveryRequest 
+      : deliveryRequest === '배송 메세지를 선택해주세요' 
+        ? '' 
+        : deliveryRequest;
+
     try {
       const paymentData = await preparePayment({
         selectedItemIds,
-        recipientName,
-        recipientPhone,
-        postalCode,
-        address,
-        addressDetail,
-        deliveryRequest,
+        recipientName: defaultAddress.recipientName,
+        recipientPhone: defaultAddress.recipientPhone,
+        postalCode: defaultAddress.postalCode,
+        address: defaultAddress.address,
+        addressDetail: defaultAddress.addressDetail,
+        deliveryRequest: finalDeliveryRequest,
       });
 
       if (!window.AUTHNICE) {
@@ -123,6 +154,15 @@ export function CheckoutPage() {
     }
   };
 
+  const formatPhoneNumber = (phone: string) => {
+    if (!phone) return '';
+    const cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length === 11) {
+      return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(7)}`;
+    }
+    return phone;
+  };
+
   if (isLoading) {
     return (
       <div className="checkout-page">
@@ -144,125 +184,209 @@ export function CheckoutPage() {
       </header>
 
       <form className="checkout-form" onSubmit={handleSubmit}>
-        <section className="checkout-section">
-          <h2 className="checkout-section-title">배송지 정보</h2>
-          
-          <div className="checkout-field">
-            <label className="checkout-label">받는 분 *</label>
-            <input
-              type="text"
-              className="checkout-input"
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-              placeholder="이름을 입력하세요"
-              required
-            />
-          </div>
-
-          <div className="checkout-field">
-            <label className="checkout-label">연락처 *</label>
-            <input
-              type="tel"
-              className="checkout-input"
-              value={recipientPhone}
-              onChange={(e) => setRecipientPhone(e.target.value)}
-              placeholder="연락처를 입력하세요"
-              required
-            />
-          </div>
-
-          <div className="checkout-field">
-            <label className="checkout-label">우편번호 *</label>
-            <input
-              type="text"
-              className="checkout-input"
-              value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
-              placeholder="우편번호를 입력하세요"
-              required
-            />
-          </div>
-
-          <div className="checkout-field">
-            <label className="checkout-label">주소 *</label>
-            <input
-              type="text"
-              className="checkout-input"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="주소를 입력하세요"
-              required
-            />
-          </div>
-
-          <div className="checkout-field">
-            <label className="checkout-label">상세주소</label>
-            <input
-              type="text"
-              className="checkout-input"
-              value={addressDetail}
-              onChange={(e) => setAddressDetail(e.target.value)}
-              placeholder="상세주소를 입력하세요"
-            />
-          </div>
-
-          <div className="checkout-field">
-            <label className="checkout-label">배송 요청사항</label>
-            <input
-              type="text"
-              className="checkout-input"
-              value={deliveryRequest}
-              onChange={(e) => setDeliveryRequest(e.target.value)}
-              placeholder="예: 문 앞에 놓아주세요"
-            />
-          </div>
-        </section>
-
-        <section className="checkout-section">
-          <h2 className="checkout-section-title">주문 상품 ({selectedItems.length}개)</h2>
-          <div className="checkout-items">
-            {selectedItems.map(item => (
-              <div key={item.id} className="checkout-item">
-                <img src={item.productImageUrl} alt={item.productName} className="checkout-item-image" />
-                <div className="checkout-item-info">
-                  <p className="checkout-item-name">{item.productName}</p>
-                  {(item.mainOptionName || item.subOptionName) && (
-                    <p className="checkout-item-option">
-                      {[item.mainOptionName, item.subOptionName].filter(Boolean).join(' / ')}
-                    </p>
+        <section className="checkout-address-card">
+          {defaultAddress ? (
+            <>
+              <div className="checkout-address-header">
+                <div className="checkout-address-name-row">
+                  <span className="checkout-address-name">{defaultAddress.addressName}</span>
+                  {defaultAddress.isDefault && (
+                    <span className="checkout-address-default-label">기본배송지</span>
                   )}
-                  <p className="checkout-item-quantity">수량: {item.quantity}개</p>
-                  <p className="checkout-item-price">{item.totalPrice.toLocaleString()}원</p>
                 </div>
+                <button type="button" className="checkout-address-change-button">
+                  변경
+                </button>
               </div>
-            ))}
+              <div className="checkout-address-details">
+                <p className="checkout-address-detail-text">{defaultAddress.recipientName}</p>
+                <p className="checkout-address-detail-text">
+                  ({defaultAddress.postalCode}) {defaultAddress.address} {defaultAddress.addressDetail}
+                </p>
+                <p className="checkout-address-detail-text">
+                  {formatPhoneNumber(defaultAddress.recipientPhone)}
+                </p>
+              </div>
+            </>
+          ) : (
+            <div className="checkout-no-address">
+              <p>등록된 배송지가 없습니다</p>
+              <button type="button" className="checkout-add-address-button">
+                배송지 등록
+              </button>
+            </div>
+          )}
+        </section>
+
+        <div className="checkout-divider" />
+
+        <section className="checkout-section">
+          <div className="checkout-section-header">
+            <h2 className="checkout-section-title">배송 요청사항</h2>
+          </div>
+          <div className="checkout-delivery-request">
+            <select
+              className="checkout-select"
+              value={deliveryRequest}
+              onChange={(e) => handleDeliveryRequestChange(e.target.value)}
+            >
+              {DELIVERY_REQUEST_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            {deliveryRequest === '직접 입력' && (
+              <input
+                type="text"
+                className="checkout-input"
+                value={customDeliveryRequest}
+                onChange={(e) => setCustomDeliveryRequest(e.target.value)}
+                placeholder="배송 요청사항을 입력해주세요"
+              />
+            )}
           </div>
         </section>
 
         <section className="checkout-section">
-          <h2 className="checkout-section-title">결제 정보</h2>
+          <div 
+            className="checkout-section-header checkout-section-header--clickable"
+            onClick={() => setIsProductsExpanded(!isProductsExpanded)}
+          >
+            <h2 className="checkout-section-title">
+              주문상품 <span className="checkout-section-count">{selectedItems.length.toString().padStart(2, '0')}</span>
+            </h2>
+            <svg 
+              className={`checkout-expand-icon ${isProductsExpanded ? 'checkout-expand-icon--expanded' : ''}`}
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none"
+            >
+              <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          {isProductsExpanded && (
+            <div className="checkout-items">
+              {selectedItems.map(item => (
+                <div key={item.id} className="checkout-item">
+                  <img src={item.productImageUrl} alt={item.productName} className="checkout-item-image" />
+                  <div className="checkout-item-info">
+                    <p className="checkout-item-name">{item.productName}</p>
+                    <p className="checkout-item-quantity">수량 : {item.quantity}개</p>
+                    <p className="checkout-item-price">{item.totalPrice.toLocaleString()}원</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="checkout-section">
+          <div 
+            className="checkout-section-header checkout-section-header--clickable"
+          >
+            <h2 className="checkout-section-title">포인트 할인</h2>
+            <svg 
+              className="checkout-expand-icon checkout-expand-icon--expanded"
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none"
+            >
+              <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div className="checkout-point-section">
+            <div className="checkout-point-input-row">
+              <div className="checkout-point-input-wrapper">
+                <input
+                  type="text"
+                  className="checkout-point-input"
+                  value={pointInput}
+                  onChange={(e) => handlePointInputChange(e.target.value)}
+                  onBlur={handleApplyPoints}
+                  placeholder="0"
+                />
+                {pointInput && (
+                  <button 
+                    type="button" 
+                    className="checkout-point-clear"
+                    onClick={() => { setPointInput(''); setUsedPoints(0); }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" fill="rgba(0,0,0,0.3)"/>
+                      <path d="M8 8L16 16M16 8L8 16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
+              <button 
+                type="button" 
+                className="checkout-point-all-button"
+                onClick={handleUseAllPoints}
+              >
+                전액 사용
+              </button>
+            </div>
+            <p className="checkout-point-available">
+              사용 가능 포인트 <span className="checkout-point-value">{availablePoints.toLocaleString()}p</span>
+            </p>
+          </div>
+        </section>
+
+        <section className="checkout-section">
+          <div 
+            className="checkout-section-header checkout-section-header--clickable"
+          >
+            <h2 className="checkout-section-title">쿠폰 할인</h2>
+            <svg 
+              className="checkout-expand-icon checkout-expand-icon--expanded"
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none"
+            >
+              <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div className="checkout-coupon-section">
+            <select className="checkout-select">
+              <option>적용할 수 있는 쿠폰이 없습니다</option>
+            </select>
+            <p className="checkout-coupon-available">
+              보유쿠폰 <span className="checkout-coupon-value">3장</span>
+            </p>
+          </div>
+        </section>
+
+        <section className="checkout-section checkout-section--summary">
+          <div className="checkout-section-header">
+            <h2 className="checkout-section-title">최종 결제금액</h2>
+          </div>
           <div className="checkout-summary">
             <div className="checkout-summary-row">
-              <span>상품금액</span>
-              <span>{totalAmount.toLocaleString()}원</span>
+              <span className="checkout-summary-label">총 상품금액</span>
+              <span className="checkout-summary-value">{productAmount.toLocaleString()}원</span>
             </div>
-            <div className="checkout-summary-row">
-              <span>배송비</span>
-              <span className="checkout-shipping-note">배송비 선불 (별도 안내)</span>
-            </div>
-            <div className="checkout-summary-total">
-              <span>총 결제금액</span>
-              <span className="checkout-total-price">{totalAmount.toLocaleString()}원</span>
-            </div>
+            {usedPoints > 0 && (
+              <div className="checkout-summary-row">
+                <span className="checkout-summary-label">포인트 할인</span>
+                <span className="checkout-summary-value checkout-summary-value--discount">-{usedPoints.toLocaleString()}원</span>
+              </div>
+            )}
+          </div>
+          <div className="checkout-final-amount">
+            <span className="checkout-final-amount-value">{finalAmount.toLocaleString()}원</span>
           </div>
         </section>
 
         <button
           type="submit"
           className="checkout-submit-button"
-          disabled={isProcessing}
+          disabled={isProcessing || !defaultAddress}
         >
-          {isProcessing ? '처리 중...' : `${totalAmount.toLocaleString()}원 결제하기`}
+          {isProcessing ? '처리 중...' : `${finalAmount.toLocaleString()}원 결제하기`}
         </button>
       </form>
     </div>
