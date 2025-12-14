@@ -1,10 +1,15 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useOrderDetail } from '../hooks/useOrderDetail';
 import { OrderDetailView } from '../views/OrderDetailView';
 
 export function PaymentCompletePage() {
   const { orderId } = useParams<{ orderId: string }>();
-  const { order, isLoading, isError, onBack, onCartClick } = useOrderDetail(orderId || '');
+  const navigate = useNavigate();
+  const { order, isLoading, isError, onCartClick } = useOrderDetail(orderId || '');
+
+  const handleBack = () => {
+    navigate('/', { replace: true });
+  };
 
   return (
     <OrderDetailView
@@ -12,7 +17,7 @@ export function PaymentCompletePage() {
       order={order}
       isLoading={isLoading}
       isError={isError}
-      onBack={onBack}
+      onBack={handleBack}
       onCartClick={onCartClick}
     />
   );
