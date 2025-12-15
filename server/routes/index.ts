@@ -20,6 +20,7 @@ import { orderHistoryRoutes } from '../features/orderHistory';
 import { paymentRoutes } from '../features/payment/routes/paymentRoutes';
 import { addressRoutes } from '../features/address';
 import { uploadRoutes } from '../features/upload';
+import { noticeRoutes } from '../features/notice';
 
 const router = Router();
 
@@ -44,5 +45,6 @@ router.use('/orders', orderHistoryRoutes);
 router.use('/payment', paymentRoutes);
 router.use('/address', addressRoutes);
 router.use('/upload', uploadRoutes);
+router.use('/admin/notices', noticeRoutes);
 
 export default router;
