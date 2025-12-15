@@ -100,19 +100,19 @@
 }
 
 .notice-list__th--date {
-  width: 150px;
+  width: 15%;
 }
 
 .notice-list__th--type {
-  width: 120px;
+  width: 15%;
 }
 
 .notice-list__th--title {
-  flex: 1;
+  width: 55%;
 }
 
 .notice-list__th--action {
-  width: 100px;
+  width: 15%;
   text-align: center;
 }
 
