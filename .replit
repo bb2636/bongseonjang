@@ -81,8 +81,8 @@ NICEPAY_SECRET_KEY = "e17c4f4a97974ccbbeae23c2bceeba1d"
 SOCIAL_REDIRECT_BASE_URL = "https://dc7d2e6a-5ba1-4d01-aad5-50c0e084c051-00-2s75sl6eze9ks.janeway.replit.dev"
 
 [userenv.shared]
-PRIVATE_OBJECT_DIR = "bongseonjang"
-PUBLIC_OBJECT_SEARCH_PATHS = "bongseonjang"
+PRIVATE_OBJECT_DIR = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
+PUBLIC_OBJECT_SEARCH_PATHS = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
 
 [objectStorage]
 defaultBucketID = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
