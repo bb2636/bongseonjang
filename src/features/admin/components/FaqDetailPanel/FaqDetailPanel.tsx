@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { ConfirmDialog } from '../ConfirmDialog';
+import { useToast } from '../../../../contexts/ToastContext';
 import './FaqDetailPanel.css';
 
 interface FaqCategoryOption {
@@ -94,6 +96,7 @@ function CustomDropdown({ options, value, onChange }: CustomDropdownProps) {
 }
 
 export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved }: FaqDetailPanelProps) {
+  const { showToast } = useToast();
   const [faq, setFaq] = useState<FaqDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -102,6 +105,8 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
   const [editCategoryId, setEditCategoryId] = useState<number | null>(null);
   const [editIsVisible, setEditIsVisible] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (isOpen && faqId) {
@@ -143,12 +148,16 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
     setIsEditing(false);
   };
 
-  const handleSave = async () => {
+  const handleSaveClick = () => {
     if (!editTitle.trim() || !editContent.trim()) {
-      alert('제목과 내용을 입력해주세요.');
+      showToast('제목과 내용을 입력해주세요.', 'warning');
       return;
     }
+    setShowSaveConfirm(true);
+  };
 
+  const handleSaveConfirm = async () => {
+    setShowSaveConfirm(false);
     setIsSaving(true);
     try {
       const response = await fetch(`/api/admin/faqs/${faqId}`, {
@@ -166,20 +175,24 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
         await fetchFaq();
         setIsEditing(false);
         onSaved();
+        showToast('FAQ가 수정되었습니다.', 'success');
       } else {
-        alert('저장에 실패했습니다.');
+        showToast('저장에 실패했습니다.', 'error');
       }
     } catch (error) {
       console.error('Failed to save FAQ:', error);
-      alert('저장에 실패했습니다.');
+      showToast('저장에 실패했습니다.', 'error');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleDelete = async () => {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
 
+  const handleDeleteConfirm = async () => {
+    setShowDeleteConfirm(false);
     try {
       const response = await fetch(`/api/admin/faqs/${faqId}`, {
         method: 'DELETE',
@@ -187,12 +200,13 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
       if (response.ok) {
         onClose();
         onSaved();
+        showToast('FAQ가 삭제되었습니다.', 'success');
       } else {
-        alert('삭제에 실패했습니다.');
+        showToast('삭제에 실패했습니다.', 'error');
       }
     } catch (error) {
       console.error('Failed to delete FAQ:', error);
-      alert('삭제에 실패했습니다.');
+      showToast('삭제에 실패했습니다.', 'error');
     }
   };
 
@@ -324,7 +338,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
               <button 
                 type="button" 
                 className="faq-panel__button faq-panel__button--delete"
-                onClick={handleDelete}
+                onClick={handleDeleteClick}
               >
                 삭제
               </button>
@@ -338,7 +352,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
               <button 
                 type="button" 
                 className="faq-panel__button faq-panel__button--save"
-                onClick={handleSave}
+                onClick={handleSaveClick}
                 disabled={isSaving}
               >
                 {isSaving ? '저장 중...' : '저장'}
@@ -355,6 +369,26 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={showSaveConfirm}
+        title="내용을 저장하시겠습니까?"
+        subtitle="저장 즉시 사용자에게 노출됩니다"
+        cancelText="취소"
+        confirmText="확인"
+        onCancel={() => setShowSaveConfirm(false)}
+        onConfirm={handleSaveConfirm}
+      />
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="FAQ를 삭제하시겠습니까?"
+        subtitle="삭제된 FAQ는 복구할 수 없습니다"
+        cancelText="취소"
+        confirmText="삭제"
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDeleteConfirm}
+      />
     </>
   );
 }
