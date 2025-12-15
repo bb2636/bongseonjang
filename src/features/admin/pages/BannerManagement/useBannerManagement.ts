@@ -46,6 +46,7 @@ export function useBannerManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reorderError, setReorderError] = useState<string | null>(null);
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
 
   const fetchPositions = useCallback(async () => {
     try {
@@ -92,8 +93,16 @@ export function useBannerManagement() {
   }, []);
 
   const handleAddBanner = useCallback(() => {
-    console.log('Add banner clicked');
+    setIsFormDialogOpen(true);
   }, []);
+
+  const handleCloseFormDialog = useCallback(() => {
+    setIsFormDialogOpen(false);
+  }, []);
+
+  const handleFormSuccess = useCallback(() => {
+    fetchBanners(activeTab);
+  }, [activeTab, fetchBanners]);
 
   const handleEditBanner = useCallback((bannerId: number) => {
     console.log('Edit banner:', bannerId);
@@ -161,15 +170,19 @@ export function useBannerManagement() {
     tabs: BANNER_TABS,
     activeTab,
     banners: filteredBanners,
+    positions,
     totalCount,
     isLoading,
     error,
     reorderError,
+    isFormDialogOpen,
     handleTabChange,
     handleAddBanner,
     handleEditBanner,
     handleReorderBanners,
     handleDismissReorderError,
+    handleCloseFormDialog,
+    handleFormSuccess,
     getPositionName,
   };
 }

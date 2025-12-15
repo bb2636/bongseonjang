@@ -1,0 +1,338 @@
+.banner-form-dialog__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.banner-form-dialog {
+  display: flex;
+  flex-direction: column;
+  width: 1101px;
+  max-height: 90vh;
+  background: #FFFFFF;
+  box-shadow: 4px 4px 74px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.banner-form-dialog__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 16px 15px 20px;
+  height: 72px;
+  background: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.banner-form-dialog__header-spacer {
+  width: 22px;
+}
+
+.banner-form-dialog__title {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #292929;
+  margin: 0;
+}
+
+.banner-form-dialog__close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.banner-form-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.banner-form-dialog__section {
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-form-dialog__section-title {
+  padding: 16px 20px;
+  margin: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+  color: #0C0C0C;
+}
+
+.banner-form-dialog__form-row {
+  display: flex;
+  flex-direction: row;
+  padding: 0 20px;
+  gap: 16px;
+}
+
+.banner-form-dialog__form-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+}
+
+.banner-form-dialog__label {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.banner-form-dialog__input {
+  display: flex;
+  align-items: center;
+  padding: 14px 12px;
+  background: rgba(12, 12, 12, 0.04);
+  border: none;
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  outline: none;
+}
+
+.banner-form-dialog__input::placeholder {
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.banner-form-dialog__checkbox-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 0;
+}
+
+.banner-form-dialog__checkbox-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.banner-form-dialog__checkbox {
+  display: none;
+}
+
+.banner-form-dialog__checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid rgba(12, 12, 12, 0.3);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.banner-form-dialog__checkbox:checked + .banner-form-dialog__checkbox-custom {
+  background: #239DFF;
+  border-color: #239DFF;
+}
+
+.banner-form-dialog__checkbox:checked + .banner-form-dialog__checkbox-custom::after {
+  content: '';
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid #FFFFFF;
+  border-bottom: 2px solid #FFFFFF;
+  transform: rotate(-45deg);
+  margin-bottom: 2px;
+}
+
+.banner-form-dialog__checkbox-text {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.banner-form-dialog__divider {
+  width: 100%;
+  height: 6px;
+  background: rgba(12, 12, 12, 0.06);
+}
+
+.banner-form-dialog__image-section {
+  display: flex;
+  flex-direction: row;
+  padding: 0 20px;
+  gap: 16px;
+}
+
+.banner-form-dialog__image-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.banner-form-dialog__image-upload {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.banner-form-dialog__upload-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 6px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banner-form-dialog__upload-button:hover {
+  background: rgba(12, 12, 12, 0.04);
+  border-color: rgba(12, 12, 12, 0.2);
+}
+
+.banner-form-dialog__file-name {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.banner-form-dialog__file-input {
+  display: none;
+}
+
+.banner-form-dialog__hint {
+  margin: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 140%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.banner-form-dialog__preview {
+  margin-top: 12px;
+}
+
+.banner-form-dialog__preview-image {
+  max-width: 100%;
+  max-height: 150px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.banner-form-dialog__error {
+  padding: 12px 20px;
+  background: rgba(255, 59, 48, 0.1);
+  color: #FF3B30;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.banner-form-dialog__footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 12px;
+  border-top: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.banner-form-dialog__reset-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banner-form-dialog__reset-button:hover:not(:disabled) {
+  background: rgba(12, 12, 12, 0.04);
+}
+
+.banner-form-dialog__reset-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.banner-form-dialog__submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: #239DFF;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banner-form-dialog__submit-button:hover:not(:disabled) {
+  background: #1A8CE6;
+}
+
+.banner-form-dialog__submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

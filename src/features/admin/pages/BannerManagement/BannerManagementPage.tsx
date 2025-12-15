@@ -1,5 +1,6 @@
 import { AdminLayout } from '../../layouts';
 import { BannerManagementView } from './BannerManagementView';
+import { BannerFormDialog } from './BannerFormDialog';
 import { useBannerManagement } from './useBannerManagement';
 
 export function BannerManagementPage() {
@@ -7,15 +8,19 @@ export function BannerManagementPage() {
     tabs,
     activeTab,
     banners,
+    positions,
     totalCount,
     isLoading,
     error,
     reorderError,
+    isFormDialogOpen,
     handleTabChange,
     handleAddBanner,
     handleEditBanner,
     handleReorderBanners,
     handleDismissReorderError,
+    handleCloseFormDialog,
+    handleFormSuccess,
     getPositionName,
   } = useBannerManagement();
 
@@ -38,6 +43,13 @@ export function BannerManagementPage() {
         onReorderBanners={handleReorderBanners}
         onDismissReorderError={handleDismissReorderError}
         getPositionName={getPositionName}
+      />
+      <BannerFormDialog
+        isOpen={isFormDialogOpen}
+        positions={positions}
+        defaultPositionCode={activeTab}
+        onClose={handleCloseFormDialog}
+        onSuccess={handleFormSuccess}
       />
     </AdminLayout>
   );
