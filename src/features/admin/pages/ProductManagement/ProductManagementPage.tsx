@@ -1,6 +1,7 @@
 import { AdminLayout } from '../../layouts';
 import { useProductManagement } from './useProductManagement';
 import { ProductManagementView } from './ProductManagementView';
+import { ProductFormDialog } from './ProductFormDialog';
 
 export function ProductManagementPage() {
   const {
@@ -9,8 +10,11 @@ export function ProductManagementPage() {
     isLoading,
     error,
     searchQuery,
+    isFormDialogOpen,
     onSearchChange,
     onAddProduct,
+    onCloseFormDialog,
+    onFormSuccess,
     onViewProduct,
     formatPrice,
     getExposureLabel,
@@ -32,6 +36,11 @@ export function ProductManagementPage() {
         onViewProduct={onViewProduct}
         formatPrice={formatPrice}
         getExposureLabel={getExposureLabel}
+      />
+      <ProductFormDialog
+        isOpen={isFormDialogOpen}
+        onClose={onCloseFormDialog}
+        onSuccess={onFormSuccess}
       />
     </AdminLayout>
   );

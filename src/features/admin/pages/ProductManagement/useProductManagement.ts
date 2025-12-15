@@ -30,6 +30,7 @@ export function useProductManagement() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const limit = 20;
 
   const fetchProducts = useCallback(async () => {
@@ -69,7 +70,15 @@ export function useProductManagement() {
   };
 
   const handleAddProduct = () => {
-    console.log('Add product clicked');
+    setIsFormDialogOpen(true);
+  };
+
+  const handleCloseFormDialog = () => {
+    setIsFormDialogOpen(false);
+  };
+
+  const handleFormSuccess = () => {
+    fetchProducts();
   };
 
   const handleViewProduct = (product: AdminProduct) => {
@@ -96,8 +105,11 @@ export function useProductManagement() {
     isLoading,
     error,
     searchQuery,
+    isFormDialogOpen,
     onSearchChange: handleSearchChange,
     onAddProduct: handleAddProduct,
+    onCloseFormDialog: handleCloseFormDialog,
+    onFormSuccess: handleFormSuccess,
     onViewProduct: handleViewProduct,
     formatPrice,
     getExposureLabel,

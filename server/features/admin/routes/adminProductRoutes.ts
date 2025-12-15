@@ -170,4 +170,111 @@ router.get('/exposure-categories', async (_req: Request, res: Response) => {
   }
 });
 
+router.get('/categories', async (_req: Request, res: Response) => {
+  try {
+    const categoryRepository = AppDataSource.getRepository(ProductCategory);
+    const categories = await categoryRepository.find({
+      order: { name: 'ASC' },
+    });
+
+    return res.json({
+      categories: categories.map(cat => ({
+        id: cat.id,
+        name: cat.name,
+      })),
+    });
+  } catch (error) {
+    console.error('Failed to get product categories:', error);
+    return res.status(500).json({ error: '카테고리를 불러오는데 실패했습니다' });
+  }
+});
+
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const {
+      name,
+      categoryId,
+      basePrice,
+      description,
+      caution,
+      options,
+      productInfos,
+      shippingInfo,
+      thumbnailUrls,
+      detailUrls,
+    } = req.body;
+
+    if (!name || !categoryId || !basePrice) {
+      return res.status(400).json({ error: '필수 필드를 입력해주세요' });
+    }
+
+    const productRepository = AppDataSource.getRepository(Product);
+    const optionRepository = AppDataSource.getRepository(ProductOption);
+    const imageRepository = AppDataSource.getRepository(ProductImage);
+
+    const product = productRepository.create({
+      name,
+      productCategoryId: categoryId,
+      basePrice,
+      stockQuantity: 0,
+      detailContent: JSON.stringify({
+        description,
+        caution,
+        productInfos,
+        shippingInfo,
+      }),
+    });
+
+    const savedProduct = await productRepository.save(product);
+
+    if (Array.isArray(thumbnailUrls)) {
+      for (let i = 0; i < thumbnailUrls.length; i++) {
+        const image = imageRepository.create({
+          productId: savedProduct.id,
+          imageUrl: thumbnailUrls[i],
+          imageType: 'thumbnail',
+          isThumbnail: i === 0,
+          sortOrder: i,
+        });
+        await imageRepository.save(image);
+      }
+    }
+
+    if (Array.isArray(detailUrls)) {
+      for (let i = 0; i < detailUrls.length; i++) {
+        const image = imageRepository.create({
+          productId: savedProduct.id,
+          imageUrl: detailUrls[i],
+          imageType: 'detail',
+          isThumbnail: false,
+          sortOrder: i,
+        });
+        await imageRepository.save(image);
+      }
+    }
+
+    if (Array.isArray(options) && options.length > 0) {
+      let totalStock = 0;
+      for (let i = 0; i < options.length; i++) {
+        const opt = options[i];
+        const option = optionRepository.create({
+          productId: savedProduct.id,
+          optionName: opt.optionName || '옵션',
+          optionValue: opt.optionValue,
+          price: opt.price,
+          sortOrder: i,
+        });
+        await optionRepository.save(option);
+        totalStock += opt.stock || 0;
+      }
+      await productRepository.update(savedProduct.id, { stockQuantity: totalStock });
+    }
+
+    return res.json({ success: true, productId: savedProduct.id });
+  } catch (error) {
+    console.error('Failed to create product:', error);
+    return res.status(500).json({ error: '상품 등록에 실패했습니다' });
+  }
+});
+
 export { router as adminProductRoutes };

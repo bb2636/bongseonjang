@@ -1,0 +1,438 @@
+.product-form-dialog__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.product-form-dialog {
+  background: #FFFFFF;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.product-form-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.product-form-dialog__header-spacer {
+  width: 22px;
+}
+
+.product-form-dialog__title {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #0C0C0C;
+  margin: 0;
+}
+
+.product-form-dialog__close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.product-form-dialog__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.product-form-dialog__section {
+  margin-bottom: 32px;
+}
+
+.product-form-dialog__section:last-child {
+  margin-bottom: 0;
+}
+
+.product-form-dialog__section-title {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #0C0C0C;
+  margin: 0 0 16px 0;
+}
+
+.product-form-dialog__divider {
+  height: 1px;
+  background: rgba(12, 12, 12, 0.06);
+  margin: 24px 0;
+}
+
+.product-form-dialog__form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.product-form-dialog__form-row:last-child {
+  margin-bottom: 0;
+}
+
+.product-form-dialog__form-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-form-dialog__form-field--half {
+  flex: 0.5;
+}
+
+.product-form-dialog__form-field--third {
+  flex: 0.33;
+}
+
+.product-form-dialog__label {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.product-form-dialog__input {
+  height: 44px;
+  padding: 0 16px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.product-form-dialog__input:focus {
+  border-color: #3B9BD5;
+}
+
+.product-form-dialog__input::placeholder {
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.product-form-dialog__input--small {
+  width: 120px;
+}
+
+.product-form-dialog__select {
+  height: 44px;
+  padding: 0 16px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+  outline: none;
+  cursor: pointer;
+}
+
+.product-form-dialog__textarea {
+  padding: 12px 16px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s ease;
+}
+
+.product-form-dialog__textarea:focus {
+  border-color: #3B9BD5;
+}
+
+.product-form-dialog__textarea-count {
+  text-align: right;
+  font-size: 12px;
+  color: rgba(12, 12, 12, 0.4);
+  margin-top: 4px;
+}
+
+.product-form-dialog__checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.product-form-dialog__checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.product-form-dialog__checkbox-label {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+  cursor: pointer;
+}
+
+.product-form-dialog__images-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.product-form-dialog__image-slot {
+  width: 100px;
+  height: 100px;
+  border: 1px dashed rgba(12, 12, 12, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-form-dialog__image-slot:hover {
+  border-color: #3B9BD5;
+}
+
+.product-form-dialog__image-slot--filled {
+  border-style: solid;
+}
+
+.product-form-dialog__image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-form-dialog__image-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+}
+
+.product-form-dialog__image-add-icon {
+  color: rgba(12, 12, 12, 0.3);
+}
+
+.product-form-dialog__radio-group {
+  display: flex;
+  gap: 24px;
+}
+
+.product-form-dialog__radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.product-form-dialog__radio {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.product-form-dialog__radio-text {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+}
+
+.product-form-dialog__option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-form-dialog__option-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-form-dialog__option-input {
+  flex: 1;
+}
+
+.product-form-dialog__option-input--price {
+  flex: 0 0 120px;
+}
+
+.product-form-dialog__option-input--stock {
+  flex: 0 0 80px;
+}
+
+.product-form-dialog__add-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: #FFFFFF;
+  border: 1px solid #3B9BD5;
+  border-radius: 6px;
+  color: #3B9BD5;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.product-form-dialog__add-button:hover {
+  background: rgba(59, 155, 213, 0.05);
+}
+
+.product-form-dialog__remove-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #FF3B30;
+}
+
+.product-form-dialog__info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.product-form-dialog__info-label-input {
+  flex: 0 0 120px;
+}
+
+.product-form-dialog__info-value-input {
+  flex: 1;
+}
+
+.product-form-dialog__shipping-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.product-form-dialog__shipping-label {
+  flex: 0 0 120px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.product-form-dialog__shipping-value {
+  flex: 1;
+}
+
+.product-form-dialog__error {
+  padding: 12px 24px;
+  background: rgba(255, 59, 48, 0.05);
+  color: #FF3B30;
+  font-size: 14px;
+}
+
+.product-form-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.product-form-dialog__reset-button {
+  padding: 12px 24px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 6px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.product-form-dialog__reset-button:hover {
+  background: rgba(12, 12, 12, 0.04);
+}
+
+.product-form-dialog__submit-button {
+  padding: 12px 24px;
+  background: #3B9BD5;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.product-form-dialog__submit-button:hover {
+  background: #2A8BC5;
+}
+
+.product-form-dialog__submit-button:disabled {
+  background: rgba(12, 12, 12, 0.1);
+  color: rgba(12, 12, 12, 0.4);
+  cursor: not-allowed;
+}
+
+.product-form-dialog__file-input {
+  display: none;
+}
+
+.product-form-dialog__inline-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.product-form-dialog__unit {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.7);
+  white-space: nowrap;
+}
