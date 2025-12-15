@@ -10,6 +10,8 @@ import { CouponApplyAllProducts } from '../../../entity/CouponApplyAllProducts';
 import { CouponApplyCategory } from '../../../entity/CouponApplyCategory';
 import { CouponIssueAllUsers } from '../../../entity/CouponIssueAllUsers';
 import { CouponIssueNewUsers } from '../../../entity/CouponIssueNewUsers';
+import { CouponIssueGrade } from '../../../entity/CouponIssueGrade';
+import { User, MembershipGrade } from '../../../entity/User';
 
 export interface CouponWithDetails extends Coupon {
   discountType: 'fixed' | 'rate' | 'shipping';
@@ -32,6 +34,8 @@ export class CouponRepository {
   private applyCategoryRepo = AppDataSource.getRepository(CouponApplyCategory);
   private issueAllUsersRepo = AppDataSource.getRepository(CouponIssueAllUsers);
   private issueNewUsersRepo = AppDataSource.getRepository(CouponIssueNewUsers);
+  private issueGradeRepo = AppDataSource.getRepository(CouponIssueGrade);
+  private userRepo = AppDataSource.getRepository(User);
 
   async findAvailableCoupons(): Promise<CouponWithDetails[]> {
     const coupons = await this.couponRepo.find({
@@ -157,6 +161,30 @@ export class CouponRepository {
     const issueNewUsers = await this.issueNewUsersRepo.findOne({ where: { couponId } });
     if (issueNewUsers) {
       return { canIssue: true };
+    }
+
+    const issueGrades = await this.issueGradeRepo.find({ where: { couponId } });
+    if (issueGrades.length > 0) {
+      const user = await this.userRepo.findOne({ where: { id: userId } });
+      if (!user) {
+        return { canIssue: false, reason: '사용자를 찾을 수 없습니다' };
+      }
+      
+      const gradeToId: Record<MembershipGrade, number> = {
+        [MembershipGrade.BRONZE]: 1,
+        [MembershipGrade.SILVER]: 2,
+        [MembershipGrade.GOLD]: 3,
+        [MembershipGrade.VIP]: 4,
+      };
+      
+      const userGradeId = gradeToId[user.membershipGrade] || 1;
+      const allowedGradeIds = issueGrades.map(g => g.gradeId);
+      
+      if (allowedGradeIds.includes(userGradeId)) {
+        return { canIssue: true };
+      }
+      
+      return { canIssue: false, reason: '해당 등급 회원만 발급받을 수 있습니다' };
     }
 
     return { canIssue: false, reason: '발급 대상이 아닙니다' };
