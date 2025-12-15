@@ -20,9 +20,6 @@ export class Review {
   @Column({ type: 'text' })
   content!: string;
 
-  @Column({ type: 'text', array: true, nullable: true })
-  imageUrls!: string[] | null;
-
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 

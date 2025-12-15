@@ -35,7 +35,6 @@ export class ReviewService implements ReviewStatsProvider {
       userId,
       rating: request.rating,
       content: request.content,
-      imageUrls: null,
     });
 
     const imageUrls: string[] = [];
