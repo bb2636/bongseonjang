@@ -22,6 +22,7 @@ import { PaymentFailPage } from './features/payment/pages/PaymentFailPage';
 import { NoticeListPage } from './features/notice';
 import { AddressFormPage } from './features/address';
 import { WriteReviewPage } from './features/review';
+import { AdminDashboardPage, AdminPlaceholderPage } from './features/admin';
 import { ProtectedRoute } from './components';
 import './components/ProtectedRoute/ProtectedRoute.css';
 
@@ -61,6 +62,26 @@ export default function App() {
       <Route path="/address/add" element={<ProtectedRoute><AddressFormPage /></ProtectedRoute>} />
       <Route path="/address/edit/:id" element={<ProtectedRoute><AddressFormPage /></ProtectedRoute>} />
       <Route path="/review/write/:productId" element={<ProtectedRoute><WriteReviewPage /></ProtectedRoute>} />
+      
+      {/* Admin Routes */}
+      <Route path="/admin" element={<AdminDashboardPage />} />
+      <Route path="/admin/products" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/products/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/orders" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/orders/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/users" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/users/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/reviews" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/reviews/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/coupons" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/coupons/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/banners" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/banners/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/categories" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/categories/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/settings" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/settings/*" element={<AdminPlaceholderPage />} />
+      
       <Route
         path="*"
         element={
