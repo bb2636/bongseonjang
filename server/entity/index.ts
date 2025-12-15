@@ -52,4 +52,5 @@ export type { TicketCategory, TicketStatus } from './SupportTicket';
 export { SupportMessage } from './SupportMessage';
 export type { MessageSender } from './SupportMessage';
 
-export { Notice, NoticeType } from './Notice';
+export { NoticeType } from './NoticeType';
+export { Notice } from './Notice';

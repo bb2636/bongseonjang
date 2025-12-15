@@ -1,34 +1,30 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-
-export enum NoticeType {
-  GENERAL = 'general',
-  IMPORTANT = 'important',
-  EVENT = 'event',
-}
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { NoticeType } from './NoticeType';
 
 @Entity('notices')
 export class Notice {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'bigint', name: 'type_id' })
+  typeId!: number;
+
+  @Column({ type: 'varchar', length: 200 })
   title!: string;
 
   @Column({ type: 'text' })
   content!: string;
 
-  @Column({
-    type: 'varchar',
-    default: NoticeType.GENERAL,
-  })
-  type!: NoticeType;
+  @Column({ type: 'boolean', default: true, name: 'is_visible' })
+  isVisible!: boolean;
 
-  @Column({ type: 'boolean', default: true })
-  isActive!: boolean;
-
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt!: Date;
+
+  @ManyToOne(() => NoticeType, (noticeType) => noticeType.notices)
+  @JoinColumn({ name: 'type_id' })
+  noticeType!: NoticeType;
 }
