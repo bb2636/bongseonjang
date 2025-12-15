@@ -146,6 +146,20 @@ export function AdminSupportPage() {
     setFaqRefreshTrigger(prev => prev + 1);
   };
 
+  const handleFaqSuccess = (message: string) => {
+    setSnackbar({
+      isOpen: true,
+      title: message,
+    });
+  };
+
+  const handleFaqError = (message: string) => {
+    setSnackbar({
+      isOpen: true,
+      title: message,
+    });
+  };
+
   const handleFaqCategoriesLoaded = (categories: FaqCategoryOption[]) => {
     setFaqCategories(categories);
   };
@@ -231,6 +245,8 @@ export function AdminSupportPage() {
           isOpen={isFaqPanelOpen}
           onClose={handleFaqPanelClose}
           onSaved={handleFaqPanelSaved}
+          onSuccess={handleFaqSuccess}
+          onError={handleFaqError}
         />
       )}
 

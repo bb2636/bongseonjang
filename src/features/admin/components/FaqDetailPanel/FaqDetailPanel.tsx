@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { ConfirmDialog } from '../ConfirmDialog';
-import { useToast } from '../../../../contexts/ToastContext';
 import './FaqDetailPanel.css';
 
 interface FaqCategoryOption {
@@ -15,6 +14,8 @@ interface FaqDetailPanelProps {
   isOpen: boolean;
   onClose: () => void;
   onSaved: () => void;
+  onSuccess?: (message: string) => void;
+  onError?: (message: string) => void;
 }
 
 interface FaqDetail {
@@ -95,8 +96,7 @@ function CustomDropdown({ options, value, onChange }: CustomDropdownProps) {
   );
 }
 
-export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved }: FaqDetailPanelProps) {
-  const { showToast } = useToast();
+export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved, onSuccess, onError }: FaqDetailPanelProps) {
   const [faq, setFaq] = useState<FaqDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -150,7 +150,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
 
   const handleSaveClick = () => {
     if (!editTitle.trim() || !editContent.trim()) {
-      showToast('제목과 내용을 입력해주세요.', 'warning');
+      onError?.('제목과 내용을 입력해주세요.');
       return;
     }
     setShowSaveConfirm(true);
@@ -172,16 +172,15 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
       });
 
       if (response.ok) {
-        await fetchFaq();
-        setIsEditing(false);
         onSaved();
-        showToast('FAQ가 수정되었습니다.', 'success');
+        onClose();
+        onSuccess?.('내용이 수정되었습니다');
       } else {
-        showToast('저장에 실패했습니다.', 'error');
+        onError?.('저장에 실패했습니다.');
       }
     } catch (error) {
       console.error('Failed to save FAQ:', error);
-      showToast('저장에 실패했습니다.', 'error');
+      onError?.('저장에 실패했습니다.');
     } finally {
       setIsSaving(false);
     }
@@ -198,15 +197,15 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved 
         method: 'DELETE',
       });
       if (response.ok) {
-        onClose();
         onSaved();
-        showToast('FAQ가 삭제되었습니다.', 'success');
+        onClose();
+        onSuccess?.('FAQ가 삭제되었습니다');
       } else {
-        showToast('삭제에 실패했습니다.', 'error');
+        onError?.('삭제에 실패했습니다.');
       }
     } catch (error) {
       console.error('Failed to delete FAQ:', error);
-      showToast('삭제에 실패했습니다.', 'error');
+      onError?.('삭제에 실패했습니다.');
     }
   };
 
