@@ -8,28 +8,6 @@ interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string };
 }
 
-function getBaseUrl(): string {
-  const customDomain = process.env.APP_DOMAIN;
-  if (customDomain) {
-    return `https://${customDomain}`;
-  }
-  
-  const replitDomain = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAINS;
-  if (replitDomain) {
-    return `https://${replitDomain}`;
-  }
-  
-  return '';
-}
-
-function buildFullImageUrl(objectPath: string): string {
-  const baseUrl = getBaseUrl();
-  if (!baseUrl) {
-    return objectPath;
-  }
-  return `${baseUrl}/api/upload${objectPath}`;
-}
-
 const router = Router();
 
 const defaultUpload = multer({
@@ -111,8 +89,7 @@ router.post('/review-image', authMiddleware, defaultUpload.single('image'), asyn
       'uploads/reviews'
     );
     
-    const fullUrl = buildFullImageUrl(objectPath);
-    res.json({ objectPath: fullUrl });
+    res.json({ objectPath });
   } catch (error) {
     console.error('Error uploading review image:', error);
     res.status(500).json({ error: 'Failed to upload image' });
