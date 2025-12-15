@@ -2,6 +2,7 @@ import { useRef, useState, ChangeEvent } from 'react';
 import { BannerPosition } from './useBannerManagement';
 import { useBannerForm } from './useBannerForm';
 import { ConfirmModal } from '../../../../components';
+import { Snackbar } from '../../components/Snackbar';
 import './BannerFormDialog.css';
 
 interface BannerFormDialogProps {
@@ -22,6 +23,7 @@ export function BannerFormDialog({
 }: BannerFormDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
   const {
     formData,
     isSubmitting,
@@ -52,8 +54,13 @@ export function BannerFormDialog({
     const success = await submitForm();
     if (success) {
       onSuccess();
-      onClose();
+      setShowSnackbar(true);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setShowSnackbar(false);
+    onClose();
   };
 
   const handleReset = () => {
@@ -192,6 +199,12 @@ export function BannerFormDialog({
         onConfirm={handleConfirmSubmit}
         cancelText="취소"
         confirmText="확인"
+      />
+
+      <Snackbar
+        isOpen={showSnackbar}
+        title="배너가 등록되었습니다"
+        onClose={handleSnackbarClose}
       />
     </div>
   );
