@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../layouts';
-import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog } from '../components';
+import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog, Snackbar } from '../components';
 import './AdminSupportPage.css';
 
 type SupportTab = 'faq' | 'inquiry' | 'notice';
@@ -22,6 +22,12 @@ const tabs: TabConfig[] = [
   { key: 'notice', label: '공지사항' },
 ];
 
+interface SnackbarState {
+  isOpen: boolean;
+  title: string;
+  details?: string[];
+}
+
 export function AdminSupportPage() {
   const [activeTab, setActiveTab] = useState<SupportTab>('notice');
   const [notices, setNotices] = useState<NoticeItem[]>([]);
@@ -32,6 +38,7 @@ export function AdminSupportPage() {
   const [selectedNoticeId, setSelectedNoticeId] = useState<number | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [noticeTypes, setNoticeTypes] = useState<NoticeTypeOption[]>([]);
+  const [snackbar, setSnackbar] = useState<SnackbarState>({ isOpen: false, title: '' });
 
   const fetchNoticeTypes = async () => {
     try {
@@ -103,7 +110,15 @@ export function AdminSupportPage() {
 
   const handleAddFormClose = () => {
     setShowAddForm(false);
+  };
+
+  const handleAddFormSuccess = () => {
+    setShowAddForm(false);
     fetchNotices(searchKeyword);
+    setSnackbar({
+      isOpen: true,
+      title: '공지사항이 등록되었습니다',
+    });
   };
 
   const renderTabContent = () => {
@@ -180,9 +195,17 @@ export function AdminSupportPage() {
       {showAddForm && (
         <NoticeAddForm 
           noticeTypes={noticeTypes}
-          onClose={handleAddFormClose} 
+          onClose={handleAddFormClose}
+          onSuccess={handleAddFormSuccess}
         />
       )}
+
+      <Snackbar
+        isOpen={snackbar.isOpen}
+        title={snackbar.title}
+        details={snackbar.details}
+        onClose={() => setSnackbar({ isOpen: false, title: '' })}
+      />
     </AdminLayout>
   );
 }
@@ -190,6 +213,7 @@ export function AdminSupportPage() {
 interface NoticeAddFormProps {
   noticeTypes: NoticeTypeOption[];
   onClose: () => void;
+  onSuccess: () => void;
 }
 
 interface FormCustomDropdownProps {
@@ -259,7 +283,7 @@ function FormCustomDropdown({ options, value, onChange }: FormCustomDropdownProp
   );
 }
 
-function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
+function NoticeAddForm({ noticeTypes, onClose, onSuccess }: NoticeAddFormProps) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [typeId, setTypeId] = useState<number | null>(null);
@@ -300,7 +324,7 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
       });
 
       if (response.ok) {
-        onClose();
+        onSuccess();
       } else {
         alert('저장에 실패했습니다.');
       }
