@@ -85,4 +85,4 @@ PRIVATE_OBJECT_DIR = "review-images"
 PUBLIC_OBJECT_SEARCH_PATHS = "review-images"
 
 [objectStorage]
-defaultBucketID = "replit-objstore-67cc5bbe-6331-42cb-bbaa-cddc596cc610"
+defaultBucketID = "replit-objstore-b7020ef3-d38f-48e5-b896-ef9af912c239"
