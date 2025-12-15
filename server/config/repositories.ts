@@ -4,18 +4,12 @@ import { MockHeroImageRepository } from '../features/home/repository/MockHeroIma
 import { TypeORMHeroImageRepository } from '../features/home/repository/TypeORMHeroImageRepository';
 import { MockBestProductRepository } from '../features/bestProduct/repository/MockBestProductRepository';
 import { TypeORMBestProductRepository } from '../features/bestProduct/repository/TypeORMBestProductRepository';
-import { MockMiddleBannerRepository } from '../features/middleBanner/repository/MockMiddleBannerRepository';
-import { TypeORMMiddleBannerRepository } from '../features/middleBanner/repository/TypeORMMiddleBannerRepository';
 import { MockBongseonjangTvRepository } from '../features/bongseonjangTv/repository/MockBongseonjangTvRepository';
 import { TypeORMBongseonjangTvRepository } from '../features/bongseonjangTv/repository/TypeORMBongseonjangTvRepository';
-import { MockBottomBannerRepository } from '../features/bottomBanner/repository/MockBottomBannerRepository';
-import { TypeORMBottomBannerRepository } from '../features/bottomBanner/repository/TypeORMBottomBannerRepository';
 import type { ReferralRepository } from '../features/referral/repository/ReferralRepository';
 import type { HeroImageRepository } from '../features/home/repository/HeroImageRepository';
 import type { BestProductRepository } from '../features/bestProduct/repository/BestProductRepository';
-import type { MiddleBannerRepository } from '../features/middleBanner/repository/MiddleBannerRepository';
 import type { BongseonjangTvRepository } from '../features/bongseonjangTv/repository/BongseonjangTvRepository';
-import type { BottomBannerRepository } from '../features/bottomBanner/repository/BottomBannerRepository';
 
 export const REPOSITORY_TYPE = {
   MOCK: 'mock',
@@ -28,18 +22,14 @@ interface RepositoryConfig {
   referral: RepositoryType;
   heroImage: RepositoryType;
   bestProduct: RepositoryType;
-  middleBanner: RepositoryType;
   bongseonjangTv: RepositoryType;
-  bottomBanner: RepositoryType;
 }
 
 const config: RepositoryConfig = {
   referral: REPOSITORY_TYPE.MOCK,
   heroImage: REPOSITORY_TYPE.MOCK,
   bestProduct: REPOSITORY_TYPE.REAL,
-  middleBanner: REPOSITORY_TYPE.MOCK,
   bongseonjangTv: REPOSITORY_TYPE.MOCK,
-  bottomBanner: REPOSITORY_TYPE.MOCK,
 };
 
 type RepositoryFactory<T> = {
@@ -51,9 +41,7 @@ interface RepositoryMap {
   referral: RepositoryFactory<ReferralRepository>;
   heroImage: RepositoryFactory<HeroImageRepository>;
   bestProduct: RepositoryFactory<BestProductRepository>;
-  middleBanner: RepositoryFactory<MiddleBannerRepository>;
   bongseonjangTv: RepositoryFactory<BongseonjangTvRepository>;
-  bottomBanner: RepositoryFactory<BottomBannerRepository>;
 }
 
 const repositoryMap: RepositoryMap = {
@@ -69,17 +57,9 @@ const repositoryMap: RepositoryMap = {
     [REPOSITORY_TYPE.MOCK]: () => new MockBestProductRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMBestProductRepository(),
   },
-  middleBanner: {
-    [REPOSITORY_TYPE.MOCK]: () => new MockMiddleBannerRepository(),
-    [REPOSITORY_TYPE.REAL]: () => new TypeORMMiddleBannerRepository(),
-  },
   bongseonjangTv: {
     [REPOSITORY_TYPE.MOCK]: () => new MockBongseonjangTvRepository(),
     [REPOSITORY_TYPE.REAL]: () => new TypeORMBongseonjangTvRepository(),
-  },
-  bottomBanner: {
-    [REPOSITORY_TYPE.MOCK]: () => new MockBottomBannerRepository(),
-    [REPOSITORY_TYPE.REAL]: () => new TypeORMBottomBannerRepository(),
   },
 };
 
@@ -111,13 +91,7 @@ export const repositories = {
   get bestProduct(): BestProductRepository {
     return createRepository<BestProductRepository>('bestProduct');
   },
-  get middleBanner(): MiddleBannerRepository {
-    return createRepository<MiddleBannerRepository>('middleBanner');
-  },
   get bongseonjangTv(): BongseonjangTvRepository {
     return createRepository<BongseonjangTvRepository>('bongseonjangTv');
-  },
-  get bottomBanner(): BottomBannerRepository {
-    return createRepository<BottomBannerRepository>('bottomBanner');
   },
 };
