@@ -81,6 +81,10 @@ export default function App() {
       <Route path="/admin/categories/*" element={<AdminPlaceholderPage />} />
       <Route path="/admin/settings" element={<AdminPlaceholderPage />} />
       <Route path="/admin/settings/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/support" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/support/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/terms" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/terms/*" element={<AdminPlaceholderPage />} />
       
       <Route
         path="*"
