@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../layouts';
-import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog, Snackbar } from '../components';
+import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog, Snackbar, FaqList } from '../components';
 import './AdminSupportPage.css';
 
 type SupportTab = 'faq' | 'inquiry' | 'notice';
@@ -125,9 +125,10 @@ export function AdminSupportPage() {
     switch (activeTab) {
       case 'faq':
         return (
-          <div className="admin-support__placeholder">
-            <p>FAQ 관리 기능이 준비 중입니다.</p>
-          </div>
+          <FaqList
+            onAdd={() => console.log('FAQ 등록')}
+            onView={(id) => console.log('FAQ 상세:', id)}
+          />
         );
       case 'inquiry':
         return (
