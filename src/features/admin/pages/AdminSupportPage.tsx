@@ -414,8 +414,8 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
 
       <ConfirmDialog
         isOpen={showConfirmDialog}
-        title="공지사항을 등록하시겠습니까?"
-        subtitle={title}
+        title="새로운 공지를 등록하시겠습니까?"
+        subtitle="저장 즉시 사용자에게 노출됩니다"
         cancelText="취소"
         confirmText="확인"
         onCancel={() => setShowConfirmDialog(false)}
