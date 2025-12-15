@@ -83,3 +83,6 @@ SOCIAL_REDIRECT_BASE_URL = "https://dc7d2e6a-5ba1-4d01-aad5-50c0e084c051-00-2s75
 [userenv.shared]
 PRIVATE_OBJECT_DIR = "/review-images"
 PUBLIC_OBJECT_SEARCH_PATHS = "/review-images"
+
+[objectStorage]
+defaultBucketID = "replit-objstore-67cc5bbe-6331-42cb-bbaa-cddc596cc610"
