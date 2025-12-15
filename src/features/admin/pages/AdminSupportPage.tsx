@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../layouts';
-import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog, Snackbar, FaqList } from '../components';
+import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog, Snackbar, FaqList, FaqDetailPanel } from '../components';
 import './AdminSupportPage.css';
 
 type SupportTab = 'faq' | 'inquiry' | 'notice';
@@ -14,6 +14,12 @@ interface NoticeTypeOption {
   id: number;
   code: string;
   name: string;
+}
+
+interface FaqCategoryOption {
+  id: number;
+  name: string;
+  sortOrder: number;
 }
 
 const tabs: TabConfig[] = [
@@ -39,6 +45,11 @@ export function AdminSupportPage() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [noticeTypes, setNoticeTypes] = useState<NoticeTypeOption[]>([]);
   const [snackbar, setSnackbar] = useState<SnackbarState>({ isOpen: false, title: '' });
+
+  const [selectedFaqId, setSelectedFaqId] = useState<number | null>(null);
+  const [isFaqPanelOpen, setIsFaqPanelOpen] = useState(false);
+  const [faqCategories, setFaqCategories] = useState<FaqCategoryOption[]>([]);
+  const [faqRefreshTrigger, setFaqRefreshTrigger] = useState(0);
 
   const fetchNoticeTypes = async () => {
     try {
@@ -121,13 +132,33 @@ export function AdminSupportPage() {
     });
   };
 
+  const handleFaqView = (id: number) => {
+    setSelectedFaqId(id);
+    setIsFaqPanelOpen(true);
+  };
+
+  const handleFaqPanelClose = () => {
+    setIsFaqPanelOpen(false);
+    setSelectedFaqId(null);
+  };
+
+  const handleFaqPanelSaved = () => {
+    setFaqRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleFaqCategoriesLoaded = (categories: FaqCategoryOption[]) => {
+    setFaqCategories(categories);
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'faq':
         return (
           <FaqList
             onAdd={() => console.log('FAQ 등록')}
-            onView={(id) => console.log('FAQ 상세:', id)}
+            onView={handleFaqView}
+            onCategoriesLoaded={handleFaqCategoriesLoaded}
+            refreshTrigger={faqRefreshTrigger}
           />
         );
       case 'inquiry':
@@ -190,6 +221,16 @@ export function AdminSupportPage() {
           isOpen={isPanelOpen}
           onClose={handlePanelClose}
           onSaved={handlePanelSaved}
+        />
+      )}
+
+      {selectedFaqId && (
+        <FaqDetailPanel
+          faqId={selectedFaqId}
+          faqCategories={faqCategories}
+          isOpen={isFaqPanelOpen}
+          onClose={handleFaqPanelClose}
+          onSaved={handleFaqPanelSaved}
         />
       )}
 

@@ -19,9 +19,11 @@ interface FaqCategory {
 interface FaqListProps {
   onAdd: () => void;
   onView: (id: number) => void;
+  onCategoriesLoaded?: (categories: FaqCategory[]) => void;
+  refreshTrigger?: number;
 }
 
-export function FaqList({ onAdd, onView }: FaqListProps) {
+export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: FaqListProps) {
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [categories, setCategories] = useState<FaqCategory[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -70,6 +72,18 @@ export function FaqList({ onAdd, onView }: FaqListProps) {
     fetchCategories();
     fetchFaqs();
   }, [fetchCategories, fetchFaqs]);
+
+  useEffect(() => {
+    if (categories.length > 0 && onCategoriesLoaded) {
+      onCategoriesLoaded(categories);
+    }
+  }, [categories, onCategoriesLoaded]);
+
+  useEffect(() => {
+    if (refreshTrigger !== undefined && refreshTrigger > 0) {
+      fetchFaqs(searchKeyword, selectedCategoryId);
+    }
+  }, [refreshTrigger]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
