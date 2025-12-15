@@ -31,10 +31,15 @@ export class CouponController {
   async issueCoupon(req: AuthRequest, res: Response): Promise<void> {
     try {
       const userId = req.userId;
-      const { couponId } = req.params;
+      const couponId = parseInt(req.params.couponId, 10);
 
       if (!userId) {
         res.status(401).json({ error: '인증이 필요합니다' });
+        return;
+      }
+
+      if (isNaN(couponId)) {
+        res.status(400).json({ error: '잘못된 쿠폰 ID입니다' });
         return;
       }
 

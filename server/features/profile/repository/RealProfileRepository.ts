@@ -3,7 +3,7 @@ import { UserProfile, Order } from '../domain/Profile';
 import { AppDataSource } from '../../../config/database';
 import { User, MembershipGrade } from '../../../entity/User';
 import { PointWallet } from '../../../entity/PointWallet';
-import { CouponIssuance } from '../../../entity/CouponIssuance';
+import { UserCoupon } from '../../../entity/UserCoupon';
 import { WishlistItem } from '../../../entity/WishlistItem';
 import { OrderItem } from '../../../entity/OrderItem';
 import { Order as OrderEntity } from '../../../entity/Order';
@@ -26,13 +26,13 @@ export class RealProfileRepository implements ProfileRepository {
     }
 
     const pointWalletRepository = AppDataSource.getRepository(PointWallet);
-    const couponIssuanceRepository = AppDataSource.getRepository(CouponIssuance);
+    const userCouponRepository = AppDataSource.getRepository(UserCoupon);
     const wishlistItemRepository = AppDataSource.getRepository(WishlistItem);
     const orderItemRepository = AppDataSource.getRepository(OrderItem);
 
     const [pointWallet, couponCount, favoriteCount, pendingReviewCount] = await Promise.all([
       pointWalletRepository.findOne({ where: { userId } }),
-      couponIssuanceRepository.count({ where: { userId, isUsed: false } }),
+      userCouponRepository.count({ where: { userId, status: 'ISSUED' } }),
       wishlistItemRepository
         .createQueryBuilder('item')
         .innerJoin('item.wishlist', 'wishlist')

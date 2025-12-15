@@ -1,58 +1,196 @@
 import { AppDataSource } from '../../../config/database';
 import { Coupon } from '../../../entity/Coupon';
-import { CouponIssuance } from '../../../entity/CouponIssuance';
-import { MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
+import { UserCoupon } from '../../../entity/UserCoupon';
+import { CouponFixedDiscount } from '../../../entity/CouponFixedDiscount';
+import { CouponRateDiscount } from '../../../entity/CouponRateDiscount';
+import { CouponShippingDiscount } from '../../../entity/CouponShippingDiscount';
+import { CouponValidityFixedRange } from '../../../entity/CouponValidityFixedRange';
+import { CouponValidityAfterIssueDays } from '../../../entity/CouponValidityAfterIssueDays';
+import { CouponApplyAllProducts } from '../../../entity/CouponApplyAllProducts';
+import { CouponApplyCategory } from '../../../entity/CouponApplyCategory';
+import { CouponIssueAllUsers } from '../../../entity/CouponIssueAllUsers';
+import { CouponIssueNewUsers } from '../../../entity/CouponIssueNewUsers';
+
+export interface CouponWithDetails extends Coupon {
+  discountType: 'fixed' | 'rate' | 'shipping';
+  discountValue: number;
+  maxDiscountAmount: number | null;
+  validFrom: Date | null;
+  validTo: Date | null;
+  targetType: 'all' | 'category';
+}
 
 export class CouponRepository {
   private couponRepo = AppDataSource.getRepository(Coupon);
-  private issuanceRepo = AppDataSource.getRepository(CouponIssuance);
+  private userCouponRepo = AppDataSource.getRepository(UserCoupon);
+  private fixedDiscountRepo = AppDataSource.getRepository(CouponFixedDiscount);
+  private rateDiscountRepo = AppDataSource.getRepository(CouponRateDiscount);
+  private shippingDiscountRepo = AppDataSource.getRepository(CouponShippingDiscount);
+  private validityFixedRangeRepo = AppDataSource.getRepository(CouponValidityFixedRange);
+  private validityAfterIssueDaysRepo = AppDataSource.getRepository(CouponValidityAfterIssueDays);
+  private applyAllProductsRepo = AppDataSource.getRepository(CouponApplyAllProducts);
+  private applyCategoryRepo = AppDataSource.getRepository(CouponApplyCategory);
+  private issueAllUsersRepo = AppDataSource.getRepository(CouponIssueAllUsers);
+  private issueNewUsersRepo = AppDataSource.getRepository(CouponIssueNewUsers);
 
-  async findAvailableCoupons(): Promise<Coupon[]> {
-    const now = new Date();
-    return this.couponRepo.find({
-      where: {
-        isActive: true,
-        validFrom: LessThanOrEqual(now),
-        validTo: MoreThanOrEqual(now),
-      },
+  async findAvailableCoupons(): Promise<CouponWithDetails[]> {
+    const coupons = await this.couponRepo.find({
+      where: { isActive: true },
       order: { createdAt: 'DESC' },
     });
+
+    const couponsWithDetails: CouponWithDetails[] = [];
+
+    for (const coupon of coupons) {
+      const details = await this.getCouponDetails(coupon);
+      if (details && this.isValidNow(details)) {
+        couponsWithDetails.push(details);
+      }
+    }
+
+    return couponsWithDetails;
   }
 
-  async findCouponById(id: string): Promise<Coupon | null> {
-    return this.couponRepo.findOne({ where: { id } });
+  async findCouponById(id: number): Promise<CouponWithDetails | null> {
+    const coupon = await this.couponRepo.findOne({ where: { id } });
+    if (!coupon) return null;
+    return this.getCouponDetails(coupon);
   }
 
-  async findUserIssuances(userId: string): Promise<CouponIssuance[]> {
-    return this.issuanceRepo.find({
-      where: { userId },
+  private async getCouponDetails(coupon: Coupon): Promise<CouponWithDetails | null> {
+    let discountType: 'fixed' | 'rate' | 'shipping' = 'fixed';
+    let discountValue = 0;
+    let maxDiscountAmount: number | null = null;
+
+    const fixedDiscount = await this.fixedDiscountRepo.findOne({ where: { couponId: coupon.id } });
+    if (fixedDiscount) {
+      discountType = 'fixed';
+      discountValue = fixedDiscount.discountAmount;
+    } else {
+      const rateDiscount = await this.rateDiscountRepo.findOne({ where: { couponId: coupon.id } });
+      if (rateDiscount) {
+        discountType = 'rate';
+        discountValue = rateDiscount.discountRate;
+        maxDiscountAmount = rateDiscount.maxDiscountAmount;
+      } else {
+        const shippingDiscount = await this.shippingDiscountRepo.findOne({ where: { couponId: coupon.id } });
+        if (shippingDiscount) {
+          discountType = 'shipping';
+          discountValue = shippingDiscount.isFreeShipping ? 0 : (shippingDiscount.shippingDiscountAmount || 0);
+        }
+      }
+    }
+
+    let validFrom: Date | null = null;
+    let validTo: Date | null = null;
+
+    const fixedRange = await this.validityFixedRangeRepo.findOne({ where: { couponId: coupon.id } });
+    if (fixedRange) {
+      validFrom = fixedRange.startAt;
+      validTo = fixedRange.endAt;
+    }
+
+    let targetType: 'all' | 'category' = 'all';
+    const applyAllProducts = await this.applyAllProductsRepo.findOne({ where: { couponId: coupon.id } });
+    if (!applyAllProducts) {
+      const applyCategories = await this.applyCategoryRepo.find({ where: { couponId: coupon.id } });
+      if (applyCategories.length > 0) {
+        targetType = 'category';
+      }
+    }
+
+    return {
+      ...coupon,
+      discountType,
+      discountValue,
+      maxDiscountAmount,
+      validFrom,
+      validTo,
+      targetType,
+    };
+  }
+
+  private isValidNow(coupon: CouponWithDetails): boolean {
+    if (!coupon.validFrom || !coupon.validTo) return true;
+    const now = new Date();
+    return coupon.validFrom <= now && coupon.validTo >= now;
+  }
+
+  async findUserCoupons(userId: string): Promise<UserCoupon[]> {
+    return this.userCouponRepo.find({
+      where: { userId, status: 'ISSUED' },
       relations: ['coupon'],
       order: { createdAt: 'DESC' },
     });
   }
 
-  async findIssuance(couponId: string, userId: string): Promise<CouponIssuance | null> {
-    return this.issuanceRepo.findOne({
-      where: { couponId, userId },
+  async findUserCoupon(couponId: number, userId: string): Promise<UserCoupon | null> {
+    return this.userCouponRepo.findOne({
+      where: { couponId, userId, status: 'ISSUED' },
     });
   }
 
-  async createIssuance(couponId: string, userId: string, expiresAt: Date): Promise<CouponIssuance> {
-    const issuance = this.issuanceRepo.create({
+  async createUserCoupon(couponId: number, userId: string, validFrom: Date | null, validTo: Date | null): Promise<UserCoupon> {
+    const userCoupon = this.userCouponRepo.create({
       couponId,
       userId,
-      expiresAt,
+      status: 'ISSUED',
+      issuedAt: new Date(),
+      validFrom,
+      validTo,
     });
-    return this.issuanceRepo.save(issuance);
+    return this.userCouponRepo.save(userCoupon);
   }
 
-  async countUserIssuances(couponId: string, userId: string): Promise<number> {
-    return this.issuanceRepo.count({
+  async countUserCoupons(couponId: number, userId: string): Promise<number> {
+    return this.userCouponRepo.count({
       where: { couponId, userId },
     });
   }
 
-  async incrementUsedQuantity(couponId: string): Promise<void> {
-    await this.couponRepo.increment({ id: couponId }, 'usedQuantity', 1);
+  async canUserIssueCoupon(couponId: number, userId: string): Promise<{ canIssue: boolean; reason?: string }> {
+    const issueAllUsers = await this.issueAllUsersRepo.findOne({ where: { couponId } });
+    if (issueAllUsers) {
+      return { canIssue: true };
+    }
+
+    const issueNewUsers = await this.issueNewUsersRepo.findOne({ where: { couponId } });
+    if (issueNewUsers) {
+      return { canIssue: true };
+    }
+
+    return { canIssue: false, reason: '발급 대상이 아닙니다' };
+  }
+
+  async calculateValidityDates(couponId: number): Promise<{ validFrom: Date | null; validTo: Date | null }> {
+    const fixedRange = await this.validityFixedRangeRepo.findOne({ where: { couponId } });
+    if (fixedRange) {
+      return { validFrom: fixedRange.startAt, validTo: fixedRange.endAt };
+    }
+
+    const afterIssueDays = await this.validityAfterIssueDaysRepo.findOne({ where: { couponId } });
+    if (afterIssueDays) {
+      const now = new Date();
+      const validTo = new Date(now);
+      validTo.setDate(validTo.getDate() + afterIssueDays.validDays);
+      return { validFrom: now, validTo };
+    }
+
+    return { validFrom: null, validTo: null };
+  }
+
+  async useUserCoupon(userCouponId: number, orderId: string): Promise<void> {
+    await this.userCouponRepo.update(userCouponId, {
+      status: 'USED',
+      usedAt: new Date(),
+      usedOrderId: orderId,
+    });
+  }
+
+  async getUserCouponById(id: number): Promise<UserCoupon | null> {
+    return this.userCouponRepo.findOne({
+      where: { id },
+      relations: ['coupon'],
+    });
   }
 }

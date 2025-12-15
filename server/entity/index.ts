@@ -54,3 +54,17 @@ export { FaqCategory } from './FaqCategory';
 export { Faq } from './Faq';
 
 export { ProductInquiry } from './ProductInquiry';
+
+export { Coupon } from './Coupon';
+export { CouponFixedDiscount } from './CouponFixedDiscount';
+export { CouponRateDiscount } from './CouponRateDiscount';
+export { CouponShippingDiscount } from './CouponShippingDiscount';
+export { CouponValidityFixedRange } from './CouponValidityFixedRange';
+export { CouponValidityAfterIssueDays } from './CouponValidityAfterIssueDays';
+export { CouponApplyAllProducts } from './CouponApplyAllProducts';
+export { CouponApplyCategory } from './CouponApplyCategory';
+export { CouponIssueAllUsers } from './CouponIssueAllUsers';
+export { CouponIssueNewUsers } from './CouponIssueNewUsers';
+export { CouponIssueGrade } from './CouponIssueGrade';
+export { UserCoupon } from './UserCoupon';
+export type { UserCouponStatus } from './UserCoupon';
