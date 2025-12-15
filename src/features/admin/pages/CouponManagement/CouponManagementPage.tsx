@@ -68,6 +68,18 @@ export function CouponManagementPage() {
         isOpen={isDetailDialogOpen}
         coupon={viewingCoupon}
         onClose={handleCloseDetailDialog}
+        onEdit={() => {
+          if (viewingCoupon) {
+            handleEditCoupon(viewingCoupon);
+            handleCloseDetailDialog();
+          }
+        }}
+        onDelete={() => {
+          if (viewingCoupon) {
+            handleDeleteCoupon(viewingCoupon.id);
+            handleCloseDetailDialog();
+          }
+        }}
         getDiscountTypeLabel={getDiscountTypeLabel}
         getDiscountValueLabel={getDiscountValueLabel}
         getTargetLabel={getTargetLabel}

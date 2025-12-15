@@ -130,6 +130,7 @@
 .coupon-detail-dialog__actions {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
   padding: 16px 24px 24px;
   border-top: 1px solid rgba(12, 12, 12, 0.06);
 }
@@ -154,4 +155,25 @@
 .coupon-detail-dialog__button:hover {
   background: rgba(12, 12, 12, 0.04);
   border-color: rgba(12, 12, 12, 0.2);
+}
+
+.coupon-detail-dialog__button--edit {
+  background: #0C0C0C;
+  border-color: #0C0C0C;
+  color: #FFFFFF;
+}
+
+.coupon-detail-dialog__button--edit:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+.coupon-detail-dialog__button--delete {
+  background: #FFFFFF;
+  border-color: #FF3B30;
+  color: #FF3B30;
+}
+
+.coupon-detail-dialog__button--delete:hover {
+  background: rgba(255, 59, 48, 0.06);
 }

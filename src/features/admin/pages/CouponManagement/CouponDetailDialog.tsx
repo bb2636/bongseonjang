@@ -5,6 +5,8 @@ interface CouponDetailDialogProps {
   isOpen: boolean;
   coupon: AdminCoupon | null;
   onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
   getDiscountTypeLabel: (type: AdminCoupon['discountType']) => string;
   getDiscountValueLabel: (coupon: AdminCoupon) => string;
   getTargetLabel: (coupon: AdminCoupon) => string;
@@ -16,6 +18,8 @@ export function CouponDetailDialog({
   isOpen,
   coupon,
   onClose,
+  onEdit,
+  onDelete,
   getDiscountTypeLabel,
   getDiscountValueLabel,
   getTargetLabel,
@@ -101,10 +105,17 @@ export function CouponDetailDialog({
         <div className="coupon-detail-dialog__actions">
           <button
             type="button"
-            className="coupon-detail-dialog__button"
-            onClick={onClose}
+            className="coupon-detail-dialog__button coupon-detail-dialog__button--delete"
+            onClick={onDelete}
           >
-            닫기
+            삭제
+          </button>
+          <button
+            type="button"
+            className="coupon-detail-dialog__button coupon-detail-dialog__button--edit"
+            onClick={onEdit}
+          >
+            수정
           </button>
         </div>
       </div>

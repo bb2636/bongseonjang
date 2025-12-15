@@ -217,18 +217,6 @@ export function CouponManagementView({
                     >
                       보기
                     </button>
-                    <button
-                      className="coupon-table__action-button coupon-table__action-button--edit"
-                      onClick={() => onEditCoupon(coupon)}
-                    >
-                      수정
-                    </button>
-                    <button
-                      className="coupon-table__action-button coupon-table__action-button--delete"
-                      onClick={() => onDeleteCoupon(coupon.id)}
-                    >
-                      삭제
-                    </button>
                   </div>
                 </div>
               ))
