@@ -14,6 +14,9 @@ interface ReviewSectionProps {
 const MAX_PHOTO_COUNT = 8;
 
 function resolveImageUrl(url: string): string {
+  if (url.startsWith('/objects/')) {
+    return `/api/upload${url}`;
+  }
   return url;
 }
 
