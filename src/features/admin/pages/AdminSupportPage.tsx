@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../layouts';
-import { NoticeList, NoticeItem, NoticeDetailPanel } from '../components';
+import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog } from '../components';
 import './AdminSupportPage.css';
 
 type SupportTab = 'faq' | 'inquiry' | 'notice';
@@ -265,6 +265,7 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
   const [typeId, setTypeId] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   useEffect(() => {
     if (noticeTypes.length > 0 && typeId === null) {
@@ -273,7 +274,7 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
     }
   }, [noticeTypes]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
       alert('제목과 내용을 입력해주세요.');
@@ -285,6 +286,11 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
       return;
     }
 
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmSave = async () => {
+    setShowConfirmDialog(false);
     setIsSaving(true);
     try {
       const response = await fetch('/api/admin/notices', {
@@ -405,6 +411,16 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
           </button>
         </div>
       </form>
+
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        title="공지사항을 등록하시겠습니까?"
+        subtitle={title}
+        cancelText="취소"
+        confirmText="확인"
+        onCancel={() => setShowConfirmDialog(false)}
+        onConfirm={handleConfirmSave}
+      />
     </div>
   );
 }
