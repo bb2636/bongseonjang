@@ -15,8 +15,8 @@
 .notice-list__count {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 16px;
-  font-weight: 500;
-  color: #0C0C0C;
+  font-weight: 400;
+  color: rgba(12, 12, 12, 0.7);
 }
 
 .notice-list__actions {
@@ -29,37 +29,48 @@
   position: relative;
 }
 
+.notice-list__search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: rgba(12, 12, 12, 0.4);
+  pointer-events: none;
+}
+
 .notice-list__search-input {
-  width: 280px;
+  width: 420px;
   height: 44px;
-  padding: 0 16px;
-  border: 1px solid #E5E5E5;
+  padding: 0 16px 0 48px;
+  border: none;
   border-radius: 8px;
+  background: #F5F5F5;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   color: #0C0C0C;
   outline: none;
-  transition: border-color 0.2s ease;
 }
 
 .notice-list__search-input::placeholder {
-  color: rgba(12, 12, 12, 0.4);
+  color: rgba(12, 12, 12, 0.6);
 }
 
 .notice-list__search-input:focus {
-  border-color: #3B9BD5;
+  background: #EFEFEF;
 }
 
 .notice-list__add-button {
   height: 44px;
-  padding: 0 24px;
+  padding: 8px 16px;
   background-color: #3B9BD5;
-  color: #FFFFFF;
+  color: #FDFDFD;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -78,13 +89,13 @@
 }
 
 .notice-list__th {
-  padding: 16px;
+  padding: 10px 24px;
   text-align: left;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #0C0C0C;
-  background-color: #F9F9F9;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(12, 12, 12, 0.8);
+  background-color: rgba(12, 12, 12, 0.02);
   border-bottom: 1px solid #E5E5E5;
 }
 

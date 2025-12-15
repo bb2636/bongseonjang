@@ -5,6 +5,7 @@ interface AdminLayoutProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
+  hidePageHeader?: boolean;
 }
 
 interface MenuItem {
@@ -36,7 +37,7 @@ const pageInfo: Record<string, { title: string; description: string }> = {
   '/admin/settings': { title: '설정', description: '사이트 설정을 관리합니다' },
 };
 
-export function AdminLayout({ children, title, description }: AdminLayoutProps) {
+export function AdminLayout({ children, title, description, hidePageHeader = false }: AdminLayoutProps) {
   const location = useLocation();
 
   const isActive = (path: string) => {
@@ -73,10 +74,12 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
       </header>
 
       <main className="admin-main">
-        <div className="admin-page-header">
-          <h1 className="admin-page-header__title">{pageTitle}</h1>
-          <p className="admin-page-header__description">{pageDescription}</p>
-        </div>
+        {!hidePageHeader && (
+          <div className="admin-page-header">
+            <h1 className="admin-page-header__title">{pageTitle}</h1>
+            <p className="admin-page-header__description">{pageDescription}</p>
+          </div>
+        )}
         <div className="admin-content">
           {children}
         </div>

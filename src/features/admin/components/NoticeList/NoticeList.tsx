@@ -49,6 +49,20 @@ export function NoticeList({ notices, totalCount, onView, onAdd, onSearch }: Not
         <span className="notice-list__count">총 공지 수 · {String(totalCount).padStart(4, '0')}</span>
         <div className="notice-list__actions">
           <div className="notice-list__search">
+            <svg 
+              className="notice-list__search-icon" 
+              viewBox="0 0 20 20" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path 
+                d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" 
+                stroke="currentColor" 
+                strokeWidth="1.5" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              />
+            </svg>
             <input
               type="text"
               className="notice-list__search-input"

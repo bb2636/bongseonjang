@@ -9,7 +9,6 @@
   flex-direction: row;
   align-items: center;
   gap: 30px;
-  border-bottom: 1px solid #E5E5E5;
   padding-bottom: 16px;
 }
 
@@ -23,7 +22,7 @@
   line-height: 128%;
   letter-spacing: -0.02em;
   color: rgba(12, 12, 12, 0.2);
-  font-weight: 400;
+  font-weight: 600;
   transition: color 0.2s ease;
 }
 

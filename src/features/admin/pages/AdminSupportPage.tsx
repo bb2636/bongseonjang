@@ -117,7 +117,7 @@ export function AdminSupportPage() {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout hidePageHeader>
       <div className="admin-support">
         <nav className="admin-support__tabs">
           {tabs.map((tab) => (
