@@ -92,9 +92,10 @@ export class ObjectStorageService {
       res.set({
         "Content-Type": metadata.contentType || "application/octet-stream",
         "Content-Length": metadata.size,
-        "Cache-Control": `${isPublic ? "public" : "private"}, max-age=${cacheTtlSec}`,
+        "Cache-Control": `${
+          isPublic ? "public" : "private"
+        }, max-age=${cacheTtlSec}`,
       });
-
       const stream = file.createReadStream();
       stream.on("error", (err) => {
         console.error("Stream error:", err);
@@ -119,11 +120,9 @@ export class ObjectStorageService {
           "tool and set PRIVATE_OBJECT_DIR env var."
       );
     }
-
     const objectId = randomUUID();
     const fullPath = `${privateObjectDir}/uploads/${objectId}`;
     const { bucketName, objectName } = parseObjectPath(fullPath);
-
     return signObjectURL({
       bucketName,
       objectName,
@@ -136,12 +135,10 @@ export class ObjectStorageService {
     if (!objectPath.startsWith("/objects/")) {
       throw new ObjectNotFoundError();
     }
-
     const parts = objectPath.slice(1).split("/");
     if (parts.length < 2) {
       throw new ObjectNotFoundError();
     }
-
     const entityId = parts.slice(1).join("/");
     let entityDir = this.getPrivateObjectDir();
     if (!entityDir.endsWith("/")) {
@@ -159,24 +156,20 @@ export class ObjectStorageService {
   }
 
   normalizeObjectEntityPath(rawPath: string): string {
-    let rawObjectPath = rawPath;
-    
-    if (rawPath.startsWith("https://storage.googleapis.com/")) {
-      const url = new URL(rawPath);
-      rawObjectPath = url.pathname;
+    if (!rawPath.startsWith("https://storage.googleapis.com/")) {
+      return rawPath;
     }
-
+    const url = new URL(rawPath);
+    const rawObjectPath = url.pathname;
     let objectEntityDir = this.getPrivateObjectDir();
     if (!objectEntityDir.endsWith("/")) {
       objectEntityDir = `${objectEntityDir}/`;
     }
-
-    if (rawObjectPath.startsWith(objectEntityDir)) {
-      const entityId = rawObjectPath.slice(objectEntityDir.length);
-      return `/objects/${entityId}`;
+    if (!rawObjectPath.startsWith(objectEntityDir)) {
+      return rawObjectPath;
     }
-
-    return rawPath;
+    const entityId = rawObjectPath.slice(objectEntityDir.length);
+    return `/objects/${entityId}`;
   }
 
   async trySetObjectEntityAclPolicy(
@@ -187,7 +180,6 @@ export class ObjectStorageService {
     if (!normalizedPath.startsWith("/")) {
       return normalizedPath;
     }
-
     const objectFile = await this.getObjectEntityFile(normalizedPath);
     await setObjectAclPolicy(objectFile, aclPolicy);
     return normalizedPath;
@@ -208,91 +200,6 @@ export class ObjectStorageService {
       requestedPermission: requestedPermission ?? ObjectPermission.READ,
     });
   }
-
-  async uploadFile(
-    buffer: Buffer,
-    originalFilename: string,
-    storagePath: string = 'uploads',
-    isPublic: boolean = true
-  ): Promise<string> {
-    const privateObjectDir = this.getPrivateObjectDir();
-    const objectId = randomUUID();
-    const extension = originalFilename.split('.').pop() || 'bin';
-    const normalizedPath = storagePath.replace(/^\/+|\/+$/g, '');
-    const objectName = `${normalizedPath}/${objectId}.${extension}`;
-    const fullPath = `${privateObjectDir}/${objectName}`;
-    
-    const { bucketName, objectName: gcsObjectName } = parseObjectPath(fullPath);
-    const bucket = objectStorageClient.bucket(bucketName);
-    const file = bucket.file(gcsObjectName);
-    
-    const mimeType = this.getMimeTypeFromPath(objectName);
-    
-    await file.save(buffer, {
-      contentType: mimeType,
-      resumable: false,
-    });
-    
-    if (isPublic) {
-      const aclPolicy: ObjectAclPolicy = {
-        owner: 'system',
-        visibility: 'public',
-      };
-      await setObjectAclPolicy(file, aclPolicy);
-    }
-    
-    return `/objects/${objectName}`;
-  }
-
-  async downloadObjectByPath(objectPath: string, res: Response): Promise<void> {
-    if (!objectPath.startsWith("/objects/")) {
-      throw new ObjectNotFoundError();
-    }
-
-    const entityId = objectPath.slice("/objects/".length);
-    
-    const searchPaths = this.getPublicObjectSearchPaths();
-    
-    for (const searchPath of searchPaths) {
-      try {
-        const fullPath = `${searchPath}/${entityId}`;
-        const { bucketName, objectName } = parseObjectPath(fullPath);
-        const bucket = objectStorageClient.bucket(bucketName);
-        const file = bucket.file(objectName);
-        
-        const [exists] = await file.exists();
-        if (exists) {
-          await this.downloadObject(file, res);
-          return;
-        }
-      } catch (error) {
-        continue;
-      }
-    }
-    
-    throw new ObjectNotFoundError();
-  }
-
-  private getMimeTypeFromPath(objectPath: string): string {
-    const extension = objectPath.split('.').pop()?.toLowerCase();
-    const mimeTypes: Record<string, string> = {
-      'jpg': 'image/jpeg',
-      'jpeg': 'image/jpeg',
-      'png': 'image/png',
-      'gif': 'image/gif',
-      'webp': 'image/webp',
-      'svg': 'image/svg+xml',
-      'bmp': 'image/bmp',
-      'ico': 'image/x-icon',
-      'pdf': 'application/pdf',
-      'json': 'application/json',
-      'txt': 'text/plain',
-      'html': 'text/html',
-      'css': 'text/css',
-      'js': 'application/javascript',
-    };
-    return mimeTypes[extension || ''] || 'application/octet-stream';
-  }
 }
 
 function parseObjectPath(path: string): {
@@ -306,14 +213,9 @@ function parseObjectPath(path: string): {
   if (pathParts.length < 3) {
     throw new Error("Invalid path: must contain at least a bucket name");
   }
-
   const bucketName = pathParts[1];
   const objectName = pathParts.slice(2).join("/");
-
-  return {
-    bucketName,
-    objectName,
-  };
+  return { bucketName, objectName };
 }
 
 async function signObjectURL({
@@ -337,9 +239,7 @@ async function signObjectURL({
     `${REPLIT_SIDECAR_ENDPOINT}/object-storage/signed-object-url`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(request),
     }
   );
@@ -349,7 +249,6 @@ async function signObjectURL({
         `make sure you're running on Replit`
     );
   }
-
-  const data = await response.json() as { signed_url: string };
-  return data.signed_url;
+  const { signed_url: signedURL } = await response.json();
+  return signedURL;
 }
