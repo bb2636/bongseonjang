@@ -10,9 +10,12 @@ export function BannerManagementPage() {
     totalCount,
     isLoading,
     error,
+    reorderError,
     handleTabChange,
     handleAddBanner,
     handleEditBanner,
+    handleReorderBanners,
+    handleDismissReorderError,
     getPositionName,
   } = useBannerManagement();
 
@@ -28,9 +31,12 @@ export function BannerManagementPage() {
         totalCount={totalCount}
         isLoading={isLoading}
         error={error}
+        reorderError={reorderError}
         onTabChange={handleTabChange}
         onAddBanner={handleAddBanner}
         onEditBanner={handleEditBanner}
+        onReorderBanners={handleReorderBanners}
+        onDismissReorderError={handleDismissReorderError}
         getPositionName={getPositionName}
       />
     </AdminLayout>
