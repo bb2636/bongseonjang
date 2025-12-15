@@ -16,13 +16,27 @@ interface UseImageUploaderOptions {
   onUploadComplete?: (images: UploadedImage[]) => void;
 }
 
+function getUploadEndpoint(purpose: UploadPurpose): string {
+  const endpoints: Record<UploadPurpose, string> = {
+    review: '/api/upload/review-image',
+    inquiry: '/api/upload',
+    profile: '/api/upload',
+    support: '/api/upload',
+  };
+  return endpoints[purpose];
+}
+
 async function uploadImageToServer(file: File, purpose: UploadPurpose): Promise<string> {
   const token = localStorage.getItem('token');
   const formData = new FormData();
   formData.append('image', file);
-  formData.append('purpose', purpose);
+  
+  if (purpose !== 'review') {
+    formData.append('purpose', purpose);
+  }
 
-  const response = await fetch('/api/upload', {
+  const endpoint = getUploadEndpoint(purpose);
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       ...(token && { Authorization: `Bearer ${token}` }),
