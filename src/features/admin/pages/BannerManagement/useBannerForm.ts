@@ -108,7 +108,7 @@ export function useBannerForm(positions: BannerPosition[], defaultPositionCode: 
         }
 
         const uploadResult = await uploadResponse.json();
-        imageUrl = `/api/upload${uploadResult.objectPath}`;
+        imageUrl = uploadResult.objectPath;
       }
 
       const response = await fetch('/api/admin/banners', {
