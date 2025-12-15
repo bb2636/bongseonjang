@@ -1,4 +1,5 @@
 import { Storage, File } from "@google-cloud/storage";
+import { Client as ReplitObjectStorage } from "@replit/object-storage";
 import { Response } from "express";
 import { randomUUID } from "crypto";
 import {
@@ -10,6 +11,8 @@ import {
 } from "./objectAcl";
 
 const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
+
+export const replitStorageClient = new ReplitObjectStorage();
 
 export const objectStorageClient = new Storage({
   credentials: {
@@ -207,6 +210,39 @@ export class ObjectStorageService {
       objectFile,
       requestedPermission: requestedPermission ?? ObjectPermission.READ,
     });
+  }
+
+  async uploadFile(buffer: Buffer, originalFilename: string): Promise<string> {
+    const objectId = randomUUID();
+    const extension = originalFilename.split('.').pop() || 'bin';
+    const objectName = `uploads/${objectId}.${extension}`;
+    
+    const result = await replitStorageClient.uploadFromBytes(objectName, buffer);
+    if (!result.ok) {
+      throw new Error(`Failed to upload file: ${result.error}`);
+    }
+    
+    return `/objects/${objectName}`;
+  }
+
+  async downloadObjectByPath(objectPath: string, res: Response): Promise<void> {
+    if (!objectPath.startsWith("/objects/")) {
+      throw new ObjectNotFoundError();
+    }
+
+    const objectName = objectPath.slice("/objects/".length);
+    
+    const result = await replitStorageClient.downloadAsBytes(objectName);
+    if (!result.ok) {
+      throw new ObjectNotFoundError();
+    }
+    
+    res.set({
+      "Content-Type": "application/octet-stream",
+      "Content-Length": result.value.length,
+      "Cache-Control": "public, max-age=3600",
+    });
+    res.send(result.value);
   }
 }
 

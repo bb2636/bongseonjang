@@ -1,42 +1,40 @@
 import { Router } from 'express';
+import multer from 'multer';
 import { authMiddleware } from '../../../common/middleware/authMiddleware';
 import { ObjectStorageService } from '../../../objectStorage';
 
 const router = Router();
-
-router.post('/review-image', authMiddleware, async (req, res) => {
-  try {
-    const objectStorageService = new ObjectStorageService();
-    const uploadURL = await objectStorageService.getObjectEntityUploadURL();
-    res.json({ uploadURL });
-  } catch (error) {
-    console.error('Error getting upload URL:', error);
-    res.status(500).json({ error: 'Failed to get upload URL' });
-  }
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.'));
+    }
+  },
 });
 
-router.post('/confirm-review-image', authMiddleware, async (req, res) => {
-  const { imageURL } = req.body;
-  
-  if (!imageURL) {
-    return res.status(400).json({ error: 'imageURL is required' });
-  }
-
+router.post('/review-image', authMiddleware, upload.single('image'), async (req, res) => {
   try {
-    const userId = (req as any).userId;
-    const objectStorageService = new ObjectStorageService();
-    const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
-      imageURL,
-      {
-        owner: userId,
-        visibility: 'public',
-      }
-    );
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
 
+    const objectStorageService = new ObjectStorageService();
+    const objectPath = await objectStorageService.uploadFile(
+      req.file.buffer,
+      req.file.originalname
+    );
+    
     res.json({ objectPath });
   } catch (error) {
-    console.error('Error confirming review image:', error);
-    res.status(500).json({ error: 'Failed to confirm review image' });
+    console.error('Error uploading review image:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
   }
 });
 
@@ -45,13 +43,17 @@ router.get('/objects/*objectPath', async (req, res) => {
   const objectPathArr = (req.params as any).objectPath || [];
   const objectPath = Array.isArray(objectPathArr) ? objectPathArr.join('/') : objectPathArr;
   try {
-    const objectFile = await objectStorageService.getObjectEntityFile(
-      `/objects/${objectPath}`
-    );
-    objectStorageService.downloadObject(objectFile, res);
+    await objectStorageService.downloadObjectByPath(`/objects/${objectPath}`, res);
   } catch (error) {
-    console.error('Error serving object:', error);
-    res.status(404).json({ error: 'Object not found' });
+    try {
+      const objectFile = await objectStorageService.getObjectEntityFile(
+        `/objects/${objectPath}`
+      );
+      await objectStorageService.downloadObject(objectFile, res);
+    } catch (fallbackError) {
+      console.error('Error serving object:', error);
+      res.status(404).json({ error: 'Object not found' });
+    }
   }
 });
 

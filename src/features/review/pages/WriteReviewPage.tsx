@@ -16,50 +16,23 @@ interface UploadedImage {
   isUploading: boolean;
 }
 
-async function getUploadUrl(): Promise<string> {
+async function uploadImageToServer(file: File): Promise<string> {
   const token = localStorage.getItem('token');
+  const formData = new FormData();
+  formData.append('image', file);
+  
   const response = await fetch('/api/upload/review-image', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
     },
+    body: formData,
   });
-  if (!response.ok) {
-    throw new Error('업로드 URL을 가져올 수 없습니다.');
-  }
-  const data = await response.json();
-  return data.uploadURL;
-}
-
-async function uploadImageToStorage(file: File, uploadUrl: string): Promise<string> {
-  const response = await fetch(uploadUrl, {
-    method: 'PUT',
-    body: file,
-    headers: {
-      'Content-Type': file.type,
-    },
-  });
+  
   if (!response.ok) {
     throw new Error('이미지 업로드에 실패했습니다.');
   }
-  const url = new URL(uploadUrl);
-  return url.pathname;
-}
-
-async function confirmUploadedImage(imageURL: string): Promise<string> {
-  const token = localStorage.getItem('token');
-  const response = await fetch('/api/upload/confirm-review-image', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    body: JSON.stringify({ imageURL }),
-  });
-  if (!response.ok) {
-    throw new Error('이미지 확인에 실패했습니다.');
-  }
+  
   const data = await response.json();
   return data.objectPath;
 }
@@ -202,14 +175,12 @@ export default function WriteReviewPage() {
     for (let i = 0; i < newFiles.length; i++) {
       const file = newFiles[i];
       try {
-        const uploadUrl = await getUploadUrl();
-        const objectPath = await uploadImageToStorage(file, uploadUrl);
-        const confirmedPath = await confirmUploadedImage(objectPath);
+        const objectPath = await uploadImageToServer(file);
 
         setUploadedImages((prev) =>
           prev.map((img) =>
             img.file === file
-              ? { ...img, uploadedUrl: confirmedPath, isUploading: false }
+              ? { ...img, uploadedUrl: objectPath, isUploading: false }
               : img
           )
         );
