@@ -17,7 +17,7 @@ interface UploadedImage {
 }
 
 async function getUploadUrl(): Promise<string> {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('token');
   const response = await fetch('/api/upload/review-image', {
     method: 'POST',
     headers: {
@@ -48,7 +48,7 @@ async function uploadImageToStorage(file: File, uploadUrl: string): Promise<stri
 }
 
 async function confirmUploadedImage(imageURL: string): Promise<string> {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('token');
   const response = await fetch('/api/upload/confirm-review-image', {
     method: 'POST',
     headers: {
@@ -112,7 +112,7 @@ async function createReview(data: {
   content: string;
   imageUrls?: string[];
 }) {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('token');
   const response = await fetch('/api/reviews', {
     method: 'POST',
     headers: {
