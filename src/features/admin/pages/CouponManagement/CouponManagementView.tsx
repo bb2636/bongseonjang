@@ -12,6 +12,7 @@ interface CouponManagementViewProps {
   onSearchChange: (query: string) => void;
   onFilterChange: (filter: DiscountFilter) => void;
   onAddCoupon: () => void;
+  onViewCoupon: (coupon: AdminCoupon) => void;
   onEditCoupon: (coupon: AdminCoupon) => void;
   onToggleStatus: (couponId: number) => void;
   onDeleteCoupon: (couponId: number) => void;
@@ -62,6 +63,7 @@ export function CouponManagementView({
   onSearchChange,
   onFilterChange,
   onAddCoupon,
+  onViewCoupon,
   onEditCoupon,
   onToggleStatus,
   onDeleteCoupon,
@@ -209,6 +211,12 @@ export function CouponManagementView({
                     </span>
                   </div>
                   <div className="coupon-table__cell coupon-table__cell--actions">
+                    <button
+                      className="coupon-table__action-button coupon-table__action-button--view"
+                      onClick={() => onViewCoupon(coupon)}
+                    >
+                      보기
+                    </button>
                     <button
                       className="coupon-table__action-button coupon-table__action-button--edit"
                       onClick={() => onEditCoupon(coupon)}

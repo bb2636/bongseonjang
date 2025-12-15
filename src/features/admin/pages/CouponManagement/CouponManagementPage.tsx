@@ -1,6 +1,7 @@
 import { AdminLayout } from '../../layouts';
 import { CouponManagementView } from './CouponManagementView';
 import { CouponFormDialog } from './CouponFormDialog';
+import { CouponDetailDialog } from './CouponDetailDialog';
 import { useCouponManagement } from './useCouponManagement';
 
 export function CouponManagementPage() {
@@ -13,11 +14,15 @@ export function CouponManagementPage() {
     discountFilter,
     isFormDialogOpen,
     editingCoupon,
+    isDetailDialogOpen,
+    viewingCoupon,
     handleSearchChange,
     handleFilterChange,
     handleAddCoupon,
+    handleViewCoupon,
     handleEditCoupon,
     handleCloseFormDialog,
+    handleCloseDetailDialog,
     handleFormSuccess,
     handleToggleStatus,
     handleDeleteCoupon,
@@ -43,6 +48,7 @@ export function CouponManagementPage() {
         onSearchChange={handleSearchChange}
         onFilterChange={handleFilterChange}
         onAddCoupon={handleAddCoupon}
+        onViewCoupon={handleViewCoupon}
         onEditCoupon={handleEditCoupon}
         onToggleStatus={handleToggleStatus}
         onDeleteCoupon={handleDeleteCoupon}
@@ -57,6 +63,16 @@ export function CouponManagementPage() {
         coupon={editingCoupon}
         onClose={handleCloseFormDialog}
         onSuccess={handleFormSuccess}
+      />
+      <CouponDetailDialog
+        isOpen={isDetailDialogOpen}
+        coupon={viewingCoupon}
+        onClose={handleCloseDetailDialog}
+        getDiscountTypeLabel={getDiscountTypeLabel}
+        getDiscountValueLabel={getDiscountValueLabel}
+        getTargetLabel={getTargetLabel}
+        getConditionLabel={getConditionLabel}
+        getPeriodLabel={getPeriodLabel}
       />
     </AdminLayout>
   );

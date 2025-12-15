@@ -42,6 +42,8 @@ export function useCouponManagement() {
   const [discountFilter, setDiscountFilter] = useState<DiscountFilter>('all');
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<AdminCoupon | null>(null);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [viewingCoupon, setViewingCoupon] = useState<AdminCoupon | null>(null);
 
   const fetchCoupons = useCallback(async () => {
     setIsLoading(true);
@@ -87,6 +89,16 @@ export function useCouponManagement() {
   const handleEditCoupon = useCallback((coupon: AdminCoupon) => {
     setEditingCoupon(coupon);
     setIsFormDialogOpen(true);
+  }, []);
+
+  const handleViewCoupon = useCallback((coupon: AdminCoupon) => {
+    setViewingCoupon(coupon);
+    setIsDetailDialogOpen(true);
+  }, []);
+
+  const handleCloseDetailDialog = useCallback(() => {
+    setIsDetailDialogOpen(false);
+    setViewingCoupon(null);
   }, []);
 
   const handleCloseFormDialog = useCallback(() => {
@@ -187,11 +199,15 @@ export function useCouponManagement() {
     discountFilter,
     isFormDialogOpen,
     editingCoupon,
+    isDetailDialogOpen,
+    viewingCoupon,
     handleSearchChange,
     handleFilterChange,
     handleAddCoupon,
     handleEditCoupon,
+    handleViewCoupon,
     handleCloseFormDialog,
+    handleCloseDetailDialog,
     handleFormSuccess,
     handleToggleStatus,
     handleDeleteCoupon,
