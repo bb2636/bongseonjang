@@ -1,16 +1,33 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
 import { fetchDefaultAddress, fetchAddresses, AddressResponse } from '../../address/api/addressApi';
 import { fetchUserProfile } from '../../profile/api/profileApi';
-import { preparePayment } from '../api/paymentApi';
+import { preparePayment, prepareDirectPayment, DirectPurchaseItem } from '../api/paymentApi';
+import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
+import type { ProductDetail } from '../../productDetail/types/productDetail';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
 import { DeliveryRequestBottomSheet } from '../components/DeliveryRequestBottomSheet';
 import { AddressSelectBottomSheet } from '../components/AddressSelectBottomSheet';
 import './CheckoutPage.css';
+
+interface DirectPurchaseData {
+  productId: string;
+  items: DirectPurchaseItem[];
+}
+
+interface DisplayItem {
+  id: string;
+  productName: string;
+  productImageUrl: string;
+  optionName: string | null;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
 
 declare global {
   interface Window {
@@ -43,7 +60,19 @@ export function CheckoutPage() {
   const { showToast } = useToast();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
+  
+  const isDirectMode = searchParams.get('direct') === 'true';
+  const directDataParam = searchParams.get('data');
   const selectedItemIds = searchParams.get('items')?.split(',') || [];
+
+  const directPurchaseData: DirectPurchaseData | null = useMemo(() => {
+    if (!isDirectMode || !directDataParam) return null;
+    try {
+      return JSON.parse(decodeURIComponent(directDataParam));
+    } catch {
+      return null;
+    }
+  }, [isDirectMode, directDataParam]);
 
   const [deliveryRequest, setDeliveryRequest] = useState('');
   const [customDeliveryRequest, setCustomDeliveryRequest] = useState('');
@@ -63,6 +92,14 @@ export function CheckoutPage() {
     queryKey: ['cart'],
     queryFn: fetchCart,
     staleTime: 1000 * 60 * 5,
+    enabled: !isDirectMode,
+  });
+
+  const { data: directProduct, isLoading: isDirectProductLoading } = useQuery({
+    queryKey: ['directProduct', directPurchaseData?.productId],
+    queryFn: () => fetchProductDetail(directPurchaseData!.productId),
+    staleTime: 1000 * 60 * 5,
+    enabled: isDirectMode && !!directPurchaseData?.productId,
   });
 
   const { data: defaultAddress, isLoading: isAddressLoading } = useQuery({
@@ -86,7 +123,9 @@ export function CheckoutPage() {
     staleTime: 1000 * 60 * 5,
   });
 
-  const isLoading = isCartLoading || isAddressLoading || isAddressesLoading || isProfileLoading;
+  const isLoading = isDirectMode 
+    ? (isDirectProductLoading || isAddressLoading || isAddressesLoading || isProfileLoading)
+    : (isCartLoading || isAddressLoading || isAddressesLoading || isProfileLoading);
 
   useEffect(() => {
     if (defaultAddress && !hasUserSelectedAddress.current) {
@@ -96,18 +135,57 @@ export function CheckoutPage() {
 
   const currentAddress = selectedAddress || defaultAddress;
 
-  const selectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
-  const productAmount = selectedItems.reduce((sum, item) => sum + item.totalPrice, 0);
+  const displayItems: DisplayItem[] = useMemo(() => {
+    if (isDirectMode && directProduct && directPurchaseData) {
+      return directPurchaseData.items.map((item, index) => {
+        const mainOption = item.mainOptionId 
+          ? directProduct.mainOptions.find(opt => opt.id === item.mainOptionId)
+          : null;
+        
+        const unitPrice = mainOption ? mainOption.price : directProduct.discountedPrice;
+        
+        return {
+          id: `direct-${index}`,
+          productName: directProduct.name,
+          productImageUrl: directProduct.thumbnailUrl || '',
+          optionName: mainOption?.name || null,
+          quantity: item.quantity,
+          unitPrice,
+          totalPrice: unitPrice * item.quantity,
+        };
+      });
+    }
+    
+    const cartSelectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
+    return cartSelectedItems.map(item => ({
+      id: item.id,
+      productName: item.productName,
+      productImageUrl: item.productImageUrl,
+      optionName: item.mainOptionName || null,
+      quantity: item.quantity,
+      unitPrice: item.totalPrice / item.quantity,
+      totalPrice: item.totalPrice,
+    }));
+  }, [isDirectMode, directProduct, directPurchaseData, cart, selectedItemIds]);
+
+  const productAmount = displayItems.reduce((sum, item) => sum + item.totalPrice, 0);
   const availablePoints = userProfile?.points ?? 0;
   const couponCount = userProfile?.couponCount ?? 0;
   const finalAmount = productAmount - usedPoints;
 
   useEffect(() => {
-    if (!isLoading && selectedItemIds.length === 0) {
-      showToast('결제할 상품을 선택해주세요', 'error');
-      navigate('/cart');
+    if (isDirectMode) {
+      if (!isLoading && !directPurchaseData) {
+        showToast('상품 정보가 올바르지 않습니다', 'error');
+        navigate('/');
+      }
+    } else {
+      if (!isLoading && selectedItemIds.length === 0) {
+        showToast('결제할 상품을 선택해주세요', 'error');
+        navigate('/cart');
+      }
     }
-  }, [isLoading, selectedItemIds, navigate, showToast]);
+  }, [isLoading, isDirectMode, directPurchaseData, selectedItemIds, navigate, showToast]);
 
   const handleDeliveryRequestChange = (value: string) => {
     setDeliveryRequest(value);
@@ -142,7 +220,7 @@ export function CheckoutPage() {
       return;
     }
 
-    if (selectedItemIds.length === 0) {
+    if (displayItems.length === 0) {
       showToast('결제할 상품이 없습니다', 'error');
       return;
     }
@@ -157,16 +235,32 @@ export function CheckoutPage() {
         : deliveryRequest;
 
     try {
-      const paymentData = await preparePayment({
-        selectedItemIds,
-        recipientName: currentAddress.recipientName,
-        recipientPhone: currentAddress.recipientPhone,
-        postalCode: currentAddress.postalCode,
-        address: currentAddress.address,
-        addressDetail: currentAddress.addressDetail,
-        deliveryRequest: finalDeliveryRequest,
-        paymentMethod,
-      });
+      let paymentData;
+      
+      if (isDirectMode && directPurchaseData) {
+        paymentData = await prepareDirectPayment({
+          productId: directPurchaseData.productId,
+          items: directPurchaseData.items,
+          recipientName: currentAddress.recipientName,
+          recipientPhone: currentAddress.recipientPhone,
+          postalCode: currentAddress.postalCode,
+          address: currentAddress.address,
+          addressDetail: currentAddress.addressDetail,
+          deliveryRequest: finalDeliveryRequest,
+          paymentMethod,
+        });
+      } else {
+        paymentData = await preparePayment({
+          selectedItemIds,
+          recipientName: currentAddress.recipientName,
+          recipientPhone: currentAddress.recipientPhone,
+          postalCode: currentAddress.postalCode,
+          address: currentAddress.address,
+          addressDetail: currentAddress.addressDetail,
+          deliveryRequest: finalDeliveryRequest,
+          paymentMethod,
+        });
+      }
 
       setPaymentStep('connecting');
 
@@ -304,7 +398,7 @@ export function CheckoutPage() {
             onClick={() => setIsProductsExpanded(!isProductsExpanded)}
           >
             <h2 className="checkout-section-title">
-              주문상품 <span className="checkout-section-count">{selectedItems.length.toString().padStart(2, '0')}</span>
+              주문상품 <span className="checkout-section-count">{displayItems.length.toString().padStart(2, '0')}</span>
             </h2>
             <svg 
               className={`checkout-expand-icon ${isProductsExpanded ? 'checkout-expand-icon--expanded' : ''}`}
@@ -318,11 +412,14 @@ export function CheckoutPage() {
           </div>
           {isProductsExpanded && (
             <div className="checkout-items">
-              {selectedItems.map(item => (
+              {displayItems.map(item => (
                 <div key={item.id} className="checkout-item">
                   <img src={item.productImageUrl} alt={item.productName} className="checkout-item-image" />
                   <div className="checkout-item-info">
                     <p className="checkout-item-name">{item.productName}</p>
+                    {item.optionName && (
+                      <p className="checkout-item-option">{item.optionName}</p>
+                    )}
                     <p className="checkout-item-quantity">수량 : {item.quantity}개</p>
                     <p className="checkout-item-price">{item.totalPrice.toLocaleString()}원</p>
                   </div>

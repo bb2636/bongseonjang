@@ -305,6 +305,188 @@ async function handlePaymentCallback(req: Request, res: Response) {
 router.get('/callback', handlePaymentCallback);
 router.post('/callback', handlePaymentCallback);
 
+interface DirectPurchaseItem {
+  mainOptionId: string | null;
+  subOptionId: string | null;
+  quantity: number;
+}
+
+router.post('/prepare-direct', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.userId;
+    const { 
+      productId, 
+      items, 
+      recipientName, 
+      recipientPhone, 
+      postalCode, 
+      address, 
+      addressDetail, 
+      deliveryRequest, 
+      returnUrl: clientReturnUrl, 
+      paymentMethod 
+    } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ error: '상품 정보가 필요합니다' });
+    }
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: '구매할 옵션을 선택해주세요' });
+    }
+
+    if (!recipientName || !recipientPhone || !postalCode || !address) {
+      return res.status(400).json({ error: '배송지 정보를 입력해주세요' });
+    }
+
+    if (!clientReturnUrl) {
+      return res.status(400).json({ error: '콜백 URL이 필요합니다' });
+    }
+
+    const { Product } = await import('../../../entity/Product');
+    const { ProductMainOption } = await import('../../../entity/ProductMainOption');
+    const { ProductSubOption } = await import('../../../entity/ProductSubOption');
+    
+    const productRepository = AppDataSource.getRepository(Product);
+    const mainOptionRepository = AppDataSource.getRepository(ProductMainOption);
+    const subOptionRepository = AppDataSource.getRepository(ProductSubOption);
+    const orderRepository = AppDataSource.getRepository(Order);
+    const orderItemRepository = AppDataSource.getRepository(OrderItem);
+    const paymentRepository = AppDataSource.getRepository(Payment);
+
+    const product = await productRepository.findOne({ where: { id: productId } });
+    if (!product) {
+      return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    }
+
+    let totalProductPrice = 0;
+    const orderItemsData: Array<{
+      productId: string;
+      productName: string;
+      mainOptionName: string | null;
+      subOptionName: string | null;
+      optionAdditionalPrice: number;
+      quantity: number;
+      unitPrice: number;
+      totalPrice: number;
+    }> = [];
+
+    for (const item of items as DirectPurchaseItem[]) {
+      let basePrice = product.basePrice;
+      let additionalPrice = 0;
+      let mainOptionName: string | null = null;
+      let subOptionName: string | null = null;
+
+      if (item.mainOptionId) {
+        const mainOption = await mainOptionRepository.findOne({ where: { id: item.mainOptionId } });
+        if (mainOption) {
+          basePrice = mainOption.price;
+          mainOptionName = mainOption.name;
+        }
+      }
+
+      if (item.subOptionId) {
+        const subOption = await subOptionRepository.findOne({ where: { id: item.subOptionId } });
+        if (subOption) {
+          additionalPrice = subOption.additionalPrice;
+          subOptionName = subOption.name;
+        }
+      }
+
+      const unitPrice = basePrice + additionalPrice;
+      const itemTotal = unitPrice * item.quantity;
+      totalProductPrice += itemTotal;
+
+      orderItemsData.push({
+        productId,
+        productName: product.name,
+        mainOptionName,
+        subOptionName,
+        optionAdditionalPrice: additionalPrice,
+        quantity: item.quantity,
+        unitPrice,
+        totalPrice: itemTotal,
+      });
+    }
+
+    const orderNumber = generateOrderNumber();
+    const finalAmount = totalProductPrice;
+
+    let returnUrlOrigin: string;
+    try {
+      returnUrlOrigin = new URL(clientReturnUrl).origin;
+    } catch {
+      return res.status(400).json({ error: '올바르지 않은 콜백 URL입니다' });
+    }
+
+    const order = orderRepository.create({
+      orderNumber,
+      userId,
+      status: 'pending',
+      totalProductPrice,
+      totalDiscountAmount: 0,
+      usedPoints: 0,
+      couponDiscountAmount: 0,
+      finalAmount,
+      earnedPoints: 0,
+      recipientName,
+      recipientPhone,
+      postalCode,
+      address,
+      addressDetail: addressDetail || null,
+      deliveryRequest: deliveryRequest || null,
+      cartItemIdsSnapshot: [],
+      returnUrl: returnUrlOrigin,
+    });
+
+    await orderRepository.save(order);
+
+    for (const itemData of orderItemsData) {
+      const orderItem = orderItemRepository.create({
+        orderId: order.id,
+        ...itemData,
+      });
+      await orderItemRepository.save(orderItem);
+    }
+
+    const paymentMethodMap: Record<string, 'card' | 'bank_transfer' | 'virtual_account'> = {
+      'card': 'card',
+      'bank': 'bank_transfer',
+      'vbank': 'virtual_account',
+    };
+    const mappedMethod = paymentMethodMap[paymentMethod] || 'card';
+
+    const payment = paymentRepository.create({
+      orderId: order.id,
+      status: 'pending',
+      method: mappedMethod,
+      amount: finalAmount,
+      pgProvider: 'nicepay',
+    });
+
+    await paymentRepository.save(payment);
+
+    const goodsName = orderItemsData.length > 1 
+      ? `${product.name} 외 ${orderItemsData.length - 1}건` 
+      : product.name;
+
+    console.log('[NicePay] Prepare direct payment - returnUrl:', clientReturnUrl);
+
+    return res.json({
+      orderId: order.id,
+      orderNumber,
+      clientKey: NICEPAY_CLIENT_KEY,
+      amount: finalAmount,
+      goodsName,
+      returnUrl: clientReturnUrl,
+    });
+  } catch (error) {
+    console.error('Failed to prepare direct payment:', error);
+    return res.status(500).json({ error: '결제 준비에 실패했습니다' });
+  }
+});
+
 router.get('/order/:orderId', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
