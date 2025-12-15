@@ -8,6 +8,7 @@ interface FaqItem {
   title: string;
   isVisible: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 interface FaqCategory {
@@ -194,10 +195,11 @@ export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: F
 
       <div className="faq-list__table">
         <div className="faq-list__table-header">
-          <div className="faq-list__table-cell faq-list__table-cell--category">카테고리</div>
-          <div className="faq-list__table-cell faq-list__table-cell--question">질문</div>
-          <div className="faq-list__table-cell faq-list__table-cell--status">노출</div>
-          <div className="faq-list__table-cell faq-list__table-cell--date">등록일</div>
+          <div className="faq-list__table-cell">카테고리</div>
+          <div className="faq-list__table-cell">질문</div>
+          <div className="faq-list__table-cell">최근 수정일</div>
+          <div className="faq-list__table-cell">노출</div>
+          <div className="faq-list__table-cell">관리</div>
         </div>
 
         <div className="faq-list__table-body">
@@ -210,21 +212,29 @@ export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: F
               <div 
                 key={faq.id} 
                 className="faq-list__table-row"
-                onClick={() => onView(faq.id)}
               >
-                <div className="faq-list__table-cell faq-list__table-cell--category">
+                <div className="faq-list__table-cell">
                   <span className="faq-list__category-badge">{faq.categoryName}</span>
                 </div>
                 <div className="faq-list__table-cell faq-list__table-cell--question">
                   {faq.title}
                 </div>
-                <div className="faq-list__table-cell faq-list__table-cell--status">
+                <div className="faq-list__table-cell">
+                  {formatDate(faq.updatedAt)}
+                </div>
+                <div className="faq-list__table-cell">
                   <span className={`faq-list__status-badge ${faq.isVisible ? 'faq-list__status-badge--visible' : 'faq-list__status-badge--hidden'}`}>
                     {faq.isVisible ? '노출' : '숨김'}
                   </span>
                 </div>
-                <div className="faq-list__table-cell faq-list__table-cell--date">
-                  {formatDate(faq.createdAt)}
+                <div className="faq-list__table-cell">
+                  <button
+                    type="button"
+                    className="faq-list__view-button"
+                    onClick={() => onView(faq.id)}
+                  >
+                    보기
+                  </button>
                 </div>
               </div>
             ))
