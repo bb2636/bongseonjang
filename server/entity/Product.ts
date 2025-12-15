@@ -1,10 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import type { ProductCategory } from './ProductCategory';
-import type { DisplayCategory } from './DisplayCategory';
+import type { ShippingPolicy } from './ShippingPolicy';
 import type { ProductOption } from './ProductOption';
 import type { ProductMainOption } from './ProductMainOption';
 import type { ProductSubOption } from './ProductSubOption';
 import type { ProductImage } from './ProductImage';
+import type { ProductExposureCategory } from './ProductExposureCategory';
 import type { Review } from './Review';
 
 @Entity('products')
@@ -12,82 +13,34 @@ export class Product {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'uuid' })
-  productCategoryId!: string;
-
-  @Column({ type: 'uuid' })
-  displayCategoryId!: string;
-
   @Column({ type: 'varchar', length: 200 })
   name!: string;
 
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  summary!: string | null;
+  @Column({ type: 'int', default: 0, name: 'stock_quantity' })
+  stockQuantity!: number;
 
-  @Column({ type: 'text', nullable: true })
-  description!: string | null;
+  @Column({ type: 'uuid', name: 'product_category_id' })
+  productCategoryId!: string;
 
-  @Column({ type: 'int' })
-  basePrice!: number;
+  @Column({ type: 'bigint', nullable: true, name: 'shipping_policy_id' })
+  shippingPolicyId!: number | null;
 
-  @Column({ type: 'int', default: 0 })
-  discountRate!: number;
+  @Column({ type: 'text', nullable: true, name: 'detail_content' })
+  detailContent!: string | null;
 
-  @Column({ type: 'boolean', default: false })
-  isDiscounted!: boolean;
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  origin!: string | null;
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  storageMethod!: string | null;
-
-  @Column({ type: 'varchar', length: 200, nullable: true })
-  expirationInfo!: string | null;
-
-  @Column({ type: 'varchar', length: 50, nullable: true })
-  shippingMethod!: string | null;
-
-  @Column({ type: 'varchar', length: 200, nullable: true })
-  shippingRegion!: string | null;
-
-  @Column({ type: 'text', nullable: true })
-  notice!: string | null;
-
-  @Column({ type: 'boolean', default: false })
-  isOptionRequired!: boolean;
-
-  @Column({ type: 'int', default: 0 })
-  sortOrder!: number;
-
-  @Column({ type: 'boolean', default: true })
-  isActive!: boolean;
-
-  @Column({ type: 'timestamp', nullable: true })
-  saleStartAt!: Date | null;
-
-  @Column({ type: 'timestamp', nullable: true })
-  saleEndAt!: Date | null;
-
-  @Column({ type: 'int', nullable: true })
-  countdownDays!: number | null;
-
-  @Column({ type: 'simple-array', nullable: true })
-  tags!: string[] | null;
-
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at' })
   updatedAt!: Date;
 
   @ManyToOne('ProductCategory', 'products')
-  @JoinColumn({ name: 'productCategoryId' })
+  @JoinColumn({ name: 'product_category_id' })
   productCategory!: ProductCategory;
 
-  @ManyToOne('DisplayCategory', 'products')
-  @JoinColumn({ name: 'displayCategoryId' })
-  displayCategory!: DisplayCategory;
+  @ManyToOne('ShippingPolicy', 'products')
+  @JoinColumn({ name: 'shipping_policy_id' })
+  shippingPolicy!: ShippingPolicy | null;
 
   @OneToMany('ProductOption', 'product')
   options!: ProductOption[];
@@ -100,6 +53,9 @@ export class Product {
 
   @OneToMany('ProductImage', 'product')
   images!: ProductImage[];
+
+  @OneToMany('ProductExposureCategory', 'product')
+  productExposureCategories!: ProductExposureCategory[];
 
   @OneToMany('Review', 'product')
   reviews!: Review[];

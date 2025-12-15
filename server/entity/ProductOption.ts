@@ -1,42 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import type { Product } from './Product';
 
 @Entity('product_options')
 export class ProductOption {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  @PrimaryGeneratedColumn({ type: 'bigint' })
+  id!: number;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', name: 'product_id' })
   productId!: string;
 
-  @Column({ type: 'varchar', length: 100 })
-  name!: string;
+  @Column({ type: 'varchar', length: 100, name: 'option_name' })
+  optionName!: string;
 
-  @Column({ type: 'int' })
-  price!: number;
+  @Column({ type: 'varchar', length: 200, name: 'option_value' })
+  optionValue!: string;
 
-  @Column({ type: 'int', nullable: true })
-  compareAtPrice!: number | null;
-
-  @Column({ type: 'int', default: 0 })
-  stockQty!: number;
-
-  @Column({ type: 'boolean', default: false })
-  isDefault!: boolean;
-
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', default: 0, name: 'sort_order' })
   sortOrder!: number;
 
-  @Column({ type: 'boolean', default: true })
-  isActive!: boolean;
-
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt!: Date;
-
   @ManyToOne('Product', 'options', { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'productId' })
+  @JoinColumn({ name: 'product_id' })
   product!: Product;
 }
