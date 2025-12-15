@@ -278,17 +278,27 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
               <div className="notice-panel__field">
                 <label className="notice-panel__label">노출 여부</label>
                 {isEditing ? (
-                  <div className="notice-panel__toggle-container">
-                    <button
-                      type="button"
-                      className={`notice-panel__toggle ${editIsVisible ? 'notice-panel__toggle--active' : ''}`}
-                      onClick={() => setEditIsVisible(!editIsVisible)}
-                    >
-                      <span className="notice-panel__toggle-slider" />
-                    </button>
-                    <span className="notice-panel__toggle-label">
-                      {editIsVisible ? '노출' : '숨김'}
-                    </span>
+                  <div className="notice-panel__radio-group">
+                    <label className="notice-panel__radio">
+                      <input
+                        type="radio"
+                        name="visibility"
+                        checked={editIsVisible === true}
+                        onChange={() => setEditIsVisible(true)}
+                      />
+                      <span className="notice-panel__radio-custom" />
+                      <span className="notice-panel__radio-label">노출</span>
+                    </label>
+                    <label className="notice-panel__radio">
+                      <input
+                        type="radio"
+                        name="visibility"
+                        checked={editIsVisible === false}
+                        onChange={() => setEditIsVisible(false)}
+                      />
+                      <span className="notice-panel__radio-custom" />
+                      <span className="notice-panel__radio-label">숨김</span>
+                    </label>
                   </div>
                 ) : (
                   <div className={`notice-panel__visibility-badge ${notice.isVisible ? 'notice-panel__visibility-badge--visible' : 'notice-panel__visibility-badge--hidden'}`}>

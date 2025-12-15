@@ -396,6 +396,57 @@
   color: #0C0C0C;
 }
 
+/* Radio Button Styles */
+.notice-panel__radio-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.notice-panel__radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.notice-panel__radio input[type="radio"] {
+  display: none;
+}
+
+.notice-panel__radio-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(12, 12, 12, 0.3);
+  border-radius: 50%;
+  position: relative;
+  transition: border-color 0.2s ease;
+}
+
+.notice-panel__radio input[type="radio"]:checked + .notice-panel__radio-custom {
+  border-color: #3B9BD5;
+}
+
+.notice-panel__radio input[type="radio"]:checked + .notice-panel__radio-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #3B9BD5;
+  border-radius: 50%;
+}
+
+.notice-panel__radio-label {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0C0C0C;
+}
+
 /* Visibility Badge Styles */
 .notice-panel__visibility-badge {
   display: inline-block;
