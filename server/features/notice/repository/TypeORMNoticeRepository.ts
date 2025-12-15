@@ -44,17 +44,22 @@ export class TypeORMNoticeRepository implements NoticeRepository {
       return null;
     }
 
+    const updateData: Partial<Notice> = {
+      updatedAt: new Date(),
+    };
+
     if (data.title !== undefined) {
-      notice.title = data.title;
+      updateData.title = data.title;
     }
     if (data.content !== undefined) {
-      notice.content = data.content;
+      updateData.content = data.content;
     }
     if (data.typeId !== undefined) {
-      notice.typeId = data.typeId;
+      updateData.typeId = data.typeId;
     }
 
-    return this.repository.save(notice);
+    await this.repository.update(id, updateData);
+    return this.findById(id);
   }
 
   async delete(id: number): Promise<boolean> {
