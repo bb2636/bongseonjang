@@ -137,6 +137,9 @@ export default function WriteReviewPage() {
     if (!productId || rating === 0) return;
 
     const imageUrls = getUploadedUrls();
+    
+    console.log('[WriteReviewPage] images state:', images);
+    console.log('[WriteReviewPage] getUploadedUrls() result:', imageUrls);
 
     createReviewMutation.mutate({
       productId,
