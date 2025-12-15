@@ -21,6 +21,7 @@ import { uploadRoutes } from '../features/upload';
 import { noticeRoutes } from '../features/notice';
 import { faqRoutes } from '../features/faq';
 import { inquiryRoutes } from '../features/inquiry';
+import { adminBannerRoutes } from '../features/banner';
 
 const router = Router();
 
@@ -46,5 +47,6 @@ router.use('/upload', uploadRoutes);
 router.use('/admin/notices', noticeRoutes);
 router.use('/admin/faqs', faqRoutes);
 router.use('/admin/inquiries', inquiryRoutes);
+router.use('/admin', adminBannerRoutes);
 
 export default router;

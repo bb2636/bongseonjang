@@ -22,7 +22,7 @@ import { PaymentFailPage } from './features/payment/pages/PaymentFailPage';
 import { NoticeListPage } from './features/notice';
 import { AddressFormPage } from './features/address';
 import { WriteReviewPage } from './features/review';
-import { AdminDashboardPage, AdminPlaceholderPage, AdminSupportPage } from './features/admin';
+import { AdminDashboardPage, AdminPlaceholderPage, AdminSupportPage, BannerManagementPage } from './features/admin';
 import { ProtectedRoute } from './components';
 import './components/ProtectedRoute/ProtectedRoute.css';
 
@@ -75,8 +75,8 @@ export default function App() {
       <Route path="/admin/reviews/*" element={<AdminPlaceholderPage />} />
       <Route path="/admin/coupons" element={<AdminPlaceholderPage />} />
       <Route path="/admin/coupons/*" element={<AdminPlaceholderPage />} />
-      <Route path="/admin/banners" element={<AdminPlaceholderPage />} />
-      <Route path="/admin/banners/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/banners" element={<BannerManagementPage />} />
+      <Route path="/admin/banners/*" element={<BannerManagementPage />} />
       <Route path="/admin/categories" element={<AdminPlaceholderPage />} />
       <Route path="/admin/categories/*" element={<AdminPlaceholderPage />} />
       <Route path="/admin/settings" element={<AdminPlaceholderPage />} />
