@@ -5,7 +5,7 @@ import { ObjectStorageService } from '../../../objectStorage';
 import { getUploadProfile, isValidPurpose } from '../config/uploadProfiles';
 
 interface AuthenticatedRequest extends Request {
-  user?: { id: string; email: string };
+  userId?: string;
 }
 
 const router = Router();
@@ -37,7 +37,7 @@ router.post('/', optionalAuth, defaultUpload.single('image'), async (req: Authen
 
     const profile = getUploadProfile(purpose)!;
 
-    if (profile.requiresAuth && !req.user) {
+    if (profile.requiresAuth && !req.userId) {
       return res.status(401).json({ error: 'Authentication required for this upload type' });
     }
 

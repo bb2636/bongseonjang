@@ -127,9 +127,6 @@ export class ReviewController {
       }
 
       const { productId, rating, content, imageUrls } = req.body;
-      
-      console.log('[ReviewController] createReview request body:', JSON.stringify(req.body, null, 2));
-      console.log('[ReviewController] imageUrls received:', imageUrls);
 
       if (!productId || !rating || !content) {
         res.status(400).json({ error: 'productId, rating, and content are required' });
