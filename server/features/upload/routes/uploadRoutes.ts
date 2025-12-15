@@ -71,28 +71,115 @@ router.post('/', optionalAuth, defaultUpload.single('image'), async (req: Authen
   }
 });
 
-router.post('/review-image', authMiddleware, defaultUpload.single('image'), async (req, res) => {
+const MAX_REVIEW_IMAGE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_REVIEW_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const MIME_TO_EXTENSION: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/gif': 'gif',
+  'image/webp': 'webp',
+};
+
+router.post('/review-image/signed-url', authMiddleware, async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No image file provided' });
+    const { mimeType, fileSize } = req.body;
+    
+    if (!mimeType || typeof mimeType !== 'string') {
+      return res.status(400).json({ error: 'mimeType parameter is required' });
     }
 
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!allowedMimeTypes.includes(req.file.mimetype)) {
-      return res.status(400).json({ error: 'Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.' });
+    if (!fileSize || typeof fileSize !== 'number') {
+      return res.status(400).json({ error: 'fileSize parameter is required' });
+    }
+
+    if (!ALLOWED_REVIEW_MIME_TYPES.includes(mimeType)) {
+      return res.status(400).json({ 
+        error: 'Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.' 
+      });
+    }
+
+    if (fileSize > MAX_REVIEW_IMAGE_SIZE) {
+      return res.status(400).json({ 
+        error: `File too large. Maximum size: ${MAX_REVIEW_IMAGE_SIZE / 1024 / 1024}MB` 
+      });
+    }
+
+    if (fileSize <= 0) {
+      return res.status(400).json({ error: 'Invalid file size' });
+    }
+
+    const extension = MIME_TO_EXTENSION[mimeType];
+    const objectStorageService = new ObjectStorageService();
+    const { signedUrl, objectPath } = await objectStorageService.getUploadSignedUrl(
+      'uploads/reviews',
+      extension
+    );
+    
+    res.json({ 
+      signedUrl, 
+      objectPath, 
+      expectedMimeType: mimeType,
+      expectedFileSize: fileSize,
+    });
+  } catch (error) {
+    console.error('Error generating signed URL:', error);
+    res.status(500).json({ error: 'Failed to generate upload URL' });
+  }
+});
+
+router.post('/review-image/verify', authMiddleware, async (req, res) => {
+  try {
+    const { objectPath, expectedMimeType, expectedFileSize } = req.body;
+    
+    if (!objectPath || typeof objectPath !== 'string') {
+      return res.status(400).json({ error: 'objectPath parameter is required' });
     }
 
     const objectStorageService = new ObjectStorageService();
-    const objectPath = await objectStorageService.uploadFile(
-      req.file.buffer,
-      req.file.originalname,
-      'uploads/reviews'
-    );
     
-    res.json({ objectPath });
+    try {
+      const objectFile = await objectStorageService.getObjectEntityFile(objectPath);
+      const [metadata] = await objectFile.getMetadata();
+      
+      const actualSize = Number(metadata.size);
+      const actualContentType = metadata.contentType || '';
+      
+      if (actualSize > MAX_REVIEW_IMAGE_SIZE) {
+        await objectFile.delete();
+        return res.status(400).json({ 
+          error: `File too large. Maximum size: ${MAX_REVIEW_IMAGE_SIZE / 1024 / 1024}MB`,
+          deleted: true,
+        });
+      }
+      
+      const isValidMimeType = ALLOWED_REVIEW_MIME_TYPES.some(
+        allowed => actualContentType.includes(allowed.split('/')[1])
+      );
+      
+      if (!isValidMimeType && !actualContentType.startsWith('image/')) {
+        await objectFile.delete();
+        return res.status(400).json({ 
+          error: 'Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.',
+          deleted: true,
+        });
+      }
+      
+      if (expectedFileSize && Math.abs(actualSize - expectedFileSize) > 1024) {
+        console.warn(`File size mismatch for ${objectPath}: expected ${expectedFileSize}, got ${actualSize}`);
+      }
+      
+      res.json({ 
+        verified: true, 
+        objectPath,
+        actualSize,
+        actualContentType,
+      });
+    } catch (error) {
+      return res.status(404).json({ error: 'Object not found or upload failed' });
+    }
   } catch (error) {
-    console.error('Error uploading review image:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
+    console.error('Error verifying uploaded file:', error);
+    res.status(500).json({ error: 'Failed to verify uploaded file' });
   }
 });
 

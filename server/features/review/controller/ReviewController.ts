@@ -1,12 +1,99 @@
 import type { Request, Response } from 'express';
 import type { ReviewService } from '../application/ReviewService';
+import { ObjectStorageService } from '../../../objectStorage';
 
 interface AuthenticatedRequest extends Request {
   userId?: string;
 }
 
+const MAX_REVIEW_IMAGE_SIZE = 10 * 1024 * 1024;
+const ALLOWED_REVIEW_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
 export class ReviewController {
-  constructor(private readonly reviewService: ReviewService) {}
+  private readonly objectStorageService: ObjectStorageService;
+
+  constructor(private readonly reviewService: ReviewService) {
+    this.objectStorageService = new ObjectStorageService();
+  }
+
+  private async validateImageUrl(imageUrl: string): Promise<{ valid: boolean; error?: string }> {
+    if (!imageUrl.startsWith('/objects/')) {
+      return { valid: false, error: 'Invalid image path format' };
+    }
+
+    try {
+      const objectFile = await this.objectStorageService.getObjectEntityFile(imageUrl);
+      const [metadata] = await objectFile.getMetadata();
+      
+      const actualSize = Number(metadata.size);
+      const actualContentType = metadata.contentType || '';
+
+      if (actualSize > MAX_REVIEW_IMAGE_SIZE) {
+        await objectFile.delete();
+        return { valid: false, error: 'Image file too large' };
+      }
+
+      const isExactMimeMatch = ALLOWED_REVIEW_MIME_TYPES.includes(actualContentType);
+      
+      if (!isExactMimeMatch) {
+        await objectFile.delete();
+        return { valid: false, error: 'Invalid image type. Only JPEG, PNG, GIF, and WebP are allowed.' };
+      }
+
+      const buffer = await this.downloadFirstBytes(objectFile, 16);
+      if (!this.isValidImageMagicBytes(buffer, actualContentType)) {
+        await objectFile.delete();
+        return { valid: false, error: 'File content does not match declared type' };
+      }
+
+      return { valid: true };
+    } catch (error) {
+      return { valid: false, error: 'Image not found or inaccessible' };
+    }
+  }
+
+  private async downloadFirstBytes(objectFile: any, numBytes: number): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      let bytesRead = 0;
+      
+      const stream = objectFile.createReadStream({ start: 0, end: numBytes - 1 });
+      
+      stream.on('data', (chunk: Buffer) => {
+        chunks.push(chunk);
+        bytesRead += chunk.length;
+        if (bytesRead >= numBytes) {
+          stream.destroy();
+        }
+      });
+      
+      stream.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+      
+      stream.on('error', (err: Error) => {
+        reject(err);
+      });
+    });
+  }
+
+  private isValidImageMagicBytes(buffer: Buffer, declaredMimeType: string): boolean {
+    if (buffer.length < 4) return false;
+
+    const magicBytes: Record<string, number[][]> = {
+      'image/jpeg': [[0xFF, 0xD8, 0xFF]],
+      'image/png': [[0x89, 0x50, 0x4E, 0x47]],
+      'image/gif': [[0x47, 0x49, 0x46, 0x38]],
+      'image/webp': [[0x52, 0x49, 0x46, 0x46]],
+    };
+
+    const expectedPatterns = magicBytes[declaredMimeType];
+    if (!expectedPatterns) return false;
+
+    return expectedPatterns.some(pattern => 
+      pattern.every((byte, index) => buffer[index] === byte)
+    );
+  }
 
   async getReviewsByProductId(req: Request, res: Response): Promise<void> {
     try {
@@ -51,11 +138,28 @@ export class ReviewController {
         return;
       }
 
+      let validatedImageUrls: string[] = [];
+      if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
+        for (const imageUrl of imageUrls) {
+          if (typeof imageUrl !== 'string') {
+            res.status(400).json({ error: 'Invalid image URL format' });
+            return;
+          }
+          
+          const validation = await this.validateImageUrl(imageUrl);
+          if (!validation.valid) {
+            res.status(400).json({ error: validation.error || 'Invalid image' });
+            return;
+          }
+          validatedImageUrls.push(imageUrl);
+        }
+      }
+
       const review = await this.reviewService.createReview(userId, {
         productId,
         rating,
         content,
-        imageUrls,
+        imageUrls: validatedImageUrls,
       });
 
       res.status(201).json(review);

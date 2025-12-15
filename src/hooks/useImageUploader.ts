@@ -18,7 +18,7 @@ interface UseImageUploaderOptions {
 
 function getUploadEndpoint(purpose: UploadPurpose): string {
   const endpoints: Record<UploadPurpose, string> = {
-    review: '/api/upload/review-image',
+    review: '/api/upload/review-image/signed-url',
     inquiry: '/api/upload',
     profile: '/api/upload',
     support: '/api/upload',
@@ -26,14 +26,84 @@ function getUploadEndpoint(purpose: UploadPurpose): string {
   return endpoints[purpose];
 }
 
+function getExtensionFromFile(file: File): string {
+  const nameParts = file.name.split('.');
+  if (nameParts.length > 1) {
+    return nameParts.pop()!.toLowerCase();
+  }
+  const mimeToExt: Record<string, string> = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'image/webp': 'webp',
+  };
+  return mimeToExt[file.type] || 'bin';
+}
+
+async function uploadImageViaSignedUrl(file: File, purpose: UploadPurpose): Promise<string> {
+  const token = localStorage.getItem('token');
+  
+  const signedUrlResponse = await fetch('/api/upload/review-image/signed-url', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: JSON.stringify({ 
+      mimeType: file.type,
+      fileSize: file.size,
+    }),
+  });
+
+  if (!signedUrlResponse.ok) {
+    const error = await signedUrlResponse.json();
+    throw new Error(error.error || 'Signed URL 발급에 실패했습니다.');
+  }
+
+  const { signedUrl, objectPath, expectedMimeType, expectedFileSize } = await signedUrlResponse.json();
+
+  const uploadResponse = await fetch(signedUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': expectedMimeType || file.type,
+    },
+    body: file,
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error('이미지 업로드에 실패했습니다.');
+  }
+
+  const verifyResponse = await fetch('/api/upload/review-image/verify', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: JSON.stringify({ 
+      objectPath,
+      expectedMimeType,
+      expectedFileSize,
+    }),
+  });
+
+  if (!verifyResponse.ok) {
+    const error = await verifyResponse.json();
+    throw new Error(error.error || '이미지 검증에 실패했습니다.');
+  }
+
+  return objectPath;
+}
+
 async function uploadImageToServer(file: File, purpose: UploadPurpose): Promise<string> {
+  if (purpose === 'review') {
+    return uploadImageViaSignedUrl(file, purpose);
+  }
+
   const token = localStorage.getItem('token');
   const formData = new FormData();
   formData.append('image', file);
-  
-  if (purpose !== 'review') {
-    formData.append('purpose', purpose);
-  }
+  formData.append('purpose', purpose);
 
   const endpoint = getUploadEndpoint(purpose);
   const response = await fetch(endpoint, {
