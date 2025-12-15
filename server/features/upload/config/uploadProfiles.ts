@@ -43,6 +43,14 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     allowedMimeTypes: [...COMMON_IMAGE_MIME_TYPES, 'application/pdf'],
     acl: 'private',
   },
+  banner: {
+    purpose: 'banner',
+    storagePath: 'uploads/banners',
+    requiresAuth: false,
+    maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
+    allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
+    acl: 'public',
+  },
 };
 
 export function getUploadProfile(purpose: string): UploadProfile | undefined {

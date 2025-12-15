@@ -95,7 +95,8 @@ export function useBannerForm(positions: BannerPosition[], defaultPositionCode: 
 
       if (selectedFile) {
         const formDataUpload = new FormData();
-        formDataUpload.append('file', selectedFile);
+        formDataUpload.append('image', selectedFile);
+        formDataUpload.append('purpose', 'banner');
         
         const uploadResponse = await fetch('/api/upload', {
           method: 'POST',
@@ -107,7 +108,7 @@ export function useBannerForm(positions: BannerPosition[], defaultPositionCode: 
         }
 
         const uploadResult = await uploadResponse.json();
-        imageUrl = uploadResult.url;
+        imageUrl = `/api/upload${uploadResult.objectPath}`;
       }
 
       const response = await fetch('/api/admin/banners', {
