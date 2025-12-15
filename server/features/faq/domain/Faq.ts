@@ -5,6 +5,7 @@ export interface FaqListItem {
   title: string;
   isVisible: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface FaqListResponse {

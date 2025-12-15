@@ -17,6 +17,7 @@ export class FaqService {
       title: faq.title,
       isVisible: faq.isVisible,
       createdAt: faq.createdAt.toISOString(),
+      updatedAt: faq.updatedAt.toISOString(),
     }));
 
     return {
@@ -38,6 +39,7 @@ export class FaqService {
       title: faq.title,
       isVisible: faq.isVisible,
       createdAt: faq.createdAt.toISOString(),
+      updatedAt: faq.updatedAt.toISOString(),
     }));
 
     return {
