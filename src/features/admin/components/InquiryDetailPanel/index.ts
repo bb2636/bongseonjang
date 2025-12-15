@@ -1,0 +1,1 @@
+export { InquiryDetailPanel } from './InquiryDetailPanel';

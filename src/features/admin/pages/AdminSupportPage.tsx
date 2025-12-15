@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../layouts';
-import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog, Snackbar, FaqList, FaqDetailPanel } from '../components';
+import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog, Snackbar, FaqList, FaqDetailPanel, InquiryList, InquiryDetailPanel } from '../components';
 import './AdminSupportPage.css';
 
 type SupportTab = 'faq' | 'inquiry' | 'notice';
@@ -50,6 +50,10 @@ export function AdminSupportPage() {
   const [isFaqPanelOpen, setIsFaqPanelOpen] = useState(false);
   const [faqCategories, setFaqCategories] = useState<FaqCategoryOption[]>([]);
   const [faqRefreshTrigger, setFaqRefreshTrigger] = useState(0);
+
+  const [selectedInquiryId, setSelectedInquiryId] = useState<number | null>(null);
+  const [isInquiryPanelOpen, setIsInquiryPanelOpen] = useState(false);
+  const [inquiryRefreshTrigger, setInquiryRefreshTrigger] = useState(0);
 
   const fetchNoticeTypes = async () => {
     try {
@@ -164,6 +168,34 @@ export function AdminSupportPage() {
     setFaqCategories(categories);
   };
 
+  const handleInquiryView = (id: number) => {
+    setSelectedInquiryId(id);
+    setIsInquiryPanelOpen(true);
+  };
+
+  const handleInquiryPanelClose = () => {
+    setIsInquiryPanelOpen(false);
+    setSelectedInquiryId(null);
+  };
+
+  const handleInquiryPanelSaved = () => {
+    setInquiryRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleInquirySuccess = (message: string) => {
+    setSnackbar({
+      isOpen: true,
+      title: message,
+    });
+  };
+
+  const handleInquiryError = (message: string) => {
+    setSnackbar({
+      isOpen: true,
+      title: message,
+    });
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'faq':
@@ -177,9 +209,10 @@ export function AdminSupportPage() {
         );
       case 'inquiry':
         return (
-          <div className="admin-support__placeholder">
-            <p>상품 문의 관리 기능이 준비 중입니다.</p>
-          </div>
+          <InquiryList
+            onView={handleInquiryView}
+            refreshTrigger={inquiryRefreshTrigger}
+          />
         );
       case 'notice':
         if (isLoading) {
@@ -247,6 +280,17 @@ export function AdminSupportPage() {
           onSaved={handleFaqPanelSaved}
           onSuccess={handleFaqSuccess}
           onError={handleFaqError}
+        />
+      )}
+
+      {selectedInquiryId && (
+        <InquiryDetailPanel
+          inquiryId={selectedInquiryId}
+          isOpen={isInquiryPanelOpen}
+          onClose={handleInquiryPanelClose}
+          onSaved={handleInquiryPanelSaved}
+          onSuccess={handleInquirySuccess}
+          onError={handleInquiryError}
         />
       )}
 
