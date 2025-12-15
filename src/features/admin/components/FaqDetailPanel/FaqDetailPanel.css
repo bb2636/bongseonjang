@@ -100,8 +100,7 @@
 }
 
 .faq-panel__field--content {
-  flex: 1;
-  min-height: 200px;
+  flex: 0 0 auto;
 }
 
 .faq-panel__label {
@@ -126,8 +125,9 @@
 }
 
 .faq-panel__value--content {
-  flex: 1;
-  min-height: 427px;
+  min-height: 200px;
+  max-height: 300px;
+  overflow-y: auto;
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -153,8 +153,8 @@
 
 .faq-panel__textarea {
   box-sizing: border-box;
-  flex: 1;
-  min-height: 427px;
+  min-height: 200px;
+  max-height: 300px;
   padding: 12px;
   background: rgba(12, 12, 12, 0.04);
   border: none;
@@ -165,7 +165,7 @@
   line-height: 150%;
   letter-spacing: -0.02em;
   color: #0C0C0C;
-  resize: none;
+  resize: vertical;
   outline: none;
 }
 
