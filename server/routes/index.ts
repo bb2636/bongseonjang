@@ -21,6 +21,7 @@ import { paymentRoutes } from '../features/payment/routes/paymentRoutes';
 import { addressRoutes } from '../features/address';
 import { uploadRoutes } from '../features/upload';
 import { noticeRoutes } from '../features/notice';
+import { faqRoutes } from '../features/faq';
 
 const router = Router();
 
@@ -46,5 +47,6 @@ router.use('/payment', paymentRoutes);
 router.use('/address', addressRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/admin/notices', noticeRoutes);
+router.use('/admin/faqs', faqRoutes);
 
 export default router;
