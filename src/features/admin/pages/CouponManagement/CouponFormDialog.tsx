@@ -10,9 +10,9 @@ interface CouponFormDialogProps {
   onSuccess: () => void;
 }
 
-type ValidityType = 'fixed' | 'afterIssue' | 'unlimited';
+type ValidityType = 'fixed' | 'afterIssue';
 type TargetType = 'all' | 'category';
-type IssueType = 'all' | 'new' | 'grade';
+type IssueType = 'all' | 'new';
 
 interface CouponFormData {
   name: string;
@@ -39,7 +39,7 @@ const INITIAL_FORM_DATA: CouponFormData = {
   minOrderAmount: 0,
   targetType: 'all',
   issueType: 'all',
-  validityType: 'unlimited',
+  validityType: 'fixed',
   validFrom: '',
   validTo: '',
   validDays: 30,
@@ -63,8 +63,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         maxDiscountAmount: coupon.maxDiscountAmount || 0,
         minOrderAmount: coupon.minOrderAmount,
         targetType: coupon.targetType,
-        issueType: coupon.issueType,
-        validityType: coupon.validityType,
+        issueType: coupon.issueType === 'grade' ? 'all' : coupon.issueType,
+        validityType: coupon.validityType === 'unlimited' ? 'fixed' : coupon.validityType,
         validFrom: coupon.validFrom ? coupon.validFrom.split('T')[0] : '',
         validTo: coupon.validTo ? coupon.validTo.split('T')[0] : '',
         validDays: coupon.validDays || 30,
@@ -325,17 +325,6 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                   <span className="coupon-form-dialog__radio-custom"></span>
                   <span className="coupon-form-dialog__radio-label">신규 회원</span>
                 </label>
-                <label className="coupon-form-dialog__radio">
-                  <input
-                    type="radio"
-                    name="issueType"
-                    value="grade"
-                    checked={formData.issueType === 'grade'}
-                    onChange={() => handleChange('issueType', 'grade')}
-                  />
-                  <span className="coupon-form-dialog__radio-custom"></span>
-                  <span className="coupon-form-dialog__radio-label">특정 등급</span>
-                </label>
               </div>
             </div>
           </div>
@@ -346,17 +335,6 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
             <div className="coupon-form-dialog__field">
               <label className="coupon-form-dialog__label">유효 기간 유형 *</label>
               <div className="coupon-form-dialog__radio-group">
-                <label className="coupon-form-dialog__radio">
-                  <input
-                    type="radio"
-                    name="validityType"
-                    value="unlimited"
-                    checked={formData.validityType === 'unlimited'}
-                    onChange={() => handleChange('validityType', 'unlimited')}
-                  />
-                  <span className="coupon-form-dialog__radio-custom"></span>
-                  <span className="coupon-form-dialog__radio-label">상시 발급</span>
-                </label>
                 <label className="coupon-form-dialog__radio">
                   <input
                     type="radio"
