@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import type { Product } from './Product';
 import type { User } from './User';
+import type { ReviewImage } from './ReviewImage';
 
 @Entity('reviews')
 export class Review {
@@ -35,4 +36,7 @@ export class Review {
   @ManyToOne('User', 'reviews')
   @JoinColumn({ name: 'userId' })
   user!: User;
+
+  @OneToMany('ReviewImage', 'review')
+  images!: ReviewImage[];
 }

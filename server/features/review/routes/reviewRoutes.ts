@@ -2,12 +2,14 @@ import { Router } from 'express';
 import { ReviewController } from '../controller/ReviewController';
 import { ReviewService } from '../application/ReviewService';
 import { TypeORMReviewRepository } from '../repository/TypeORMReviewRepository';
+import { TypeORMReviewImageRepository } from '../repository/TypeORMReviewImageRepository';
 import { authMiddleware } from '../../../common/middleware/authMiddleware';
 
 const router = Router();
 
 const reviewRepository = new TypeORMReviewRepository();
-const reviewService = new ReviewService(reviewRepository);
+const reviewImageRepository = new TypeORMReviewImageRepository();
+const reviewService = new ReviewService(reviewRepository, reviewImageRepository);
 const reviewController = new ReviewController(reviewService);
 
 router.get('/product/:productId', (req, res) => reviewController.getReviewsByProductId(req, res));

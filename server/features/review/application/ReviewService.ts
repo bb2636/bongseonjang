@@ -1,14 +1,28 @@
 import type { Review } from '../../../entity/Review';
 import type { ReviewDto, ReviewStatsDto, CreateReviewRequest } from '../domain/Review';
 import type { ReviewRepository } from '../repository/ReviewRepository';
+import type { ReviewImageRepository } from '../repository/ReviewImageRepository';
 import type { ReviewStatsProvider } from '../../product/application/ProductService';
 
 export class ReviewService implements ReviewStatsProvider {
-  constructor(private readonly reviewRepository: ReviewRepository) {}
+  constructor(
+    private readonly reviewRepository: ReviewRepository,
+    private readonly reviewImageRepository: ReviewImageRepository
+  ) {}
 
   async getReviewsByProductId(productId: string): Promise<ReviewDto[]> {
     const reviews = await this.reviewRepository.findByProductId(productId);
-    return reviews.map((review) => this.toDto(review));
+    const reviewIds = reviews.map(r => r.id);
+    const allImages = await this.reviewImageRepository.findByReviewIds(reviewIds);
+    
+    const imagesByReviewId = new Map<string, string[]>();
+    allImages.forEach(img => {
+      const urls = imagesByReviewId.get(img.reviewId) || [];
+      urls.push(img.imageUrl);
+      imagesByReviewId.set(img.reviewId, urls);
+    });
+
+    return reviews.map((review) => this.toDto(review, imagesByReviewId.get(review.id) || []));
   }
 
   async getReviewStatsByProductId(productId: string): Promise<ReviewStatsDto> {
@@ -21,15 +35,26 @@ export class ReviewService implements ReviewStatsProvider {
       userId,
       rating: request.rating,
       content: request.content,
-      imageUrls: request.imageUrls || null,
+      imageUrls: null,
     });
+
+    const imageUrls: string[] = [];
+    if (request.imageUrls && request.imageUrls.length > 0) {
+      const reviewImages = request.imageUrls.map((url, index) => ({
+        reviewId: review.id,
+        imageUrl: url,
+        sortOrder: index,
+      }));
+      await this.reviewImageRepository.saveMany(reviewImages);
+      imageUrls.push(...request.imageUrls);
+    }
 
     const savedReview = await this.reviewRepository.findById(review.id);
     if (!savedReview) {
       throw new Error('Failed to save review');
     }
 
-    return this.toDto(savedReview);
+    return this.toDto(savedReview, imageUrls);
   }
 
   async deleteReview(id: string, userId: string): Promise<void> {
@@ -50,7 +75,7 @@ export class ReviewService implements ReviewStatsProvider {
     return this.reviewRepository.hasUserReviewedProduct(userId, productId);
   }
 
-  private toDto(review: Review): ReviewDto {
+  private toDto(review: Review, imageUrls: string[] = []): ReviewDto {
     return {
       id: review.id,
       productId: review.productId,
@@ -58,7 +83,7 @@ export class ReviewService implements ReviewStatsProvider {
       userName: review.user?.name || '익명',
       rating: review.rating,
       content: review.content,
-      imageUrls: review.imageUrls || [],
+      imageUrls,
       createdAt: review.createdAt.toISOString(),
     };
   }
