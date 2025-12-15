@@ -54,3 +54,6 @@ export type { MessageSender } from './SupportMessage';
 
 export { NoticeType } from './NoticeType';
 export { Notice } from './Notice';
+
+export { FaqCategory } from './FaqCategory';
+export { Faq } from './Faq';
