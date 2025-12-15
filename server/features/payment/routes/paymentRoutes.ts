@@ -5,6 +5,7 @@ import { OrderItem } from '../../../entity/OrderItem';
 import { Payment } from '../../../entity/Payment';
 import { Cart } from '../../../entity/Cart';
 import { CartItem } from '../../../entity/CartItem';
+import { ProductOption } from '../../../entity/ProductOption';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 
 const router = Router();
@@ -90,7 +91,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     const { In } = await import('typeorm');
     const cartItems = await cartItemRepository.find({
       where: { id: In(selectedItemIds), cartId: cart.id },
-      relations: ['product', 'mainOption', 'subOption'],
+      relations: ['product', 'productOption'],
     });
 
     if (cartItems.length === 0) {
@@ -101,9 +102,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     const goodsNames: string[] = [];
 
     for (const item of cartItems) {
-      const basePrice = item.mainOption?.price ?? item.product?.basePrice ?? 0;
-      const additionalPrice = item.subOption?.additionalPrice ?? 0;
-      const unitPrice = basePrice + additionalPrice;
+      const unitPrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
       totalProductPrice += unitPrice * item.quantity;
       goodsNames.push(item.product?.name ?? '상품');
     }
@@ -143,17 +142,17 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     await orderRepository.save(order);
 
     for (const item of cartItems) {
-      const basePrice = item.mainOption?.price ?? item.product?.basePrice ?? 0;
-      const additionalPrice = item.subOption?.additionalPrice ?? 0;
-      const unitPrice = basePrice + additionalPrice;
+      const unitPrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
+
+      const optionDisplay = item.productOption 
+        ? `${item.productOption.optionName}: ${item.productOption.optionValue}`
+        : null;
 
       const orderItem = orderItemRepository.create({
         orderId: order.id,
         productId: item.productId,
         productName: item.product?.name ?? '',
-        mainOptionName: item.mainOption?.name || null,
-        subOptionName: item.subOption?.name || null,
-        optionAdditionalPrice: additionalPrice,
+        optionName: optionDisplay,
         quantity: item.quantity,
         unitPrice,
         totalPrice: unitPrice * item.quantity,
@@ -306,8 +305,7 @@ router.get('/callback', handlePaymentCallback);
 router.post('/callback', handlePaymentCallback);
 
 interface DirectPurchaseItem {
-  mainOptionId: string | null;
-  subOptionId: string | null;
+  productOptionId: number | null;
   quantity: number;
 }
 
@@ -345,12 +343,9 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
     }
 
     const { Product } = await import('../../../entity/Product');
-    const { ProductMainOption } = await import('../../../entity/ProductMainOption');
-    const { ProductSubOption } = await import('../../../entity/ProductSubOption');
     
     const productRepository = AppDataSource.getRepository(Product);
-    const mainOptionRepository = AppDataSource.getRepository(ProductMainOption);
-    const subOptionRepository = AppDataSource.getRepository(ProductSubOption);
+    const productOptionRepository = AppDataSource.getRepository(ProductOption);
     const orderRepository = AppDataSource.getRepository(Order);
     const orderItemRepository = AppDataSource.getRepository(OrderItem);
     const paymentRepository = AppDataSource.getRepository(Payment);
@@ -364,46 +359,32 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
     const orderItemsData: Array<{
       productId: string;
       productName: string;
-      mainOptionName: string | null;
-      subOptionName: string | null;
-      optionAdditionalPrice: number;
+      optionName: string | null;
       quantity: number;
       unitPrice: number;
       totalPrice: number;
     }> = [];
 
     for (const item of items as DirectPurchaseItem[]) {
-      let basePrice = product.basePrice;
-      let additionalPrice = 0;
-      let mainOptionName: string | null = null;
-      let subOptionName: string | null = null;
+      let optionDisplay: string | null = null;
+      let unitPrice = product.basePrice;
 
-      if (item.mainOptionId) {
-        const mainOption = await mainOptionRepository.findOne({ where: { id: item.mainOptionId } });
-        if (mainOption) {
-          basePrice = mainOption.price;
-          mainOptionName = mainOption.name;
+      if (item.productOptionId) {
+        const option = await productOptionRepository.findOne({ where: { id: item.productOptionId } });
+        if (option) {
+          optionDisplay = `${option.optionName}: ${option.optionValue}`;
+          if (option.price !== null) {
+            unitPrice = option.price;
+          }
         }
       }
-
-      if (item.subOptionId) {
-        const subOption = await subOptionRepository.findOne({ where: { id: item.subOptionId } });
-        if (subOption) {
-          additionalPrice = subOption.additionalPrice;
-          subOptionName = subOption.name;
-        }
-      }
-
-      const unitPrice = basePrice + additionalPrice;
       const itemTotal = unitPrice * item.quantity;
       totalProductPrice += itemTotal;
 
       orderItemsData.push({
         productId,
         productName: product.name,
-        mainOptionName,
-        subOptionName,
-        optionAdditionalPrice: additionalPrice,
+        optionName: optionDisplay,
         quantity: item.quantity,
         unitPrice,
         totalPrice: itemTotal,

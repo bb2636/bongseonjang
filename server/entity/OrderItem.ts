@@ -19,17 +19,11 @@ export class OrderItem {
   @Column({ type: 'varchar', length: 500, nullable: true })
   productImageUrl!: string | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  mainOptionName!: string | null;
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  subOptionName!: string | null;
+  @Column({ type: 'varchar', length: 200, nullable: true, name: 'option_name' })
+  optionName!: string | null;
 
   @Column({ type: 'int' })
   unitPrice!: number;
-
-  @Column({ type: 'int', default: 0 })
-  optionAdditionalPrice!: number;
 
   @Column({ type: 'int' })
   quantity!: number;

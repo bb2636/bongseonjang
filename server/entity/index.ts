@@ -9,8 +9,6 @@ export { ProductExposureCategory } from './ProductExposureCategory';
 export { ShippingPolicy } from './ShippingPolicy';
 export { Product } from './Product';
 export { ProductOption } from './ProductOption';
-export { ProductMainOption } from './ProductMainOption';
-export { ProductSubOption } from './ProductSubOption';
 export { ProductImage, ImageType } from './ProductImage';
 export { TimeDeal } from './TimeDeal';
 export { BannerPosition } from './BannerPosition';

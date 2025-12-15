@@ -3,6 +3,7 @@ import { AppDataSource } from '../../../config/database';
 import { Cart } from '../../../entity/Cart';
 import { CartItem } from '../../../entity/CartItem';
 import { ProductImage } from '../../../entity/ProductImage';
+import { ProductOption } from '../../../entity/ProductOption';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { In } from 'typeorm';
 
@@ -28,7 +29,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 
     const items = await cartItemRepository.find({
       where: { cartId: cart.id },
-      relations: ['product', 'mainOption', 'subOption'],
+      relations: ['product', 'productOption'],
       order: { createdAt: 'DESC' },
     });
 
@@ -45,24 +46,22 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
     }
 
     const cartItems = items.map(item => {
-      const basePrice = item.mainOption?.price ?? item.product?.basePrice ?? 0;
-      const additionalPrice = item.subOption?.additionalPrice ?? 0;
-      const unitPrice = basePrice + additionalPrice;
+      const unitPrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
       const totalPrice = unitPrice * item.quantity;
+
+      const optionDisplay = item.productOption 
+        ? `${item.productOption.optionName}: ${item.productOption.optionValue}`
+        : null;
 
       return {
         id: item.id,
         productId: item.productId,
         productName: item.product?.name ?? '',
         productImageUrl: thumbnailMap.get(item.productId) ?? 'https://placehold.co/58x58/f5f5f5/999999?text=No+Image',
-        mainOptionId: item.mainOptionId,
-        mainOptionName: item.mainOption?.name ?? null,
-        subOptionId: item.subOptionId,
-        subOptionName: item.subOption?.name ?? null,
+        productOptionId: item.productOptionId,
+        optionName: optionDisplay,
         quantity: item.quantity,
         unitPrice,
-        compareAtPrice: item.mainOption?.compareAtPrice ?? null,
-        additionalPrice,
         totalPrice,
       };
     });
@@ -103,12 +102,9 @@ router.post('/items', authMiddleware, async (req: Request, res: Response) => {
     }
 
     const { Product } = await import('../../../entity/Product');
-    const { ProductMainOption } = await import('../../../entity/ProductMainOption');
-    const { ProductSubOption } = await import('../../../entity/ProductSubOption');
 
     const productRepository = AppDataSource.getRepository(Product);
-    const mainOptionRepository = AppDataSource.getRepository(ProductMainOption);
-    const subOptionRepository = AppDataSource.getRepository(ProductSubOption);
+    const productOptionRepository = AppDataSource.getRepository(ProductOption);
 
     const product = await productRepository.findOne({ where: { id: productId } });
     if (!product) {
@@ -116,20 +112,12 @@ router.post('/items', authMiddleware, async (req: Request, res: Response) => {
     }
 
     for (const item of items) {
-      if (item.mainOptionId) {
-        const mainOption = await mainOptionRepository.findOne({ 
-          where: { id: item.mainOptionId, productId } 
+      if (item.productOptionId) {
+        const option = await productOptionRepository.findOne({ 
+          where: { id: item.productOptionId, productId } 
         });
-        if (!mainOption) {
-          return res.status(400).json({ error: '유효하지 않은 메인 옵션입니다' });
-        }
-      }
-      if (item.subOptionId) {
-        const subOption = await subOptionRepository.findOne({ 
-          where: { id: item.subOptionId, productId } 
-        });
-        if (!subOption) {
-          return res.status(400).json({ error: '유효하지 않은 서브 옵션입니다' });
+        if (!option) {
+          return res.status(400).json({ error: '유효하지 않은 옵션입니다' });
         }
       }
     }
@@ -150,15 +138,14 @@ router.post('/items', authMiddleware, async (req: Request, res: Response) => {
     }
 
     for (const item of items) {
-      const { mainOptionId, subOptionId, quantity } = item;
+      const { productOptionId, quantity } = item;
       const validQuantity = Math.max(1, Math.floor(quantity || 1));
 
       const existingItem = await cartItemRepository.findOne({
         where: {
           cartId: cart.id,
           productId,
-          mainOptionId: mainOptionId || null,
-          subOptionId: subOptionId || null,
+          productOptionId: productOptionId || null,
         },
       });
 
@@ -169,8 +156,7 @@ router.post('/items', authMiddleware, async (req: Request, res: Response) => {
         const newItem = cartItemRepository.create({
           cartId: cart.id,
           productId,
-          mainOptionId: mainOptionId || null,
-          subOptionId: subOptionId || null,
+          productOptionId: productOptionId || null,
           quantity: validQuantity,
         });
         await cartItemRepository.save(newItem);

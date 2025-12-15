@@ -2,8 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import type { ProductCategory } from './ProductCategory';
 import type { ShippingPolicy } from './ShippingPolicy';
 import type { ProductOption } from './ProductOption';
-import type { ProductMainOption } from './ProductMainOption';
-import type { ProductSubOption } from './ProductSubOption';
 import type { ProductImage } from './ProductImage';
 import type { ProductExposureCategory } from './ProductExposureCategory';
 import type { Review } from './Review';
@@ -15,6 +13,9 @@ export class Product {
 
   @Column({ type: 'varchar', length: 200 })
   name!: string;
+
+  @Column({ type: 'int', name: 'base_price' })
+  basePrice!: number;
 
   @Column({ type: 'int', default: 0, name: 'stock_quantity' })
   stockQuantity!: number;
@@ -44,12 +45,6 @@ export class Product {
 
   @OneToMany('ProductOption', 'product')
   options!: ProductOption[];
-
-  @OneToMany('ProductMainOption', 'product')
-  mainOptions!: ProductMainOption[];
-
-  @OneToMany('ProductSubOption', 'product')
-  subOptions!: ProductSubOption[];
 
   @OneToMany('ProductImage', 'product')
   images!: ProductImage[];

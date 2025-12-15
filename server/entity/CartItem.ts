@@ -1,8 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import type { Cart } from './Cart';
 import type { Product } from './Product';
-import type { ProductMainOption } from './ProductMainOption';
-import type { ProductSubOption } from './ProductSubOption';
+import type { ProductOption } from './ProductOption';
 
 @Entity('cart_items')
 export class CartItem {
@@ -15,11 +14,8 @@ export class CartItem {
   @Column({ type: 'uuid' })
   productId!: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  mainOptionId!: string | null;
-
-  @Column({ type: 'uuid', nullable: true })
-  subOptionId!: string | null;
+  @Column({ type: 'bigint', nullable: true, name: 'product_option_id' })
+  productOptionId!: number | null;
 
   @Column({ type: 'int', default: 1 })
   quantity!: number;
@@ -38,11 +34,7 @@ export class CartItem {
   @JoinColumn({ name: 'productId' })
   product!: Product;
 
-  @ManyToOne('ProductMainOption', { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'mainOptionId' })
-  mainOption!: ProductMainOption | null;
-
-  @ManyToOne('ProductSubOption', { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'subOptionId' })
-  subOption!: ProductSubOption | null;
+  @ManyToOne('ProductOption', { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'product_option_id' })
+  productOption!: ProductOption | null;
 }

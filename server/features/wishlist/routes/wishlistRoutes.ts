@@ -4,7 +4,7 @@ import { Wishlist } from '../../../entity/Wishlist';
 import { WishlistItem } from '../../../entity/WishlistItem';
 import { Product } from '../../../entity/Product';
 import { ProductImage } from '../../../entity/ProductImage';
-import { ProductMainOption } from '../../../entity/ProductMainOption';
+import { ProductOption } from '../../../entity/ProductOption';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 
 const router = Router();
@@ -18,7 +18,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
     const wishlistItemRepository = AppDataSource.getRepository(WishlistItem);
     const productRepository = AppDataSource.getRepository(Product);
     const productImageRepository = AppDataSource.getRepository(ProductImage);
-    const mainOptionRepository = AppDataSource.getRepository(ProductMainOption);
+    const optionRepository = AppDataSource.getRepository(ProductOption);
 
     let wishlist = await wishlistRepository.findOne({
       where: { userId },
@@ -45,14 +45,15 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
           where: { productId: product.id, isThumbnail: true },
         });
 
-        const mainOptions = await mainOptionRepository.find({
-          where: { productId: product.id, isActive: true },
-          order: { price: 'ASC' },
+        const options = await optionRepository.find({
+          where: { productId: product.id },
+          order: { sortOrder: 'ASC' },
         });
 
-        const lowestPrice = mainOptions.length > 0 
-          ? Math.min(...mainOptions.map(o => o.price))
-          : Math.round(product.basePrice * (1 - product.discountRate / 100));
+        const optionPrices = options.filter(o => o.price !== null).map(o => o.price as number);
+        const lowestPrice = optionPrices.length > 0 
+          ? Math.min(...optionPrices)
+          : product.basePrice;
 
         return {
           id: item.id,
@@ -60,7 +61,6 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
           name: product.name,
           originalPrice: product.basePrice,
           discountedPrice: lowestPrice,
-          discountRate: product.discountRate,
           thumbnailUrl: thumbnailImage?.imageUrl || '',
           addedAt: item.createdAt,
         };

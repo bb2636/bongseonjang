@@ -15,6 +15,9 @@ export class ProductOption {
   @Column({ type: 'varchar', length: 200, name: 'option_value' })
   optionValue!: string;
 
+  @Column({ type: 'int', nullable: true })
+  price!: number | null;
+
   @Column({ type: 'int', default: 0, name: 'sort_order' })
   sortOrder!: number;
 
