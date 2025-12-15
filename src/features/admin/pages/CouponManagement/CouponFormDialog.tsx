@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AdminCoupon, DiscountType } from './useCouponManagement';
+import { DateRangePicker } from '../../../../components/DateRangePicker';
 import './CouponFormDialog.css';
 
 interface CouponFormDialogProps {
@@ -83,6 +84,12 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+
+    if (formData.validityType === 'fixed' && (!formData.validFrom || !formData.validTo)) {
+      setError('기간 지정 시 시작일과 종료일을 모두 선택해주세요.');
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const payload = {
@@ -376,28 +383,12 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
             </div>
 
             {formData.validityType === 'fixed' && (
-              <div className="coupon-form-dialog__field-row">
-                <div className="coupon-form-dialog__field">
-                  <label className="coupon-form-dialog__label">시작일 *</label>
-                  <input
-                    type="date"
-                    className="coupon-form-dialog__input"
-                    value={formData.validFrom}
-                    onChange={(e) => handleChange('validFrom', e.target.value)}
-                    required={formData.validityType === 'fixed'}
-                  />
-                </div>
-                <div className="coupon-form-dialog__field">
-                  <label className="coupon-form-dialog__label">종료일 *</label>
-                  <input
-                    type="date"
-                    className="coupon-form-dialog__input"
-                    value={formData.validTo}
-                    onChange={(e) => handleChange('validTo', e.target.value)}
-                    required={formData.validityType === 'fixed'}
-                  />
-                </div>
-              </div>
+              <DateRangePicker
+                startDate={formData.validFrom}
+                endDate={formData.validTo}
+                onStartDateChange={(date) => handleChange('validFrom', date)}
+                onEndDateChange={(date) => handleChange('validTo', date)}
+              />
             )}
 
             {formData.validityType === 'afterIssue' && (
