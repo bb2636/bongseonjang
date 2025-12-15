@@ -39,8 +39,24 @@ export class BannerRepository {
     });
   }
 
-  async createBanner(data: Partial<Banner>): Promise<Banner> {
-    const banner = this.bannerRepo.create(data);
+  async createBanner(data: {
+    bannerPositionId: number;
+    title?: string | null;
+    imageUrl: string;
+    linkUrl?: string | null;
+    isActive?: boolean;
+    startedAt?: Date | null;
+    endedAt?: Date | null;
+  }): Promise<Banner> {
+    const banner = this.bannerRepo.create({
+      position: { id: data.bannerPositionId },
+      title: data.title,
+      imageUrl: data.imageUrl,
+      linkUrl: data.linkUrl,
+      isActive: data.isActive ?? true,
+      startedAt: data.startedAt,
+      endedAt: data.endedAt,
+    });
     return this.bannerRepo.save(banner);
   }
 
