@@ -1,6 +1,7 @@
-import { useRef, ChangeEvent } from 'react';
+import { useRef, useState, ChangeEvent } from 'react';
 import { BannerPosition } from './useBannerManagement';
 import { useBannerForm } from './useBannerForm';
+import { ConfirmModal } from '../../../../components';
 import './BannerFormDialog.css';
 
 interface BannerFormDialogProps {
@@ -20,6 +21,7 @@ export function BannerFormDialog({
   onSuccess,
 }: BannerFormDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const {
     formData,
     isSubmitting,
@@ -41,7 +43,12 @@ export function BannerFormDialog({
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmSubmit = async () => {
+    setShowConfirmModal(false);
     const success = await submitForm();
     if (success) {
       onSuccess();
@@ -177,6 +184,15 @@ export function BannerFormDialog({
           </button>
         </footer>
       </div>
+
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        title="배너를 등록하시겠습니까?"
+        onCancel={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmSubmit}
+        cancelText="취소"
+        confirmText="확인"
+      />
     </div>
   );
 }
