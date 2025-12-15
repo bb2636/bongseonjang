@@ -55,11 +55,7 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
       <header className="admin-header">
         <div className="admin-header__inner">
           <Link to="/admin" className="admin-header__logo">
-            <svg width="67" height="24" viewBox="0 0 67 24" fill="none">
-              <rect width="20" height="24" rx="4" fill="#3B9BD5"/>
-              <rect x="24" width="20" height="24" rx="4" fill="#3B9BD5"/>
-              <rect x="48" width="20" height="24" rx="4" fill="#3B9BD5"/>
-            </svg>
+            <span className="admin-header__logo-text">봉선장</span>
           </Link>
           
           <nav className="admin-header__nav">
