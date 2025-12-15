@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import { AdminCoupon, DiscountFilter } from './useCouponManagement';
 import './CouponManagement.css';
 
@@ -28,6 +29,29 @@ const FILTER_OPTIONS: { value: DiscountFilter; label: string }[] = [
   { value: 'shipping', label: '배송비 할인' },
 ];
 
+function SearchIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function ChevronDownIcon({ isOpen }: { isOpen: boolean }) {
+  return (
+    <svg 
+      width="16" 
+      height="16" 
+      viewBox="0 0 16 16" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      className={`coupon-management__dropdown-arrow ${isOpen ? 'coupon-management__dropdown-arrow--open' : ''}`}
+    >
+      <path d="M4 6L8 10L12 6" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
 export function CouponManagementView({
   coupons,
   totalCount,
@@ -47,12 +71,37 @@ export function CouponManagementView({
   getConditionLabel,
   getPeriodLabel,
 }: CouponManagementViewProps) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedLabel = FILTER_OPTIONS.find(opt => opt.value === discountFilter)?.label || '전체 유형';
+
+  const handleOptionSelect = (value: DiscountFilter) => {
+    onFilterChange(value);
+    setIsDropdownOpen(false);
+  };
+
   return (
     <div className="coupon-management">
       <div className="coupon-management__toolbar">
         <div className="coupon-management__toolbar-left">
-          <span className="coupon-management__total">총 {totalCount}개</span>
+          <span className="coupon-management__total">총 쿠폰 수 · {totalCount.toLocaleString()}</span>
+        </div>
+        <div className="coupon-management__toolbar-right">
           <div className="coupon-management__search">
+            <span className="coupon-management__search-icon">
+              <SearchIcon />
+            </span>
             <input
               type="text"
               placeholder="쿠폰명 검색"
@@ -61,19 +110,30 @@ export function CouponManagementView({
               className="coupon-management__search-input"
             />
           </div>
-          <select
-            value={discountFilter}
-            onChange={(e) => onFilterChange(e.target.value as DiscountFilter)}
-            className="coupon-management__filter-select"
-          >
-            {FILTER_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="coupon-management__toolbar-right">
+          <div className="coupon-management__dropdown" ref={dropdownRef}>
+            <button
+              type="button"
+              className="coupon-management__dropdown-trigger"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <span className="coupon-management__dropdown-text">{selectedLabel}</span>
+              <ChevronDownIcon isOpen={isDropdownOpen} />
+            </button>
+            {isDropdownOpen && (
+              <div className="coupon-management__dropdown-menu">
+                {FILTER_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`coupon-management__dropdown-option ${discountFilter === option.value ? 'coupon-management__dropdown-option--selected' : ''}`}
+                    onClick={() => handleOptionSelect(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <button className="coupon-management__add-button" onClick={onAddCoupon}>
             새 쿠폰 생성
           </button>

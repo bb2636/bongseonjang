@@ -6,6 +6,7 @@
 
 .coupon-management__toolbar {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
@@ -14,61 +15,151 @@
 .coupon-management__toolbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
 }
 
 .coupon-management__toolbar-right {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .coupon-management__total {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 500;
   font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
   color: rgba(12, 12, 12, 0.7);
 }
 
 .coupon-management__search {
   position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.coupon-management__search-icon {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 .coupon-management__search-input {
-  width: 240px;
-  height: 40px;
-  padding: 0 16px;
-  border: 1px solid rgba(12, 12, 12, 0.1);
+  width: 420px;
+  height: 44px;
+  padding: 0 16px 0 48px;
+  background: #F5F5F5;
+  border: none;
   border-radius: 8px;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: background-color 0.2s ease;
+  box-sizing: border-box;
 }
 
 .coupon-management__search-input:focus {
-  border-color: #239DFF;
+  background: #EEEEEE;
 }
 
 .coupon-management__search-input::placeholder {
   color: rgba(12, 12, 12, 0.4);
 }
 
-.coupon-management__filter-select {
-  height: 40px;
+.coupon-management__dropdown {
+  position: relative;
+}
+
+.coupon-management__dropdown-trigger {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 183px;
+  height: 44px;
   padding: 0 16px;
-  border: 1px solid rgba(12, 12, 12, 0.1);
-  border-radius: 8px;
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  color: #0C0C0C;
   background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.2);
+  border-radius: 4px;
   cursor: pointer;
-  outline: none;
   transition: border-color 0.2s ease;
 }
 
-.coupon-management__filter-select:focus {
-  border-color: #239DFF;
+.coupon-management__dropdown-trigger:hover {
+  border-color: rgba(12, 12, 12, 0.4);
+}
+
+.coupon-management__dropdown-trigger:focus {
+  outline: none;
+  border-color: #3B9BD5;
+}
+
+.coupon-management__dropdown-text {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.coupon-management__dropdown-arrow {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.coupon-management__dropdown-arrow--open {
+  transform: rotate(180deg);
+}
+
+.coupon-management__dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 183px;
+  display: flex;
+  flex-direction: column;
+  background: #FDFDFD;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.coupon-management__dropdown-option {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 20px;
+  height: 48px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+  text-align: left;
+}
+
+.coupon-management__dropdown-option:hover {
+  background-color: rgba(12, 12, 12, 0.04);
+}
+
+.coupon-management__dropdown-option--selected {
+  font-weight: 500;
+  color: #0C0C0C;
 }
 
 .coupon-management__add-button {
@@ -76,20 +167,23 @@
   justify-content: center;
   align-items: center;
   padding: 12px 24px;
-  height: 46px;
-  background: #239DFF;
-  border-radius: 8px;
+  height: 44px;
+  background: #3B9BD5;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
   color: #FFFFFF;
   transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 
 .coupon-management__add-button:hover {
-  background: #1A8CE6;
+  background: #2A8BC5;
 }
 
 .coupon-table {
