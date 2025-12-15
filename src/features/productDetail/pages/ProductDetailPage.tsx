@@ -80,27 +80,26 @@ export default function ProductDetailPage() {
     setIsCheckingReviewPermission(true);
 
     try {
-      // TODO: 테스트 후 조건 복원 필요
-      // const [purchaseResult, reviewResult] = await Promise.all([
-      //   checkPurchase(id || ''),
-      //   checkUserReview(id || ''),
-      // ]);
+      const [purchaseResult, reviewResult] = await Promise.all([
+        checkPurchase(id || ''),
+        checkUserReview(id || ''),
+      ]);
 
-      // if (!purchaseResult.hasPurchased) {
-      //   setModalState({
-      //     type: 'alert',
-      //     message: '상품 구매 후 리뷰를 작성할 수 있습니다',
-      //   });
-      //   return;
-      // }
+      if (!purchaseResult.hasPurchased) {
+        setModalState({
+          type: 'alert',
+          message: '상품 구매 후 리뷰를 작성할 수 있습니다',
+        });
+        return;
+      }
 
-      // if (reviewResult.hasReviewed) {
-      //   setModalState({
-      //     type: 'alert',
-      //     message: '이미 리뷰를 작성하셨습니다',
-      //   });
-      //   return;
-      // }
+      if (reviewResult.hasReviewed) {
+        setModalState({
+          type: 'alert',
+          message: '이미 리뷰를 작성하셨습니다',
+        });
+        return;
+      }
 
       navigate(`/review/write/${id}`, {
         state: {
