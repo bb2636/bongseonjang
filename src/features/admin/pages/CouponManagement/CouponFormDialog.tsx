@@ -187,7 +187,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.discountType === 'fixed'}
                     onChange={() => handleChange('discountType', 'fixed')}
                   />
-                  <span>정액 할인</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">정액 할인</span>
                 </label>
                 <label className="coupon-form-dialog__radio">
                   <input
@@ -197,7 +198,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.discountType === 'rate'}
                     onChange={() => handleChange('discountType', 'rate')}
                   />
-                  <span>정률 할인</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">정률 할인</span>
                 </label>
                 <label className="coupon-form-dialog__radio">
                   <input
@@ -207,7 +209,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.discountType === 'shipping'}
                     onChange={() => handleChange('discountType', 'shipping')}
                   />
-                  <span>배송비 할인</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">배송비 할인</span>
                 </label>
               </div>
             </div>
@@ -269,7 +272,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.targetType === 'all'}
                     onChange={() => handleChange('targetType', 'all')}
                   />
-                  <span>전체 상품</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">전체 상품</span>
                 </label>
                 <label className="coupon-form-dialog__radio">
                   <input
@@ -279,7 +283,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.targetType === 'category'}
                     onChange={() => handleChange('targetType', 'category')}
                   />
-                  <span>특정 카테고리</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">특정 카테고리</span>
                 </label>
               </div>
             </div>
@@ -299,7 +304,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.issueType === 'all'}
                     onChange={() => handleChange('issueType', 'all')}
                   />
-                  <span>전체 회원</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">전체 회원</span>
                 </label>
                 <label className="coupon-form-dialog__radio">
                   <input
@@ -309,7 +315,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.issueType === 'new'}
                     onChange={() => handleChange('issueType', 'new')}
                   />
-                  <span>신규 회원</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">신규 회원</span>
                 </label>
                 <label className="coupon-form-dialog__radio">
                   <input
@@ -319,7 +326,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.issueType === 'grade'}
                     onChange={() => handleChange('issueType', 'grade')}
                   />
-                  <span>특정 등급</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">특정 등급</span>
                 </label>
               </div>
             </div>
@@ -339,7 +347,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.validityType === 'unlimited'}
                     onChange={() => handleChange('validityType', 'unlimited')}
                   />
-                  <span>상시 발급</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">상시 발급</span>
                 </label>
                 <label className="coupon-form-dialog__radio">
                   <input
@@ -349,7 +358,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.validityType === 'fixed'}
                     onChange={() => handleChange('validityType', 'fixed')}
                   />
-                  <span>기간 지정</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">기간 지정</span>
                 </label>
                 <label className="coupon-form-dialog__radio">
                   <input
@@ -359,7 +369,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                     checked={formData.validityType === 'afterIssue'}
                     onChange={() => handleChange('validityType', 'afterIssue')}
                   />
-                  <span>발급 후 N일</span>
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">발급 후 N일</span>
                 </label>
               </div>
             </div>
