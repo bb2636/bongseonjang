@@ -212,10 +212,15 @@ export class ObjectStorageService {
     });
   }
 
-  async uploadFile(buffer: Buffer, originalFilename: string): Promise<string> {
+  async uploadFile(
+    buffer: Buffer,
+    originalFilename: string,
+    storagePath: string = 'uploads'
+  ): Promise<string> {
     const objectId = randomUUID();
     const extension = originalFilename.split('.').pop() || 'bin';
-    const objectName = `uploads/${objectId}.${extension}`;
+    const normalizedPath = storagePath.replace(/^\/+|\/+$/g, '');
+    const objectName = `${normalizedPath}/${objectId}.${extension}`;
     
     const result = await replitStorageClient.uploadFromBytes(objectName, buffer);
     if (!result.ok) {
