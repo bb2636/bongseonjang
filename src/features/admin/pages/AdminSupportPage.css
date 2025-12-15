@@ -352,3 +352,297 @@
   font-weight: 500;
   color: #0C0C0C;
 }
+
+/* Notice Modal Styles */
+.notice-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.notice-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  gap: 28px;
+  width: 749px;
+  max-height: 90vh;
+  background: #FFFFFF;
+  box-shadow: 4px 4px 74px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.notice-modal__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 16px 15px 20px;
+  width: 100%;
+  height: 72px;
+  background: #FFFFFF;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.1);
+}
+
+.notice-modal__title {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #292929;
+  margin: 0;
+}
+
+.notice-modal__close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.notice-modal__close-button:hover {
+  background-color: rgba(12, 12, 12, 0.05);
+}
+
+.notice-modal__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 20px;
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.notice-modal__field {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0;
+  width: 100%;
+}
+
+.notice-modal__field--content {
+  flex: 1;
+}
+
+.notice-modal__label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24px 0 0;
+  gap: 10px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+  margin-bottom: 10px;
+}
+
+.notice-modal__input-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 10px;
+  width: 100%;
+}
+
+.notice-modal__input-wrapper--content {
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.notice-modal__input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  background: rgba(12, 12, 12, 0.04);
+  border: none;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  outline: none;
+}
+
+.notice-modal__input::placeholder {
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.notice-modal__input:focus {
+  background: rgba(12, 12, 12, 0.06);
+}
+
+.notice-modal__textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 12px;
+  background: rgba(12, 12, 12, 0.04);
+  border: none;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 150%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  resize: none;
+  outline: none;
+}
+
+.notice-modal__textarea::placeholder {
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.notice-modal__textarea:focus {
+  background: rgba(12, 12, 12, 0.06);
+}
+
+.notice-modal__char-count {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.notice-modal__radio-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+.notice-modal__radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.notice-modal__radio input[type="radio"] {
+  display: none;
+}
+
+.notice-modal__radio-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(12, 12, 12, 0.3);
+  border-radius: 50%;
+  position: relative;
+  transition: border-color 0.2s ease;
+}
+
+.notice-modal__radio input[type="radio"]:checked + .notice-modal__radio-custom {
+  border-color: #3B9BD5;
+}
+
+.notice-modal__radio input[type="radio"]:checked + .notice-modal__radio-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #3B9BD5;
+  border-radius: 50%;
+}
+
+.notice-modal__radio-label {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0C0C0C;
+}
+
+.notice-modal__footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(12, 12, 12, 0.1);
+}
+
+.notice-modal__cancel-button {
+  padding: 14px 32px;
+  background: none;
+  border: 1px solid rgba(12, 12, 12, 0.2);
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(12, 12, 12, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notice-modal__cancel-button:hover {
+  background-color: rgba(12, 12, 12, 0.05);
+}
+
+.notice-modal__submit-button {
+  padding: 14px 32px;
+  background-color: #3B9BD5;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.notice-modal__submit-button:hover {
+  background-color: #2A8BC5;
+}
+
+.notice-modal__submit-button:disabled {
+  background-color: rgba(59, 155, 213, 0.5);
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .notice-modal {
+    width: 95%;
+    max-width: 749px;
+  }
+}

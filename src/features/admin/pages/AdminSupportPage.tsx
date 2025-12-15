@@ -121,14 +121,6 @@ export function AdminSupportPage() {
           </div>
         );
       case 'notice':
-        if (showAddForm) {
-          return (
-            <NoticeAddForm 
-              noticeTypes={noticeTypes}
-              onClose={handleAddFormClose} 
-            />
-          );
-        }
         if (isLoading) {
           return (
             <div className="admin-support__placeholder">
@@ -182,6 +174,13 @@ export function AdminSupportPage() {
           isOpen={isPanelOpen}
           onClose={handlePanelClose}
           onSaved={handlePanelSaved}
+        />
+      )}
+
+      {showAddForm && (
+        <NoticeAddForm 
+          noticeTypes={noticeTypes}
+          onClose={handleAddFormClose} 
         />
       )}
     </AdminLayout>
@@ -308,81 +307,104 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
   };
 
   return (
-    <form className="notice-form" onSubmit={handleSubmit}>
-      <div className="notice-form__header">
-        <h3 className="notice-form__title">공지사항 등록</h3>
-        <button 
-          type="button" 
-          className="notice-form__close-button"
-          onClick={onClose}
-        >
-          닫기
-        </button>
-      </div>
-
-      <div className="notice-form__field">
-        <label className="notice-form__label">공지 유형</label>
-        <FormCustomDropdown
-          options={noticeTypes}
-          value={typeId}
-          onChange={setTypeId}
-        />
-      </div>
-
-      <div className="notice-form__field">
-        <label className="notice-form__label">제목</label>
-        <input
-          type="text"
-          className="notice-form__input"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="공지사항 제목을 입력하세요"
-        />
-      </div>
-
-      <div className="notice-form__field">
-        <label className="notice-form__label">내용</label>
-        <textarea
-          className="notice-form__textarea"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="공지사항 내용을 입력하세요"
-          rows={10}
-        />
-      </div>
-
-      <div className="notice-form__field">
-        <label className="notice-form__label">노출 여부</label>
-        <div className="notice-form__toggle-container">
-          <button
-            type="button"
-            className={`notice-form__toggle ${isVisible ? 'notice-form__toggle--active' : ''}`}
-            onClick={() => setIsVisible(!isVisible)}
+    <div className="notice-modal-overlay">
+      <form className="notice-modal" onSubmit={handleSubmit}>
+        <div className="notice-modal__header">
+          <h3 className="notice-modal__title">공지사항 등록</h3>
+          <button 
+            type="button" 
+            className="notice-modal__close-button"
+            onClick={onClose}
+            aria-label="닫기"
           >
-            <span className="notice-form__toggle-slider" />
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.5 5.5L5.5 16.5M5.5 5.5L16.5 16.5" stroke="#101112" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
-          <span className="notice-form__toggle-label">
-            {isVisible ? '노출' : '숨김'}
-          </span>
         </div>
-      </div>
 
-      <div className="notice-form__actions">
-        <button 
-          type="button" 
-          className="notice-form__cancel-button"
-          onClick={onClose}
-        >
-          취소
-        </button>
-        <button 
-          type="submit" 
-          className="notice-form__submit-button"
-          disabled={isSaving}
-        >
-          {isSaving ? '저장 중...' : '저장'}
-        </button>
-      </div>
-    </form>
+        <div className="notice-modal__content">
+          <div className="notice-modal__field">
+            <label className="notice-modal__label">제목</label>
+            <div className="notice-modal__input-wrapper">
+              <input
+                type="text"
+                className="notice-modal__input"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="제목"
+              />
+            </div>
+          </div>
+
+          <div className="notice-modal__field">
+            <label className="notice-modal__label">유형</label>
+            <div className="notice-modal__input-wrapper">
+              <FormCustomDropdown
+                options={noticeTypes}
+                value={typeId}
+                onChange={setTypeId}
+              />
+            </div>
+          </div>
+
+          <div className="notice-modal__field notice-modal__field--content">
+            <label className="notice-modal__label">내용</label>
+            <div className="notice-modal__input-wrapper notice-modal__input-wrapper--content">
+              <textarea
+                className="notice-modal__textarea"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="공지 상세 내용을 입력하세요"
+              />
+              <span className="notice-modal__char-count">0/500</span>
+            </div>
+          </div>
+
+          <div className="notice-modal__field">
+            <label className="notice-modal__label">노출 여부</label>
+            <div className="notice-modal__radio-group">
+              <label className="notice-modal__radio">
+                <input
+                  type="radio"
+                  name="visibility"
+                  checked={isVisible}
+                  onChange={() => setIsVisible(true)}
+                />
+                <span className="notice-modal__radio-custom" />
+                <span className="notice-modal__radio-label">노출</span>
+              </label>
+              <label className="notice-modal__radio">
+                <input
+                  type="radio"
+                  name="visibility"
+                  checked={!isVisible}
+                  onChange={() => setIsVisible(false)}
+                />
+                <span className="notice-modal__radio-custom" />
+                <span className="notice-modal__radio-label">숨김</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="notice-modal__footer">
+          <button 
+            type="button" 
+            className="notice-modal__cancel-button"
+            onClick={onClose}
+          >
+            초기화
+          </button>
+          <button 
+            type="submit" 
+            className="notice-modal__submit-button"
+            disabled={isSaving}
+          >
+            {isSaving ? '저장 중...' : '저장하기'}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
