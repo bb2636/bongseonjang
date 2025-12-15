@@ -35,10 +35,6 @@ export type { PaymentStatus, PaymentMethod } from './Payment';
 export { PaymentRefund } from './PaymentRefund';
 export type { RefundStatus } from './PaymentRefund';
 
-export { Coupon } from './Coupon';
-export type { CouponType, CouponTarget } from './Coupon';
-export { CouponIssuance } from './CouponIssuance';
-
 export { PointWallet } from './PointWallet';
 export { PointTransaction } from './PointTransaction';
 export type { PointTransactionType } from './PointTransaction';
