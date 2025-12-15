@@ -13,6 +13,8 @@ export { TimeDeal } from './TimeDeal';
 export { HeroBanner } from './HeroBanner';
 export { MiddleBanner } from './MiddleBanner';
 export { BottomBanner } from './BottomBanner';
+export { BannerPosition } from './BannerPosition';
+export { Banner } from './Banner';
 export { BongseonjangTv } from './BongseonjangTv';
 export { Event } from './Event';
 export { Review } from './Review';
