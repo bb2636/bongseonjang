@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from '../layouts';
-import { NoticeList, NoticeItem } from '../components';
+import { NoticeList, NoticeItem, NoticeDetailPanel } from '../components';
 import './AdminSupportPage.css';
 
 type SupportTab = 'faq' | 'inquiry' | 'notice';
@@ -28,8 +28,9 @@ export function AdminSupportPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
   const [selectedNoticeId, setSelectedNoticeId] = useState<number | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [noticeTypes, setNoticeTypes] = useState<NoticeTypeOption[]>([]);
 
   const fetchNoticeTypes = async () => {
@@ -81,17 +82,27 @@ export function AdminSupportPage() {
 
   const handleView = (id: number) => {
     setSelectedNoticeId(id);
-    setShowForm(true);
+    setIsPanelOpen(true);
+    setShowAddForm(false);
   };
 
   const handleAdd = () => {
+    setShowAddForm(true);
+    setIsPanelOpen(false);
     setSelectedNoticeId(null);
-    setShowForm(true);
   };
 
-  const handleFormClose = () => {
-    setShowForm(false);
+  const handlePanelClose = () => {
+    setIsPanelOpen(false);
     setSelectedNoticeId(null);
+  };
+
+  const handlePanelSaved = () => {
+    fetchNotices(searchKeyword);
+  };
+
+  const handleAddFormClose = () => {
+    setShowAddForm(false);
     fetchNotices(searchKeyword);
   };
 
@@ -110,12 +121,11 @@ export function AdminSupportPage() {
           </div>
         );
       case 'notice':
-        if (showForm) {
+        if (showAddForm) {
           return (
-            <NoticeForm 
-              noticeId={selectedNoticeId} 
+            <NoticeAddForm 
               noticeTypes={noticeTypes}
-              onClose={handleFormClose} 
+              onClose={handleAddFormClose} 
             />
           );
         }
@@ -151,7 +161,8 @@ export function AdminSupportPage() {
               className={`admin-support__tab ${activeTab === tab.key ? 'active' : ''}`}
               onClick={() => {
                 setActiveTab(tab.key);
-                setShowForm(false);
+                setShowAddForm(false);
+                setIsPanelOpen(false);
               }}
             >
               {tab.label}
@@ -163,24 +174,30 @@ export function AdminSupportPage() {
           {renderTabContent()}
         </div>
       </div>
+
+      {selectedNoticeId && (
+        <NoticeDetailPanel
+          noticeId={selectedNoticeId}
+          noticeTypes={noticeTypes}
+          isOpen={isPanelOpen}
+          onClose={handlePanelClose}
+          onSaved={handlePanelSaved}
+        />
+      )}
     </AdminLayout>
   );
 }
 
-interface NoticeFormProps {
-  noticeId: number | null;
+interface NoticeAddFormProps {
   noticeTypes: NoticeTypeOption[];
   onClose: () => void;
 }
 
-function NoticeForm({ noticeId, noticeTypes, onClose }: NoticeFormProps) {
+function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [typeId, setTypeId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
-  const isEditMode = noticeId !== null;
 
   useEffect(() => {
     if (noticeTypes.length > 0 && typeId === null) {
@@ -188,30 +205,6 @@ function NoticeForm({ noticeId, noticeTypes, onClose }: NoticeFormProps) {
       setTypeId(normalType?.id ?? noticeTypes[0].id);
     }
   }, [noticeTypes]);
-
-  useEffect(() => {
-    if (isEditMode) {
-      fetchNotice();
-    }
-  }, [noticeId]);
-
-  const fetchNotice = async () => {
-    if (!noticeId) return;
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/admin/notices/${noticeId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setTitle(data.title);
-        setContent(data.content);
-        setTypeId(data.typeId);
-      }
-    } catch (error) {
-      console.error('Failed to fetch notice:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -227,13 +220,8 @@ function NoticeForm({ noticeId, noticeTypes, onClose }: NoticeFormProps) {
 
     setIsSaving(true);
     try {
-      const url = isEditMode 
-        ? `/api/admin/notices/${noticeId}` 
-        : '/api/admin/notices';
-      const method = isEditMode ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
+      const response = await fetch('/api/admin/notices', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, content, typeId }),
       });
@@ -251,39 +239,10 @@ function NoticeForm({ noticeId, noticeTypes, onClose }: NoticeFormProps) {
     }
   };
 
-  const handleDelete = async () => {
-    if (!noticeId) return;
-    if (!confirm('정말 삭제하시겠습니까?')) return;
-
-    try {
-      const response = await fetch(`/api/admin/notices/${noticeId}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        onClose();
-      } else {
-        alert('삭제에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('Failed to delete notice:', error);
-      alert('삭제에 실패했습니다.');
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="notice-form">
-        <p>로딩 중...</p>
-      </div>
-    );
-  }
-
   return (
     <form className="notice-form" onSubmit={handleSubmit}>
       <div className="notice-form__header">
-        <h3 className="notice-form__title">
-          {isEditMode ? '공지사항 수정' : '공지사항 등록'}
-        </h3>
+        <h3 className="notice-form__title">공지사항 등록</h3>
         <button 
           type="button" 
           className="notice-form__close-button"
@@ -331,15 +290,6 @@ function NoticeForm({ noticeId, noticeTypes, onClose }: NoticeFormProps) {
       </div>
 
       <div className="notice-form__actions">
-        {isEditMode && (
-          <button 
-            type="button" 
-            className="notice-form__delete-button"
-            onClick={handleDelete}
-          >
-            삭제
-          </button>
-        )}
         <button 
           type="button" 
           className="notice-form__cancel-button"
