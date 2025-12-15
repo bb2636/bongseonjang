@@ -14,7 +14,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
   review: {
     purpose: 'review',
     storagePath: 'uploads/reviews',
-    requiresAuth: true,
+    requiresAuth: false,
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
