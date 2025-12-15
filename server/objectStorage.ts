@@ -242,12 +242,35 @@ export class ObjectStorageService {
       throw new ObjectNotFoundError();
     }
     
+    const mimeType = this.getMimeTypeFromPath(objectName);
+    
     res.set({
-      "Content-Type": "application/octet-stream",
+      "Content-Type": mimeType,
       "Content-Length": result.value.length,
       "Cache-Control": "public, max-age=3600",
     });
     res.send(result.value);
+  }
+
+  private getMimeTypeFromPath(objectPath: string): string {
+    const extension = objectPath.split('.').pop()?.toLowerCase();
+    const mimeTypes: Record<string, string> = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+      'svg': 'image/svg+xml',
+      'bmp': 'image/bmp',
+      'ico': 'image/x-icon',
+      'pdf': 'application/pdf',
+      'json': 'application/json',
+      'txt': 'text/plain',
+      'html': 'text/html',
+      'css': 'text/css',
+      'js': 'application/javascript',
+    };
+    return mimeTypes[extension || ''] || 'application/octet-stream';
   }
 }
 
