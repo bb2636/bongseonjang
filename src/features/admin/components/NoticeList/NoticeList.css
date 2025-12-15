@@ -140,7 +140,8 @@
   font-weight: 500;
 }
 
-.notice-list__type-badge--general {
+.notice-list__type-badge--general,
+.notice-list__type-badge--normal {
   background-color: #F0F0F0;
   color: #666666;
 }

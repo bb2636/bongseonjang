@@ -4,7 +4,8 @@ import './NoticeList.css';
 export interface NoticeItem {
   id: number;
   title: string;
-  type: 'general' | 'important' | 'event';
+  typeCode: string;
+  typeName: string;
   createdAt: string;
 }
 
@@ -16,18 +17,24 @@ interface NoticeListProps {
   onSearch: (keyword: string) => void;
 }
 
-const typeLabels: Record<string, string> = {
-  general: '일반',
-  important: '중요',
-  event: '이벤트',
-};
-
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}.${month}.${day}`;
+}
+
+function getTypeBadgeClass(typeCode: string): string {
+  switch (typeCode) {
+    case 'IMPORTANT':
+      return 'notice-list__type-badge--important';
+    case 'EVENT':
+      return 'notice-list__type-badge--event';
+    case 'NORMAL':
+    default:
+      return 'notice-list__type-badge--normal';
+  }
 }
 
 export function NoticeList({ notices, totalCount, onView, onAdd, onSearch }: NoticeListProps) {
@@ -101,8 +108,8 @@ export function NoticeList({ notices, totalCount, onView, onAdd, onSearch }: Not
                   {formatDate(notice.createdAt)}
                 </td>
                 <td className="notice-list__td notice-list__td--type">
-                  <span className={`notice-list__type-badge notice-list__type-badge--${notice.type}`}>
-                    {typeLabels[notice.type]}
+                  <span className={`notice-list__type-badge ${getTypeBadgeClass(notice.typeCode)}`}>
+                    {notice.typeName}
                   </span>
                 </td>
                 <td className="notice-list__td notice-list__td--title">{notice.title}</td>

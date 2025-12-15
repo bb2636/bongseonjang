@@ -10,6 +10,12 @@ interface TabConfig {
   label: string;
 }
 
+interface NoticeTypeOption {
+  id: number;
+  code: string;
+  name: string;
+}
+
 const tabs: TabConfig[] = [
   { key: 'faq', label: 'FAQ' },
   { key: 'inquiry', label: '상품 문의' },
@@ -24,6 +30,19 @@ export function AdminSupportPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [selectedNoticeId, setSelectedNoticeId] = useState<number | null>(null);
+  const [noticeTypes, setNoticeTypes] = useState<NoticeTypeOption[]>([]);
+
+  const fetchNoticeTypes = async () => {
+    try {
+      const response = await fetch('/api/admin/notices/types');
+      if (response.ok) {
+        const data = await response.json();
+        setNoticeTypes(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch notice types:', error);
+    }
+  };
 
   const fetchNotices = async (keyword = '') => {
     setIsLoading(true);
@@ -44,6 +63,10 @@ export function AdminSupportPage() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchNoticeTypes();
+  }, []);
 
   useEffect(() => {
     if (activeTab === 'notice') {
@@ -91,6 +114,7 @@ export function AdminSupportPage() {
           return (
             <NoticeForm 
               noticeId={selectedNoticeId} 
+              noticeTypes={noticeTypes}
               onClose={handleFormClose} 
             />
           );
@@ -145,17 +169,25 @@ export function AdminSupportPage() {
 
 interface NoticeFormProps {
   noticeId: number | null;
+  noticeTypes: NoticeTypeOption[];
   onClose: () => void;
 }
 
-function NoticeForm({ noticeId, onClose }: NoticeFormProps) {
+function NoticeForm({ noticeId, noticeTypes, onClose }: NoticeFormProps) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [type, setType] = useState<'general' | 'important' | 'event'>('general');
+  const [typeId, setTypeId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const isEditMode = noticeId !== null;
+
+  useEffect(() => {
+    if (noticeTypes.length > 0 && typeId === null) {
+      const normalType = noticeTypes.find(t => t.code === 'NORMAL');
+      setTypeId(normalType?.id ?? noticeTypes[0].id);
+    }
+  }, [noticeTypes]);
 
   useEffect(() => {
     if (isEditMode) {
@@ -172,7 +204,7 @@ function NoticeForm({ noticeId, onClose }: NoticeFormProps) {
         const data = await response.json();
         setTitle(data.title);
         setContent(data.content);
-        setType(data.type);
+        setTypeId(data.typeId);
       }
     } catch (error) {
       console.error('Failed to fetch notice:', error);
@@ -188,6 +220,11 @@ function NoticeForm({ noticeId, onClose }: NoticeFormProps) {
       return;
     }
 
+    if (!typeId) {
+      alert('공지 유형을 선택해주세요.');
+      return;
+    }
+
     setIsSaving(true);
     try {
       const url = isEditMode 
@@ -198,7 +235,7 @@ function NoticeForm({ noticeId, onClose }: NoticeFormProps) {
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content, type }),
+        body: JSON.stringify({ title, content, typeId }),
       });
 
       if (response.ok) {
@@ -260,12 +297,14 @@ function NoticeForm({ noticeId, onClose }: NoticeFormProps) {
         <label className="notice-form__label">공지 유형</label>
         <select
           className="notice-form__select"
-          value={type}
-          onChange={(e) => setType(e.target.value as 'general' | 'important' | 'event')}
+          value={typeId ?? ''}
+          onChange={(e) => setTypeId(Number(e.target.value))}
         >
-          <option value="general">일반</option>
-          <option value="important">중요</option>
-          <option value="event">이벤트</option>
+          {noticeTypes.map((type) => (
+            <option key={type.id} value={type.id}>
+              {type.name}
+            </option>
+          ))}
         </select>
       </div>
 
