@@ -1,5 +1,5 @@
 import { AppDataSource } from '../../../config/database';
-import { Notice, NoticeType } from '../../../entity';
+import { Notice } from '../../../entity';
 import type { NoticeRepository } from './NoticeRepository';
 
 export class TypeORMNoticeRepository implements NoticeRepository {
@@ -10,7 +10,8 @@ export class TypeORMNoticeRepository implements NoticeRepository {
   async findAll(keyword?: string): Promise<Notice[]> {
     const queryBuilder = this.repository
       .createQueryBuilder('notice')
-      .where('notice.isActive = :isActive', { isActive: true })
+      .leftJoinAndSelect('notice.noticeType', 'noticeType')
+      .where('notice.isVisible = :isVisible', { isVisible: true })
       .orderBy('notice.createdAt', 'DESC');
 
     if (keyword) {
@@ -22,21 +23,22 @@ export class TypeORMNoticeRepository implements NoticeRepository {
 
   async findById(id: number): Promise<Notice | null> {
     return this.repository.findOne({
-      where: { id, isActive: true },
+      where: { id, isVisible: true },
+      relations: ['noticeType'],
     });
   }
 
-  async create(data: { title: string; content: string; type: string }): Promise<Notice> {
+  async create(data: { title: string; content: string; typeId: number }): Promise<Notice> {
     const notice = this.repository.create({
       title: data.title,
       content: data.content,
-      type: data.type as NoticeType,
-      isActive: true,
+      typeId: data.typeId,
+      isVisible: true,
     });
     return this.repository.save(notice);
   }
 
-  async update(id: number, data: { title?: string; content?: string; type?: string }): Promise<Notice | null> {
+  async update(id: number, data: { title?: string; content?: string; typeId?: number }): Promise<Notice | null> {
     const notice = await this.findById(id);
     if (!notice) {
       return null;
@@ -48,8 +50,8 @@ export class TypeORMNoticeRepository implements NoticeRepository {
     if (data.content !== undefined) {
       notice.content = data.content;
     }
-    if (data.type !== undefined) {
-      notice.type = data.type as NoticeType;
+    if (data.typeId !== undefined) {
+      notice.typeId = data.typeId;
     }
 
     return this.repository.save(notice);
@@ -61,14 +63,14 @@ export class TypeORMNoticeRepository implements NoticeRepository {
       return false;
     }
 
-    notice.isActive = false;
+    notice.isVisible = false;
     await this.repository.save(notice);
     return true;
   }
 
-  async countActive(): Promise<number> {
+  async countVisible(): Promise<number> {
     return this.repository.count({
-      where: { isActive: true },
+      where: { isVisible: true },
     });
   }
 }

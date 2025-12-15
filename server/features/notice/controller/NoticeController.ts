@@ -38,20 +38,22 @@ export class NoticeController {
 
   async createNotice(req: Request, res: Response): Promise<void> {
     try {
-      const { title, content, type } = req.body;
+      const { title, content, typeId } = req.body;
 
       if (!title || !content) {
         res.status(400).json({ error: 'Title and content are required' });
         return;
       }
 
-      const validTypes = ['general', 'important', 'event'];
-      const noticeType = validTypes.includes(type) ? type : 'general';
+      if (!typeId || isNaN(parseInt(typeId, 10))) {
+        res.status(400).json({ error: 'Valid typeId is required' });
+        return;
+      }
 
       const notice = await this.noticeService.createNotice({
         title,
         content,
-        type: noticeType,
+        typeId: parseInt(typeId, 10),
       });
 
       res.status(201).json(notice);
@@ -69,13 +71,12 @@ export class NoticeController {
         return;
       }
 
-      const { title, content, type } = req.body;
-      const validTypes = ['general', 'important', 'event'];
+      const { title, content, typeId } = req.body;
 
       const notice = await this.noticeService.updateNotice(id, {
         title,
         content,
-        type: validTypes.includes(type) ? type : undefined,
+        typeId: typeId ? parseInt(typeId, 10) : undefined,
       });
 
       if (!notice) {

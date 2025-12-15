@@ -1,29 +1,30 @@
 import type { NoticeRepository } from '../repository/NoticeRepository';
-import type { NoticeListResponse, NoticeListItem, CreateNoticeDto, UpdateNoticeDto } from '../domain/Notice';
+import type { NoticeListResponse, NoticeListItem, CreateNoticeDto, UpdateNoticeDto, NoticeDetailResponse } from '../domain/Notice';
 
 export class NoticeService {
   constructor(private readonly noticeRepository: NoticeRepository) {}
 
   async getNotices(keyword?: string): Promise<NoticeListResponse> {
-    const [notices, totalActive] = await Promise.all([
+    const [notices, totalVisible] = await Promise.all([
       this.noticeRepository.findAll(keyword),
-      this.noticeRepository.countActive(),
+      this.noticeRepository.countVisible(),
     ]);
 
     const noticeItems: NoticeListItem[] = notices.map((notice) => ({
       id: notice.id,
       title: notice.title,
-      type: notice.type as 'general' | 'important' | 'event',
+      typeCode: notice.noticeType?.code ?? '',
+      typeName: notice.noticeType?.name ?? '',
       createdAt: notice.createdAt.toISOString(),
     }));
 
     return {
       notices: noticeItems,
-      total: keyword ? notices.length : totalActive,
+      total: keyword ? notices.length : totalVisible,
     };
   }
 
-  async getNoticeById(id: number) {
+  async getNoticeById(id: number): Promise<NoticeDetailResponse | null> {
     const notice = await this.noticeRepository.findById(id);
     if (!notice) {
       return null;
@@ -33,7 +34,9 @@ export class NoticeService {
       id: notice.id,
       title: notice.title,
       content: notice.content,
-      type: notice.type,
+      typeId: notice.typeId,
+      typeCode: notice.noticeType?.code ?? '',
+      typeName: notice.noticeType?.name ?? '',
       createdAt: notice.createdAt.toISOString(),
       updatedAt: notice.updatedAt.toISOString(),
     };
@@ -43,14 +46,14 @@ export class NoticeService {
     const notice = await this.noticeRepository.create({
       title: dto.title,
       content: dto.content,
-      type: dto.type,
+      typeId: dto.typeId,
     });
 
     return {
       id: notice.id,
       title: notice.title,
       content: notice.content,
-      type: notice.type,
+      typeId: notice.typeId,
       createdAt: notice.createdAt.toISOString(),
     };
   }
@@ -59,7 +62,7 @@ export class NoticeService {
     const notice = await this.noticeRepository.update(id, {
       title: dto.title,
       content: dto.content,
-      type: dto.type,
+      typeId: dto.typeId,
     });
 
     if (!notice) {
@@ -70,7 +73,7 @@ export class NoticeService {
       id: notice.id,
       title: notice.title,
       content: notice.content,
-      type: notice.type,
+      typeId: notice.typeId,
       updatedAt: notice.updatedAt.toISOString(),
     };
   }

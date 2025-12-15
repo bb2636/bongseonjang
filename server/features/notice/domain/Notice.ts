@@ -1,17 +1,25 @@
+export interface NoticeTypeInfo {
+  id: number;
+  code: string;
+  name: string;
+}
+
 export interface Notice {
   id: number;
+  typeId: number;
   title: string;
   content: string;
-  type: 'general' | 'important' | 'event';
-  isActive: boolean;
+  isVisible: boolean;
   createdAt: Date;
   updatedAt: Date;
+  noticeType?: NoticeTypeInfo;
 }
 
 export interface NoticeListItem {
   id: number;
   title: string;
-  type: 'general' | 'important' | 'event';
+  typeCode: string;
+  typeName: string;
   createdAt: string;
 }
 
@@ -23,11 +31,22 @@ export interface NoticeListResponse {
 export interface CreateNoticeDto {
   title: string;
   content: string;
-  type: 'general' | 'important' | 'event';
+  typeId: number;
 }
 
 export interface UpdateNoticeDto {
   title?: string;
   content?: string;
-  type?: 'general' | 'important' | 'event';
+  typeId?: number;
+}
+
+export interface NoticeDetailResponse {
+  id: number;
+  title: string;
+  content: string;
+  typeId: number;
+  typeCode: string;
+  typeName: string;
+  createdAt: string;
+  updatedAt: string;
 }
