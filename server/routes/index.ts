@@ -19,6 +19,7 @@ import { wishlistRoutes } from '../features/wishlist';
 import { orderHistoryRoutes } from '../features/orderHistory';
 import { paymentRoutes } from '../features/payment/routes/paymentRoutes';
 import { addressRoutes } from '../features/address';
+import { uploadRoutes } from '../features/upload';
 
 const router = Router();
 
@@ -42,5 +43,6 @@ router.use('/wishlist', wishlistRoutes);
 router.use('/orders', orderHistoryRoutes);
 router.use('/payment', paymentRoutes);
 router.use('/address', addressRoutes);
+router.use('/upload', uploadRoutes);
 
 export default router;
