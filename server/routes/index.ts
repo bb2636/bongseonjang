@@ -22,6 +22,7 @@ import { noticeRoutes } from '../features/notice';
 import { faqRoutes } from '../features/faq';
 import { inquiryRoutes } from '../features/inquiry';
 import { adminBannerRoutes } from '../features/banner';
+import { adminProductRoutes } from '../features/admin/routes/adminProductRoutes';
 
 const router = Router();
 
@@ -49,5 +50,6 @@ router.use('/admin/faqs', faqRoutes);
 router.use('/admin/inquiries', inquiryRoutes);
 router.use('/admin', adminBannerRoutes);
 router.use('/admin', adminCouponRoutes);
+router.use('/admin/products', adminProductRoutes);
 
 export default router;
