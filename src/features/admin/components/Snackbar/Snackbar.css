@@ -1,6 +1,6 @@
 .snackbar {
   position: fixed;
-  top: 24px;
+  bottom: 24px;
   right: 24px;
   z-index: 1200;
   animation: snackbar-slide-in 0.3s ease-out;
@@ -8,11 +8,11 @@
 
 @keyframes snackbar-slide-in {
   from {
-    transform: translateX(100%);
+    transform: translateY(100%);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }
@@ -104,6 +104,7 @@
 
 @media (max-width: 480px) {
   .snackbar {
+    bottom: 12px;
     right: 12px;
     left: 12px;
   }
