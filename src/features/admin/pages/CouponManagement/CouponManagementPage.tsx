@@ -1,4 +1,5 @@
 import { AdminLayout } from '../../layouts';
+import { ConfirmDialog, Snackbar } from '../../components';
 import { CouponManagementView } from './CouponManagementView';
 import { CouponFormDialog } from './CouponFormDialog';
 import { CouponDetailDialog } from './CouponDetailDialog';
@@ -16,6 +17,9 @@ export function CouponManagementPage() {
     editingCoupon,
     isDetailDialogOpen,
     viewingCoupon,
+    isDeleteDialogOpen,
+    isSnackbarOpen,
+    snackbarMessage,
     handleSearchChange,
     handleFilterChange,
     handleAddCoupon,
@@ -26,6 +30,9 @@ export function CouponManagementPage() {
     handleFormSuccess,
     handleToggleStatus,
     handleDeleteCoupon,
+    handleCancelDelete,
+    handleConfirmDelete,
+    handleCloseSnackbar,
     getDiscountTypeLabel,
     getDiscountValueLabel,
     getTargetLabel,
@@ -85,6 +92,20 @@ export function CouponManagementPage() {
         getTargetLabel={getTargetLabel}
         getConditionLabel={getConditionLabel}
         getPeriodLabel={getPeriodLabel}
+      />
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        title="정말 삭제하시겠습니까?"
+        subtitle="삭제된 쿠폰은 복구할 수 없습니다."
+        cancelText="취소"
+        confirmText="삭제"
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
+      <Snackbar
+        isOpen={isSnackbarOpen}
+        title={snackbarMessage}
+        onClose={handleCloseSnackbar}
       />
     </AdminLayout>
   );

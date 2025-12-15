@@ -44,6 +44,10 @@ export function useCouponManagement() {
   const [editingCoupon, setEditingCoupon] = useState<AdminCoupon | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [viewingCoupon, setViewingCoupon] = useState<AdminCoupon | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deletingCouponId, setDeletingCouponId] = useState<number | null>(null);
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const fetchCoupons = useCallback(async () => {
     setIsLoading(true);
@@ -125,22 +129,38 @@ export function useCouponManagement() {
     }
   }, [fetchCoupons]);
 
-  const handleDeleteCoupon = useCallback(async (couponId: number) => {
-    if (!window.confirm('정말 이 쿠폰을 삭제하시겠습니까?')) {
-      return;
-    }
+  const handleDeleteCoupon = useCallback((couponId: number) => {
+    setDeletingCouponId(couponId);
+    setIsDeleteDialogOpen(true);
+  }, []);
+
+  const handleCancelDelete = useCallback(() => {
+    setIsDeleteDialogOpen(false);
+    setDeletingCouponId(null);
+  }, []);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!deletingCouponId) return;
     try {
-      const response = await fetch(`/api/admin/coupons/${couponId}`, {
+      const response = await fetch(`/api/admin/coupons/${deletingCouponId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
         throw new Error('쿠폰 삭제에 실패했습니다');
       }
+      setIsDeleteDialogOpen(false);
+      setDeletingCouponId(null);
+      setSnackbarMessage('쿠폰이 삭제되었습니다');
+      setIsSnackbarOpen(true);
       fetchCoupons();
     } catch (err) {
       console.error('Failed to delete coupon:', err);
     }
-  }, [fetchCoupons]);
+  }, [deletingCouponId, fetchCoupons]);
+
+  const handleCloseSnackbar = useCallback(() => {
+    setIsSnackbarOpen(false);
+  }, []);
 
   const getDiscountTypeLabel = useCallback((type: DiscountType): string => {
     switch (type) {
@@ -201,6 +221,9 @@ export function useCouponManagement() {
     editingCoupon,
     isDetailDialogOpen,
     viewingCoupon,
+    isDeleteDialogOpen,
+    isSnackbarOpen,
+    snackbarMessage,
     handleSearchChange,
     handleFilterChange,
     handleAddCoupon,
@@ -211,6 +234,9 @@ export function useCouponManagement() {
     handleFormSuccess,
     handleToggleStatus,
     handleDeleteCoupon,
+    handleCancelDelete,
+    handleConfirmDelete,
+    handleCloseSnackbar,
     getDiscountTypeLabel,
     getDiscountValueLabel,
     getTargetLabel,
