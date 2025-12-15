@@ -13,6 +13,13 @@ interface ReviewSectionProps {
 
 const MAX_PHOTO_COUNT = 8;
 
+function resolveImageUrl(url: string): string {
+  if (url.startsWith('/objects/')) {
+    return `/api/upload${url}`;
+  }
+  return url;
+}
+
 function StarIcon({ filled }: { filled: boolean }) {
   return (
     <svg 
@@ -37,7 +44,7 @@ function extractPhotoUrls(reviews: Review[]): string[] {
       if (photoUrls.length >= MAX_PHOTO_COUNT) {
         return photoUrls;
       }
-      photoUrls.push(url);
+      photoUrls.push(resolveImageUrl(url));
     }
   }
   return photoUrls;
@@ -283,7 +290,7 @@ function ReviewItem({ review }: { review: Review }) {
       <div className="review-item__body">
         {review.imageUrls.length > 0 && (
           <img
-            src={review.imageUrls[0]}
+            src={resolveImageUrl(review.imageUrls[0])}
             alt="리뷰 이미지"
             className="review-item__image"
           />
