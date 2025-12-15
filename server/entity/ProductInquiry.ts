@@ -2,22 +2,24 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import type { Product } from './Product';
 import type { User } from './User';
 
+export type InquiryType = 'product' | 'shipping' | 'exchange_return' | 'refund' | 'other';
+
 @Entity('product_inquiries')
 export class ProductInquiry {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id!: number;
 
-  @Column({ type: 'uuid', name: 'product_id' })
-  productId!: string;
+  @Column({ type: 'varchar', length: 20, name: 'inquiry_type', default: 'product' })
+  inquiryType!: InquiryType;
+
+  @Column({ type: 'uuid', name: 'product_id', nullable: true })
+  productId!: string | null;
 
   @Column({ type: 'uuid', name: 'author_id' })
   authorId!: string;
 
   @Column({ type: 'text' })
   question!: string;
-
-  @Column({ type: 'boolean', default: false, name: 'is_answered' })
-  isAnswered!: boolean;
 
   @Column({ type: 'text', nullable: true })
   answer!: string | null;
@@ -36,7 +38,7 @@ export class ProductInquiry {
 
   @ManyToOne('Product', 'inquiries')
   @JoinColumn({ name: 'product_id' })
-  product!: Product;
+  product!: Product | null;
 
   @ManyToOne('User', 'productInquiries')
   @JoinColumn({ name: 'author_id' })
@@ -45,4 +47,8 @@ export class ProductInquiry {
   @ManyToOne('User')
   @JoinColumn({ name: 'answered_by' })
   answerer!: User | null;
+
+  get isAnswered(): boolean {
+    return this.answer !== null;
+  }
 }
