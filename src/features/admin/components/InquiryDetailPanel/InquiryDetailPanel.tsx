@@ -125,6 +125,8 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
     return `${year}.${month}.${day}`;
   };
 
+  const isAnswered = inquiry?.answer !== null;
+
   return (
     <>
       <div 
@@ -151,67 +153,64 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
             <div className="inquiry-panel__loading">로딩 중...</div>
           ) : inquiry ? (
             <>
-              <div className="inquiry-panel__section">
-                <h4 className="inquiry-panel__section-title">문의 정보</h4>
-                
-                <div className="inquiry-panel__field">
-                  <label className="inquiry-panel__label">문의 유형</label>
-                  <div className="inquiry-panel__value">
-                    <span className="inquiry-panel__type-badge">
-                      {INQUIRY_TYPE_LABELS[inquiry.inquiryType]}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="inquiry-panel__field">
-                  <label className="inquiry-panel__label">작성자</label>
-                  <div className="inquiry-panel__value">
-                    {inquiry.authorName} {inquiry.authorPhone && `(${inquiry.authorPhone})`}
-                  </div>
-                </div>
-
-                {inquiry.productName && (
-                  <div className="inquiry-panel__field">
-                    <label className="inquiry-panel__label">문의 상품</label>
-                    <div className="inquiry-panel__value">{inquiry.productName}</div>
-                  </div>
-                )}
-
-                <div className="inquiry-panel__field">
-                  <label className="inquiry-panel__label">등록일</label>
-                  <div className="inquiry-panel__value">{formatDate(inquiry.createdAt)}</div>
-                </div>
-
-                <div className="inquiry-panel__field inquiry-panel__field--question">
-                  <label className="inquiry-panel__label">문의 내용</label>
-                  <div className="inquiry-panel__value inquiry-panel__value--question">
-                    {inquiry.question}
-                  </div>
+              <div className="inquiry-panel__field">
+                <label className="inquiry-panel__label">문의 유형</label>
+                <div className="inquiry-panel__type-badge">
+                  {INQUIRY_TYPE_LABELS[inquiry.inquiryType]}
                 </div>
               </div>
 
-              <div className="inquiry-panel__section">
-                <h4 className="inquiry-panel__section-title">답변</h4>
-                
+              <div className="inquiry-panel__field">
+                <label className="inquiry-panel__label">작성자</label>
+                <div className="inquiry-panel__value">
+                  {inquiry.authorName}{inquiry.authorPhone && ` (${inquiry.authorPhone})`}
+                </div>
+              </div>
+
+              {inquiry.productName && (
+                <div className="inquiry-panel__field">
+                  <label className="inquiry-panel__label">문의 상품</label>
+                  <div className="inquiry-panel__value">{inquiry.productName}</div>
+                </div>
+              )}
+
+              <div className="inquiry-panel__field inquiry-panel__field--content">
+                <label className="inquiry-panel__label">문의 내용</label>
+                <div className="inquiry-panel__value inquiry-panel__value--content">
+                  {inquiry.question}
+                </div>
+              </div>
+
+              <div className="inquiry-panel__field">
+                <label className="inquiry-panel__label">답변 상태</label>
+                <div className={`inquiry-panel__status-badge ${isAnswered ? 'inquiry-panel__status-badge--answered' : 'inquiry-panel__status-badge--unanswered'}`}>
+                  {isAnswered ? '답변 완료' : '답변 전'}
+                </div>
+              </div>
+
+              <div className="inquiry-panel__field inquiry-panel__field--answer">
+                <label className="inquiry-panel__label">답변</label>
                 {isAnswering || !inquiry.answer ? (
-                  <div className="inquiry-panel__answer-form">
-                    <textarea
-                      className="inquiry-panel__textarea"
-                      value={answerText}
-                      onChange={(e) => setAnswerText(e.target.value)}
-                      placeholder="답변 내용을 입력하세요"
-                    />
-                  </div>
+                  <textarea
+                    className="inquiry-panel__textarea"
+                    value={answerText}
+                    onChange={(e) => setAnswerText(e.target.value)}
+                    placeholder="답변 내용을 입력하세요"
+                  />
                 ) : (
-                  <div className="inquiry-panel__answer">
-                    <div className="inquiry-panel__answer-content">{inquiry.answer}</div>
-                    <div className="inquiry-panel__answer-meta">
-                      <span>답변자: {inquiry.answererName || '관리자'}</span>
-                      {inquiry.answeredAt && (
-                        <span>답변일: {formatDate(inquiry.answeredAt)}</span>
-                      )}
-                    </div>
+                  <div className="inquiry-panel__value inquiry-panel__value--answer">
+                    {inquiry.answer}
                   </div>
+                )}
+              </div>
+
+              <div className="inquiry-panel__meta">
+                <span>등록일: {formatDate(inquiry.createdAt)}</span>
+                {inquiry.answeredAt && (
+                  <span>답변일: {formatDate(inquiry.answeredAt)}</span>
+                )}
+                {isAnswered && (
+                  <span>답변자: {inquiry.answererName ?? '관리자'}</span>
                 )}
               </div>
             </>
