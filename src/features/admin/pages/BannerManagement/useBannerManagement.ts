@@ -118,8 +118,8 @@ export function useBannerManagement() {
     const bannerIds = reorderedBanners.map(b => b.id);
 
     try {
-      const response = await fetch(`/api/admin/banner-positions/${position.id}/banners/reorder`, {
-        method: 'PUT',
+      const response = await fetch('/api/admin/banners/reorder', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
