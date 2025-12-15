@@ -1,36 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import './FaqList.css';
 
 interface FaqItem {
   id: number;
-  category: string;
-  question: string;
-  answer: string;
+  categoryId: number;
+  categoryName: string;
+  title: string;
   isVisible: boolean;
   createdAt: string;
 }
 
 interface FaqCategory {
   id: number;
-  code: string;
   name: string;
+  sortOrder: number;
 }
-
-const MOCK_CATEGORIES: FaqCategory[] = [
-  { id: 1, code: 'DELIVERY', name: '배송' },
-  { id: 2, code: 'PAYMENT', name: '결제' },
-  { id: 3, code: 'PRODUCT', name: '상품' },
-  { id: 4, code: 'ORDER', name: '주문' },
-  { id: 5, code: 'RETURN', name: '교환/반품' },
-];
-
-const MOCK_FAQS: FaqItem[] = [
-  { id: 1, category: '배송', question: '배송은 얼마나 걸리나요?', answer: '일반적으로 2-3일 소요됩니다.', isVisible: true, createdAt: '2025-01-15' },
-  { id: 2, category: '결제', question: '어떤 결제 수단을 사용할 수 있나요?', answer: '신용카드, 계좌이체, 간편결제를 지원합니다.', isVisible: true, createdAt: '2025-01-14' },
-  { id: 3, category: '상품', question: '상품 교환은 어떻게 하나요?', answer: '고객센터로 연락 주시면 안내드립니다.', isVisible: true, createdAt: '2025-01-13' },
-  { id: 4, category: '주문', question: '주문 취소는 언제까지 가능한가요?', answer: '배송 시작 전까지 가능합니다.', isVisible: false, createdAt: '2025-01-12' },
-  { id: 5, category: '교환/반품', question: '반품 배송비는 누가 부담하나요?', answer: '단순 변심의 경우 고객 부담입니다.', isVisible: true, createdAt: '2025-01-11' },
-];
 
 interface FaqListProps {
   onAdd: () => void;
@@ -38,11 +22,54 @@ interface FaqListProps {
 }
 
 export function FaqList({ onAdd, onView }: FaqListProps) {
-  const [faqs] = useState<FaqItem[]>(MOCK_FAQS);
+  const [faqs, setFaqs] = useState<FaqItem[]>([]);
+  const [categories, setCategories] = useState<FaqCategory[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/faqs/categories');
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch FAQ categories:', error);
+    }
+  }, []);
+
+  const fetchFaqs = useCallback(async (keyword = '', categoryId: number | null = null) => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (keyword) {
+        params.append('keyword', keyword);
+      }
+      if (categoryId) {
+        params.append('categoryId', categoryId.toString());
+      }
+      const response = await fetch(`/api/admin/faqs?${params.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setFaqs(data.faqs);
+        setTotalCount(data.total);
+      }
+    } catch (error) {
+      console.error('Failed to fetch FAQs:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchFaqs();
+  }, [fetchCategories, fetchFaqs]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -54,13 +81,22 @@ export function FaqList({ onAdd, onView }: FaqListProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const filteredFaqs = faqs.filter(faq => {
-    const matchesSearch = !searchKeyword || 
-      faq.question.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchKeyword.toLowerCase());
-    const matchesCategory = !selectedCategory || faq.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
+    fetchFaqs(keyword, selectedCategoryId);
+  };
+
+  const handleCategoryChange = (categoryId: number | null) => {
+    setSelectedCategoryId(categoryId);
+    setIsDropdownOpen(false);
+    fetchFaqs(searchKeyword, categoryId);
+  };
+
+  const getSelectedCategoryName = () => {
+    if (!selectedCategoryId) return '카테고리 선택';
+    const category = categories.find(c => c.id === selectedCategoryId);
+    return category?.name ?? '카테고리 선택';
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -76,7 +112,7 @@ export function FaqList({ onAdd, onView }: FaqListProps) {
         <div className="faq-list__count">
           <span className="faq-list__count-label">총 FAQ 수</span>
           <span className="faq-list__count-dot" />
-          <span className="faq-list__count-value">{filteredFaqs.length}</span>
+          <span className="faq-list__count-value">{totalCount}</span>
         </div>
 
         <div className="faq-list__actions">
@@ -90,7 +126,7 @@ export function FaqList({ onAdd, onView }: FaqListProps) {
               className="faq-list__search-input"
               placeholder="검색어를 입력하세요"
               value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
 
@@ -101,7 +137,7 @@ export function FaqList({ onAdd, onView }: FaqListProps) {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
               <span className="faq-list__category-text">
-                {selectedCategory || '카테고리 선택'}
+                {getSelectedCategoryName()}
               </span>
               <svg 
                 className={`faq-list__category-arrow ${isDropdownOpen ? 'faq-list__category-arrow--open' : ''}`}
@@ -117,17 +153,17 @@ export function FaqList({ onAdd, onView }: FaqListProps) {
               <div className="faq-list__category-menu">
                 <button
                   type="button"
-                  className={`faq-list__category-option ${!selectedCategory ? 'faq-list__category-option--selected' : ''}`}
-                  onClick={() => { setSelectedCategory(null); setIsDropdownOpen(false); }}
+                  className={`faq-list__category-option ${!selectedCategoryId ? 'faq-list__category-option--selected' : ''}`}
+                  onClick={() => handleCategoryChange(null)}
                 >
                   전체
                 </button>
-                {MOCK_CATEGORIES.map(cat => (
+                {categories.map(cat => (
                   <button
                     key={cat.id}
                     type="button"
-                    className={`faq-list__category-option ${selectedCategory === cat.name ? 'faq-list__category-option--selected' : ''}`}
-                    onClick={() => { setSelectedCategory(cat.name); setIsDropdownOpen(false); }}
+                    className={`faq-list__category-option ${selectedCategoryId === cat.id ? 'faq-list__category-option--selected' : ''}`}
+                    onClick={() => handleCategoryChange(cat.id)}
                   >
                     {cat.name}
                   </button>
@@ -151,28 +187,34 @@ export function FaqList({ onAdd, onView }: FaqListProps) {
         </div>
 
         <div className="faq-list__table-body">
-          {filteredFaqs.map(faq => (
-            <div 
-              key={faq.id} 
-              className="faq-list__table-row"
-              onClick={() => onView(faq.id)}
-            >
-              <div className="faq-list__table-cell faq-list__table-cell--category">
-                <span className="faq-list__category-badge">{faq.category}</span>
+          {isLoading ? (
+            <div className="faq-list__loading">로딩 중...</div>
+          ) : faqs.length === 0 ? (
+            <div className="faq-list__empty">등록된 FAQ가 없습니다.</div>
+          ) : (
+            faqs.map(faq => (
+              <div 
+                key={faq.id} 
+                className="faq-list__table-row"
+                onClick={() => onView(faq.id)}
+              >
+                <div className="faq-list__table-cell faq-list__table-cell--category">
+                  <span className="faq-list__category-badge">{faq.categoryName}</span>
+                </div>
+                <div className="faq-list__table-cell faq-list__table-cell--question">
+                  {faq.title}
+                </div>
+                <div className="faq-list__table-cell faq-list__table-cell--status">
+                  <span className={`faq-list__status-badge ${faq.isVisible ? 'faq-list__status-badge--visible' : 'faq-list__status-badge--hidden'}`}>
+                    {faq.isVisible ? '노출' : '숨김'}
+                  </span>
+                </div>
+                <div className="faq-list__table-cell faq-list__table-cell--date">
+                  {formatDate(faq.createdAt)}
+                </div>
               </div>
-              <div className="faq-list__table-cell faq-list__table-cell--question">
-                {faq.question}
-              </div>
-              <div className="faq-list__table-cell faq-list__table-cell--status">
-                <span className={`faq-list__status-badge ${faq.isVisible ? 'faq-list__status-badge--visible' : 'faq-list__status-badge--hidden'}`}>
-                  {faq.isVisible ? '노출' : '숨김'}
-                </span>
-              </div>
-              <div className="faq-list__table-cell faq-list__table-cell--date">
-                {formatDate(faq.createdAt)}
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

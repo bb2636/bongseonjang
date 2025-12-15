@@ -278,3 +278,17 @@
   background-color: #FFEBEE;
   color: #C62828;
 }
+
+.faq-list__loading,
+.faq-list__empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 24px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.5);
+}
