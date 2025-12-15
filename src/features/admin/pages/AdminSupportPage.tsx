@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../layouts';
 import { NoticeList, NoticeItem, NoticeDetailPanel } from '../components';
 import './AdminSupportPage.css';
@@ -193,6 +193,73 @@ interface NoticeAddFormProps {
   onClose: () => void;
 }
 
+interface FormCustomDropdownProps {
+  options: NoticeTypeOption[];
+  value: number | null;
+  onChange: (id: number) => void;
+}
+
+function FormCustomDropdown({ options, value, onChange }: FormCustomDropdownProps) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const selectedOption = options.find(opt => opt.id === value);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelect = (optionId: number) => {
+    onChange(optionId);
+    setIsDropdownOpen(false);
+  };
+
+  return (
+    <div className="notice-form__dropdown" ref={dropdownRef}>
+      <button
+        type="button"
+        className="notice-form__dropdown-trigger"
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+      >
+        <span className="notice-form__dropdown-text">
+          {selectedOption?.name || '선택하세요'}
+        </span>
+        <svg 
+          className={`notice-form__dropdown-arrow ${isDropdownOpen ? 'notice-form__dropdown-arrow--open' : ''}`}
+          width="20" 
+          height="20" 
+          viewBox="0 0 20 20" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M5 7.5L10 12.5L15 7.5" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+      {isDropdownOpen && (
+        <div className="notice-form__dropdown-menu">
+          {options.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className={`notice-form__dropdown-option ${option.id === value ? 'notice-form__dropdown-option--selected' : ''}`}
+              onClick={() => handleSelect(option.id)}
+            >
+              {option.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -254,17 +321,11 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
 
       <div className="notice-form__field">
         <label className="notice-form__label">공지 유형</label>
-        <select
-          className="notice-form__select"
-          value={typeId ?? ''}
-          onChange={(e) => setTypeId(Number(e.target.value))}
-        >
-          {noticeTypes.map((type) => (
-            <option key={type.id} value={type.id}>
-              {type.name}
-            </option>
-          ))}
-        </select>
+        <FormCustomDropdown
+          options={noticeTypes}
+          value={typeId}
+          onChange={setTypeId}
+        />
       </div>
 
       <div className="notice-form__field">

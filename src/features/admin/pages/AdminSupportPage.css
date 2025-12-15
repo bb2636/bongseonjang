@@ -214,3 +214,95 @@
   background-color: rgba(59, 155, 213, 0.5);
   cursor: not-allowed;
 }
+
+/* Custom Dropdown for Notice Form */
+.notice-form__dropdown {
+  position: relative;
+  width: 100%;
+  max-width: 200px;
+}
+
+.notice-form__dropdown-trigger {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.notice-form__dropdown-trigger:hover {
+  border-color: rgba(12, 12, 12, 0.4);
+}
+
+.notice-form__dropdown-trigger:focus {
+  outline: none;
+  border-color: #3B9BD5;
+}
+
+.notice-form__dropdown-text {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.notice-form__dropdown-arrow {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.notice-form__dropdown-arrow--open {
+  transform: rotate(180deg);
+}
+
+.notice-form__dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 183px;
+  display: flex;
+  flex-direction: column;
+  background: #FDFDFD;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.notice-form__dropdown-option {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0px 20px;
+  height: 48px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+  text-align: left;
+}
+
+.notice-form__dropdown-option:hover {
+  background-color: rgba(12, 12, 12, 0.04);
+}
+
+.notice-form__dropdown-option--selected {
+  font-weight: 500;
+  color: #0C0C0C;
+}
