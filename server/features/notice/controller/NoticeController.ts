@@ -7,7 +7,7 @@ export class NoticeController {
   async getNotices(req: Request, res: Response): Promise<void> {
     try {
       const keyword = req.query.keyword as string | undefined;
-      const result = await this.noticeService.getNotices(keyword);
+      const result = await this.noticeService.getNoticesForAdmin(keyword);
       res.json(result);
     } catch (error) {
       console.error('Error fetching notices:', error);
@@ -23,7 +23,7 @@ export class NoticeController {
         return;
       }
 
-      const notice = await this.noticeService.getNoticeById(id);
+      const notice = await this.noticeService.getNoticeByIdForAdmin(id);
       if (!notice) {
         res.status(404).json({ error: 'Notice not found' });
         return;
@@ -38,7 +38,7 @@ export class NoticeController {
 
   async createNotice(req: Request, res: Response): Promise<void> {
     try {
-      const { title, content, typeId } = req.body;
+      const { title, content, typeId, isVisible } = req.body;
 
       if (!title || !content) {
         res.status(400).json({ error: 'Title and content are required' });
@@ -54,6 +54,7 @@ export class NoticeController {
         title,
         content,
         typeId: parseInt(typeId, 10),
+        isVisible: isVisible !== undefined ? Boolean(isVisible) : true,
       });
 
       res.status(201).json(notice);
@@ -71,12 +72,13 @@ export class NoticeController {
         return;
       }
 
-      const { title, content, typeId } = req.body;
+      const { title, content, typeId, isVisible } = req.body;
 
       const notice = await this.noticeService.updateNotice(id, {
         title,
         content,
         typeId: typeId ? parseInt(typeId, 10) : undefined,
+        isVisible: isVisible !== undefined ? Boolean(isVisible) : undefined,
       });
 
       if (!notice) {

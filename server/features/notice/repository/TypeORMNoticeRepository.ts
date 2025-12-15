@@ -7,6 +7,26 @@ export class TypeORMNoticeRepository implements NoticeRepository {
     return AppDataSource.getRepository(Notice);
   }
 
+  async findAllForAdmin(keyword?: string): Promise<Notice[]> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('notice')
+      .leftJoinAndSelect('notice.noticeType', 'noticeType')
+      .orderBy('notice.createdAt', 'DESC');
+
+    if (keyword) {
+      queryBuilder.andWhere('notice.title ILIKE :keyword', { keyword: `%${keyword}%` });
+    }
+
+    return queryBuilder.getMany();
+  }
+
+  async findByIdForAdmin(id: number): Promise<Notice | null> {
+    return this.repository.findOne({
+      where: { id },
+      relations: ['noticeType'],
+    });
+  }
+
   async findAll(keyword?: string): Promise<Notice[]> {
     const queryBuilder = this.repository
       .createQueryBuilder('notice')
@@ -28,18 +48,18 @@ export class TypeORMNoticeRepository implements NoticeRepository {
     });
   }
 
-  async create(data: { title: string; content: string; typeId: number }): Promise<Notice> {
+  async create(data: { title: string; content: string; typeId: number; isVisible?: boolean }): Promise<Notice> {
     const notice = this.repository.create({
       title: data.title,
       content: data.content,
       typeId: data.typeId,
-      isVisible: true,
+      isVisible: data.isVisible ?? true,
     });
     return this.repository.save(notice);
   }
 
-  async update(id: number, data: { title?: string; content?: string; typeId?: number }): Promise<Notice | null> {
-    const notice = await this.findById(id);
+  async update(id: number, data: { title?: string; content?: string; typeId?: number; isVisible?: boolean }): Promise<Notice | null> {
+    const notice = await this.findByIdForAdmin(id);
     if (!notice) {
       return null;
     }
@@ -57,13 +77,16 @@ export class TypeORMNoticeRepository implements NoticeRepository {
     if (data.typeId !== undefined) {
       updateData.typeId = data.typeId;
     }
+    if (data.isVisible !== undefined) {
+      updateData.isVisible = data.isVisible;
+    }
 
     await this.repository.update(id, updateData);
-    return this.findById(id);
+    return this.findByIdForAdmin(id);
   }
 
   async delete(id: number): Promise<boolean> {
-    const notice = await this.findById(id);
+    const notice = await this.findByIdForAdmin(id);
     if (!notice) {
       return false;
     }
@@ -71,6 +94,10 @@ export class TypeORMNoticeRepository implements NoticeRepository {
     notice.isVisible = false;
     await this.repository.save(notice);
     return true;
+  }
+
+  async countAll(): Promise<number> {
+    return this.repository.count();
   }
 
   async countVisible(): Promise<number> {

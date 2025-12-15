@@ -20,6 +20,7 @@ export interface NoticeListItem {
   title: string;
   typeCode: string;
   typeName: string;
+  isVisible: boolean;
   createdAt: string;
 }
 
@@ -32,12 +33,14 @@ export interface CreateNoticeDto {
   title: string;
   content: string;
   typeId: number;
+  isVisible?: boolean;
 }
 
 export interface UpdateNoticeDto {
   title?: string;
   content?: string;
   typeId?: number;
+  isVisible?: boolean;
 }
 
 export interface NoticeDetailResponse {
@@ -47,6 +50,7 @@ export interface NoticeDetailResponse {
   typeId: number;
   typeCode: string;
   typeName: string;
+  isVisible: boolean;
   createdAt: string;
   updatedAt: string;
 }

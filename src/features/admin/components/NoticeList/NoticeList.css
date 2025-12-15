@@ -100,19 +100,24 @@
 }
 
 .notice-list__th--date {
-  width: 15%;
+  width: 12%;
 }
 
 .notice-list__th--type {
-  width: 15%;
+  width: 12%;
 }
 
 .notice-list__th--title {
-  width: 55%;
+  width: 46%;
+}
+
+.notice-list__th--visibility {
+  width: 12%;
+  text-align: center;
 }
 
 .notice-list__th--action {
-  width: 15%;
+  width: 12%;
   text-align: center;
 }
 
@@ -130,6 +135,33 @@
 
 .notice-list__td--action {
   text-align: center;
+}
+
+.notice-list__td--visibility {
+  text-align: center;
+}
+
+.notice-list__row--hidden {
+  opacity: 0.6;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.notice-list__visibility-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.notice-list__visibility-badge--visible {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+
+.notice-list__visibility-badge--hidden {
+  background-color: #FFEBEE;
+  color: #C62828;
 }
 
 .notice-list__type-badge {

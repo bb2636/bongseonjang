@@ -264,6 +264,7 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [typeId, setTypeId] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -290,7 +291,7 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
       const response = await fetch('/api/admin/notices', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content, typeId }),
+        body: JSON.stringify({ title, content, typeId, isVisible }),
       });
 
       if (response.ok) {
@@ -348,6 +349,22 @@ function NoticeAddForm({ noticeTypes, onClose }: NoticeAddFormProps) {
           placeholder="공지사항 내용을 입력하세요"
           rows={10}
         />
+      </div>
+
+      <div className="notice-form__field">
+        <label className="notice-form__label">노출 여부</label>
+        <div className="notice-form__toggle-container">
+          <button
+            type="button"
+            className={`notice-form__toggle ${isVisible ? 'notice-form__toggle--active' : ''}`}
+            onClick={() => setIsVisible(!isVisible)}
+          >
+            <span className="notice-form__toggle-slider" />
+          </button>
+          <span className="notice-form__toggle-label">
+            {isVisible ? '노출' : '숨김'}
+          </span>
+        </div>
       </div>
 
       <div className="notice-form__actions">

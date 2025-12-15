@@ -6,6 +6,7 @@ export interface NoticeItem {
   title: string;
   typeCode: string;
   typeName: string;
+  isVisible: boolean;
   createdAt: string;
 }
 
@@ -91,19 +92,20 @@ export function NoticeList({ notices, totalCount, onView, onAdd, onSearch }: Not
             <th className="notice-list__th notice-list__th--date">공지 등록일</th>
             <th className="notice-list__th notice-list__th--type">공지 유형</th>
             <th className="notice-list__th notice-list__th--title">공지 제목</th>
+            <th className="notice-list__th notice-list__th--visibility">노출 여부</th>
             <th className="notice-list__th notice-list__th--action">관리</th>
           </tr>
         </thead>
         <tbody>
           {notices.length === 0 ? (
             <tr>
-              <td colSpan={4} className="notice-list__empty">
+              <td colSpan={5} className="notice-list__empty">
                 등록된 공지사항이 없습니다.
               </td>
             </tr>
           ) : (
             notices.map((notice) => (
-              <tr key={notice.id}>
+              <tr key={notice.id} className={!notice.isVisible ? 'notice-list__row--hidden' : ''}>
                 <td className="notice-list__td notice-list__td--date">
                   {formatDate(notice.createdAt)}
                 </td>
@@ -113,6 +115,11 @@ export function NoticeList({ notices, totalCount, onView, onAdd, onSearch }: Not
                   </span>
                 </td>
                 <td className="notice-list__td notice-list__td--title">{notice.title}</td>
+                <td className="notice-list__td notice-list__td--visibility">
+                  <span className={`notice-list__visibility-badge ${notice.isVisible ? 'notice-list__visibility-badge--visible' : 'notice-list__visibility-badge--hidden'}`}>
+                    {notice.isVisible ? '노출' : '숨김'}
+                  </span>
+                </td>
                 <td className="notice-list__td notice-list__td--action">
                   <button
                     type="button"

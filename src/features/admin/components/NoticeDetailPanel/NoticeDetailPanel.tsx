@@ -22,6 +22,7 @@ interface NoticeDetail {
   typeId: number;
   typeCode: string;
   typeName: string;
+  isVisible: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -100,6 +101,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [editTypeId, setEditTypeId] = useState<number | null>(null);
+  const [editIsVisible, setEditIsVisible] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -119,6 +121,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
         setEditTitle(data.title);
         setEditContent(data.content);
         setEditTypeId(Number(data.typeId));
+        setEditIsVisible(data.isVisible);
       }
     } catch (error) {
       console.error('Failed to fetch notice:', error);
@@ -136,6 +139,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
       setEditTitle(notice.title);
       setEditContent(notice.content);
       setEditTypeId(Number(notice.typeId));
+      setEditIsVisible(notice.isVisible);
     }
     setIsEditing(false);
   };
@@ -155,6 +159,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
           title: editTitle,
           content: editContent,
           typeId: editTypeId,
+          isVisible: editIsVisible,
         }),
       });
 
@@ -266,6 +271,28 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
                 ) : (
                   <div className="notice-panel__value notice-panel__value--content">
                     {notice.content}
+                  </div>
+                )}
+              </div>
+
+              <div className="notice-panel__field">
+                <label className="notice-panel__label">노출 여부</label>
+                {isEditing ? (
+                  <div className="notice-panel__toggle-container">
+                    <button
+                      type="button"
+                      className={`notice-panel__toggle ${editIsVisible ? 'notice-panel__toggle--active' : ''}`}
+                      onClick={() => setEditIsVisible(!editIsVisible)}
+                    >
+                      <span className="notice-panel__toggle-slider" />
+                    </button>
+                    <span className="notice-panel__toggle-label">
+                      {editIsVisible ? '노출' : '숨김'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className={`notice-panel__visibility-badge ${notice.isVisible ? 'notice-panel__visibility-badge--visible' : 'notice-panel__visibility-badge--hidden'}`}>
+                    {notice.isVisible ? '노출' : '숨김'}
                   </div>
                 )}
               </div>

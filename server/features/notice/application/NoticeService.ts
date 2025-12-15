@@ -4,6 +4,27 @@ import type { NoticeListResponse, NoticeListItem, CreateNoticeDto, UpdateNoticeD
 export class NoticeService {
   constructor(private readonly noticeRepository: NoticeRepository) {}
 
+  async getNoticesForAdmin(keyword?: string): Promise<NoticeListResponse> {
+    const [notices, totalAll] = await Promise.all([
+      this.noticeRepository.findAllForAdmin(keyword),
+      this.noticeRepository.countAll(),
+    ]);
+
+    const noticeItems: NoticeListItem[] = notices.map((notice) => ({
+      id: notice.id,
+      title: notice.title,
+      typeCode: notice.noticeType?.code ?? '',
+      typeName: notice.noticeType?.name ?? '',
+      isVisible: notice.isVisible,
+      createdAt: notice.createdAt.toISOString(),
+    }));
+
+    return {
+      notices: noticeItems,
+      total: keyword ? notices.length : totalAll,
+    };
+  }
+
   async getNotices(keyword?: string): Promise<NoticeListResponse> {
     const [notices, totalVisible] = await Promise.all([
       this.noticeRepository.findAll(keyword),
@@ -15,12 +36,32 @@ export class NoticeService {
       title: notice.title,
       typeCode: notice.noticeType?.code ?? '',
       typeName: notice.noticeType?.name ?? '',
+      isVisible: notice.isVisible,
       createdAt: notice.createdAt.toISOString(),
     }));
 
     return {
       notices: noticeItems,
       total: keyword ? notices.length : totalVisible,
+    };
+  }
+
+  async getNoticeByIdForAdmin(id: number): Promise<NoticeDetailResponse | null> {
+    const notice = await this.noticeRepository.findByIdForAdmin(id);
+    if (!notice) {
+      return null;
+    }
+
+    return {
+      id: notice.id,
+      title: notice.title,
+      content: notice.content,
+      typeId: notice.typeId,
+      typeCode: notice.noticeType?.code ?? '',
+      typeName: notice.noticeType?.name ?? '',
+      isVisible: notice.isVisible,
+      createdAt: notice.createdAt.toISOString(),
+      updatedAt: notice.updatedAt.toISOString(),
     };
   }
 
@@ -37,6 +78,7 @@ export class NoticeService {
       typeId: notice.typeId,
       typeCode: notice.noticeType?.code ?? '',
       typeName: notice.noticeType?.name ?? '',
+      isVisible: notice.isVisible,
       createdAt: notice.createdAt.toISOString(),
       updatedAt: notice.updatedAt.toISOString(),
     };
@@ -47,6 +89,7 @@ export class NoticeService {
       title: dto.title,
       content: dto.content,
       typeId: dto.typeId,
+      isVisible: dto.isVisible,
     });
 
     return {
@@ -54,6 +97,7 @@ export class NoticeService {
       title: notice.title,
       content: notice.content,
       typeId: notice.typeId,
+      isVisible: notice.isVisible,
       createdAt: notice.createdAt.toISOString(),
     };
   }
@@ -63,6 +107,7 @@ export class NoticeService {
       title: dto.title,
       content: dto.content,
       typeId: dto.typeId,
+      isVisible: dto.isVisible,
     });
 
     if (!notice) {
@@ -74,6 +119,7 @@ export class NoticeService {
       title: notice.title,
       content: notice.content,
       typeId: notice.typeId,
+      isVisible: notice.isVisible,
       updatedAt: notice.updatedAt.toISOString(),
     };
   }

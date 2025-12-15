@@ -306,3 +306,49 @@
   font-weight: 500;
   color: #0C0C0C;
 }
+
+/* Toggle Switch Styles for Notice Form */
+.notice-form__toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notice-form__toggle {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  background-color: #E0E0E0;
+  border: none;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  padding: 0;
+}
+
+.notice-form__toggle--active {
+  background-color: #3B9BD5;
+}
+
+.notice-form__toggle-slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.notice-form__toggle--active .notice-form__toggle-slider {
+  transform: translateX(22px);
+}
+
+.notice-form__toggle-label {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0C0C0C;
+}
