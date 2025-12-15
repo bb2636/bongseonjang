@@ -214,6 +214,32 @@
   justify-content: center;
 }
 
+.write-review-page__photo-remove-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.write-review-page__photo-uploading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.write-review-page__photo-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(59, 155, 213, 0.2);
+  border-top-color: #3B9BD5;
+  border-radius: 50%;
+  animation: write-review-spin 0.8s linear infinite;
+}
+
 .write-review-page__content-section {
   display: flex;
   flex-direction: column;

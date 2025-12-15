@@ -40,11 +40,13 @@ router.post('/confirm-review-image', authMiddleware, async (req, res) => {
   }
 });
 
-router.get('/objects/:objectPath(*)', async (req, res) => {
+router.get('/objects/*objectPath', async (req, res) => {
   const objectStorageService = new ObjectStorageService();
+  const objectPathArr = (req.params as any).objectPath || [];
+  const objectPath = Array.isArray(objectPathArr) ? objectPathArr.join('/') : objectPathArr;
   try {
     const objectFile = await objectStorageService.getObjectEntityFile(
-      `/objects/${req.params.objectPath}`
+      `/objects/${objectPath}`
     );
     objectStorageService.downloadObject(objectFile, res);
   } catch (error) {

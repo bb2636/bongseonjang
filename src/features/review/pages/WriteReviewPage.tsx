@@ -9,6 +9,61 @@ interface ProductInfo {
   thumbnailUrl?: string;
 }
 
+interface UploadedImage {
+  file: File;
+  previewUrl: string;
+  uploadedUrl?: string;
+  isUploading: boolean;
+}
+
+async function getUploadUrl(): Promise<string> {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch('/api/upload/review-image', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+  });
+  if (!response.ok) {
+    throw new Error('업로드 URL을 가져올 수 없습니다.');
+  }
+  const data = await response.json();
+  return data.uploadURL;
+}
+
+async function uploadImageToStorage(file: File, uploadUrl: string): Promise<string> {
+  const response = await fetch(uploadUrl, {
+    method: 'PUT',
+    body: file,
+    headers: {
+      'Content-Type': file.type,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('이미지 업로드에 실패했습니다.');
+  }
+  const url = new URL(uploadUrl);
+  return url.pathname;
+}
+
+async function confirmUploadedImage(imageURL: string): Promise<string> {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch('/api/upload/confirm-review-image', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: JSON.stringify({ imageURL }),
+  });
+  if (!response.ok) {
+    throw new Error('이미지 확인에 실패했습니다.');
+  }
+  const data = await response.json();
+  return data.objectPath;
+}
+
 async function fetchProductInfo(productId: string): Promise<ProductInfo> {
   const response = await fetch(`/api/products/${productId}`);
   if (!response.ok) {
@@ -97,8 +152,8 @@ export default function WriteReviewPage() {
 
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState('');
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
 
   const createReviewMutation = useMutation({
     mutationFn: createReview,
@@ -127,41 +182,73 @@ export default function WriteReviewPage() {
     fileInputRef.current?.click();
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    const newFiles = Array.from(files).slice(0, MAX_IMAGES - selectedImages.length);
-    
-    newFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreviewUrls((prev) => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
+    const newFiles = Array.from(files).slice(0, MAX_IMAGES - uploadedImages.length);
+    if (newFiles.length === 0) return;
 
-    setSelectedImages((prev) => [...prev, ...newFiles]);
+    const newImages: UploadedImage[] = newFiles.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+      isUploading: true,
+    }));
+
+    setUploadedImages((prev) => [...prev, ...newImages]);
+    setIsUploadingImages(true);
     e.target.value = '';
+
+    for (let i = 0; i < newFiles.length; i++) {
+      const file = newFiles[i];
+      try {
+        const uploadUrl = await getUploadUrl();
+        const objectPath = await uploadImageToStorage(file, uploadUrl);
+        const confirmedPath = await confirmUploadedImage(objectPath);
+
+        setUploadedImages((prev) =>
+          prev.map((img) =>
+            img.file === file
+              ? { ...img, uploadedUrl: confirmedPath, isUploading: false }
+              : img
+          )
+        );
+      } catch (error) {
+        console.error('Image upload failed:', error);
+        setUploadedImages((prev) => prev.filter((img) => img.file !== file));
+      }
+    }
+
+    setIsUploadingImages(false);
   };
 
   const handleRemoveImage = (index: number) => {
-    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    setUploadedImages((prev) => {
+      const removed = prev[index];
+      if (removed?.previewUrl) {
+        URL.revokeObjectURL(removed.previewUrl);
+      }
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   const handleSubmit = async () => {
     if (!productId || rating === 0) return;
 
+    const imageUrls = uploadedImages
+      .filter((img) => img.uploadedUrl)
+      .map((img) => img.uploadedUrl!);
+
     createReviewMutation.mutate({
       productId,
       rating,
       content,
-      imageUrls: imagePreviewUrls,
+      imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
     });
   };
 
-  const isSubmitDisabled = rating === 0 || createReviewMutation.isPending || !productInfo;
+  const hasUploadingImages = uploadedImages.some((img) => img.isUploading);
+  const isSubmitDisabled = rating === 0 || createReviewMutation.isPending || !productInfo || hasUploadingImages;
 
   if (productLoading) {
     return (
@@ -242,25 +329,31 @@ export default function WriteReviewPage() {
               type="button" 
               className="write-review-page__photo-add-btn"
               onClick={handleImageUploadClick}
-              disabled={selectedImages.length >= MAX_IMAGES}
+              disabled={uploadedImages.length >= MAX_IMAGES || isUploadingImages}
             >
               <ImageUploadIcon />
             </button>
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/png,application/pdf"
+              accept="image/jpeg,image/png"
               multiple
               onChange={handleImageChange}
               className="write-review-page__file-input"
             />
-            {imagePreviewUrls.map((url, index) => (
+            {uploadedImages.map((image, index) => (
               <div key={index} className="write-review-page__photo-preview">
-                <img src={url} alt={`미리보기 ${index + 1}`} />
+                <img src={image.previewUrl} alt={`미리보기 ${index + 1}`} />
+                {image.isUploading && (
+                  <div className="write-review-page__photo-uploading">
+                    <div className="write-review-page__photo-spinner" />
+                  </div>
+                )}
                 <button
                   type="button"
                   className="write-review-page__photo-remove-btn"
                   onClick={() => handleRemoveImage(index)}
+                  disabled={image.isUploading}
                 >
                   ×
                 </button>
