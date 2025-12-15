@@ -12,7 +12,7 @@ import { searchRoutes } from '../features/search';
 import { profileRoutes } from '../features/profile';
 import { pointRoutes } from '../features/point';
 import { cartRoutes } from '../features/cart';
-import { couponRoutes } from '../features/coupon';
+import { couponRoutes, adminCouponRoutes } from '../features/coupon';
 import { wishlistRoutes } from '../features/wishlist';
 import { orderHistoryRoutes } from '../features/orderHistory';
 import { paymentRoutes } from '../features/payment/routes/paymentRoutes';
@@ -48,5 +48,6 @@ router.use('/admin/notices', noticeRoutes);
 router.use('/admin/faqs', faqRoutes);
 router.use('/admin/inquiries', inquiryRoutes);
 router.use('/admin', adminBannerRoutes);
+router.use('/admin', adminCouponRoutes);
 
 export default router;

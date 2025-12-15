@@ -1,2 +1,2 @@
-export { AdminDashboardPage, AdminPlaceholderPage, AdminSupportPage, BannerManagementPage } from './pages';
+export { AdminDashboardPage, AdminPlaceholderPage, AdminSupportPage, BannerManagementPage, CouponManagementPage } from './pages';
 export { AdminLayout } from './layouts';

@@ -1,0 +1,377 @@
+.coupon-management {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.coupon-management__toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.coupon-management__toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.coupon-management__toolbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.coupon-management__total {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.coupon-management__search {
+  position: relative;
+}
+
+.coupon-management__search-input {
+  width: 240px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.coupon-management__search-input:focus {
+  border-color: #239DFF;
+}
+
+.coupon-management__search-input::placeholder {
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.coupon-management__filter-select {
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+  background: #FFFFFF;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.coupon-management__filter-select:focus {
+  border-color: #239DFF;
+}
+
+.coupon-management__add-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 24px;
+  height: 46px;
+  background: #239DFF;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #FFFFFF;
+  transition: background-color 0.2s ease;
+}
+
+.coupon-management__add-button:hover {
+  background: #1A8CE6;
+}
+
+.coupon-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid rgba(12, 12, 12, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.coupon-table__header {
+  background: rgba(12, 12, 12, 0.02);
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.coupon-table__header-row {
+  display: flex;
+  align-items: center;
+  height: 48px;
+}
+
+.coupon-table__header-cell {
+  display: flex;
+  align-items: center;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.8);
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.coupon-table__header-cell--name {
+  width: 18%;
+  flex-shrink: 0;
+}
+
+.coupon-table__header-cell--type {
+  width: 10%;
+  flex-shrink: 0;
+}
+
+.coupon-table__header-cell--discount {
+  width: 10%;
+  flex-shrink: 0;
+}
+
+.coupon-table__header-cell--target {
+  width: 12%;
+  flex-shrink: 0;
+}
+
+.coupon-table__header-cell--condition {
+  width: 14%;
+  flex-shrink: 0;
+}
+
+.coupon-table__header-cell--period {
+  width: 12%;
+  flex-shrink: 0;
+}
+
+.coupon-table__header-cell--usage {
+  width: 8%;
+  flex-shrink: 0;
+}
+
+.coupon-table__header-cell--status {
+  width: 8%;
+  flex-shrink: 0;
+}
+
+.coupon-table__header-cell--actions {
+  width: 8%;
+  flex-shrink: 0;
+}
+
+.coupon-table__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.coupon-table__body-row {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+  background: #FFFFFF;
+  transition: background-color 0.2s ease;
+}
+
+.coupon-table__body-row:last-child {
+  border-bottom: none;
+}
+
+.coupon-table__body-row:hover {
+  background: rgba(12, 12, 12, 0.02);
+}
+
+.coupon-table__body-row--loading {
+  justify-content: center;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.coupon-table__cell {
+  display: flex;
+  align-items: center;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.coupon-table__cell--name {
+  width: 18%;
+  flex-shrink: 0;
+}
+
+.coupon-table__cell--type {
+  width: 10%;
+  flex-shrink: 0;
+}
+
+.coupon-table__cell--discount {
+  width: 10%;
+  flex-shrink: 0;
+}
+
+.coupon-table__cell--target {
+  width: 12%;
+  flex-shrink: 0;
+}
+
+.coupon-table__cell--condition {
+  width: 14%;
+  flex-shrink: 0;
+}
+
+.coupon-table__cell--period {
+  width: 12%;
+  flex-shrink: 0;
+}
+
+.coupon-table__cell--usage {
+  width: 8%;
+  flex-shrink: 0;
+}
+
+.coupon-table__cell--status {
+  width: 8%;
+  flex-shrink: 0;
+}
+
+.coupon-table__cell--actions {
+  width: 8%;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.coupon-table__name {
+  font-weight: 500;
+  color: #0C0C0C;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.coupon-table__type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.coupon-table__type-badge--fixed {
+  background: rgba(35, 157, 255, 0.1);
+  color: #239DFF;
+}
+
+.coupon-table__type-badge--rate {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34C759;
+}
+
+.coupon-table__type-badge--shipping {
+  background: rgba(255, 149, 0, 0.1);
+  color: #FF9500;
+}
+
+.coupon-table__discount {
+  font-weight: 600;
+  color: #0C0C0C;
+}
+
+.coupon-table__target,
+.coupon-table__condition,
+.coupon-table__period,
+.coupon-table__usage {
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.coupon-table__status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.coupon-table__status:hover {
+  opacity: 0.8;
+}
+
+.coupon-table__status--active {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34C759;
+}
+
+.coupon-table__status--inactive {
+  background: rgba(12, 12, 12, 0.06);
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.coupon-table__action-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 12px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: #0C0C0C;
+  transition: all 0.2s ease;
+}
+
+.coupon-table__action-button:hover {
+  background: rgba(12, 12, 12, 0.04);
+  border-color: rgba(12, 12, 12, 0.2);
+}
+
+.coupon-table__action-button--delete {
+  color: #FF3B30;
+  border-color: rgba(255, 59, 48, 0.2);
+}
+
+.coupon-table__action-button--delete:hover {
+  background: rgba(255, 59, 48, 0.05);
+  border-color: rgba(255, 59, 48, 0.3);
+}
+
+.coupon-table__empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.coupon-table__empty-message {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.coupon-table__error {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(255, 59, 48, 0.05);
+  border-radius: 8px;
+}
+
+.coupon-table__error-message {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #FF3B30;
+}
