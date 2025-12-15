@@ -57,3 +57,5 @@ export { Notice } from './Notice';
 
 export { FaqCategory } from './FaqCategory';
 export { Faq } from './Faq';
+
+export { ProductInquiry } from './ProductInquiry';
