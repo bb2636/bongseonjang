@@ -31,9 +31,6 @@ export class OrderItem {
   @Column({ type: 'int' })
   totalPrice!: number;
 
-  @Column({ type: 'boolean', default: false })
-  isReviewed!: boolean;
-
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 

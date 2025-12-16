@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import type { Product } from './Product';
 import type { User } from './User';
 import type { ReviewImage } from './ReviewImage';
+import type { OrderItem } from './OrderItem';
 
 @Entity('reviews')
 export class Review {
@@ -13,6 +14,9 @@ export class Review {
 
   @Column({ type: 'uuid' })
   userId!: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  orderItemId!: string | null;
 
   @Column({ type: 'int' })
   rating!: number;
@@ -33,6 +37,10 @@ export class Review {
   @ManyToOne('User', 'reviews')
   @JoinColumn({ name: 'userId' })
   user!: User;
+
+  @ManyToOne('OrderItem', { nullable: true })
+  @JoinColumn({ name: 'orderItemId' })
+  orderItem!: OrderItem | null;
 
   @OneToMany('ReviewImage', 'review')
   images!: ReviewImage[];
