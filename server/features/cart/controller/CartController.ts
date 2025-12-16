@@ -29,9 +29,9 @@ export class CartController {
         return;
       }
 
-      const { productId, mainOptionId, subOptionId, quantity } = req.body;
+      const { productId, productOptionId, quantity } = req.body;
 
-      console.log('[Cart] Add item request:', { productId, mainOptionId, subOptionId, quantity, userId });
+      console.log('[Cart] Add item request:', { productId, productOptionId, quantity, userId });
 
       if (!productId) {
         console.error('[Cart] Product ID is missing in request body:', req.body);
@@ -42,8 +42,7 @@ export class CartController {
       const item = await this.cartService.addItem(
         userId,
         productId,
-        mainOptionId ?? null,
-        subOptionId ?? null,
+        productOptionId ?? null,
         quantity ?? 1
       );
 

@@ -152,27 +152,24 @@ export default function QuickCartBottomSheet() {
     const token = localStorage.getItem('token');
 
     try {
-      const items = selectedItems.map(item => ({
-        mainOptionId: item.option?.id || null,
-        subOptionId: null,
-        quantity: item.quantity,
-      }));
+      for (const item of selectedItems) {
+        const response = await fetch('/api/cart/items', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: product.id,
+            productOptionId: item.option?.id || null,
+            quantity: item.quantity,
+          }),
+        });
 
-      const response = await fetch('/api/cart/items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          productId: product.id,
-          items,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to add to cart');
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to add to cart');
+        }
       }
 
       refreshCart();
@@ -198,8 +195,7 @@ export default function QuickCartBottomSheet() {
     if (selectedItems.length === 0 || !product) return;
 
     const items = selectedItems.map(item => ({
-      mainOptionId: item.option?.id || null,
-      subOptionId: null,
+      productOptionId: item.option?.id || null,
       quantity: item.quantity,
     }));
 

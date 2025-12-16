@@ -138,17 +138,17 @@ export function CheckoutPage() {
   const displayItems: DisplayItem[] = useMemo(() => {
     if (isDirectMode && directProduct && directPurchaseData) {
       return directPurchaseData.items.map((item, index) => {
-        const mainOption = item.mainOptionId 
-          ? directProduct.mainOptions.find(opt => opt.id === item.mainOptionId)
+        const productOption = item.productOptionId 
+          ? directProduct.mainOptions.find(opt => opt.id === item.productOptionId)
           : null;
         
-        const unitPrice = mainOption ? mainOption.price : directProduct.discountedPrice;
+        const unitPrice = productOption ? productOption.price : directProduct.discountedPrice;
         
         return {
           id: `direct-${index}`,
           productName: directProduct.name,
           productImageUrl: directProduct.thumbnailUrl || '',
-          optionName: mainOption?.name || null,
+          optionName: productOption?.name || null,
           quantity: item.quantity,
           unitPrice,
           totalPrice: unitPrice * item.quantity,
@@ -161,7 +161,7 @@ export function CheckoutPage() {
       id: item.id,
       productName: item.productName,
       productImageUrl: item.productImageUrl,
-      optionName: item.mainOptionName || null,
+      optionName: item.productOptionName || null,
       quantity: item.quantity,
       unitPrice: item.totalPrice / item.quantity,
       totalPrice: item.totalPrice,

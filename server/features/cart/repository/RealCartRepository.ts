@@ -33,7 +33,7 @@ export class RealCartRepository implements CartRepository {
     const cartItemRepository = AppDataSource.getRepository(CartItem);
     const items = await cartItemRepository.find({
       where: { cartId: cart.id },
-      relations: ['product', 'mainOption', 'subOption'],
+      relations: ['product', 'productOption'],
       order: { createdAt: 'DESC' },
     });
 
@@ -41,17 +41,8 @@ export class RealCartRepository implements CartRepository {
     const productImages = await this.getProductThumbnails(productIds);
 
     const cartItems: CartItemDto[] = items.map(item => {
-      let basePrice = item.mainOption?.price ?? 0;
-      if (!item.mainOption && item.product) {
-        const productBasePrice = item.product.basePrice;
-        const discountRate = item.product.discountRate ?? 0;
-        basePrice = item.product.isDiscounted 
-          ? Math.round(productBasePrice * (1 - discountRate / 100))
-          : productBasePrice;
-      }
-      const additionalPrice = item.subOption?.additionalPrice ?? 0;
-      const unitPrice = basePrice + additionalPrice;
-      const compareAtPrice = item.mainOption?.compareAtPrice ?? (item.product?.isDiscounted ? item.product.basePrice : null);
+      const basePrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
+      const unitPrice = basePrice;
       const totalPrice = unitPrice * item.quantity;
 
       return {
@@ -59,14 +50,11 @@ export class RealCartRepository implements CartRepository {
         productId: item.productId,
         productName: item.product?.name ?? '',
         productImageUrl: productImages.get(item.productId) ?? 'https://placehold.co/58x58/f5f5f5/999999?text=No+Image',
-        mainOptionId: item.mainOptionId,
-        mainOptionName: item.mainOption ? `${item.mainOption.name}` : null,
-        subOptionId: item.subOptionId,
-        subOptionName: item.subOption?.name ?? null,
+        productOptionId: item.productOptionId,
+        productOptionName: item.productOption ? `${item.productOption.optionName}: ${item.productOption.optionValue}` : null,
         quantity: item.quantity,
         unitPrice,
-        compareAtPrice,
-        additionalPrice,
+        compareAtPrice: null,
         totalPrice,
       };
     });
@@ -84,8 +72,7 @@ export class RealCartRepository implements CartRepository {
   async addItem(
     userId: string,
     productId: string,
-    mainOptionId: string | null,
-    subOptionId: string | null,
+    productOptionId: number | null,
     quantity: number
   ): Promise<CartItemDto> {
     const cart = await this.getOrCreateCart(userId);
@@ -95,10 +82,9 @@ export class RealCartRepository implements CartRepository {
       where: {
         cartId: cart.id,
         productId,
-        mainOptionId: mainOptionId ?? undefined,
-        subOptionId: subOptionId ?? undefined,
+        productOptionId: productOptionId ?? undefined,
       },
-      relations: ['product', 'mainOption', 'subOption'],
+      relations: ['product', 'productOption'],
     });
 
     if (existingItem) {
@@ -108,15 +94,14 @@ export class RealCartRepository implements CartRepository {
       existingItem = cartItemRepository.create({
         cartId: cart.id,
         productId,
-        mainOptionId,
-        subOptionId,
+        productOptionId,
         quantity,
       });
       await cartItemRepository.save(existingItem);
       
       existingItem = await cartItemRepository.findOne({
         where: { id: existingItem.id },
-        relations: ['product', 'mainOption', 'subOption'],
+        relations: ['product', 'productOption'],
       });
     }
 
@@ -125,30 +110,19 @@ export class RealCartRepository implements CartRepository {
     }
 
     const productImages = await this.getProductThumbnails([productId]);
-    let basePrice = existingItem.mainOption?.price ?? 0;
-    if (!existingItem.mainOption && existingItem.product) {
-      const productBasePrice = existingItem.product.basePrice;
-      const discountRate = existingItem.product.discountRate ?? 0;
-      basePrice = existingItem.product.isDiscounted 
-        ? Math.round(productBasePrice * (1 - discountRate / 100))
-        : productBasePrice;
-    }
-    const additionalPrice = existingItem.subOption?.additionalPrice ?? 0;
-    const unitPrice = basePrice + additionalPrice;
+    const basePrice = existingItem.productOption?.price ?? existingItem.product?.basePrice ?? 0;
+    const unitPrice = basePrice;
 
     return {
       id: existingItem.id,
       productId: existingItem.productId,
       productName: existingItem.product?.name ?? '',
       productImageUrl: productImages.get(productId) ?? 'https://placehold.co/58x58/f5f5f5/999999?text=No+Image',
-      mainOptionId: existingItem.mainOptionId,
-      mainOptionName: existingItem.mainOption?.name ?? null,
-      subOptionId: existingItem.subOptionId,
-      subOptionName: existingItem.subOption?.name ?? null,
+      productOptionId: existingItem.productOptionId,
+      productOptionName: existingItem.productOption ? `${existingItem.productOption.optionName}: ${existingItem.productOption.optionValue}` : null,
       quantity: existingItem.quantity,
       unitPrice,
-      compareAtPrice: existingItem.mainOption?.compareAtPrice ?? (existingItem.product?.isDiscounted ? existingItem.product.basePrice : null),
-      additionalPrice,
+      compareAtPrice: null,
       totalPrice: unitPrice * existingItem.quantity,
     };
   }
@@ -159,7 +133,7 @@ export class RealCartRepository implements CartRepository {
 
     const item = await cartItemRepository.findOne({
       where: { id: itemId, cartId: cart.id },
-      relations: ['product', 'mainOption', 'subOption'],
+      relations: ['product', 'productOption'],
     });
 
     if (!item) {
@@ -175,30 +149,19 @@ export class RealCartRepository implements CartRepository {
     await cartItemRepository.save(item);
 
     const productImages = await this.getProductThumbnails([item.productId]);
-    let basePrice = item.mainOption?.price ?? 0;
-    if (!item.mainOption && item.product) {
-      const productBasePrice = item.product.basePrice;
-      const discountRate = item.product.discountRate ?? 0;
-      basePrice = item.product.isDiscounted 
-        ? Math.round(productBasePrice * (1 - discountRate / 100))
-        : productBasePrice;
-    }
-    const additionalPrice = item.subOption?.additionalPrice ?? 0;
-    const unitPrice = basePrice + additionalPrice;
+    const basePrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
+    const unitPrice = basePrice;
 
     return {
       id: item.id,
       productId: item.productId,
       productName: item.product?.name ?? '',
       productImageUrl: productImages.get(item.productId) ?? 'https://placehold.co/58x58/f5f5f5/999999?text=No+Image',
-      mainOptionId: item.mainOptionId,
-      mainOptionName: item.mainOption?.name ?? null,
-      subOptionId: item.subOptionId,
-      subOptionName: item.subOption?.name ?? null,
+      productOptionId: item.productOptionId,
+      productOptionName: item.productOption ? `${item.productOption.optionName}: ${item.productOption.optionValue}` : null,
       quantity: item.quantity,
       unitPrice,
-      compareAtPrice: item.mainOption?.compareAtPrice ?? (item.product?.isDiscounted ? item.product.basePrice : null),
-      additionalPrice,
+      compareAtPrice: null,
       totalPrice: unitPrice * item.quantity,
     };
   }

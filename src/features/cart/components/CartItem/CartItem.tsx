@@ -21,14 +21,7 @@ export function CartItem({
   };
 
   const getOptionText = () => {
-    const parts: string[] = [];
-    if (item.mainOptionName) {
-      parts.push(item.mainOptionName);
-    }
-    if (item.subOptionName) {
-      parts.push(item.subOptionName);
-    }
-    return parts.join(' / ');
+    return item.productOptionName || '';
   };
 
   const handleDecrease = () => {

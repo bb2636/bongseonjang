@@ -11,11 +11,10 @@ export class CartService {
   async addItem(
     userId: string,
     productId: string,
-    mainOptionId: string | null,
-    subOptionId: string | null,
+    productOptionId: number | null,
     quantity: number
   ): Promise<CartItemDto> {
-    return this.cartRepository.addItem(userId, productId, mainOptionId, subOptionId, quantity);
+    return this.cartRepository.addItem(userId, productId, productOptionId, quantity);
   }
 
   async updateItemQuantity(userId: string, itemId: string, quantity: number): Promise<CartItemDto | null> {

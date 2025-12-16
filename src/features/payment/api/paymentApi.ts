@@ -10,8 +10,7 @@ interface PreparePaymentRequest {
 }
 
 export interface DirectPurchaseItem {
-  mainOptionId: string | null;
-  subOptionId: string | null;
+  productOptionId: string | null;
   quantity: number;
 }
 
