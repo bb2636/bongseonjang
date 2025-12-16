@@ -34,7 +34,6 @@ import { CheckoutPage } from "./features/payment/pages/CheckoutPage";
 import { PaymentSuccessPage } from "./features/payment/pages/PaymentSuccessPage";
 import { PaymentFailPage } from "./features/payment/pages/PaymentFailPage";
 import { NoticeListPage } from "./features/notice";
-import { InquiryListPage, InquiryWritePage, InquiryDetailPage } from "./features/inquiry";
 import { AddressFormPage } from "./features/address";
 import { WriteReviewPage, ReviewListPage } from "./features/review";
 import { FaqPage } from "./features/faq";
@@ -220,30 +219,6 @@ export default function App() {
         element={
           <ProtectedRoute>
             <NoticeListPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/inquiry"
-        element={
-          <ProtectedRoute>
-            <InquiryListPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/inquiry/write"
-        element={
-          <ProtectedRoute>
-            <InquiryWritePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/inquiry/:id"
-        element={
-          <ProtectedRoute>
-            <InquiryDetailPage />
           </ProtectedRoute>
         }
       />

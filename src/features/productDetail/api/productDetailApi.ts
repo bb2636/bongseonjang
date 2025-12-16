@@ -30,3 +30,25 @@ export async function fetchRelatedProducts(productId: string, limit: number = 4)
   
   return response.json();
 }
+
+export interface ProductInquiryResponse {
+  id: string;
+  status: 'pending' | 'answered';
+  categoryLabel: string;
+  authorAlias: string;
+  createdAt: string;
+  title: string;
+  answer?: string;
+  isPrivate?: boolean;
+}
+
+export async function fetchProductInquiries(productId: string): Promise<ProductInquiryResponse[]> {
+  const response = await fetch(`${API_BASE_URL}/products/${productId}/inquiries`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch product inquiries');
+  }
+  
+  const data = await response.json();
+  return data.inquiries;
+}
