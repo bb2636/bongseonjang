@@ -3,8 +3,15 @@ import { AdminLayout } from '../../layouts';
 import './TermsManagementPage.css';
 import type { TermsContent, TermsType } from '../../../terms/types/terms';
 import { fetchAdminTerms, saveTerms } from '../../../terms/api/termsApi';
+import { useToast } from '../../../../contexts';
 
 const DEFAULT_TERMS_TYPE: TermsType = 'SERVICE';
+
+const TERMS_TYPE_OPTIONS: { value: TermsType; label: string }[] = [
+  { value: 'SERVICE', label: '서비스 이용약관' },
+  { value: 'PRIVACY_POLICY', label: '개인정보 처리방침' },
+  { value: 'PURCHASE_POLICY', label: '구매·배송·취소/환불 정책' },
+];
 
 export function TermsManagementPage() {
   const [selectedType, setSelectedType] = useState<TermsType>(DEFAULT_TERMS_TYPE);
@@ -16,6 +23,7 @@ export function TermsManagementPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const formattedUpdatedAt = useMemo(() => {
     if (!terms) return '업데이트 예정';
@@ -57,8 +65,10 @@ export function TermsManagementPage() {
         content,
         isActive,
       });
+      const nextMessage = `약관이 ${terms ? '업데이트' : '등록'}되었습니다.`;
       setTerms(saved);
-      setMessage('약관이 저장되었습니다.');
+      setMessage(nextMessage);
+      showToast(nextMessage, 'success');
     } catch (err) {
       setError(err instanceof Error ? err.message : '약관 저장에 실패했습니다.');
     } finally {
@@ -81,7 +91,9 @@ export function TermsManagementPage() {
               onChange={(event) => setSelectedType(event.target.value as TermsType)}
               className="terms-management__select"
             >
-              <option value="SERVICE">서비스 이용약관</option>
+              {TERMS_TYPE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
             </select>
           </div>
           <div className="terms-management__status">
