@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '../../layouts';
 import { fetchAdminOrders, updateShippingInfo, OrderStatus, PaymentMethod, AdminOrderDto } from './api/adminOrderApi';
-import { ShippingInfoModal } from './components/ShippingInfoModal';
+import { TrackingNumberDialog } from './components/TrackingNumberDialog';
 import './OrderManagement.css';
 
 const orderStatusOptions: { code: OrderStatus; label: string }[] = [
@@ -48,11 +48,23 @@ const paymentMethodLabelMap: Record<Exclude<PaymentMethod, 'ALL'>, string> = {
   KAKAO_PAY: '카카오페이',
 };
 
-interface SelectedOrder {
-  id: string;
-  orderNumber: string;
-  shippingCompany: string | null;
-  trackingNumber: string | null;
+const COURIER_OPTIONS = [
+  { id: 'cj', name: 'CJ대한통운' },
+  { id: 'hanjin', name: '한진택배' },
+  { id: 'lotte', name: '롯데택배' },
+  { id: 'logen', name: '로젠택배' },
+  { id: 'post', name: '우체국택배' },
+  { id: 'gs', name: 'GS25편의점택배' },
+  { id: 'cu', name: 'CU편의점택배' },
+  { id: 'kyungdong', name: '경동택배' },
+  { id: 'daesin', name: '대신택배' },
+];
+
+interface TrackingDialogState {
+  orderId: string;
+  carrierId: string;
+  carrierName: string;
+  currentTrackingNumber: string;
 }
 
 export function OrderManagementPage() {
@@ -60,8 +72,8 @@ export function OrderManagementPage() {
   const [orderStatusFilter, setOrderStatusFilter] = useState<OrderStatus>('ALL');
   const [paymentMethodFilter, setPaymentMethodFilter] = useState<PaymentMethod>('ALL');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<SelectedOrder | null>(null);
+  const [trackingDialogState, setTrackingDialogState] = useState<TrackingDialogState | null>(null);
+  const [savingOrderId, setSavingOrderId] = useState<string | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['adminOrders', orderStatusFilter, paymentMethodFilter, searchKeyword],
@@ -91,24 +103,66 @@ export function OrderManagementPage() {
     return paymentMethodLabelMap[method] || '-';
   };
 
-  const handleOpenShippingModal = (order: AdminOrderDto) => {
-    setSelectedOrder({
-      id: order.id,
-      orderNumber: order.orderNumber,
-      shippingCompany: order.shippingCompany,
-      trackingNumber: order.trackingNumber,
+  const handleCarrierChange = async (order: AdminOrderDto, carrierId: string) => {
+    const selectedOption = COURIER_OPTIONS.find(opt => opt.id === carrierId);
+    if (!selectedOption) return;
+
+    setSavingOrderId(order.id);
+    try {
+      await updateShippingInfo(order.id, {
+        carrierId: carrierId,
+        carrierName: selectedOption.name,
+        trackingNumber: order.trackingNumber || '',
+      });
+      await queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
+    } catch (error) {
+      console.error('Failed to save carrier:', error);
+    } finally {
+      setSavingOrderId(null);
+    }
+  };
+
+  const handleTrackingCellClick = (order: AdminOrderDto) => {
+    if (!order.shippingCompany) {
+      return;
+    }
+
+    const currentCarrier = COURIER_OPTIONS.find(opt => opt.name === order.shippingCompany);
+    const carrierId = currentCarrier?.id || order.shippingCompany;
+    const carrierName = order.shippingCompany;
+
+    setTrackingDialogState({
+      orderId: order.id,
+      carrierId: carrierId,
+      carrierName: carrierName,
+      currentTrackingNumber: order.trackingNumber || '',
     });
-    setIsShippingModalOpen(true);
   };
 
-  const handleCloseShippingModal = () => {
-    setIsShippingModalOpen(false);
-    setSelectedOrder(null);
+  const handleSaveTrackingNumber = async (trackingNumber: string) => {
+    if (!trackingDialogState) return;
+
+    setSavingOrderId(trackingDialogState.orderId);
+    try {
+      await updateShippingInfo(trackingDialogState.orderId, {
+        carrierId: trackingDialogState.carrierId,
+        carrierName: trackingDialogState.carrierName,
+        trackingNumber,
+      });
+      await queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
+      setTrackingDialogState(null);
+    } catch (error) {
+      console.error('Failed to save shipping info:', error);
+    } finally {
+      setSavingOrderId(null);
+    }
   };
 
-  const handleSaveShippingInfo = async (orderId: string, carrierId: string, carrierName: string, trackingNumber: string) => {
-    await updateShippingInfo(orderId, { carrierId, carrierName, trackingNumber });
-    await queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
+  const getCarrierIdForOrder = (order: AdminOrderDto): string => {
+    if (!order.shippingCompany) return '';
+    const option = COURIER_OPTIONS.find(opt => opt.name === order.shippingCompany);
+    if (option) return option.id;
+    return '__backend__';
   };
 
   return (
@@ -172,7 +226,6 @@ export function OrderManagementPage() {
               <div className="order-table__header-cell">결제 수단</div>
               <div className="order-table__header-cell">택배사</div>
               <div className="order-table__header-cell">송장번호</div>
-              <div className="order-table__header-cell order-table__header-cell--action">관리</div>
             </div>
 
             {isLoading ? (
@@ -205,19 +258,33 @@ export function OrderManagementPage() {
                   <div className="order-table__cell">
                     <div className="order-table__primary">{renderPaymentMethod(order.paymentMethod)}</div>
                   </div>
-                  <div className="order-table__cell">
-                    <div className="order-table__primary">{order.shippingCompany || '-'}</div>
-                  </div>
-                  <div className="order-table__cell">
-                    <div className="order-table__primary">{order.trackingNumber || '-'}</div>
-                  </div>
-                  <div className="order-table__cell order-table__cell--action">
-                    <button 
-                      type="button" 
-                      className="order-table__link"
-                      onClick={() => handleOpenShippingModal(order)}
+                  <div className="order-table__cell order-table__cell--carrier">
+                    <select
+                      className="order-table__carrier-select"
+                      value={getCarrierIdForOrder(order)}
+                      onChange={(e) => handleCarrierChange(order, e.target.value)}
                     >
-                      보기
+                      <option value="">선택</option>
+                      {order.shippingCompany && !COURIER_OPTIONS.find(opt => opt.name === order.shippingCompany) && (
+                        <option value="__backend__" disabled>
+                          {order.shippingCompany}
+                        </option>
+                      )}
+                      {COURIER_OPTIONS.map((courier) => (
+                        <option key={courier.id} value={courier.id}>
+                          {courier.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="order-table__cell order-table__cell--tracking">
+                    <button
+                      type="button"
+                      className="order-table__tracking-button"
+                      onClick={() => handleTrackingCellClick(order)}
+                      disabled={!order.shippingCompany}
+                    >
+                      {order.trackingNumber || '입력'}
                     </button>
                   </div>
                 </div>
@@ -227,17 +294,13 @@ export function OrderManagementPage() {
         )}
       </div>
 
-      {selectedOrder && (
-        <ShippingInfoModal
-          isOpen={isShippingModalOpen}
-          orderId={selectedOrder.id}
-          orderNumber={selectedOrder.orderNumber}
-          currentCarrier={selectedOrder.shippingCompany}
-          currentTrackingNumber={selectedOrder.trackingNumber}
-          onClose={handleCloseShippingModal}
-          onSave={handleSaveShippingInfo}
-        />
-      )}
+      <TrackingNumberDialog
+        isOpen={!!trackingDialogState}
+        currentValue={trackingDialogState?.currentTrackingNumber || ''}
+        onClose={() => setTrackingDialogState(null)}
+        onSave={handleSaveTrackingNumber}
+        isSaving={!!savingOrderId}
+      />
     </AdminLayout>
   );
 }

@@ -1,1 +1,0 @@
-export { ShippingInfoModal } from './ShippingInfoModal';
