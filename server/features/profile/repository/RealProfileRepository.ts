@@ -7,6 +7,7 @@ import { UserCoupon } from '../../../entity/UserCoupon';
 import { WishlistItem } from '../../../entity/WishlistItem';
 import { OrderItem } from '../../../entity/OrderItem';
 import { Order as OrderEntity } from '../../../entity/Order';
+import { Review } from '../../../entity/Review';
 
 const GRADE_DISPLAY_MAP: Record<MembershipGrade, string> = {
   [MembershipGrade.BRONZE]: '브론즈',
@@ -30,7 +31,25 @@ export class RealProfileRepository implements ProfileRepository {
     const wishlistItemRepository = AppDataSource.getRepository(WishlistItem);
     const orderItemRepository = AppDataSource.getRepository(OrderItem);
 
-    const [pointWallet, couponCount, favoriteCount, pendingReviewCount] = await Promise.all([
+    const pendingReviewQuery = orderItemRepository
+      .createQueryBuilder('orderItem')
+      .innerJoin('orderItem.order', 'order')
+      .select('COUNT(DISTINCT orderItem.productId)', 'count')
+      .where('order.userId = :userId', { userId })
+      .andWhere('order.status = :status', { status: 'delivered' })
+      .andWhere('orderItem.productId IS NOT NULL')
+      .andWhere(qb => {
+        const subQuery = qb.subQuery()
+          .select('1')
+          .from(Review, 'review')
+          .where('review.userId = :userId')
+          .andWhere('review.productId IS NOT NULL')
+          .andWhere('review.productId = orderItem.productId')
+          .getQuery();
+        return `NOT EXISTS ${subQuery}`;
+      });
+
+    const [pointWallet, couponCount, favoriteCount, pendingReviewResult] = await Promise.all([
       pointWalletRepository.findOne({ where: { userId } }),
       userCouponRepository.count({ where: { userId, status: 'ISSUED' } }),
       wishlistItemRepository
@@ -38,14 +57,10 @@ export class RealProfileRepository implements ProfileRepository {
         .innerJoin('item.wishlist', 'wishlist')
         .where('wishlist.userId = :userId', { userId })
         .getCount(),
-      orderItemRepository
-        .createQueryBuilder('orderItem')
-        .innerJoin('orderItem.order', 'order')
-        .where('order.userId = :userId', { userId })
-        .andWhere('order.status = :status', { status: 'delivered' })
-        .andWhere('orderItem.isReviewed = :isReviewed', { isReviewed: false })
-        .getCount(),
+      pendingReviewQuery.getRawOne(),
     ]);
+
+    const pendingReviewCount = parseInt(pendingReviewResult?.count || '0', 10);
 
     return {
       id: user.id,
