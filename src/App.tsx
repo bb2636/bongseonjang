@@ -38,6 +38,7 @@ import { AddressFormPage } from "./features/address";
 import { WriteReviewPage, ReviewListPage } from "./features/review";
 import { FaqPage } from "./features/faq";
 import { MyInquiriesPage } from "./features/myInquiries";
+import { BongseonStoryPage } from "./features/about";
 import {
   AdminDashboardPage,
   AdminPlaceholderPage,
@@ -268,6 +269,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <MyInquiriesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/about"
+        element={
+          <ProtectedRoute>
+            <BongseonStoryPage />
           </ProtectedRoute>
         }
       />
