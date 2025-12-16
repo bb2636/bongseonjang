@@ -18,8 +18,7 @@ type FrontendOrderStatus =
 type FrontendPaymentMethod =
   | 'CARD'
   | 'ACCOUNT_TRANSFER'
-  | 'NAVER_PAY'
-  | 'KAKAO_PAY';
+  | 'BANK_TRANSFER';
 
 interface AdminOrderListItem {
   id: string;
@@ -48,19 +47,19 @@ const dbStatusToFrontend: Record<string, FrontendOrderStatus> = {
 
 const dbPaymentMethodToFrontend: Record<string, FrontendPaymentMethod> = {
   card: 'CARD',
+  CARD: 'CARD',
   bank_transfer: 'ACCOUNT_TRANSFER',
+  ACCOUNT_TRANSFER: 'ACCOUNT_TRANSFER',
   virtual_account: 'ACCOUNT_TRANSFER',
+  BANK_TRANSFER: 'BANK_TRANSFER',
   mobile: 'CARD',
-  kakao_pay: 'KAKAO_PAY',
-  naver_pay: 'NAVER_PAY',
   toss_pay: 'CARD',
 };
 
 const frontendToDbPaymentMethods: Record<string, string[]> = {
-  CARD: ['card', 'mobile', 'toss_pay'],
-  ACCOUNT_TRANSFER: ['bank_transfer', 'virtual_account'],
-  NAVER_PAY: ['naver_pay'],
-  KAKAO_PAY: ['kakao_pay'],
+  CARD: ['card', 'CARD', 'mobile', 'toss_pay'],
+  ACCOUNT_TRANSFER: ['bank_transfer', 'ACCOUNT_TRANSFER', 'virtual_account'],
+  BANK_TRANSFER: ['BANK_TRANSFER'],
 };
 
 function formatDate(date: Date): string {

@@ -18,9 +18,8 @@ const orderStatusOptions: { code: OrderStatus; label: string }[] = [
 const paymentMethodOptions: { code: PaymentMethod; label: string }[] = [
   { code: 'ALL', label: '결제수단' },
   { code: 'CARD', label: '신용카드' },
-  { code: 'ACCOUNT_TRANSFER', label: '무통장 입금' },
-  { code: 'NAVER_PAY', label: '네이버페이' },
-  { code: 'KAKAO_PAY', label: '카카오페이' },
+  { code: 'ACCOUNT_TRANSFER', label: '무통장입금' },
+  { code: 'BANK_TRANSFER', label: '계좌이체' },
 ];
 
 const statusLabelMap: Record<Exclude<OrderStatus, 'ALL'>, string> = {
@@ -43,9 +42,8 @@ const statusClassMap: Record<Exclude<OrderStatus, 'ALL'>, string> = {
 
 const paymentMethodLabelMap: Record<Exclude<PaymentMethod, 'ALL'>, string> = {
   CARD: '신용카드',
-  ACCOUNT_TRANSFER: '무통장 입금',
-  NAVER_PAY: '네이버페이',
-  KAKAO_PAY: '카카오페이',
+  ACCOUNT_TRANSFER: '무통장입금',
+  BANK_TRANSFER: '계좌이체',
 };
 
 const COURIER_OPTIONS = [

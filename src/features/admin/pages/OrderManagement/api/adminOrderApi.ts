@@ -7,7 +7,7 @@ export type OrderStatus =
   | 'DELIVERED'
   | 'CANCELLED';
 
-export type PaymentMethod = 'ALL' | 'CARD' | 'ACCOUNT_TRANSFER' | 'NAVER_PAY' | 'KAKAO_PAY';
+export type PaymentMethod = 'ALL' | 'CARD' | 'ACCOUNT_TRANSFER' | 'BANK_TRANSFER';
 
 export interface AdminOrderDto {
   id: string;
