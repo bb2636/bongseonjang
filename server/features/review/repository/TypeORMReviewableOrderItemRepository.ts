@@ -16,7 +16,14 @@ export class TypeORMReviewableOrderItemRepository implements ReviewableOrderItem
       .andWhere('review.orderItemId IS NOT NULL')
       .getRawMany();
 
-    const reviewedIds = reviewedOrderItemIds.map(r => r.review_orderItemId);
+    const reviewedProductIds = await reviewRepository
+      .createQueryBuilder('review')
+      .select('review.productId')
+      .where('review.userId = :userId', { userId })
+      .getRawMany();
+
+    const reviewedOrderIds = reviewedOrderItemIds.map(r => r.review_orderItemId);
+    const reviewedProducts = reviewedProductIds.map(r => r.review_productId);
 
     const queryBuilder = orderItemRepository
       .createQueryBuilder('orderItem')
@@ -24,8 +31,12 @@ export class TypeORMReviewableOrderItemRepository implements ReviewableOrderItem
       .where('order.userId = :userId', { userId })
       .andWhere('order.status = :status', { status: 'delivered' });
 
-    if (reviewedIds.length > 0) {
-      queryBuilder.andWhere('orderItem.id NOT IN (:...reviewedIds)', { reviewedIds });
+    if (reviewedOrderIds.length > 0) {
+      queryBuilder.andWhere('orderItem.id NOT IN (:...reviewedOrderIds)', { reviewedOrderIds });
+    }
+
+    if (reviewedProducts.length > 0) {
+      queryBuilder.andWhere('(orderItem.productId IS NULL OR orderItem.productId NOT IN (:...reviewedProducts))', { reviewedProducts });
     }
 
     const items = await queryBuilder
