@@ -1,5 +1,5 @@
 import type { Product } from '../../../entity/Product';
-import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, MainOptionDto, SubOptionDto, TimeDealProductDto } from '../domain/Product';
+import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, TimeDealProductDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
 
 export interface ReviewStats {
@@ -64,9 +64,9 @@ export class ProductService {
 
   private toTimeDealDto(product: Product, now: number): TimeDealProductDto {
     const baseDto = this.toDto(product);
-    const saleEndAt = product.saleEndAt ? new Date(product.saleEndAt).toISOString() : '';
-    const remainingSeconds = product.saleEndAt 
-      ? Math.max(0, Math.floor((new Date(product.saleEndAt).getTime() - now) / 1000))
+    const saleEndAt = product.saleEndDate ? new Date(product.saleEndDate).toISOString() : '';
+    const remainingSeconds = product.saleEndDate 
+      ? Math.max(0, Math.floor((new Date(product.saleEndDate).getTime() - now) / 1000))
       : 0;
 
     return {
@@ -77,10 +77,6 @@ export class ProductService {
   }
 
   private toDto(product: Product): ProductDto {
-    const discountedPrice = product.isDiscounted
-      ? Math.round(product.basePrice * (1 - product.discountRate / 100))
-      : product.basePrice;
-
     const thumbnailImage = product.images?.find((img) => img.isThumbnail);
 
     return {
@@ -88,50 +84,26 @@ export class ProductService {
       name: product.name,
       imageUrl: thumbnailImage?.imageUrl,
       originalPrice: product.basePrice,
-      discountPercent: product.isDiscounted ? product.discountRate : 0,
-      discountedPrice,
+      discountPercent: 0,
+      discountedPrice: product.basePrice,
     };
   }
 
   private toDetailDto(product: Product, reviewStats: ReviewStats): ProductDetailDto {
-    const discountedPrice = product.isDiscounted
-      ? Math.round(product.basePrice * (1 - product.discountRate / 100))
+    const options: ProductOptionDto[] = (product.options || []).map((option) => ({
+      id: String(option.id),
+      name: option.optionValue,
+      price: option.price ?? product.basePrice,
+      stockQty: 999,
+      isDefault: option.sortOrder === 0,
+    }));
+
+    const lowestPrice = options.length > 0
+      ? Math.min(...options.map((opt) => opt.price))
       : product.basePrice;
 
-    const options: ProductOptionDto[] = (product.options || []).map((option) => ({
-      id: option.id,
-      name: option.name,
-      price: option.price,
-      compareAtPrice: option.compareAtPrice ?? undefined,
-      stockQty: option.stockQty,
-      isDefault: option.isDefault,
-    }));
-
-    const mainOptions: MainOptionDto[] = (product.mainOptions || []).map((option) => ({
-      id: option.id,
-      groupName: option.groupName,
-      name: option.name,
-      price: option.price,
-      compareAtPrice: option.compareAtPrice ?? undefined,
-      stockQty: option.stockQty,
-      isDefault: option.isDefault,
-    }));
-
-    const subOptions: SubOptionDto[] = (product.subOptions || []).map((option) => ({
-      id: option.id,
-      groupName: option.groupName,
-      name: option.name,
-      additionalPrice: option.additionalPrice,
-      stockQty: option.stockQty,
-      isDefault: option.isDefault,
-    }));
-
-    const lowestPrice = mainOptions.length > 0
-      ? Math.min(...mainOptions.map((opt) => opt.price))
-      : discountedPrice;
-
     const images: ProductImageDto[] = (product.images || []).map((image) => ({
-      id: image.id,
+      id: String(image.id),
       imageUrl: image.imageUrl,
       imageType: image.imageType as 'THUMBNAIL' | 'DETAIL' | 'GALLERY',
       sortOrder: image.sortOrder,
@@ -142,26 +114,26 @@ export class ProductService {
     return {
       id: product.id,
       name: product.name,
-      summary: product.summary ?? undefined,
-      description: product.description ?? undefined,
+      summary: undefined,
+      description: product.detailContent ?? undefined,
       thumbnailUrl: thumbnailImage?.imageUrl,
       basePrice: product.basePrice,
-      discountRate: product.discountRate,
-      isDiscounted: product.isDiscounted,
-      discountedPrice,
+      discountRate: 0,
+      isDiscounted: false,
+      discountedPrice: product.basePrice,
       lowestPrice,
-      origin: product.origin ?? undefined,
-      storageMethod: product.storageMethod ?? undefined,
-      expirationInfo: product.expirationInfo ?? undefined,
-      shippingMethod: product.shippingMethod ?? undefined,
-      shippingRegion: product.shippingRegion ?? undefined,
-      notice: product.notice ?? undefined,
-      isOptionRequired: product.isOptionRequired,
-      saleStartAt: product.saleStartAt ? new Date(product.saleStartAt).toISOString() : undefined,
-      saleEndAt: product.saleEndAt ? new Date(product.saleEndAt).toISOString() : undefined,
+      origin: undefined,
+      storageMethod: undefined,
+      expirationInfo: undefined,
+      shippingMethod: undefined,
+      shippingRegion: undefined,
+      notice: undefined,
+      isOptionRequired: options.length > 0,
+      saleStartAt: product.saleStartDate ? new Date(product.saleStartDate).toISOString() : undefined,
+      saleEndAt: product.saleEndDate ? new Date(product.saleEndDate).toISOString() : undefined,
       options,
-      mainOptions,
-      subOptions,
+      mainOptions: [],
+      subOptions: [],
       images,
       reviewCount: reviewStats.reviewCount,
       averageRating: reviewStats.averageRating,

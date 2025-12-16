@@ -7,8 +7,7 @@ export interface OrderHistoryItem {
   productId: string | null;
   productName: string;
   productImageUrl: string;
-  mainOptionName: string | null;
-  subOptionName: string | null;
+  optionName: string | null;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
@@ -45,8 +44,7 @@ export interface OrderDetailItem {
   productId: string | null;
   productName: string;
   productImageUrl: string;
-  mainOptionName: string | null;
-  subOptionName: string | null;
+  optionName: string | null;
   quantity: number;
   unitPrice: number;
   totalPrice: number;

@@ -11,7 +11,6 @@ interface CategoryProductsViewProps {
   error: Error | null;
   onTabChange: (slug: string) => void;
   onProductClick: (productId: string) => void;
-  onAddToCart: (productId: string) => void;
   onCartClick: () => void;
   onBack: () => void;
   onLogoClick: () => void;
@@ -24,7 +23,6 @@ export default function CategoryProductsView({
   error,
   onTabChange,
   onProductClick,
-  onAddToCart,
   onCartClick,
   onBack,
   onLogoClick,
@@ -46,7 +44,6 @@ export default function CategoryProductsView({
           products={products}
           isLoading={isLoading}
           error={error}
-          onAddToCart={onAddToCart}
           onProductClick={onProductClick}
         />
       </main>

@@ -9,7 +9,6 @@ export default function CategoryProductsPage() {
     error,
     handleTabChange,
     handleProductClick,
-    handleAddToCart,
     handleCartClick,
     handleBack,
     handleLogoClick,
@@ -23,7 +22,6 @@ export default function CategoryProductsPage() {
       error={error}
       onTabChange={handleTabChange}
       onProductClick={handleProductClick}
-      onAddToCart={handleAddToCart}
       onCartClick={handleCartClick}
       onBack={handleBack}
       onLogoClick={handleLogoClick}
