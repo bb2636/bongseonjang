@@ -1,0 +1,542 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TYPE "public"."product_images_imagetype_enum" AS ENUM('THUMBNAIL', 'DETAIL', 'GALLERY');
+CREATE TABLE "coupon_issue_grades" (
+	"coupon_id" integer NOT NULL,
+	"grade_id" integer NOT NULL,
+	CONSTRAINT "PK_96ad7c28f6a5a8e70aa9f0ee87b" PRIMARY KEY("coupon_id","grade_id")
+);
+CREATE TABLE "product_inquiries" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"inquiry_type" varchar(20) DEFAULT 'product' NOT NULL,
+	"product_id" uuid,
+	"author_id" uuid NOT NULL,
+	"question" text NOT NULL,
+	"answer" text,
+	"answered_at" timestamp with time zone,
+	"answered_by" uuid,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"is_private" boolean DEFAULT false NOT NULL,
+	"image_urls" text[] DEFAULT '{}' NOT NULL
+);
+CREATE TABLE "product_options" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"product_id" uuid NOT NULL,
+	"option_name" varchar(100) NOT NULL,
+	"option_value" varchar(200) NOT NULL,
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"price" integer
+);
+CREATE TABLE "coupon_apply_all_products" (
+	"coupon_id" integer PRIMARY KEY NOT NULL
+);
+CREATE TABLE "review_images" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"reviewId" uuid NOT NULL,
+	"imageUrl" text NOT NULL,
+	"sortOrder" integer DEFAULT 0 NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "display_categories" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"name" varchar(50) NOT NULL,
+	"sortOrder" integer DEFAULT 0 NOT NULL,
+	"isActive" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "UQ_0777c62cf26db50f6bf598d6143" UNIQUE("name")
+);
+CREATE TABLE "product_images" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"productId" uuid NOT NULL,
+	"imageUrl" varchar(500) NOT NULL,
+	"imageType" "product_images_imagetype_enum" NOT NULL,
+	"sortOrder" integer DEFAULT 0 NOT NULL,
+	"isThumbnail" boolean DEFAULT false NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "terms" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"type" varchar(50) NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"content" text NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+CREATE TABLE "support_tickets" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"ticketNumber" varchar(20) NOT NULL,
+	"userId" uuid NOT NULL,
+	"orderId" uuid,
+	"category" varchar(20) NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"status" varchar(20) DEFAULT 'open' NOT NULL,
+	"resolvedAt" timestamp,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "UQ_6e4c71fa5e96520463e92aa02d9" UNIQUE("ticketNumber")
+);
+CREATE TABLE "wishlist_items" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"wishlistId" uuid NOT NULL,
+	"productId" uuid NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "UQ_61a45550812312e4f90ac99363b" UNIQUE("wishlistId","productId")
+);
+CREATE TABLE "coupon_issue_all_users" (
+	"coupon_id" integer PRIMARY KEY NOT NULL
+);
+CREATE TABLE "coupon_shipping_discounts" (
+	"coupon_id" integer PRIMARY KEY NOT NULL,
+	"is_free_shipping" boolean DEFAULT false NOT NULL,
+	"shipping_discount_amount" integer
+);
+CREATE TABLE "user_social_accounts" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"userId" uuid NOT NULL,
+	"provider" varchar(20) NOT NULL,
+	"providerUserId" varchar NOT NULL,
+	"emailFromProvider" varchar,
+	"displayName" varchar,
+	"profileImage" varchar,
+	"linkedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "UQ_7911710c58f9e08dc94d99d3ddb" UNIQUE("provider","providerUserId")
+);
+CREATE TABLE "email_verification_tokens" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"email" varchar NOT NULL,
+	"code" varchar NOT NULL,
+	"expiresAt" timestamp NOT NULL,
+	"isVerified" boolean DEFAULT false NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "wishlists" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"userId" uuid NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "UQ_4f3c30555daa6ab0b70a1db772c" UNIQUE("userId")
+);
+CREATE TABLE "shipping_policies" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"shipping_fee" integer NOT NULL,
+	"description" text,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+CREATE TABLE "carts" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"userId" uuid,
+	"guestToken" varchar(100),
+	"isActive" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "reviews" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"productId" uuid NOT NULL,
+	"userId" uuid NOT NULL,
+	"rating" integer NOT NULL,
+	"content" text NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"orderItemId" uuid
+);
+CREATE TABLE "products" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"name" varchar(200) NOT NULL,
+	"stock_quantity" integer DEFAULT 0 NOT NULL,
+	"product_category_id" uuid NOT NULL,
+	"shipping_policy_id" bigint,
+	"detail_content" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"base_price" integer NOT NULL,
+	"sale_start_date" date,
+	"sale_end_date" date,
+	"countdown_days" integer
+);
+CREATE TABLE "banner_positions" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"code" varchar(50) NOT NULL,
+	"name" varchar(100) NOT NULL,
+	"sort_no" integer DEFAULT 0 NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	CONSTRAINT "banner_positions_code_key" UNIQUE("code")
+);
+CREATE TABLE "cart_items" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"cartId" uuid NOT NULL,
+	"productId" uuid NOT NULL,
+	"quantity" integer DEFAULT 1 NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"product_option_id" bigint
+);
+CREATE TABLE "coupon_rate_discounts" (
+	"coupon_id" integer PRIMARY KEY NOT NULL,
+	"discount_rate" integer NOT NULL,
+	"max_discount_amount" integer
+);
+CREATE TABLE "shipments" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"orderId" uuid NOT NULL,
+	"carrierCode" varchar(50) NOT NULL,
+	"carrierName" varchar(100),
+	"trackingNumber" varchar(100) NOT NULL,
+	"status" varchar(20) DEFAULT 'pending' NOT NULL,
+	"shippedAt" timestamp,
+	"deliveredAt" timestamp,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"carrier" varchar(100)
+);
+CREATE TABLE "faq_categories" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"name" varchar(50) NOT NULL,
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+CREATE TABLE "time_deals" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"productId" uuid NOT NULL,
+	"discountRate" integer NOT NULL,
+	"dealPrice" integer NOT NULL,
+	"startAt" timestamp NOT NULL,
+	"endAt" timestamp NOT NULL,
+	"isActive" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "banners" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"banner_position_id" integer,
+	"title" varchar(200),
+	"image_url" varchar(500) NOT NULL,
+	"link_url" varchar(500),
+	"sort_no" integer DEFAULT 0 NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"started_at" timestamp,
+	"ended_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "coupon_validity_fixed_ranges" (
+	"coupon_id" integer PRIMARY KEY NOT NULL,
+	"start_at" timestamp NOT NULL,
+	"end_at" timestamp NOT NULL
+);
+CREATE TABLE "events" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"description" varchar(500),
+	"imageUrl" varchar(500) NOT NULL,
+	"linkUrl" varchar(500),
+	"startDate" timestamp,
+	"endDate" timestamp,
+	"sortOrder" integer DEFAULT 0 NOT NULL,
+	"isActive" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "exposure_categories" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"name" varchar(100) NOT NULL,
+	"sort_order" integer DEFAULT 0 NOT NULL
+);
+CREATE TABLE "point_transactions" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"walletId" uuid NOT NULL,
+	"type" varchar(20) NOT NULL,
+	"amount" integer NOT NULL,
+	"balanceAfter" integer NOT NULL,
+	"description" varchar(200) NOT NULL,
+	"relatedOrderId" uuid,
+	"expiresAt" timestamp,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "product_exposure_categories" (
+	"product_id" uuid NOT NULL,
+	"exposure_category_id" bigint NOT NULL,
+	CONSTRAINT "PK_d3ae78a13f4f1a1af6b6aa820be" PRIMARY KEY("product_id","exposure_category_id")
+);
+CREATE TABLE "notices" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"content" text NOT NULL,
+	"type_id" bigint NOT NULL,
+	"is_visible" boolean DEFAULT true NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+CREATE TABLE "coupon_issue_new_users" (
+	"coupon_id" integer PRIMARY KEY NOT NULL
+);
+CREATE TABLE "notice_types" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"code" varchar(30) NOT NULL,
+	"name" varchar(50) NOT NULL,
+	"sortNo" integer DEFAULT 0 NOT NULL,
+	"isActive" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "UQ_844345656c18258ace83b9b7ed4" UNIQUE("code")
+);
+CREATE TABLE "shipment_events" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"shipmentId" uuid NOT NULL,
+	"status" varchar(50) NOT NULL,
+	"location" varchar(200),
+	"description" text,
+	"eventTime" timestamp NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "payment_refunds" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"paymentId" uuid NOT NULL,
+	"refundAmount" integer NOT NULL,
+	"status" varchar(20) DEFAULT 'pending' NOT NULL,
+	"reason" text NOT NULL,
+	"pgRefundId" varchar(100),
+	"refundedAt" timestamp,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "product_categories" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"name" varchar(50) NOT NULL,
+	"sortOrder" integer DEFAULT 0 NOT NULL,
+	"isActive" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "UQ_a75bfadcd8291a0538ab7abfdcf" UNIQUE("name")
+);
+CREATE TABLE "coupon_fixed_discounts" (
+	"coupon_id" integer PRIMARY KEY NOT NULL,
+	"discount_amount" integer NOT NULL
+);
+CREATE TABLE "coupon_validity_after_issue_days" (
+	"coupon_id" integer PRIMARY KEY NOT NULL,
+	"valid_days" integer NOT NULL
+);
+CREATE TABLE "order_status_history" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"orderId" uuid NOT NULL,
+	"previousStatus" varchar(20),
+	"newStatus" varchar(20) NOT NULL,
+	"reason" text,
+	"changedBy" varchar(50),
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "bongseonjang_tv" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"title" varchar(200),
+	"imageUrl" varchar(500) NOT NULL,
+	"linkUrl" varchar(500),
+	"sortOrder" integer DEFAULT 0 NOT NULL,
+	"isActive" boolean DEFAULT true NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "point_wallets" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"userId" uuid NOT NULL,
+	"balance" integer DEFAULT 0 NOT NULL,
+	"totalEarned" integer DEFAULT 0 NOT NULL,
+	"totalUsed" integer DEFAULT 0 NOT NULL,
+	"totalExpired" integer DEFAULT 0 NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "UQ_1300d14c94d13085e90d8b10d0f" UNIQUE("userId")
+);
+CREATE TABLE "shipping_addresses" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"userId" uuid NOT NULL,
+	"addressName" varchar(50) NOT NULL,
+	"recipientName" varchar(100) NOT NULL,
+	"recipientPhone" varchar(20) NOT NULL,
+	"postalCode" varchar(10) NOT NULL,
+	"address" varchar(200) NOT NULL,
+	"addressDetail" varchar(200),
+	"isDefault" boolean DEFAULT false NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"isDeleted" boolean DEFAULT false NOT NULL,
+	"deletedAt" timestamp with time zone
+);
+CREATE TABLE "faqs" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"category_id" bigint NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"content" text NOT NULL,
+	"is_visible" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+CREATE TABLE "support_messages" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"ticketId" uuid NOT NULL,
+	"senderId" uuid,
+	"senderType" varchar(10) NOT NULL,
+	"content" text NOT NULL,
+	"attachmentUrls" text,
+	"isRead" boolean DEFAULT false NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "order_items" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"orderId" uuid NOT NULL,
+	"productId" uuid,
+	"productName" varchar(200) NOT NULL,
+	"productImageUrl" varchar(500),
+	"unitPrice" integer NOT NULL,
+	"quantity" integer NOT NULL,
+	"totalPrice" integer NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"option_name" varchar(200)
+);
+CREATE TABLE "coupons" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" varchar(100) NOT NULL,
+	"description" text,
+	"min_order_amount" integer DEFAULT 0 NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "payments" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"orderId" uuid NOT NULL,
+	"status" varchar(20) DEFAULT 'pending' NOT NULL,
+	"method" varchar(20) NOT NULL,
+	"amount" integer NOT NULL,
+	"pgProvider" varchar(100),
+	"pgTransactionId" varchar(100),
+	"cardCompany" varchar(100),
+	"cardNumber" varchar(20),
+	"installmentMonths" integer,
+	"failReason" text,
+	"paidAt" timestamp,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "search_terms" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"term" varchar(255) NOT NULL,
+	"searchCount" integer DEFAULT 1 NOT NULL,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"lastSearchedAt" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "coupon_apply_categories" (
+	"coupon_id" integer NOT NULL,
+	"category_id" integer NOT NULL,
+	CONSTRAINT "PK_9397337c6ebb26dc9000d14f3fe" PRIMARY KEY("coupon_id","category_id")
+);
+CREATE TABLE "user_coupons" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"coupon_id" integer NOT NULL,
+	"user_id" uuid NOT NULL,
+	"status" varchar(20) DEFAULT 'ISSUED' NOT NULL,
+	"issued_at" timestamp,
+	"valid_from" timestamp,
+	"valid_to" timestamp,
+	"used_at" timestamp,
+	"used_order_id" uuid,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "orders" (
+	"id" uuid PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL,
+	"orderNumber" varchar(20) NOT NULL,
+	"userId" uuid NOT NULL,
+	"shippingAddressId" uuid,
+	"status" varchar(20) DEFAULT 'pending' NOT NULL,
+	"totalProductPrice" integer NOT NULL,
+	"totalDiscountAmount" integer DEFAULT 0 NOT NULL,
+	"usedPoints" integer DEFAULT 0 NOT NULL,
+	"couponDiscountAmount" integer DEFAULT 0 NOT NULL,
+	"finalAmount" integer NOT NULL,
+	"earnedPoints" integer DEFAULT 0 NOT NULL,
+	"orderNote" text,
+	"recipientName" varchar(100) NOT NULL,
+	"recipientPhone" varchar(20) NOT NULL,
+	"postalCode" varchar(10) NOT NULL,
+	"address" varchar(200) NOT NULL,
+	"addressDetail" varchar(200),
+	"deliveryRequest" text,
+	"createdAt" timestamp DEFAULT now() NOT NULL,
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"paidAt" timestamp,
+	"deliveredAt" timestamp,
+	"cartItemIdsSnapshot" text,
+	"returnUrl" varchar(500),
+	CONSTRAINT "UQ_59b0c3b34ea0fa5562342f24143" UNIQUE("orderNumber")
+);
+ALTER TABLE "users" ALTER COLUMN "password" DROP NOT NULL;
+ALTER TABLE "users" ADD COLUMN "profileImage" varchar;
+ALTER TABLE "users" ADD COLUMN "phone" varchar;
+ALTER TABLE "users" ADD COLUMN "isEmailVerified" boolean DEFAULT false NOT NULL;
+ALTER TABLE "users" ADD COLUMN "lastLoginAt" timestamp;
+ALTER TABLE "users" ADD COLUMN "birthDate" date;
+ALTER TABLE "users" ADD COLUMN "gender" varchar;
+ALTER TABLE "users" ADD COLUMN "referralId" varchar;
+ALTER TABLE "users" ADD COLUMN "membershipGrade" varchar DEFAULT 'bronze' NOT NULL;
+ALTER TABLE "coupon_issue_grades" ADD CONSTRAINT "FK_ce806d95a2aa907b99cb61bed68" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "product_inquiries" ADD CONSTRAINT "FK_06f4ce8600fb71133b23b2b9700" FOREIGN KEY ("answered_by") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "product_inquiries" ADD CONSTRAINT "FK_8b150eba10fe54d040fdd357629" FOREIGN KEY ("author_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "product_inquiries" ADD CONSTRAINT "FK_a7a5537c3ee4d5c2e22e0fd8697" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "product_options" ADD CONSTRAINT "FK_49677f87ad61a8b2a31f33c8a2c" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "coupon_apply_all_products" ADD CONSTRAINT "FK_82ab1f3e02ea74ed1951140f7cb" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "review_images" ADD CONSTRAINT "FK_3c94c9391ebd2ce1f69b5c4e3ac" FOREIGN KEY ("reviewId") REFERENCES "public"."reviews"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "product_images" ADD CONSTRAINT "FK_b367708bf720c8dd62fc6833161" FOREIGN KEY ("productId") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "support_tickets" ADD CONSTRAINT "FK_4b6e456441c65fc687ff14d33e1" FOREIGN KEY ("orderId") REFERENCES "public"."orders"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "support_tickets" ADD CONSTRAINT "FK_8679e2ff150ff0e253189ca0253" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "wishlist_items" ADD CONSTRAINT "FK_485ece8ab9b569d1c560144aa25" FOREIGN KEY ("productId") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "wishlist_items" ADD CONSTRAINT "FK_afee7b38d9a4d8e1039e3a0de49" FOREIGN KEY ("wishlistId") REFERENCES "public"."wishlists"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "coupon_issue_all_users" ADD CONSTRAINT "FK_5761547791aa24979aff1a23bf2" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "coupon_shipping_discounts" ADD CONSTRAINT "FK_56e1747c130952aa49ed32e1c95" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "user_social_accounts" ADD CONSTRAINT "FK_e46bb6a19f570578db5b12a081f" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "wishlists" ADD CONSTRAINT "FK_4f3c30555daa6ab0b70a1db772c" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "carts" ADD CONSTRAINT "FK_69828a178f152f157dcf2f70a89" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "reviews" ADD CONSTRAINT "FK_1e6c554d615dd5a5bf0e11ee0e9" FOREIGN KEY ("orderItemId") REFERENCES "public"."order_items"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "reviews" ADD CONSTRAINT "FK_7ed5659e7139fc8bc039198cc1f" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "reviews" ADD CONSTRAINT "FK_a6b3c434392f5d10ec171043666" FOREIGN KEY ("productId") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "products" ADD CONSTRAINT "FK_508a951294582a2e039492740b5" FOREIGN KEY ("shipping_policy_id") REFERENCES "public"."shipping_policies"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "products" ADD CONSTRAINT "FK_cd2b4197eb0f551ed0272cee6de" FOREIGN KEY ("product_category_id") REFERENCES "public"."product_categories"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "cart_items" ADD CONSTRAINT "FK_72679d98b31c737937b8932ebe6" FOREIGN KEY ("productId") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "cart_items" ADD CONSTRAINT "FK_aca133af2ad799543cfa48cfe2b" FOREIGN KEY ("product_option_id") REFERENCES "public"."product_options"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "cart_items" ADD CONSTRAINT "FK_edd714311619a5ad09525045838" FOREIGN KEY ("cartId") REFERENCES "public"."carts"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "coupon_rate_discounts" ADD CONSTRAINT "FK_ffd67598bcad0f66a150812e870" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "shipments" ADD CONSTRAINT "FK_13ba957bcb616719a0dc3fca82f" FOREIGN KEY ("orderId") REFERENCES "public"."orders"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "time_deals" ADD CONSTRAINT "FK_babe1feddf575f2db6ca2c8f958" FOREIGN KEY ("productId") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "banners" ADD CONSTRAINT "FK_f3a80babac6b5cde75662863741" FOREIGN KEY ("banner_position_id") REFERENCES "public"."banner_positions"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "coupon_validity_fixed_ranges" ADD CONSTRAINT "FK_5f2faef0e8e329f01d34790c8dd" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "point_transactions" ADD CONSTRAINT "FK_172e2a94f14b88a0efe918409f1" FOREIGN KEY ("relatedOrderId") REFERENCES "public"."orders"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "point_transactions" ADD CONSTRAINT "FK_8ee27f7b909176b37d5b528fdce" FOREIGN KEY ("walletId") REFERENCES "public"."point_wallets"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "product_exposure_categories" ADD CONSTRAINT "FK_34f9c86f9db1c6a7ab2230e230c" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "product_exposure_categories" ADD CONSTRAINT "FK_cc23be68ffb26a30114dd7feb62" FOREIGN KEY ("exposure_category_id") REFERENCES "public"."exposure_categories"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "notices" ADD CONSTRAINT "FK_d947b56ee2a1ab279f986b57dd9" FOREIGN KEY ("type_id") REFERENCES "public"."notice_types"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "coupon_issue_new_users" ADD CONSTRAINT "FK_942079f83b0439b08bc12d87a8c" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "shipment_events" ADD CONSTRAINT "FK_e0d86c92942127971af5a1d9829" FOREIGN KEY ("shipmentId") REFERENCES "public"."shipments"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "payment_refunds" ADD CONSTRAINT "FK_f201eeb6b580759255174f62162" FOREIGN KEY ("paymentId") REFERENCES "public"."payments"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "coupon_fixed_discounts" ADD CONSTRAINT "FK_185aab9dd6105127678d16010d9" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "coupon_validity_after_issue_days" ADD CONSTRAINT "FK_b2ed1468f6a7dd04f8b5defc9f9" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "order_status_history" ADD CONSTRAINT "FK_689db3835e5550e68d26ca32676" FOREIGN KEY ("orderId") REFERENCES "public"."orders"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "point_wallets" ADD CONSTRAINT "FK_1300d14c94d13085e90d8b10d0f" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "shipping_addresses" ADD CONSTRAINT "FK_6f522735551c716dc489635b5b7" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "faqs" ADD CONSTRAINT "FK_8108b0e557203537d3e2321149e" FOREIGN KEY ("category_id") REFERENCES "public"."faq_categories"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "support_messages" ADD CONSTRAINT "FK_219aab1e47674b144d2094cfa1f" FOREIGN KEY ("ticketId") REFERENCES "public"."support_tickets"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "support_messages" ADD CONSTRAINT "FK_a6d023327205aee297257d4f0fe" FOREIGN KEY ("senderId") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "order_items" ADD CONSTRAINT "FK_cdb99c05982d5191ac8465ac010" FOREIGN KEY ("productId") REFERENCES "public"."products"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "order_items" ADD CONSTRAINT "FK_f1d359a55923bb45b057fbdab0d" FOREIGN KEY ("orderId") REFERENCES "public"."orders"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "payments" ADD CONSTRAINT "FK_af929a5f2a400fdb6913b4967e1" FOREIGN KEY ("orderId") REFERENCES "public"."orders"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "coupon_apply_categories" ADD CONSTRAINT "FK_52c5f67e52a0916e4a10d659eff" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "user_coupons" ADD CONSTRAINT "FK_8051e26a8b74e9b53696cb9625d" FOREIGN KEY ("coupon_id") REFERENCES "public"."coupons"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "orders" ADD CONSTRAINT "FK_151b79a83ba240b0cb31b2302d1" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "orders" ADD CONSTRAINT "FK_cc4e4adab232e8c05026b2f345d" FOREIGN KEY ("shippingAddressId") REFERENCES "public"."shipping_addresses"("id") ON DELETE set null ON UPDATE no action;
+CREATE INDEX "IDX_e46bb6a19f570578db5b12a081" ON "user_social_accounts" USING btree ("userId");
+CREATE UNIQUE INDEX "IDX_5dbe64fd530c2350fd868bf646" ON "search_terms" USING btree ("term");
