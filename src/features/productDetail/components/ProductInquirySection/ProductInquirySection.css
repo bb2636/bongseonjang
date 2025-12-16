@@ -2,33 +2,18 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   background: #ffffff;
 }
 
 .product-inquiry__header {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.product-inquiry__verify {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #3b9bd5;
-  border-radius: 6px;
-  background: #fdfdfd;
-  color: #3b9bd5;
-  font-family: 'Pretendard';
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 1.28;
-  letter-spacing: -0.02em;
-  cursor: pointer;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .product-inquiry__count {
-  padding: 8px 0;
   font-family: 'Pretendard';
   font-weight: 600;
   font-size: 14px;
@@ -36,10 +21,23 @@
   color: #0c0c0c;
 }
 
+.product-inquiry__button {
+  padding: 8px 16px;
+  border: 1px solid #3b9bd5;
+  border-radius: 6px;
+  background: #fdfdfd;
+  color: #3b9bd5;
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.28;
+  cursor: pointer;
+}
+
 .product-inquiry__list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .inquiry-item {
@@ -156,7 +154,7 @@
 }
 
 .product-inquiry__empty {
-  padding: 40px 0;
+  padding: 24px 0;
   text-align: center;
   font-family: 'Pretendard';
   font-size: 14px;

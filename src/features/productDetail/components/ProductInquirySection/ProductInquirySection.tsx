@@ -80,10 +80,10 @@ export default function ProductInquirySection({ inquiries, onCreateInquiry }: Pr
   return (
     <section className="product-inquiry">
       <div className="product-inquiry__header">
-        <button className="product-inquiry__verify" type="button" onClick={onCreateInquiry}>
-          문의하기
-        </button>
         <div className="product-inquiry__count">문의 {inquiries.length.toString().padStart(2, '0')}개</div>
+        <button className="product-inquiry__button" type="button" onClick={onCreateInquiry}>
+          상품 문의하기
+        </button>
       </div>
 
       <div className="product-inquiry__list">
