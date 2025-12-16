@@ -43,6 +43,7 @@ import {
   AdminSupportPage,
   BannerManagementPage,
   CouponManagementPage,
+  OrderManagementPage,
   ProductManagementPage,
   UserManagementPage,
 } from "./features/admin";
@@ -282,8 +283,8 @@ export default function App() {
       <Route path="/admin" element={<AdminDashboardPage />} />
       <Route path="/admin/products" element={<ProductManagementPage />} />
       <Route path="/admin/products/*" element={<ProductManagementPage />} />
-      <Route path="/admin/orders" element={<AdminPlaceholderPage />} />
-      <Route path="/admin/orders/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/orders" element={<OrderManagementPage />} />
+      <Route path="/admin/orders/*" element={<OrderManagementPage />} />
       <Route path="/admin/users" element={<UserManagementPage />} />
       <Route path="/admin/users/*" element={<UserManagementPage />} />
       <Route path="/admin/reviews" element={<AdminPlaceholderPage />} />
