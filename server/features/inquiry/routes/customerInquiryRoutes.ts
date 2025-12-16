@@ -2,11 +2,40 @@ import { Router, Response } from 'express';
 import { AppDataSource } from '../../../config/database';
 import { ProductInquiry } from '../../../entity/ProductInquiry';
 import { Product } from '../../../entity/Product';
+import { ProductImage, ImageType } from '../../../entity/ProductImage';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 
 const router = Router();
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+async function getProductInfo(productId: string | null): Promise<{ name: string | null; imageUrl: string | null }> {
+  if (!productId) {
+    return { name: null, imageUrl: null };
+  }
+
+  const productRepository = AppDataSource.getRepository(Product);
+  const productImageRepository = AppDataSource.getRepository(ProductImage);
+
+  const product = await productRepository.findOne({
+    where: { id: productId },
+    select: ['name'],
+  });
+
+  if (!product) {
+    return { name: null, imageUrl: null };
+  }
+
+  const thumbnailImage = await productImageRepository.findOne({
+    where: { productId, imageType: ImageType.THUMBNAIL },
+    order: { sortOrder: 'ASC' },
+  });
+
+  return {
+    name: product.name,
+    imageUrl: thumbnailImage?.imageUrl || null,
+  };
+}
 
 router.get('/my', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -16,7 +45,6 @@ router.get('/my', authMiddleware, async (req: AuthenticatedRequest, res: Respons
     }
 
     const inquiryRepository = AppDataSource.getRepository(ProductInquiry);
-    const productRepository = AppDataSource.getRepository(Product);
 
     const inquiries = await inquiryRepository.find({
       where: { authorId: userId },
@@ -25,20 +53,14 @@ router.get('/my', authMiddleware, async (req: AuthenticatedRequest, res: Respons
 
     const inquiriesWithProducts = await Promise.all(
       inquiries.map(async (inquiry: ProductInquiry) => {
-        let productName = null;
-        if (inquiry.productId) {
-          const product = await productRepository.findOne({
-            where: { id: inquiry.productId },
-            select: ['name'],
-          });
-          productName = product?.name || null;
-        }
+        const productInfo = await getProductInfo(inquiry.productId);
 
         return {
           id: Number(inquiry.id),
           inquiryType: inquiry.inquiryType,
           productId: inquiry.productId,
-          productName,
+          productName: productInfo.name,
+          productImageUrl: productInfo.imageUrl,
           question: inquiry.question,
           answer: inquiry.answer,
           isAnswered: inquiry.answer !== null,
@@ -64,7 +86,6 @@ router.get('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Respon
 
     const id = parseInt(req.params.id, 10);
     const inquiryRepository = AppDataSource.getRepository(ProductInquiry);
-    const productRepository = AppDataSource.getRepository(Product);
 
     const inquiry = await inquiryRepository.findOne({
       where: { id, authorId: userId },
@@ -74,20 +95,14 @@ router.get('/:id', authMiddleware, async (req: AuthenticatedRequest, res: Respon
       return res.status(404).json({ error: 'Inquiry not found' });
     }
 
-    let productName = null;
-    if (inquiry.productId) {
-      const product = await productRepository.findOne({
-        where: { id: inquiry.productId },
-        select: ['name'],
-      });
-      productName = product?.name || null;
-    }
+    const productInfo = await getProductInfo(inquiry.productId);
 
     res.json({
       id: Number(inquiry.id),
       inquiryType: inquiry.inquiryType,
       productId: inquiry.productId,
-      productName,
+      productName: productInfo.name,
+      productImageUrl: productInfo.imageUrl,
       question: inquiry.question,
       answer: inquiry.answer,
       answeredAt: inquiry.answeredAt,

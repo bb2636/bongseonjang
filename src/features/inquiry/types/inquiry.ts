@@ -1,10 +1,12 @@
 export type InquiryType = 'product' | 'shipping' | 'exchange_return' | 'refund' | 'other';
+export type SortOrder = 'newest' | 'oldest';
 
 export interface InquiryItem {
   id: number;
   inquiryType: InquiryType;
   productId: string | null;
   productName: string | null;
+  productImageUrl: string | null;
   question: string;
   answer: string | null;
   isAnswered: boolean;
@@ -17,6 +19,7 @@ export interface InquiryDetail {
   inquiryType: InquiryType;
   productId: string | null;
   productName: string | null;
+  productImageUrl: string | null;
   question: string;
   answer: string | null;
   answeredAt: string | null;
@@ -36,6 +39,15 @@ export const INQUIRY_TYPE_LABELS: Record<InquiryType, string> = {
   refund: '환불문의',
   other: '기타',
 };
+
+export const INQUIRY_TYPE_FILTER_OPTIONS: { value: InquiryType | 'all'; label: string }[] = [
+  { value: 'all', label: '문의 유형 선택' },
+  { value: 'product', label: '상품문의' },
+  { value: 'shipping', label: '배송문의' },
+  { value: 'exchange_return', label: '교환/반품문의' },
+  { value: 'refund', label: '환불문의' },
+  { value: 'other', label: '기타' },
+];
 
 export const INQUIRY_TYPE_OPTIONS: { value: InquiryType; label: string }[] = [
   { value: 'product', label: '상품문의' },
