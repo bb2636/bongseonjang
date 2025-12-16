@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-export type TermsType = 'SERVICE';
+export type TermsType = 'SERVICE' | 'PRIVACY_POLICY' | 'PURCHASE_POLICY';
 
 @Entity('terms')
 export class Terms {

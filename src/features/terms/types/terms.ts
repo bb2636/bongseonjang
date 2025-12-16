@@ -1,4 +1,4 @@
-export type TermsType = 'SERVICE';
+export type TermsType = 'SERVICE' | 'PRIVACY_POLICY' | 'PURCHASE_POLICY';
 
 export interface TermsContent {
   id: number;
