@@ -14,6 +14,7 @@ interface UserDetail {
   lastLoginAt: string | null;
   createdAt: string;
   orderCount: number;
+  defaultAddress: string | null;
 }
 
 interface UserDetailPanelProps {
@@ -173,7 +174,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
                   <div className="user-detail-info-grid user-detail-info-grid--full">
                     <div className="user-detail-info-row-item">
                       <div className="user-detail-info-label">기본 배송지</div>
-                      <div className="user-detail-info-value">-</div>
+                      <div className="user-detail-info-value">{user.defaultAddress || '-'}</div>
                     </div>
                   </div>
                 </div>

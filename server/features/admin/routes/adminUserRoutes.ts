@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database';
 import { User } from '../../../entity/User';
 import { Order } from '../../../entity/Order';
+import { ShippingAddress } from '../../../entity/ShippingAddress';
 
 const router = Router();
 
@@ -82,6 +83,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
 
     const userRepository = AppDataSource.getRepository(User);
     const orderRepository = AppDataSource.getRepository(Order);
+    const addressRepository = AppDataSource.getRepository(ShippingAddress);
 
     const user = await userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -91,6 +93,17 @@ router.get('/:userId', async (req: Request, res: Response) => {
     const orderCount = await orderRepository.count({
       where: { userId: user.id },
     });
+
+    const defaultAddress = await addressRepository.findOne({
+      where: { userId: user.id, isDefault: true, isDeleted: false },
+    });
+
+    let defaultAddressText: string | null = null;
+    if (defaultAddress) {
+      defaultAddressText = defaultAddress.addressDetail
+        ? `${defaultAddress.address} ${defaultAddress.addressDetail}`
+        : defaultAddress.address;
+    }
 
     return res.json({
       id: user.id,
@@ -105,6 +118,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
       lastLoginAt: user.lastLoginAt,
       createdAt: user.createdAt,
       orderCount,
+      defaultAddress: defaultAddressText,
     });
   } catch (error) {
     console.error('Failed to get user detail:', error);
