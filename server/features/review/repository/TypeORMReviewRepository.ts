@@ -21,6 +21,8 @@ export class TypeORMReviewRepository implements ReviewRepository {
       .createQueryBuilder('review')
       .leftJoinAndSelect('review.user', 'user')
       .leftJoinAndSelect('review.product', 'product')
+      .leftJoin('product.images', 'productImages', 'productImages.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .addSelect(['productImages.imageUrl'])
       .where('review.userId = :userId', { userId })
       .orderBy('review.createdAt', 'DESC')
       .getMany();

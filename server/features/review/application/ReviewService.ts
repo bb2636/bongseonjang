@@ -113,11 +113,13 @@ export class ReviewService implements ReviewStatsProvider {
   }
 
   private toMyReviewDto(review: Review, imageUrls: string[] = []): MyReviewDto {
+    const productImageUrl = review.product?.images?.[0]?.imageUrl || null;
+    
     return {
       id: review.id,
       productId: review.productId,
       productName: review.product?.name || '상품명 없음',
-      productImageUrl: null,
+      productImageUrl,
       rating: review.rating,
       content: review.content,
       imageUrls,
