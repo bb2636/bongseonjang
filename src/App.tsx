@@ -36,6 +36,7 @@ import { PaymentFailPage } from "./features/payment/pages/PaymentFailPage";
 import { NoticeListPage } from "./features/notice";
 import { AddressFormPage } from "./features/address";
 import { WriteReviewPage, ReviewListPage } from "./features/review";
+import { FaqPage } from "./features/faq";
 import {
   AdminDashboardPage,
   AdminPlaceholderPage,
@@ -249,6 +250,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <ReviewListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/faq"
+        element={
+          <ProtectedRoute>
+            <FaqPage />
           </ProtectedRoute>
         }
       />
