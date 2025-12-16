@@ -1,0 +1,1035 @@
+/* Frame 1707492632 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+position: absolute;
+width: 344px;
+height: 527px;
+left: 16px;
+top: 108px;
+
+
+
+/* Frame 1707492631 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 109px;
+
+width: 344px;
+height: 37px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491630 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 6px 6px 6px 12px;
+gap: 4px;
+
+width: 120px;
+height: 32px;
+
+border: 1px solid rgba(12, 12, 12, 0.12);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 문의 유형 선택 */
+
+margin: 0 auto;
+width: 74px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* icons */
+
+margin: 0 auto;
+width: 20px;
+height: 20px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* arrow_drop_down */
+
+position: absolute;
+left: 34.29%;
+right: 34.29%;
+top: 42.71%;
+bottom: 40.07%;
+
+background: rgba(12, 12, 12, 0.5);
+
+
+/* Frame 1707492630 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 122px;
+height: 37px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707492628 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+width: 54px;
+height: 37px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 최신순 */
+
+width: 34px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+letter-spacing: -0.01em;
+
+color: #000000;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492629 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px;
+gap: 10px;
+
+width: 68px;
+height: 37px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 오래된 순 */
+
+width: 48px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+letter-spacing: -0.01em;
+
+color: #000000;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492627 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+padding: 0px;
+gap: 24px;
+
+width: 344px;
+height: 474px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492625 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+width: 344px;
+height: 161px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492624 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 344px;
+height: 101px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491671 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 208px;
+
+width: 344px;
+height: 21px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491678 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 4px;
+
+width: 167px;
+height: 21px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492606 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 3px 6px;
+gap: 10px;
+
+width: 43px;
+height: 21px;
+
+background: rgba(12, 12, 12, 0.1);
+border-radius: 2px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 미답변 */
+
+width: 31px;
+height: 15px;
+
+/* pretendard/semibold/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.02em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 상품문의 */
+
+width: 42px;
+height: 15px;
+
+/* pretendard/medium/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.5);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491662 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 4px;
+
+width: 56px;
+height: 14px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 2025.00.00 */
+
+width: 56px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.4);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492619 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 2px;
+
+width: 344px;
+height: 68px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 문의 상품 */
+
+width: 344px;
+height: 20px;
+
+/* pretendard/medium/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491638 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 227px;
+height: 46px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491636 */
+
+width: 46px;
+height: 46px;
+
+background: rgba(12, 12, 12, 0.06);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 중하 새우로 만든 살로만 새우장 360g(양념/간장) */
+
+width: 171px;
+height: 38px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 138%;
+/* or 19px */
+letter-spacing: -0.02em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491670 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 344px;
+height: 44px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Q */
+
+width: 16px;
+height: 22px;
+
+/* pretendard/medium/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+display: flex;
+align-items: center;
+letter-spacing: -0.01em;
+
+color: #3B9BD5;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 안녕하세요 이 곳에 문의 제목이 들어갑니다안녕하세요 이 곳에 문의 제목이 들어갑니다 */
+
+width: 320px;
+height: 44px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 158%;
+/* or 22px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Line 3 */
+
+width: 344px;
+height: 0px;
+
+border: 1px solid rgba(12, 12, 12, 0.12);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492626 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 16px;
+
+width: 344px;
+height: 265px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492624 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 344px;
+height: 101px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491671 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 208px;
+
+width: 344px;
+height: 21px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491678 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 4px;
+
+width: 167px;
+height: 21px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492623 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 3px 6px;
+gap: 10px;
+
+width: 53px;
+height: 21px;
+
+background: rgba(56, 129, 255, 0.1);
+border-radius: 2px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 답변완료 */
+
+width: 41px;
+height: 15px;
+
+/* pretendard/semibold/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.02em;
+
+color: #3B9BD5;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 상품문의 */
+
+width: 42px;
+height: 15px;
+
+/* pretendard/medium/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.5);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491662 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 4px;
+
+width: 56px;
+height: 14px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 2025.00.00 */
+
+width: 56px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.4);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492619 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 2px;
+
+width: 344px;
+height: 68px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 문의 상품 */
+
+width: 344px;
+height: 20px;
+
+/* pretendard/medium/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491638 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 10px;
+
+width: 227px;
+height: 46px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491636 */
+
+width: 46px;
+height: 46px;
+
+background: rgba(12, 12, 12, 0.06);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 중하 새우로 만든 살로만 새우장 360g(양념/간장) */
+
+width: 171px;
+height: 38px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 138%;
+/* or 19px */
+letter-spacing: -0.02em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707491670 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 344px;
+height: 44px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Q */
+
+width: 16px;
+height: 22px;
+
+/* pretendard/medium/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+display: flex;
+align-items: center;
+letter-spacing: -0.01em;
+
+color: #3B9BD5;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 안녕하세요 이 곳에 문의 제목이 들어갑니다안녕하세요 이 곳에 문의 제목이 들어갑니다 */
+
+width: 320px;
+height: 44px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 158%;
+/* or 22px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
+
+
+/* Frame 1707491669 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 343px;
+height: 88px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* A */
+
+width: 16px;
+height: 22px;
+
+/* pretendard/medium/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+display: flex;
+align-items: center;
+letter-spacing: -0.01em;
+
+color: #4CCBA0;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 안녕하세요 고객님! 이 곳에 문의 답변이 들어갑니다 안녕하세요 고객님! 이 곳에 문의 답변이 들어갑니다 안녕하세요 고객님! 이 곳에 문의 답변이 들어갑니다 안녕하세요 고객님! 이 곳에 문의 답변이 들어갑니다 */
+
+width: 319px;
+height: 88px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 158%;
+/* or 22px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 1;
