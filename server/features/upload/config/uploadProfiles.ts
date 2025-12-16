@@ -51,6 +51,22 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
   },
+  'product-thumbnail': {
+    purpose: 'product-thumbnail',
+    storagePath: 'uploads/products/thumbnails',
+    requiresAuth: true,
+    maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
+    allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
+    acl: 'public',
+  },
+  'product-detail': {
+    purpose: 'product-detail',
+    storagePath: 'uploads/products/details',
+    requiresAuth: true,
+    maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
+    allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
+    acl: 'public',
+  },
 };
 
 export function getUploadProfile(purpose: string): UploadProfile | undefined {
