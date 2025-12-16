@@ -5,6 +5,7 @@ import SummaryCard from '../components/SummaryCard/SummaryCard';
 import RecentOrders from '../components/RecentOrders/RecentOrders';
 import MenuList from '../components/MenuList/MenuList';
 import BottomNav from '../../../components/BottomNav/BottomNav';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 import './ProfileView.css';
 
 interface ProfileViewProps {
@@ -24,7 +25,10 @@ interface ProfileViewProps {
     onReorderClick: (orderId: string) => void;
     onMenuItemClick: (path: string) => void;
     onViewAllOrdersClick: () => void;
-    onLogout: () => void;
+    onLogoutClick: () => void;
+    onLogoutConfirm: () => void;
+    onLogoutCancel: () => void;
+    isLogoutModalOpen: boolean;
   };
 }
 
@@ -95,11 +99,20 @@ export default function ProfileView({ state }: ProfileViewProps) {
         <MenuList
           sections={state.menuSections}
           onItemClick={state.onMenuItemClick}
-          onLogout={state.onLogout}
+          onLogout={state.onLogoutClick}
         />
       </main>
 
       <BottomNav />
+
+      <ConfirmModal
+        isOpen={state.isLogoutModalOpen}
+        title="로그아웃 하시겠습니까?"
+        onCancel={state.onLogoutCancel}
+        onConfirm={state.onLogoutConfirm}
+        cancelText="취소"
+        confirmText="로그아웃"
+      />
     </div>
   );
 }

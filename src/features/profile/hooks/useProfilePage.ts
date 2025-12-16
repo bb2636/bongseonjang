@@ -35,6 +35,7 @@ export function useProfilePage() {
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadProfileData() {
@@ -97,11 +98,20 @@ export function useProfilePage() {
     navigate('/orders/in-progress');
   }, [navigate]);
 
-  const handleLogout = useCallback(() => {
+  const handleLogoutClick = useCallback(() => {
+    setIsLogoutModalOpen(true);
+  }, []);
+
+  const handleLogoutConfirm = useCallback(() => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    setIsLogoutModalOpen(false);
     navigate('/login');
   }, [navigate]);
+
+  const handleLogoutCancel = useCallback(() => {
+    setIsLogoutModalOpen(false);
+  }, []);
 
   return {
     profile,
@@ -119,6 +129,9 @@ export function useProfilePage() {
     onReorderClick: handleReorderClick,
     onMenuItemClick: handleMenuItemClick,
     onViewAllOrdersClick: handleViewAllOrdersClick,
-    onLogout: handleLogout,
+    onLogoutClick: handleLogoutClick,
+    onLogoutConfirm: handleLogoutConfirm,
+    onLogoutCancel: handleLogoutCancel,
+    isLogoutModalOpen,
   };
 }
