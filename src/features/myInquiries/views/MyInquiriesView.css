@@ -1,0 +1,424 @@
+.my-inquiries {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.my-inquiries__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 8px;
+  height: 48px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  z-index: 100;
+}
+
+.my-inquiries__header-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.my-inquiries__header-btn .material-symbols-outlined {
+  font-size: 24px;
+  color: #101112;
+}
+
+.my-inquiries__header-title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0c0c0c;
+}
+
+.my-inquiries__cart-btn {
+  position: relative;
+}
+
+.my-inquiries__cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 6px;
+  background: #3b9bd5;
+  border-radius: 40px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 110%;
+  color: #fdfdfd;
+}
+
+.my-inquiries__content {
+  padding: 60px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-inquiries__filters {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 37px;
+}
+
+.my-inquiries__type-select {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 6px 6px 12px;
+  gap: 4px;
+  min-width: 120px;
+  height: 32px;
+  border: 1px solid rgba(12, 12, 12, 0.12);
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.9);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 8L10 12L14 8' stroke='rgba(12,12,12,0.5)' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  padding-right: 28px;
+}
+
+.my-inquiries__sort-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.my-inquiries__sort-btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.my-inquiries__sort-btn--active {
+  color: #000000;
+  font-weight: 500;
+}
+
+.my-inquiries__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.my-inquiries__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 16px;
+  text-align: center;
+}
+
+.my-inquiries__empty-icon {
+  font-size: 48px;
+  color: rgba(12, 12, 12, 0.2);
+  margin-bottom: 16px;
+}
+
+.my-inquiries__empty-text {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.inquiry-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.08);
+}
+
+.inquiry-card__header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.inquiry-card__product-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.inquiry-card__product-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.inquiry-card__product-placeholder .material-symbols-outlined {
+  font-size: 24px;
+  color: rgba(12, 12, 12, 0.2);
+}
+
+.inquiry-card__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inquiry-card__meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.inquiry-card__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 140%;
+}
+
+.inquiry-card__status--pending {
+  background: rgba(12, 12, 12, 0.08);
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.inquiry-card__status--answered {
+  background: rgba(59, 155, 213, 0.1);
+  color: #3b9bd5;
+}
+
+.inquiry-card__type {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 140%;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.inquiry-card__date {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 140%;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.inquiry-card__product-name {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 140%;
+  color: #0c0c0c;
+  cursor: pointer;
+}
+
+.inquiry-card__product-name:hover {
+  text-decoration: underline;
+}
+
+.inquiry-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inquiry-card__question {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.inquiry-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.inquiry-card__icon--question {
+  background: rgba(12, 12, 12, 0.08);
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.inquiry-card__icon--answer {
+  background: rgba(59, 155, 213, 0.1);
+  color: #3b9bd5;
+}
+
+.inquiry-card__text {
+  flex: 1;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  color: rgba(12, 12, 12, 0.8);
+  margin: 0;
+}
+
+.inquiry-card__answer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(59, 155, 213, 0.05);
+  border-radius: 8px;
+}
+
+.inquiry-card__answer .inquiry-card__text {
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.my-inquiries__loading {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.my-inquiries__skeleton {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.my-inquiries__skeleton-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.my-inquiries__skeleton-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.my-inquiries__skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.my-inquiries__skeleton-line--short {
+  width: 60%;
+}
+
+.my-inquiries__skeleton-line--medium {
+  width: 80%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.my-inquiries__count {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  color: rgba(12, 12, 12, 0.6);
+  margin-bottom: 8px;
+}
+
+.my-inquiries__load-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 16px;
+  margin-top: 16px;
+  background: transparent;
+  border: 1px solid rgba(12, 12, 12, 0.12);
+  border-radius: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.8);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.my-inquiries__load-more:hover:not(:disabled) {
+  background: rgba(12, 12, 12, 0.04);
+}
+
+.my-inquiries__load-more:disabled {
+  color: rgba(12, 12, 12, 0.4);
+  cursor: not-allowed;
+}

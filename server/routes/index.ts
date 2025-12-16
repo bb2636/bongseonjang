@@ -24,6 +24,7 @@ import { inquiryRoutes } from '../features/inquiry';
 import { adminBannerRoutes } from '../features/banner';
 import { adminProductRoutes } from '../features/admin/routes/adminProductRoutes';
 import { adminUserRoutes } from '../features/admin/routes/adminUserRoutes';
+import { userRoutes } from '../features/user';
 
 const router = Router();
 
@@ -38,6 +39,7 @@ router.use('/events', eventRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/search', searchRoutes);
 router.use('/profile', profileRoutes);
+router.use('/users', userRoutes);
 router.use('/points', pointRoutes);
 router.use('/cart', cartRoutes);
 router.use('/coupons', couponRoutes);

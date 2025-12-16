@@ -37,6 +37,7 @@ import { NoticeListPage } from "./features/notice";
 import { AddressFormPage } from "./features/address";
 import { WriteReviewPage, ReviewListPage } from "./features/review";
 import { FaqPage } from "./features/faq";
+import { MyInquiriesPage } from "./features/myInquiries";
 import {
   AdminDashboardPage,
   AdminPlaceholderPage,
@@ -259,6 +260,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <FaqPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-inquiries"
+        element={
+          <ProtectedRoute>
+            <MyInquiriesPage />
           </ProtectedRoute>
         }
       />

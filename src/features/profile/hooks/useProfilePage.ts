@@ -14,8 +14,7 @@ const MENU_SECTIONS: MenuSection[] = [
   {
     title: '고객센터',
     items: [
-      { id: 'inquiry', icon: 'support_agent', label: '1:1문의', path: '/inquiry' },
-      { id: 'product-inquiry', icon: 'contact_support', label: '상품문의', path: '/product-inquiry' },
+      { id: 'product-inquiry', icon: 'contact_support', label: '상품문의', path: '/my-inquiries' },
       { id: 'notice', icon: 'campaign', label: '공지사항', path: '/notice' },
       { id: 'faq', icon: 'sticky_note_2', label: 'FAQ', path: '/faq' },
     ],
