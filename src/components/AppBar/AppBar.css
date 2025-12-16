@@ -102,3 +102,33 @@
   letter-spacing: -0.01em;
   color: #FDFDFD;
 }
+
+.app-bar--subpage {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 8px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #FFFFFF;
+}
+
+.app-bar__title--subpage {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #0C0C0C;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.app-bar__placeholder {
+  width: 42px;
+  height: 42px;
+}

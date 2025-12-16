@@ -1,5 +1,6 @@
 import type { MyInquiry, InquiryType, SortOrder } from "../types/myInquiry";
 import { INQUIRY_TYPE_OPTIONS, SORT_OPTIONS } from "../types/myInquiry";
+import AppBar from "../../../components/AppBar/AppBar";
 import "./MyInquiriesView.css";
 
 interface MyInquiriesViewProps {
@@ -17,48 +18,6 @@ interface MyInquiriesViewProps {
   onSortChange: (sort: SortOrder) => void;
   onProductClick: (productId: string) => void;
   onLoadMore: () => void;
-}
-
-function BackIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M15 18L9 12L15 6"
-        stroke="#101112"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function CartIcon() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-      <path
-        d="M8.66667 23.8333C9.5871 23.8333 10.3333 23.0871 10.3333 22.1667C10.3333 21.2462 9.5871 20.5 8.66667 20.5C7.74619 20.5 7 21.2462 7 22.1667C7 23.0871 7.74619 23.8333 8.66667 23.8333Z"
-        stroke="rgba(12, 12, 12, 0.9)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M19.3333 23.8333C20.2538 23.8333 21 23.0871 21 22.1667C21 21.2462 20.2538 20.5 19.3333 20.5C18.4129 20.5 17.6667 21.2462 17.6667 22.1667C17.6667 23.0871 18.4129 23.8333 19.3333 23.8333Z"
-        stroke="rgba(12, 12, 12, 0.9)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M1 1H5L7.68 15.39C7.77144 15.8504 8.02191 16.264 8.38755 16.5583C8.75318 16.8526 9.2107 17.009 9.68 17H18.4C18.8693 17.009 19.3268 16.8526 19.6925 16.5583C20.0581 16.264 20.3086 15.8504 20.4 15.39L22 6H6"
-        stroke="rgba(12, 12, 12, 0.9)"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
 }
 
 function ProductPlaceholderIcon() {
@@ -262,25 +221,13 @@ export default function MyInquiriesView({
 }: MyInquiriesViewProps) {
   return (
     <div className="my-inquiries">
-      <header className="my-inquiries__header">
-        <button
-          className="my-inquiries__header-btn"
-          onClick={onBack}
-          type="button"
-          aria-label="뒤로가기"
-        >
-          <BackIcon />
-        </button>
-        <span className="my-inquiries__header-title">상품문의</span>
-        <button
-          className="my-inquiries__header-btn my-inquiries__cart-btn"
-          onClick={onCartClick}
-          type="button"
-          aria-label="장바구니"
-        >
-          <CartIcon />
-        </button>
-      </header>
+      <AppBar
+        variant="subpage"
+        title="상품문의"
+        onBackClick={onBack}
+        showCart
+        onCartClick={onCartClick}
+      />
 
       <main className="my-inquiries__content">
         <div className="my-inquiries__filters">

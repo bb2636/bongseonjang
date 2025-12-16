@@ -2,27 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { MainLayout } from '../../../layouts';
+import AppBar from '../../../components/AppBar/AppBar';
 import { fetchPendingReviewItems, fetchMyReviews, ReviewableOrderItemDto, MyReviewDto } from '../api/reviewApi';
 import './ReviewListPage.css';
 
 type TabType = 'pending' | 'my';
-
-function BackIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 18L9 12L15 6" stroke="#101112" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function BagIcon() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6 9H20L18.5 21H7.5L6 9Z" stroke="#0C0C0C" strokeWidth="1.5" />
-      <path d="M10 11V8.5C10 6.567 11.567 5 13.5 5C15.433 5 17 6.567 17 8.5V11" stroke="#0C0C0C" strokeWidth="1.5" />
-    </svg>
-  );
-}
 
 function StarIcon({ filled }: { filled: boolean }) {
   return (
@@ -120,20 +104,13 @@ export default function ReviewListPage() {
   return (
     <MainLayout>
       <div className="review-list-page">
-        <header className="review-list-page__header">
-          <button type="button" className="review-list-page__icon-btn" onClick={() => navigate(-1)} aria-label="뒤로가기">
-            <BackIcon />
-          </button>
-          <h1 className="review-list-page__title">상품 리뷰</h1>
-          <button type="button" className="review-list-page__icon-btn" onClick={() => navigate('/cart')} aria-label="장바구니">
-            <div className="review-list-page__bag-wrapper">
-              <BagIcon />
-              {pendingItems.length > 0 && (
-                <span className="review-list-page__badge">{pendingItems.length}</span>
-              )}
-            </div>
-          </button>
-        </header>
+        <AppBar
+          variant="subpage"
+          title="상품 리뷰"
+          onBackClick={() => navigate(-1)}
+          showCart
+          onCartClick={() => navigate('/cart')}
+        />
 
         <div className="review-list-page__tabs">
           <button
