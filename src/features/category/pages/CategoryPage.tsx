@@ -2,17 +2,13 @@ import { useCategoryPage } from '../hooks/useCategoryPage';
 import CategoryView from '../views/CategoryView';
 
 export default function CategoryPage() {
-  const {
-    categories,
-    handleCategoryClick,
-    handleBrandClick,
-  } = useCategoryPage();
+  const { state, actions } = useCategoryPage();
 
   return (
     <CategoryView
-      categories={categories}
-      onCategoryClick={handleCategoryClick}
-      onBrandClick={handleBrandClick}
+      categories={state.categories}
+      onCategoryClick={actions.handleCategoryClick}
+      onBrandClick={actions.handleBrandClick}
     />
   );
 }

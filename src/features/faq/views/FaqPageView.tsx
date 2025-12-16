@@ -1,25 +1,30 @@
 import { ChangeEvent } from 'react';
 import { AppBar } from '../../../components';
-import { FaqPageState } from '../hooks/useFaqPage';
+import { useFaqPage } from '../hooks/useFaqPage';
 import './FaqPageView.css';
 
+type FaqPageReturn = ReturnType<typeof useFaqPage>;
+
 interface FaqPageViewProps {
-  state: FaqPageState;
+  state: FaqPageReturn['state'];
+  actions: FaqPageReturn['actions'];
 }
 
-export default function FaqPageView({ state }: FaqPageViewProps) {
+export default function FaqPageView({ state, actions }: FaqPageViewProps) {
   const {
     categories,
     selectedCategoryId,
     searchQuery,
     filteredFaqs,
     expandedFaqId,
+  } = state;
+  const {
     handleBack,
     handleCartClick,
     handleCategorySelect,
     handleSearchChange,
     handleToggle,
-  } = state;
+  } = actions;
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     handleSearchChange(event.target.value);

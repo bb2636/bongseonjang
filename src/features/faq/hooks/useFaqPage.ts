@@ -63,20 +63,7 @@ const FAQ_ITEMS: FaqItem[] = [
   },
 ];
 
-export interface FaqPageState {
-  categories: FaqCategory[];
-  selectedCategoryId: string;
-  searchQuery: string;
-  filteredFaqs: FaqItem[];
-  expandedFaqId: string | null;
-  handleBack: () => void;
-  handleCartClick: () => void;
-  handleCategorySelect: (categoryId: string) => void;
-  handleSearchChange: (value: string) => void;
-  handleToggle: (faqId: string) => void;
-}
-
-export function useFaqPage(): FaqPageState {
+export function useFaqPage() {
   const navigate = useNavigate();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('orders-payments');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -117,15 +104,19 @@ export function useFaqPage(): FaqPageState {
   };
 
   return {
-    categories: FAQ_CATEGORIES,
-    selectedCategoryId,
-    searchQuery,
-    filteredFaqs,
-    expandedFaqId,
-    handleBack,
-    handleCartClick,
-    handleCategorySelect,
-    handleSearchChange,
-    handleToggle,
+    state: {
+      categories: FAQ_CATEGORIES,
+      selectedCategoryId,
+      searchQuery,
+      filteredFaqs,
+      expandedFaqId,
+    },
+    actions: {
+      handleBack,
+      handleCartClick,
+      handleCategorySelect,
+      handleSearchChange,
+      handleToggle,
+    },
   };
 }

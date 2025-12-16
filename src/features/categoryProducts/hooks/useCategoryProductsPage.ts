@@ -12,19 +12,7 @@ const SLUG_TO_DISPLAY_CATEGORY: Record<string, string> = {
   'pickled': '바담은 절임류',
 };
 
-export interface UseCategoryProductsPageReturn {
-  activeSlug: string;
-  products: ProductCardData[];
-  isLoading: boolean;
-  error: Error | null;
-  handleTabChange: (slug: string) => void;
-  handleProductClick: (productId: string) => void;
-  handleCartClick: () => void;
-  handleBack: () => void;
-  handleLogoClick: () => void;
-}
-
-export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
+export function useCategoryProductsPage() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const activeSlug = slug || 'all';
@@ -53,14 +41,18 @@ export function useCategoryProductsPage(): UseCategoryProductsPageReturn {
   };
 
   return {
-    activeSlug,
-    products,
-    isLoading,
-    error: error as Error | null,
-    handleTabChange,
-    handleProductClick,
-    handleCartClick,
-    handleBack,
-    handleLogoClick,
+    state: {
+      activeSlug,
+      products,
+      isLoading,
+      error: error as Error | null,
+    },
+    actions: {
+      handleTabChange,
+      handleProductClick,
+      handleCartClick,
+      handleBack,
+      handleLogoClick,
+    },
   };
 }

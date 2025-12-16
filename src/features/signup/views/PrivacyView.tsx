@@ -1,16 +1,17 @@
 import './PrivacyView.css';
 
 interface PrivacyViewProps {
-  privacy: {
+  state: Record<string, never>;
+  actions: {
     onBack: () => void;
   };
 }
 
-export default function PrivacyView({ privacy }: PrivacyViewProps) {
+export default function PrivacyView({ actions }: PrivacyViewProps) {
   return (
     <div className="privacy-container">
       <header className="privacy-header">
-        <button className="privacy-back-button" onClick={privacy.onBack} aria-label="뒤로가기">
+        <button className="privacy-back-button" onClick={actions.onBack} aria-label="뒤로가기">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M15 18L9 12L15 6"

@@ -15,6 +15,9 @@ interface ProfileViewProps {
     menuSections: MenuSection[];
     isLoading: boolean;
     error: string | null;
+    isLogoutModalOpen: boolean;
+  };
+  actions: {
     onEditProfileClick: () => void;
     onPointsClick: () => void;
     onCouponsClick: () => void;
@@ -28,11 +31,10 @@ interface ProfileViewProps {
     onLogoutClick: () => void;
     onLogoutConfirm: () => void;
     onLogoutCancel: () => void;
-    isLogoutModalOpen: boolean;
   };
 }
 
-export default function ProfileView({ state }: ProfileViewProps) {
+export default function ProfileView({ state, actions }: ProfileViewProps) {
   if (state.isLoading) {
     return (
       <div className="profile-view">
@@ -72,7 +74,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
         <ProfileHeader
           name={state.profile?.name || ''}
           grade={state.profile?.grade || ''}
-          onEditClick={state.onEditProfileClick}
+          onEditClick={actions.onEditProfileClick}
         />
 
         <SummaryCard
@@ -80,26 +82,26 @@ export default function ProfileView({ state }: ProfileViewProps) {
           couponCount={state.profile?.couponCount || 0}
           favoriteCount={state.profile?.favoriteCount || 0}
           pendingReviewCount={state.profile?.pendingReviewCount || 0}
-          onPointsClick={state.onPointsClick}
-          onCouponsClick={state.onCouponsClick}
-          onFavoritesClick={state.onFavoritesClick}
-          onPendingReviewsClick={state.onPendingReviewsClick}
+          onPointsClick={actions.onPointsClick}
+          onCouponsClick={actions.onCouponsClick}
+          onFavoritesClick={actions.onFavoritesClick}
+          onPendingReviewsClick={actions.onPendingReviewsClick}
         />
 
         <RecentOrders
           orders={state.recentOrders}
-          onOrderClick={state.onOrderClick}
-          onReturnClick={state.onReturnClick}
-          onReorderClick={state.onReorderClick}
-          onViewAllClick={state.onViewAllOrdersClick}
+          onOrderClick={actions.onOrderClick}
+          onReturnClick={actions.onReturnClick}
+          onReorderClick={actions.onReorderClick}
+          onViewAllClick={actions.onViewAllOrdersClick}
         />
 
         <div className="profile-view__divider" />
 
         <MenuList
           sections={state.menuSections}
-          onItemClick={state.onMenuItemClick}
-          onLogout={state.onLogoutClick}
+          onItemClick={actions.onMenuItemClick}
+          onLogout={actions.onLogoutClick}
         />
       </main>
 
@@ -108,8 +110,8 @@ export default function ProfileView({ state }: ProfileViewProps) {
       <ConfirmModal
         isOpen={state.isLogoutModalOpen}
         title="로그아웃 하시겠습니까?"
-        onCancel={state.onLogoutCancel}
-        onConfirm={state.onLogoutConfirm}
+        onCancel={actions.onLogoutCancel}
+        onConfirm={actions.onLogoutConfirm}
         cancelText="취소"
         confirmText="로그아웃"
       />

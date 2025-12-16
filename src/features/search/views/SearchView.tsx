@@ -4,14 +4,17 @@ import SearchInput from '../components/SearchInput';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import { BottomNav } from '@/components/BottomNav';
 import SortDropdown from '../components/SortDropdown';
-import type { SearchPageState } from '../hooks/useSearchPage';
 import { SORT_OPTIONS } from '../types/SortTypes';
+import { useSearchPage } from '../hooks/useSearchPage';
+
+type SearchPageReturn = ReturnType<typeof useSearchPage>;
 
 interface SearchViewProps {
-  state: SearchPageState;
+  state: SearchPageReturn['state'];
+  actions: SearchPageReturn['actions'];
 }
 
-export default function SearchView({ state }: SearchViewProps) {
+export default function SearchView({ state, actions }: SearchViewProps) {
   return (
     <div className="search-view">
       <AppBar />
@@ -22,9 +25,9 @@ export default function SearchView({ state }: SearchViewProps) {
           <div className="search-view__input-wrapper">
             <SearchInput
               value={state.searchQuery}
-              onChange={state.onSearchChange}
-              onClear={state.onSearchClear}
-              onSubmit={state.onSearch}
+              onChange={actions.onSearchChange}
+              onClear={actions.onSearchClear}
+              onSubmit={actions.onSearch}
             />
           </div>
         </section>
@@ -35,7 +38,7 @@ export default function SearchView({ state }: SearchViewProps) {
               <span className="search-view__recent-title">최근 검색어</span>
               <button 
                 className="search-view__recent-clear"
-                onClick={state.onClearAllRecent}
+                onClick={actions.onClearAllRecent}
               >
                 전체 삭제
               </button>
@@ -45,13 +48,13 @@ export default function SearchView({ state }: SearchViewProps) {
                 <div key={term} className="search-view__recent-item">
                   <button 
                     className="search-view__recent-term"
-                    onClick={() => state.onRecentSearchClick(term)}
+                    onClick={() => actions.onRecentSearchClick(term)}
                   >
                     {term}
                   </button>
                   <button 
                     className="search-view__recent-delete"
-                    onClick={() => state.onRecentSearchDelete(term)}
+                    onClick={() => actions.onRecentSearchDelete(term)}
                   >
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                       <path d="M4 4L12 12M12 4L4 12" stroke="rgba(12, 12, 12, 0.5)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -72,7 +75,7 @@ export default function SearchView({ state }: SearchViewProps) {
                   <button
                     key={item.term}
                     className="search-view__popular-item"
-                    onClick={() => state.onPopularSearchClick(item.term)}
+                    onClick={() => actions.onPopularSearchClick(item.term)}
                   >
                     <span className="search-view__popular-rank">{index + 1}</span>
                     <span className="search-view__popular-term">{item.term}</span>
@@ -84,7 +87,7 @@ export default function SearchView({ state }: SearchViewProps) {
                   <button
                     key={item.term}
                     className="search-view__popular-item"
-                    onClick={() => state.onPopularSearchClick(item.term)}
+                    onClick={() => actions.onPopularSearchClick(item.term)}
                   >
                     <span className="search-view__popular-rank">{index + 6}</span>
                     <span className="search-view__popular-term">{item.term}</span>
@@ -101,7 +104,7 @@ export default function SearchView({ state }: SearchViewProps) {
               <SortDropdown
                 value={state.sortBy}
                 options={SORT_OPTIONS}
-                onChange={state.onSortChange}
+                onChange={actions.onSortChange}
               />
             </div>
             {!state.isSearching && state.searchResults.length === 0 ? (
@@ -113,7 +116,7 @@ export default function SearchView({ state }: SearchViewProps) {
                 products={state.searchResults}
                 isLoading={state.isSearching}
                 error={null}
-                onProductClick={state.onProductClick}
+                onProductClick={actions.onProductClick}
               />
             )}
           </section>

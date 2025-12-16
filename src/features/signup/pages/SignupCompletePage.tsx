@@ -2,12 +2,12 @@ import { CompletionScreen, COMPLETION_VARIANT } from '@/components/CompletionScr
 import { useSignupCompletePage } from '../hooks/useSignupCompletePage';
 
 export default function SignupCompletePage() {
-  const { onButtonClick } = useSignupCompletePage();
+  const { actions } = useSignupCompletePage();
 
   return (
     <CompletionScreen
       variant={COMPLETION_VARIANT.SIGNUP_COMPLETE}
-      onButtonClick={onButtonClick}
+      onButtonClick={actions.onButtonClick}
     />
   );
 }

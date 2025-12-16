@@ -3,21 +3,13 @@ import { INQUIRY_TYPE_OPTIONS, SORT_OPTIONS } from "../types/myInquiry";
 import AppBar from "../../../components/AppBar/AppBar";
 import "./MyInquiriesView.css";
 
+import { useMyInquiriesPage } from '../hooks/useMyInquiriesPage';
+
+type MyInquiriesPageReturn = ReturnType<typeof useMyInquiriesPage>;
+
 interface MyInquiriesViewProps {
-  inquiries: MyInquiry[];
-  total: number;
-  hasMore: boolean;
-  isLoading: boolean;
-  isLoadingMore: boolean;
-  error: string | null;
-  selectedType: InquiryType;
-  sortOrder: SortOrder;
-  onBack: () => void;
-  onCartClick: () => void;
-  onTypeChange: (type: InquiryType) => void;
-  onSortChange: (sort: SortOrder) => void;
-  onProductClick: (productId: string) => void;
-  onLoadMore: () => void;
+  state: MyInquiriesPageReturn['state'];
+  actions: MyInquiriesPageReturn['actions'];
 }
 
 function ProductPlaceholderIcon() {
@@ -203,22 +195,25 @@ function LoadingSkeleton() {
   );
 }
 
-export default function MyInquiriesView({
-  inquiries,
-  total,
-  hasMore,
-  isLoading,
-  isLoadingMore,
-  error,
-  selectedType,
-  sortOrder,
-  onBack,
-  onCartClick,
-  onTypeChange,
-  onSortChange,
-  onProductClick,
-  onLoadMore,
-}: MyInquiriesViewProps) {
+export default function MyInquiriesView({ state, actions }: MyInquiriesViewProps) {
+  const {
+    inquiries,
+    total,
+    hasMore,
+    isLoading,
+    isLoadingMore,
+    error,
+    selectedType,
+    sortOrder,
+  } = state;
+  const {
+    onBack,
+    onCartClick,
+    onTypeChange,
+    onSortChange,
+    onProductClick,
+    onLoadMore,
+  } = actions;
   return (
     <div className="my-inquiries">
       <AppBar

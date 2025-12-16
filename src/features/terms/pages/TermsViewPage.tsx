@@ -2,7 +2,7 @@ import { useTermsViewPage } from '../hooks/useTermsViewPage';
 import TermsViewPageView from '../views/TermsViewPageView';
 
 export default function TermsViewPage() {
-  const state = useTermsViewPage();
+  const { state, actions } = useTermsViewPage();
 
-  return <TermsViewPageView state={state} />;
+  return <TermsViewPageView state={state} actions={actions} />;
 }

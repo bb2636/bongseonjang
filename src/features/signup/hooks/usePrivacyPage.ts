@@ -9,6 +9,9 @@ export function usePrivacyPage() {
   }, [navigate]);
 
   return {
-    onBack,
+    state: {},
+    actions: {
+      onBack,
+    },
   };
 }

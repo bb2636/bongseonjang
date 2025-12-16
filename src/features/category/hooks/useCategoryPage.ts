@@ -1,13 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { CATEGORIES, Category } from '../types/category';
 
-export interface UseCategoryPageReturn {
-  categories: Category[];
-  handleCategoryClick: (category: Category) => void;
-  handleBrandClick: (brandId: string) => void;
-}
-
-export function useCategoryPage(): UseCategoryPageReturn {
+export function useCategoryPage() {
   const navigate = useNavigate();
 
   const handleCategoryClick = (category: Category) => {
@@ -19,8 +13,12 @@ export function useCategoryPage(): UseCategoryPageReturn {
   };
 
   return {
-    categories: CATEGORIES,
-    handleCategoryClick,
-    handleBrandClick,
+    state: {
+      categories: CATEGORIES,
+    },
+    actions: {
+      handleCategoryClick,
+      handleBrandClick,
+    },
   };
 }

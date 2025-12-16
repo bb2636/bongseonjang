@@ -90,14 +90,18 @@ export function usePointPage() {
   }, [navigate]);
 
   return {
-    wallet,
-    historyGroups,
-    isLoading,
-    error,
-    hasMore,
-    isLoadingMore,
-    onBackClick: handleBackClick,
-    onCartClick: handleCartClick,
-    onLoadMore: handleLoadMore,
+    state: {
+      wallet,
+      historyGroups,
+      isLoading,
+      error,
+      hasMore,
+      isLoadingMore,
+    },
+    actions: {
+      onBackClick: handleBackClick,
+      onCartClick: handleCartClick,
+      onLoadMore: handleLoadMore,
+    },
   };
 }

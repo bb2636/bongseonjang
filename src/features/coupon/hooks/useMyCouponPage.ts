@@ -20,11 +20,15 @@ export function useMyCouponPage() {
   };
 
   return {
-    coupons: data?.coupons ?? [],
-    totalCount: data?.totalCount ?? 0,
-    isLoading,
-    error: error as Error | null,
-    onBack: handleBack,
-    onGoToDownload: handleGoToDownload,
+    state: {
+      coupons: data?.coupons ?? [],
+      totalCount: data?.totalCount ?? 0,
+      isLoading,
+      error: error as Error | null,
+    },
+    actions: {
+      onBack: handleBack,
+      onGoToDownload: handleGoToDownload,
+    },
   };
 }

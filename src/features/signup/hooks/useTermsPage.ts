@@ -11,9 +11,13 @@ export function useTermsPage() {
   }, [navigate]);
 
   return {
-    onBack,
-    content: terms,
-    isLoading,
-    error,
+    state: {
+      content: terms,
+      isLoading,
+      error,
+    },
+    actions: {
+      onBack,
+    },
   };
 }

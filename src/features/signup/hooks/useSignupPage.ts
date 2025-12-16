@@ -40,10 +40,14 @@ export function useSignupPage() {
   }, [currentStep, updateFormData, navigate]);
 
   return {
-    currentStep,
-    emailStep,
-    passwordStep,
-    profileStep,
-    onBack,
+    state: {
+      currentStep,
+      emailStep,
+      passwordStep,
+      profileStep,
+    },
+    actions: {
+      onBack,
+    },
   };
 }

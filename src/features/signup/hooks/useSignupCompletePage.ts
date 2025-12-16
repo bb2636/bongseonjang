@@ -10,6 +10,9 @@ export function useSignupCompletePage() {
   }, [navigate]);
 
   return {
-    onButtonClick,
+    state: {},
+    actions: {
+      onButtonClick,
+    },
   };
 }

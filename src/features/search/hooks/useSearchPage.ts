@@ -153,22 +153,26 @@ export function useSearchPage() {
   }, [navigate]);
 
   return {
-    searchQuery,
-    recentSearches,
-    popularSearches,
-    searchResults,
-    isSearching,
-    hasSearched,
-    sortBy,
-    onSearchChange: handleSearchChange,
-    onSearchClear: handleSearchClear,
-    onSearch: handleSearch,
-    onRecentSearchClick: handleRecentSearchClick,
-    onPopularSearchClick: handlePopularSearchClick,
-    onSortChange: handleSortChange,
-    onRecentSearchDelete: handleRecentSearchDelete,
-    onClearAllRecent: handleClearAllRecent,
-    onProductClick: handleProductClick,
+    state: {
+      searchQuery,
+      recentSearches,
+      popularSearches,
+      searchResults,
+      isSearching,
+      hasSearched,
+      sortBy,
+    },
+    actions: {
+      onSearchChange: handleSearchChange,
+      onSearchClear: handleSearchClear,
+      onSearch: handleSearch,
+      onRecentSearchClick: handleRecentSearchClick,
+      onPopularSearchClick: handlePopularSearchClick,
+      onSortChange: handleSortChange,
+      onRecentSearchDelete: handleRecentSearchDelete,
+      onClearAllRecent: handleClearAllRecent,
+      onProductClick: handleProductClick,
+    },
   };
 }
 

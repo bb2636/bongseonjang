@@ -13,9 +13,7 @@ interface TermsViewProps {
 }
 
 
-
 export default function TermsView({ state, actions }: TermsViewProps) {
-  const termsTitle = state.content?.title ?? '서비스 이용약관 동의';
 
   const renderContent = () => {
     if (state.isLoading) {

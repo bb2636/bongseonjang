@@ -125,46 +125,52 @@ export function useProductDetailPage(productId: string) {
     console.log('Add related product to cart:', relatedProductId);
   };
 
-  return {
-    product,
-    isLoading,
-    error,
-    selectedOption,
-    quantity,
-    totalPrice,
-    activeTab,
-    reviews,
-    reviewsLoading,
-    inquiries,
-    inquiriesLoading,
-    relatedProducts,
-    relatedProductsLoading,
-    isWishlisted,
-    handleOptionSelect,
-    handleQuantityChange,
-    handleCartClick,
-    handleShare,
-    handleTabChange,
-    handleAddToCart,
-    handleToggleWishlist: handleWishlistClick,
-    handleWriteInquiryClick: () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login', { state: { from: `/product/${productId}` } });
-        return;
-      }
+  const handleWriteInquiryClick = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login', { state: { from: `/product/${productId}` } });
+      return;
+    }
 
-      navigate(`/product/${productId}/inquiry/write`, {
-        state: {
-          product: product
-            ? {
-                id: product.id,
-                name: product.name,
-                thumbnailUrl: product.thumbnailUrl,
-              }
-            : undefined,
-        },
-      });
+    navigate(`/product/${productId}/inquiry/write`, {
+      state: {
+        product: product
+          ? {
+              id: product.id,
+              name: product.name,
+              thumbnailUrl: product.thumbnailUrl,
+            }
+          : undefined,
+      },
+    });
+  };
+
+  return {
+    state: {
+      product,
+      isLoading,
+      error,
+      selectedOption,
+      quantity,
+      totalPrice,
+      activeTab,
+      reviews,
+      reviewsLoading,
+      inquiries,
+      inquiriesLoading,
+      relatedProducts,
+      relatedProductsLoading,
+      isWishlisted,
+    },
+    actions: {
+      handleOptionSelect,
+      handleQuantityChange,
+      handleCartClick,
+      handleShare,
+      handleTabChange,
+      handleAddToCart,
+      handleToggleWishlist: handleWishlistClick,
+      handleWriteInquiryClick,
     },
   };
 }

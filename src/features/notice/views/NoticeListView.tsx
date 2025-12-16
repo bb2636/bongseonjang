@@ -1,13 +1,17 @@
 import { AppBar } from '../../../components';
-import { NoticeListPageState } from '../hooks/useNoticeListPage';
+import { useNoticeListPage } from '../hooks/useNoticeListPage';
 import './NoticeListView.css';
 
+type NoticeListPageReturn = ReturnType<typeof useNoticeListPage>;
+
 interface NoticeListViewProps {
-  state: NoticeListPageState;
+  state: NoticeListPageReturn['state'];
+  actions: NoticeListPageReturn['actions'];
 }
 
-export default function NoticeListView({ state }: NoticeListViewProps) {
-  const { notices, isLoading, handleBack, handleCartClick, handleNoticeClick } = state;
+export default function NoticeListView({ state, actions }: NoticeListViewProps) {
+  const { notices, isLoading } = state;
+  const { handleBack, handleCartClick, handleNoticeClick } = actions;
 
   const renderContent = () => {
     if (isLoading) {

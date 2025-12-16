@@ -15,19 +15,7 @@ const TERMS_OPTIONS: TermsOption[] = [
   { value: 'PURCHASE_POLICY', label: '구매 정책' },
 ];
 
-export interface TermsViewPageState {
-  selectedType: TermsType;
-  options: TermsOption[];
-  content: TermsContent | null;
-  isLoading: boolean;
-  error?: string;
-  cartCount: number;
-  onTypeChange: (type: TermsType) => void;
-  onBack: () => void;
-  onCartClick: () => void;
-}
-
-export function useTermsViewPage(): TermsViewPageState {
+export function useTermsViewPage() {
   const navigate = useNavigate();
   const { cartCount } = useCart();
   const [selectedType, setSelectedType] = useState<TermsType>('SERVICE');
@@ -46,14 +34,18 @@ export function useTermsViewPage(): TermsViewPageState {
   }, [navigate]);
 
   return {
-    selectedType,
-    options: TERMS_OPTIONS,
-    content: terms,
-    isLoading,
-    error,
-    cartCount,
-    onTypeChange,
-    onBack,
-    onCartClick,
+    state: {
+      selectedType,
+      options: TERMS_OPTIONS,
+      content: terms,
+      isLoading,
+      error,
+      cartCount,
+    },
+    actions: {
+      onTypeChange,
+      onBack,
+      onCartClick,
+    },
   };
 }

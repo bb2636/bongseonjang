@@ -12,19 +12,21 @@ interface PointViewProps {
     error: string | null;
     hasMore: boolean;
     isLoadingMore: boolean;
+  };
+  actions: {
     onBackClick: () => void;
     onCartClick: () => void;
     onLoadMore: () => void;
   };
 }
 
-export default function PointView({ state }: PointViewProps) {
+export default function PointView({ state, actions }: PointViewProps) {
   if (state.isLoading) {
     return (
       <div className="point-view">
         <PointAppBar
-          onBackClick={state.onBackClick}
-          onCartClick={state.onCartClick}
+          onBackClick={actions.onBackClick}
+          onCartClick={actions.onCartClick}
         />
         <div className="point-view__loading">
           <div className="point-view__loading-spinner" />
@@ -37,8 +39,8 @@ export default function PointView({ state }: PointViewProps) {
     return (
       <div className="point-view">
         <PointAppBar
-          onBackClick={state.onBackClick}
-          onCartClick={state.onCartClick}
+          onBackClick={actions.onBackClick}
+          onCartClick={actions.onCartClick}
         />
         <div className="point-view__error">
           <p className="point-view__error-message">{state.error}</p>
@@ -57,8 +59,8 @@ export default function PointView({ state }: PointViewProps) {
   return (
     <div className="point-view">
       <PointAppBar
-        onBackClick={state.onBackClick}
-        onCartClick={state.onCartClick}
+        onBackClick={actions.onBackClick}
+        onCartClick={actions.onCartClick}
         cartCount={1}
       />
       
@@ -70,7 +72,7 @@ export default function PointView({ state }: PointViewProps) {
         groups={state.historyGroups}
         hasMore={state.hasMore}
         isLoadingMore={state.isLoadingMore}
-        onLoadMore={state.onLoadMore}
+        onLoadMore={actions.onLoadMore}
       />
     </div>
   );

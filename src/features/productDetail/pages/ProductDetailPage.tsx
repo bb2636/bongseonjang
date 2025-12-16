@@ -19,6 +19,7 @@ export default function ProductDetailPage() {
   });
   const [isCheckingReviewPermission, setIsCheckingReviewPermission] = useState(false);
   
+  const { state, actions } = useProductDetailPage(id || '');
   const {
     product,
     isLoading,
@@ -34,6 +35,8 @@ export default function ProductDetailPage() {
     relatedProducts,
     relatedProductsLoading,
     isWishlisted,
+  } = state;
+  const {
     handleOptionSelect,
     handleQuantityChange,
     handleCartClick,
@@ -42,7 +45,7 @@ export default function ProductDetailPage() {
     handleAddToCart,
     handleToggleWishlist,
     handleWriteInquiryClick,
-  } = useProductDetailPage(id || '');
+  } = actions;
 
   if (isLoading) {
     return (

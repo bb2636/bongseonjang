@@ -2,7 +2,7 @@ import { usePointPage } from '../hooks/usePointPage';
 import PointView from '../views/PointView';
 
 export default function PointPage() {
-  const state = usePointPage();
+  const { state, actions } = usePointPage();
   
-  return <PointView state={state} />;
+  return <PointView state={state} actions={actions} />;
 }

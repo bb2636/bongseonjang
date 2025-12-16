@@ -5,16 +5,7 @@ import { useCart, useToast } from '../../../contexts';
 import { Notice } from '../types/notice';
 import { fetchNotices } from '../api/noticeApi';
 
-export interface NoticeListPageState {
-  notices: Notice[];
-  isLoading: boolean;
-  cartCount: number;
-  handleBack: () => void;
-  handleCartClick: () => void;
-  handleNoticeClick: (noticeId: string) => void;
-}
-
-export function useNoticeListPage(): NoticeListPageState {
+export function useNoticeListPage() {
   const navigate = useNavigate();
   const { cartCount } = useCart();
   const { showToast } = useToast();
@@ -44,11 +35,15 @@ export function useNoticeListPage(): NoticeListPageState {
   };
 
   return {
-    notices,
-    isLoading,
-    cartCount,
-    handleBack,
-    handleCartClick,
-    handleNoticeClick,
+    state: {
+      notices,
+      isLoading,
+      cartCount,
+    },
+    actions: {
+      handleBack,
+      handleCartClick,
+      handleNoticeClick,
+    },
   };
 }

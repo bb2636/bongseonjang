@@ -56,19 +56,23 @@ export function useMyInquiriesPage() {
   const displayInquiries = page === 1 ? (data?.inquiries ?? []) : allInquiries.concat(data?.inquiries ?? []);
 
   return {
-    inquiries: displayInquiries,
-    total,
-    hasMore,
-    isLoading: isLoading && page === 1,
-    isLoadingMore: isFetching && page > 1,
-    error: error ? '문의 목록을 불러오는데 실패했습니다.' : null,
-    selectedType,
-    sortOrder,
-    onBack: handleBack,
-    onCartClick: handleCartClick,
-    onTypeChange: handleTypeChange,
-    onSortChange: handleSortChange,
-    onProductClick: handleProductClick,
-    onLoadMore: handleLoadMore,
+    state: {
+      inquiries: displayInquiries,
+      total,
+      hasMore,
+      isLoading: isLoading && page === 1,
+      isLoadingMore: isFetching && page > 1,
+      error: error ? '문의 목록을 불러오는데 실패했습니다.' : null,
+      selectedType,
+      sortOrder,
+    },
+    actions: {
+      onBack: handleBack,
+      onCartClick: handleCartClick,
+      onTypeChange: handleTypeChange,
+      onSortChange: handleSortChange,
+      onProductClick: handleProductClick,
+      onLoadMore: handleLoadMore,
+    },
   };
 }

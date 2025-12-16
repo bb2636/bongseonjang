@@ -44,12 +44,16 @@ export function useCouponPage() {
   };
 
   return {
-    coupons: data?.coupons ?? [],
-    totalCount: data?.totalCount ?? 0,
-    isLoading,
-    error: error as Error | null,
-    isIssuing: issueMutation.isPending,
-    onBack: handleBack,
-    onIssueCoupon: handleIssueCoupon,
+    state: {
+      coupons: data?.coupons ?? [],
+      totalCount: data?.totalCount ?? 0,
+      isLoading,
+      error: error as Error | null,
+      isIssuing: issueMutation.isPending,
+    },
+    actions: {
+      onBack: handleBack,
+      onIssueCoupon: handleIssueCoupon,
+    },
   };
 }
