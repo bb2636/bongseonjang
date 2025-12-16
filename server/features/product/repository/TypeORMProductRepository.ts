@@ -9,18 +9,16 @@ export class TypeORMProductRepository implements ProductRepository {
     const queryBuilder = productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .innerJoin('product.displayCategory', 'displayCategory')
-      .where('displayCategory.name = :displayName', { displayName: displayCategoryName })
-      .andWhere('product.isActive = :isActive', { isActive: true });
+      .innerJoin('product.productCategory', 'productCategory')
+      .where('productCategory.name = :displayName', { displayName: displayCategoryName });
 
     if (filter?.productCategory) {
       queryBuilder
-        .innerJoin('product.productCategory', 'productCategory')
         .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
     }
 
     return queryBuilder
-      .orderBy('product.sortOrder', 'ASC')
+      .orderBy('product.createdAt', 'DESC')
       .getMany();
   }
 
@@ -29,8 +27,7 @@ export class TypeORMProductRepository implements ProductRepository {
     
     const queryBuilder = productRepository
       .createQueryBuilder('product')
-      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .where('product.isActive = :isActive', { isActive: true });
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true });
 
     if (filter?.productCategory) {
       queryBuilder
@@ -46,30 +43,26 @@ export class TypeORMProductRepository implements ProductRepository {
       case 'newest':
         queryBuilder
           .orderBy('product.createdAt', 'DESC')
-          .addOrderBy('product.sortOrder', 'ASC')
           .addOrderBy('product.id', 'ASC');
         break;
       case 'priceAsc':
         queryBuilder
           .orderBy('product.basePrice', 'ASC')
-          .addOrderBy('product.sortOrder', 'ASC')
           .addOrderBy('product.id', 'ASC');
         break;
       case 'priceDesc':
         queryBuilder
           .orderBy('product.basePrice', 'DESC')
-          .addOrderBy('product.sortOrder', 'ASC')
           .addOrderBy('product.id', 'ASC');
         break;
       case 'discountDesc':
         queryBuilder
-          .orderBy('product.discountRate', 'DESC')
-          .addOrderBy('product.sortOrder', 'ASC')
+          .orderBy('product.basePrice', 'DESC')
           .addOrderBy('product.id', 'ASC');
         break;
       default:
         queryBuilder
-          .orderBy('product.sortOrder', 'ASC')
+          .orderBy('product.createdAt', 'DESC')
           .addOrderBy('product.id', 'ASC');
         break;
     }
@@ -82,16 +75,10 @@ export class TypeORMProductRepository implements ProductRepository {
     
     return productRepository
       .createQueryBuilder('product')
-      .leftJoinAndSelect('product.options', 'options', 'options.isActive = :optionActive', { optionActive: true })
-      .leftJoinAndSelect('product.mainOptions', 'mainOptions', 'mainOptions.isActive = :mainOptionActive', { mainOptionActive: true })
-      .leftJoinAndSelect('product.subOptions', 'subOptions', 'subOptions.isActive = :subOptionActive', { subOptionActive: true })
+      .leftJoinAndSelect('product.options', 'options')
       .leftJoinAndSelect('product.images', 'images')
       .where('product.id = :id', { id })
-      .andWhere('product.isActive = :isActive', { isActive: true })
-      .orderBy('options.sortOrder', 'ASC')
-      .addOrderBy('mainOptions.sortOrder', 'ASC')
-      .addOrderBy('subOptions.sortOrder', 'ASC')
-      .addOrderBy('images.sortOrder', 'ASC')
+      .orderBy('images.sortOrder', 'ASC')
       .getOne();
   }
 
@@ -112,9 +99,7 @@ export class TypeORMProductRepository implements ProductRepository {
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .where('product.productCategoryId = :categoryId', { categoryId: currentProduct.productCategoryId })
       .andWhere('product.id != :productId', { productId })
-      .andWhere('product.isActive = :isActive', { isActive: true })
-      .orderBy('product.isDiscounted', 'DESC')
-      .addOrderBy('product.sortOrder', 'ASC')
+      .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();
   }
@@ -126,11 +111,10 @@ export class TypeORMProductRepository implements ProductRepository {
     return productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .where('product.isActive = :isActive', { isActive: true })
-      .andWhere('product.saleEndAt IS NOT NULL')
-      .andWhere('product.saleEndAt > :now', { now })
-      .andWhere('product.saleStartAt IS NULL OR product.saleStartAt <= :now', { now })
-      .orderBy('product.saleEndAt', 'ASC')
+      .where('product.saleEndDate IS NOT NULL')
+      .andWhere('product.saleEndDate > :now', { now })
+      .andWhere('product.saleStartDate IS NULL OR product.saleStartDate <= :now', { now })
+      .orderBy('product.saleEndDate', 'ASC')
       .limit(limit)
       .getMany();
   }
@@ -141,9 +125,7 @@ export class TypeORMProductRepository implements ProductRepository {
     return productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .where('product.isActive = :isActive', { isActive: true })
-      .andWhere('product.tags LIKE :tag', { tag: `%${tag}%` })
-      .orderBy('product.sortOrder', 'ASC')
+      .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();
   }
@@ -154,11 +136,7 @@ export class TypeORMProductRepository implements ProductRepository {
     return productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .innerJoin('product.displayCategory', 'displayCategory')
-      .where('product.isActive = :isActive', { isActive: true })
-      .andWhere('displayCategory.name = :displayName', { displayName: '싱싱해산물' })
-      .orderBy('product.isDiscounted', 'DESC')
-      .addOrderBy('product.sortOrder', 'ASC')
+      .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();
   }
