@@ -48,6 +48,24 @@
   background: transparent;
   border: none;
   cursor: pointer;
+  position: relative;
+}
+
+.terms-view__cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #3B9BD5;
+  border-radius: 9px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  color: #ffffff;
 }
 
 .terms-view__body {

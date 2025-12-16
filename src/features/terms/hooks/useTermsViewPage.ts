@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../../contexts/CartContext';
 import { useTermsContent } from './useTermsContent';
 import type { TermsType, TermsContent } from '../types/terms';
 
@@ -20,12 +21,15 @@ export interface TermsViewPageState {
   content: TermsContent | null;
   isLoading: boolean;
   error?: string;
+  cartCount: number;
   onTypeChange: (type: TermsType) => void;
   onBack: () => void;
+  onCartClick: () => void;
 }
 
 export function useTermsViewPage(): TermsViewPageState {
   const navigate = useNavigate();
+  const { cartCount } = useCart();
   const [selectedType, setSelectedType] = useState<TermsType>('SERVICE');
   const { terms, isLoading, error } = useTermsContent(selectedType);
 
@@ -37,13 +41,19 @@ export function useTermsViewPage(): TermsViewPageState {
     navigate(-1);
   }, [navigate]);
 
+  const onCartClick = useCallback(() => {
+    navigate('/cart');
+  }, [navigate]);
+
   return {
     selectedType,
     options: TERMS_OPTIONS,
     content: terms,
     isLoading,
     error,
+    cartCount,
     onTypeChange,
     onBack,
+    onCartClick,
   };
 }

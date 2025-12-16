@@ -97,13 +97,19 @@ export default function TermsViewPageView({ state }: TermsViewPageViewProps) {
           </svg>
         </button>
         <h1 className="terms-view__title">약관보기</h1>
-        <button className="terms-view__cart" type="button" aria-label="장바구니">
+        <button className="terms-view__cart" type="button" aria-label="장바구니" onClick={state.onCartClick}>
           <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-            <path d="M8 8.5L7 6H4" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M10 11H17M10 14H17" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M6.5 8.5H19.5L18.5 19.5H7.5L6.5 8.5Z" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M16 11V7C16 5.89543 15.1046 5 14 5H12C10.8954 5 10 5.89543 10 7V11" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path 
+              d="M6.5 7.58333V6.5C6.5 5.30653 6.97411 4.16193 7.81802 3.31802C8.66193 2.47411 9.80653 2 11 2H15C16.1935 2 17.3381 2.47411 18.182 3.31802C19.0259 4.16193 19.5 5.30653 19.5 6.5V7.58333M3.25 7.58333H22.75V21.6667C22.75 22.2413 22.5217 22.7924 22.1154 23.1987C21.7091 23.605 21.158 23.8333 20.5833 23.8333H5.41667C4.84203 23.8333 4.29093 23.605 3.88461 23.1987C3.47827 22.7924 3.25 22.2413 3.25 21.6667V7.58333Z" 
+              stroke="rgba(12, 12, 12, 0.9)" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            />
           </svg>
+          {state.cartCount > 0 && (
+            <span className="terms-view__cart-badge">{state.cartCount}</span>
+          )}
         </button>
       </header>
 
