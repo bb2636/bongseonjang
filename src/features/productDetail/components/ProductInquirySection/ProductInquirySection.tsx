@@ -79,12 +79,11 @@ function InquiryItem({ inquiry }: { inquiry: ProductInquiry }) {
 export default function ProductInquirySection({ inquiries, onCreateInquiry }: ProductInquirySectionProps) {
   return (
     <section className="product-inquiry">
-      <div className="product-inquiry__header">
-        <div className="product-inquiry__count">문의 {inquiries.length.toString().padStart(2, '0')}개</div>
-        <button className="product-inquiry__button" type="button" onClick={onCreateInquiry}>
-          상품 문의하기
-        </button>
-      </div>
+      <button className="product-inquiry__button" type="button" onClick={onCreateInquiry}>
+        상품 문의하기
+      </button>
+
+      <div className="product-inquiry__count">문의 {inquiries.length.toString().padStart(2, '0')}개</div>
 
       <div className="product-inquiry__list">
         {inquiries.length === 0 ? (
