@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { PointService } from '../application/PointService';
-import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+import { PointService } from '../application/PointService.js';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
 
 export class PointController {
   constructor(private readonly pointService: PointService) {}

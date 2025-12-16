@@ -3,14 +3,28 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
+export interface UserResponse {
+  id: string;
+  email: string;
+  name: string;
+  profileImage?: string | null;
+  phone?: string | null;
+  birthDate?: Date | null;
+  gender?: string | null;
+  referralId?: string | null;
+  membershipGrade?: string;
+  isEmailVerified?: boolean;
+  lastLoginAt?: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
+
+export interface AuthResult {
+  user: UserResponse;
+  token: string;
+}
+
+export type LoginResponse = AuthResult;
 
 export interface SignupRequest {
   email: string;
@@ -18,15 +32,28 @@ export interface SignupRequest {
   name: string;
   phone?: string;
   birthDate?: string;
-  gender?: 'male' | 'female';
+  gender?: string;
   referralId?: string;
-  agreedTerms: string[];
+  zonecode?: string;
+  address?: string;
+  addressDetail?: string;
+  addressName?: string;
+  agreedTerms?: string[];
 }
 
-export interface SignupResponse {
-  success: boolean;
+export type SignupResponse = AuthResult;
+
+export interface CheckEmailRequest {
+  email: string;
+}
+
+export interface CheckEmailResponse {
+  exists: boolean;
+}
+
+export interface ReferralVerifyResponse {
+  exists: boolean;
   message: string;
-  userId?: string;
 }
 
 export interface EmailVerificationRequest {

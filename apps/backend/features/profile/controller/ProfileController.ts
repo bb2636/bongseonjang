@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { ProfileService } from '../application/ProfileService';
-import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+import { ProfileService } from '../application/ProfileService.js';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
 
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}

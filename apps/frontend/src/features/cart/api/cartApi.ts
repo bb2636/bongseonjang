@@ -1,22 +1,6 @@
-export interface CartItemDto {
-  id: string;
-  productId: string;
-  productName: string;
-  productImageUrl: string;
-  productOptionId: number | null;
-  productOptionName: string | null;
-  quantity: number;
-  unitPrice: number;
-  compareAtPrice: number | null;
-  totalPrice: number;
-}
+import { CartDto, CartItemDto } from '@bongkru/contract';
 
-export interface CartDto {
-  id: string;
-  items: CartItemDto[];
-  subtotal: number;
-  itemCount: number;
-}
+export type { CartDto, CartItemDto };
 
 export async function fetchCart(): Promise<CartDto> {
   const token = localStorage.getItem('token');

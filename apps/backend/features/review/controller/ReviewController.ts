@@ -1,9 +1,6 @@
 import type { Request, Response } from 'express';
-import type { ReviewService } from '../application/ReviewService';
-
-interface AuthenticatedRequest extends Request {
-  userId?: string;
-}
+import type { ReviewService } from '../application/ReviewService.js';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
 
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}

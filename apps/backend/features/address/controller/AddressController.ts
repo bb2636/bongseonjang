@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
-import { RealShippingAddressRepository } from '../repository/RealShippingAddressRepository';
-
-interface AuthenticatedRequest extends Request {
-  userId?: string;
-}
+import { RealShippingAddressRepository } from '../repository/RealShippingAddressRepository.js';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
 
 export class AddressController {
   private shippingAddressRepository: RealShippingAddressRepository;

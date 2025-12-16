@@ -1,3 +1,12 @@
+import { 
+  AuthResult,
+  EmailVerificationResponse, 
+  CheckEmailResponse, 
+  ReferralVerifyResponse 
+} from '@bongkru/contract';
+
+type SignupResult = AuthResult;
+
 const API_BASE_URL = '/api';
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -6,19 +15,6 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 function translateErrorMessage(message: string): string {
   return ERROR_MESSAGES[message] || message;
-}
-
-export interface SignupUser {
-  id: string;
-  email: string;
-  name: string;
-}
-
-export interface SignupResponse {
-  success: boolean;
-  message?: string;
-  token?: string;
-  user?: SignupUser;
 }
 
 export interface SignupData {
@@ -35,20 +31,6 @@ export interface SignupData {
   zonecode: string;
   address: string;
   addressDetail: string;
-}
-
-export interface EmailVerificationResponse {
-  success: boolean;
-  message: string;
-}
-
-export interface CheckEmailResponse {
-  exists: boolean;
-}
-
-export interface ReferralVerifyResponse {
-  exists: boolean;
-  message: string;
 }
 
 export const signupService = {
@@ -114,7 +96,7 @@ export const signupService = {
     return response.json();
   },
 
-  async signup(data: SignupData): Promise<SignupResponse> {
+  async signup(data: SignupData): Promise<SignupResult> {
     const birthDate = `${data.birthYear}-${data.birthMonth.padStart(2, '0')}-${data.birthDay.padStart(2, '0')}`;
     
     const requestBody = {
@@ -144,10 +126,6 @@ export const signupService = {
       throw new Error(errorMessage);
     }
 
-    return { 
-      success: true, 
-      token: result.token,
-      user: result.user,
-    };
+    return result;
   },
 };

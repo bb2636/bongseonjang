@@ -1,6 +1,7 @@
 import { Response } from 'express';
-import { CartService } from '../application/CartService';
-import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+import { CartService } from '../application/CartService.js';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
+import { AddToCartRequest, UpdateCartItemRequest } from '@bongkru/contract';
 
 export class CartController {
   constructor(private readonly cartService: CartService) {}

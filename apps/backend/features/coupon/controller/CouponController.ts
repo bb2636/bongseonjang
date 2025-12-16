@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { CouponService } from '../application/CouponService';
+import { CouponService } from '../application/CouponService.js';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
 
-interface AuthRequest extends Request {
-  userId?: string;
-}
+type AuthRequest = AuthenticatedRequest;
 
 export class CouponController {
   private service: CouponService;

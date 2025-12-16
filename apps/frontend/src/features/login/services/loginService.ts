@@ -1,17 +1,6 @@
+import { LoginResponse } from '@bongkru/contract';
+
 const API_BASE_URL = '/api';
-
-interface LoginUser {
-  id: string;
-  email: string;
-  name: string;
-}
-
-export interface LoginResponse {
-  success: boolean;
-  message?: string;
-  token?: string;
-  user?: LoginUser;
-}
 
 export const loginService = {
   async loginWithEmail(email: string, password: string): Promise<LoginResponse> {
@@ -30,11 +19,11 @@ export const loginService = {
     return data;
   },
 
-  async loginWithKakao(): Promise<LoginResponse> {
-    return { success: false, message: '카카오 로그인은 아직 구현되지 않았습니다.' };
+  async loginWithKakao(): Promise<LoginResponse | null> {
+    throw new Error('카카오 로그인은 아직 구현되지 않았습니다.');
   },
 
-  async loginWithNaver(): Promise<LoginResponse> {
-    return { success: false, message: '네이버 로그인은 아직 구현되지 않았습니다.' };
+  async loginWithNaver(): Promise<LoginResponse | null> {
+    throw new Error('네이버 로그인은 아직 구현되지 않았습니다.');
   },
 };

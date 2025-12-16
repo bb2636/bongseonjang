@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { OrderHistoryService } from '../application/OrderHistoryService';
-import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
-import { OrderStatusFilter } from '../domain/OrderHistory';
+import { OrderHistoryService } from '../application/OrderHistoryService.js';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
+import { OrderStatusFilter } from '../domain/OrderHistory.js';
 
 const VALID_STATUS_FILTERS: OrderStatusFilter[] = ['all', 'shipping', 'delivered', 'cancelled'];
 

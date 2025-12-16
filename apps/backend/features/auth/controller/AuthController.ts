@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { UserApplicationService } from '../application/UserApplicationService';
-import { SocialAuthService } from '../domain/SocialAuthService';
-import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
-import { SocialProvider } from '../../../entity/UserSocialAccount';
+import { UserApplicationService } from '../application/UserApplicationService.js';
+import { SocialAuthService } from '../domain/SocialAuthService.js';
+import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
+import { SocialProvider } from '../../../entity/UserSocialAccount.js';
+import { LoginRequest, SignupRequest } from '@bongkru/contract';
 
 const userService = new UserApplicationService();
 const socialAuthService = new SocialAuthService();

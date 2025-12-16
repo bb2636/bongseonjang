@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import type { TermsService } from '../application/TermsService';
-import type { TermsType } from '../../../entity';
+import type { TermsService } from '../application/TermsService.js';
+import type { TermsType } from '../../../entity/index.js';
 
 const DEFAULT_TERMS_TYPE: TermsType = 'SERVICE';
 

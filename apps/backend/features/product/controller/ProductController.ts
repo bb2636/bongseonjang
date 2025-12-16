@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import type { ProductService } from '../application/ProductService';
-import type { ProductFilter, SortBy } from '../repository/ProductRepository';
+import type { ProductService } from '../application/ProductService.js';
+import type { ProductFilter, SortBy } from '../repository/ProductRepository.js';
 
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
