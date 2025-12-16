@@ -1,3 +1,4 @@
+import { BottomNav } from '../../../components/BottomNav';
 import { Input, PasswordInput, AlertModal } from '../../../components';
 import './ProfileEditView.css';
 
@@ -160,6 +161,8 @@ export default function ProfileEditView({
         title="수정되었습니다."
         onConfirm={onModalConfirm}
       />
+
+      <BottomNav />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { BottomNav } from '../../../components/BottomNav';
 import { ConfirmModal } from '../../../components';
 import './ProfileWithdrawView.css';
 
@@ -116,6 +117,8 @@ export default function ProfileWithdrawView({
         confirmText="확인"
         confirmColor="danger"
       />
+
+      <BottomNav />
     </div>
   );
 }
