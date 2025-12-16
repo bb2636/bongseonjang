@@ -150,14 +150,18 @@ router.get('/:userId/orders', async (req: Request, res: Response) => {
       let productSummary = '-';
       if (order.items && order.items.length > 0) {
         const firstItem = order.items[0];
-        const firstProductName = firstItem.productName || '상품';
-        const firstQuantity = firstItem.quantity || 1;
+        const productName = firstItem.productName || '상품';
+        const optionName = firstItem.optionName;
         const remainingCount = order.items.length - 1;
         
+        const firstProductDisplay = optionName 
+          ? `${productName} (${optionName})`
+          : productName;
+        
         if (remainingCount > 0) {
-          productSummary = `${firstProductName} ${firstQuantity}개 외 ${remainingCount}건`;
+          productSummary = `${firstProductDisplay} 외 ${remainingCount}건`;
         } else {
-          productSummary = `${firstProductName} ${firstQuantity}개`;
+          productSummary = firstProductDisplay;
         }
       }
 
