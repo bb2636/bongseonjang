@@ -4,6 +4,7 @@ import { ShippingAddressSection } from '../components/ShippingAddressSection';
 import { OrderInfoSection } from '../components/OrderInfoSection';
 import { OrderItemsSection } from '../components/OrderItemsSection';
 import { PaymentInfoSection } from '../components/PaymentInfoSection';
+import { ShipmentInfoSection } from '../components/ShipmentInfoSection';
 import './OrderDetailView.css';
 
 interface OrderDetailViewProps {
@@ -113,6 +114,8 @@ export function OrderDetailView({
           recipientName={order.recipientName}
           paidAt={order.paidAt}
         />
+
+        <ShipmentInfoSection shipments={order.shipments} />
 
         <OrderItemsSection
           statusLabel={order.statusLabel}

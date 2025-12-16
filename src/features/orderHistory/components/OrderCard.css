@@ -68,6 +68,37 @@
   letter-spacing: -0.01em;
 }
 
+.order-card__shipment {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid rgba(12, 12, 12, 0.08);
+  border-radius: 10px;
+  background: #fafafa;
+  margin-bottom: 12px;
+}
+
+.order-card__shipment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-card__shipment-label {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.order-card__shipment-value {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0C0C0C;
+}
+
 .order-card__items {
   display: flex;
   flex-direction: column;
