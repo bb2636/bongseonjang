@@ -1,12 +1,17 @@
 import { DataSource } from 'typeorm';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
   url: process.env.DATABASE_URL,
   synchronize: process.env.NODE_ENV !== 'production',
   logging: process.env.NODE_ENV !== 'production',
-  entities: ['server/entity/**/*.ts'],
-  migrations: ['server/migrations/**/*.ts'],
+  entities: [join(__dirname, '..', 'entity', '*.ts')],
+  migrations: [join(__dirname, '..', 'migrations', '*.ts')],
 });
 
 export async function initializeDatabase(): Promise<DataSource> {
