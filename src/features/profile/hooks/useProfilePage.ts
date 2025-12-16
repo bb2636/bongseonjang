@@ -19,6 +19,14 @@ const MENU_SECTIONS: MenuSection[] = [
       { id: 'faq', icon: 'sticky_note_2', label: 'FAQ', path: '/faq' },
     ],
   },
+  {
+    title: '',
+    items: [
+      { id: 'terms', label: '약관보기', path: '/terms' },
+      { id: 'about', label: '봉선장 이야기', path: '/about', color: '#3B9BD5' },
+      { id: 'logout', label: '로그아웃', action: 'logout' },
+    ],
+  },
 ];
 
 export function useProfilePage() {
@@ -89,6 +97,12 @@ export function useProfilePage() {
     navigate('/orders/in-progress');
   }, [navigate]);
 
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    navigate('/login');
+  }, [navigate]);
+
   return {
     profile,
     recentOrders,
@@ -105,5 +119,6 @@ export function useProfilePage() {
     onReorderClick: handleReorderClick,
     onMenuItemClick: handleMenuItemClick,
     onViewAllOrdersClick: handleViewAllOrdersClick,
+    onLogout: handleLogout,
   };
 }

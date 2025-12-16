@@ -24,6 +24,7 @@ interface ProfileViewProps {
     onReorderClick: (orderId: string) => void;
     onMenuItemClick: (path: string) => void;
     onViewAllOrdersClick: () => void;
+    onLogout: () => void;
   };
 }
 
@@ -94,6 +95,7 @@ export default function ProfileView({ state }: ProfileViewProps) {
         <MenuList
           sections={state.menuSections}
           onItemClick={state.onMenuItemClick}
+          onLogout={state.onLogout}
         />
       </main>
 

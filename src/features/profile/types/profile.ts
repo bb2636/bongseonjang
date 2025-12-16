@@ -37,9 +37,11 @@ export type OrderStatus =
 
 export interface MenuItem {
   id: string;
-  icon: string;
+  icon?: string;
   label: string;
-  path: string;
+  path?: string;
+  color?: string;
+  action?: 'logout';
 }
 
 export interface MenuSection {

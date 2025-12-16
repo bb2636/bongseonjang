@@ -4,6 +4,7 @@ import './MenuList.css';
 interface MenuListProps {
   sections: MenuSection[];
   onItemClick: (path: string) => void;
+  onLogout?: () => void;
 }
 
 function getIconPath(iconName: string): JSX.Element {
@@ -57,24 +58,41 @@ function getIconPath(iconName: string): JSX.Element {
   }
 }
 
-export default function MenuList({ sections, onItemClick }: MenuListProps) {
+export default function MenuList({ sections, onItemClick, onLogout }: MenuListProps) {
+  const handleItemClick = (item: MenuSection['items'][0]) => {
+    if (item.action === 'logout') {
+      onLogout?.();
+    } else if (item.path) {
+      onItemClick(item.path);
+    }
+  };
+
   return (
     <nav className="menu-list">
       {sections.map((section, index) => (
-        <div key={section.title} className="menu-list__section">
-          <h4 className="menu-list__section-title">{section.title}</h4>
+        <div key={section.title || `section-${index}`} className="menu-list__section">
+          {section.title && (
+            <h4 className="menu-list__section-title">{section.title}</h4>
+          )}
           <ul className="menu-list__items">
             {section.items.map((item) => (
               <li key={item.id}>
                 <button
                   type="button"
                   className="menu-list__item"
-                  onClick={() => onItemClick(item.path)}
+                  onClick={() => handleItemClick(item)}
                 >
-                  <span className="menu-list__item-icon">
-                    {getIconPath(item.icon)}
+                  {item.icon && (
+                    <span className="menu-list__item-icon">
+                      {getIconPath(item.icon)}
+                    </span>
+                  )}
+                  <span
+                    className="menu-list__item-label"
+                    style={item.color ? { color: item.color } : undefined}
+                  >
+                    {item.label}
                   </span>
-                  <span className="menu-list__item-label">{item.label}</span>
                 </button>
               </li>
             ))}
