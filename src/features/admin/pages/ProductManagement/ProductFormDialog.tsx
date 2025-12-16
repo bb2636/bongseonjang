@@ -1,9 +1,8 @@
-import { useRef, useEffect, ChangeEvent } from 'react';
+import { useRef, useEffect, ChangeEvent, useState } from 'react';
 import { useProductForm, ProductOption, ProductInfo } from './useProductForm';
-import { ConfirmModal } from '../../../../components';
+import { ConfirmModal, Select, DateRangePicker } from '../../../../components';
 import { Snackbar } from '../../components/Snackbar';
 import './ProductFormDialog.css';
-import { useState } from 'react';
 
 interface ProductFormDialogProps {
   isOpen: boolean;
@@ -227,16 +226,13 @@ export function ProductFormDialog({
               </div>
               <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
                 <label className="product-form-dialog__label">상품 카테고리</label>
-                <select
-                  className="product-form-dialog__select"
+                <Select
+                  options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
                   value={formData.categoryId}
-                  onChange={(e) => handleCategoryChange(e.target.value)}
-                >
-                  <option value="">선택</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
-                </select>
+                  onChange={handleCategoryChange}
+                  placeholder="선택"
+                  width={200}
+                />
               </div>
             </div>
 
@@ -299,42 +295,34 @@ export function ProductFormDialog({
               </div>
             )}
 
-            <div className="product-form-dialog__form-row">
-              <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
-                <label className="product-form-dialog__label">판매 기간(시작일)</label>
-                <input
-                  type="date"
-                  className="product-form-dialog__input"
-                  value={formData.startDate}
-                  onChange={(e) => handleStartDateChange(e.target.value)}
-                />
-              </div>
-              <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
-                <label className="product-form-dialog__label">판매 기간(종료일)</label>
-                <input
-                  type="date"
-                  className="product-form-dialog__input"
-                  value={formData.endDate}
-                  onChange={(e) => handleEndDateChange(e.target.value)}
-                />
-              </div>
-              <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
-                <label className="product-form-dialog__label">카운트다운</label>
-                <select
-                  className="product-form-dialog__select"
-                  value={formData.countdownDays ?? ''}
-                  onChange={(e) => handleCountdownDaysChange(e.target.value ? Number(e.target.value) : null)}
-                >
-                  <option value="">선택 안 함</option>
-                  <option value="1">1일 전</option>
-                  <option value="2">2일 전</option>
-                  <option value="3">3일 전</option>
-                  <option value="4">4일 전</option>
-                  <option value="5">5일 전</option>
-                  <option value="6">6일 전</option>
-                  <option value="7">7일 전</option>
-                </select>
-              </div>
+            <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
+              <label className="product-form-dialog__label">판매 기간</label>
+              <DateRangePicker
+                startDate={formData.startDate}
+                endDate={formData.endDate}
+                onStartDateChange={handleStartDateChange}
+                onEndDateChange={handleEndDateChange}
+              />
+            </div>
+
+            <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
+              <label className="product-form-dialog__label">카운트다운</label>
+              <Select
+                options={[
+                  { value: '', label: '선택 안 함' },
+                  { value: '1', label: '1일 전' },
+                  { value: '2', label: '2일 전' },
+                  { value: '3', label: '3일 전' },
+                  { value: '4', label: '4일 전' },
+                  { value: '5', label: '5일 전' },
+                  { value: '6', label: '6일 전' },
+                  { value: '7', label: '7일 전' },
+                ]}
+                value={formData.countdownDays?.toString() ?? ''}
+                onChange={(val) => handleCountdownDaysChange(val ? Number(val) : null)}
+                placeholder="선택 안 함"
+                width={150}
+              />
             </div>
 
             <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
