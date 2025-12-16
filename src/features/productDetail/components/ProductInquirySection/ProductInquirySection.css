@@ -1,0 +1,147 @@
+.product-inquiry {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #ffffff;
+}
+
+.product-inquiry__header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-inquiry__verify {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #3b9bd5;
+  border-radius: 6px;
+  background: #fdfdfd;
+  color: #3b9bd5;
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+
+.product-inquiry__count {
+  padding: 8px 0;
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.28;
+  color: #0c0c0c;
+}
+
+.product-inquiry__list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inquiry-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inquiry-item__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.inquiry-item__meta-left,
+.inquiry-item__meta-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(12, 12, 12, 0.5);
+  font-family: 'Pretendard';
+  font-size: 12px;
+  line-height: 1.28;
+}
+
+.inquiry-item__status {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(12, 12, 12, 0.06);
+  color: rgba(12, 12, 12, 0.7);
+  font-weight: 500;
+}
+
+.inquiry-item__status--answered {
+  color: #3b9bd5;
+  background: rgba(59, 155, 213, 0.12);
+}
+
+.inquiry-item__category {
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.inquiry-item__author,
+.inquiry-item__date {
+  color: rgba(12, 12, 12, 0.4);
+  font-size: 11px;
+}
+
+.inquiry-item__separator {
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.inquiry-item__content-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inquiry-item__row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.inquiry-item__row--answer {
+  align-items: flex-start;
+}
+
+.inquiry-item__icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #d9d9d9;
+  color: rgba(12, 12, 12, 0.8);
+  font-family: 'Pretendard';
+  font-size: 12px;
+  line-height: 1;
+}
+
+.inquiry-item__icon--question {
+  color: #3b9bd5;
+  background: rgba(59, 155, 213, 0.15);
+}
+
+.inquiry-item__icon--answer {
+  color: #4ccba0;
+  background: rgba(76, 203, 160, 0.15);
+}
+
+.inquiry-item__text {
+  margin: 0;
+  font-family: 'Pretendard';
+  font-size: 14px;
+  line-height: 1.58;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.inquiry-item__divider {
+  border-bottom: 1px solid rgba(12, 12, 12, 0.12);
+}

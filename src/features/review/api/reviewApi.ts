@@ -29,6 +29,7 @@ export interface CreateReviewRequest {
   rating: number;
   content: string;
   imageUrls?: string[];
+  orderItemId?: string;
 }
 
 export interface ReviewDto {
@@ -40,6 +41,15 @@ export interface ReviewDto {
   content: string;
   imageUrls: string[];
   createdAt: string;
+}
+
+export interface ReviewableOrderItemDto {
+  orderItemId: string;
+  productId: string;
+  productName: string;
+  optionName: string | null;
+  productImageUrl: string | null;
+  purchaseDate: string;
 }
 
 export async function createReview(request: CreateReviewRequest): Promise<ReviewDto> {
@@ -60,6 +70,26 @@ export async function createReview(request: CreateReviewRequest): Promise<Review
 
   if (!response.ok) {
     throw new Error('Failed to create review');
+  }
+
+  return response.json();
+}
+
+export async function fetchPendingReviewItems(): Promise<ReviewableOrderItemDto[]> {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    return [];
+  }
+
+  const response = await fetch(`${API_BASE_URL}/reviews/pending`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to load pending review items');
   }
 
   return response.json();

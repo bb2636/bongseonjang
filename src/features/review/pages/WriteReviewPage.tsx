@@ -57,6 +57,7 @@ async function createReview(data: {
   rating: number;
   content: string;
   imageUrls?: string[];
+  orderItemId?: string;
 }) {
   const token = localStorage.getItem('token');
   const response = await fetch('/api/reviews', {
@@ -86,6 +87,7 @@ export default function WriteReviewPage() {
   const queryClient = useQueryClient();
 
   const stateProduct: ProductInfo | undefined = location.state?.product;
+  const stateOrderItemId: string | undefined = location.state?.orderItemId;
 
   const { data: fetchedProduct, isLoading: productLoading } = useQuery({
     queryKey: ['productInfo', productId],
@@ -143,6 +145,7 @@ export default function WriteReviewPage() {
       rating,
       content,
       imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
+      orderItemId: stateOrderItemId,
     });
   };
 
