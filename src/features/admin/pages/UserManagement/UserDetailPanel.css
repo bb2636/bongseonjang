@@ -502,3 +502,135 @@
   line-height: 150%;
   color: rgba(12, 12, 12, 0.8);
 }
+
+.user-detail-order-table {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 32px;
+  width: 100%;
+}
+
+.user-detail-order-table-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.user-detail-order-table-header .user-detail-order-table-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(12, 12, 12, 0.04);
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.user-detail-order-table-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.user-detail-order-table-row:last-child {
+  border-bottom: none;
+}
+
+.user-detail-order-table-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  min-height: 59px;
+}
+
+.user-detail-order-table-cell--order-number {
+  width: 142px;
+  flex-shrink: 0;
+}
+
+.user-detail-order-table-cell--order-date {
+  width: 124px;
+  flex-shrink: 0;
+}
+
+.user-detail-order-table-cell--product-summary {
+  flex: 1;
+  min-width: 0;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.user-detail-order-table-cell--amount {
+  width: 151px;
+  flex-shrink: 0;
+}
+
+.user-detail-order-table-cell--status {
+  width: 116px;
+  flex-shrink: 0;
+}
+
+.user-detail-order-status-badge {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(12, 12, 12, 0.05);
+  border-radius: 20px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-detail-order-status-badge--paid {
+  background: rgba(59, 155, 213, 0.08);
+  color: #3B9BD5;
+}
+
+.user-detail-order-status-badge--confirmed {
+  background: rgba(59, 155, 213, 0.08);
+  color: #3B9BD5;
+}
+
+.user-detail-order-status-badge--preparing {
+  background: rgba(255, 170, 0, 0.08);
+  color: #FF9500;
+}
+
+.user-detail-order-status-badge--shipping {
+  background: rgba(255, 170, 0, 0.08);
+  color: #FF9500;
+}
+
+.user-detail-order-status-badge--delivered {
+  background: rgba(46, 184, 92, 0.08);
+  color: #2EB85C;
+}
+
+.user-detail-order-status-badge--cancelled,
+.user-detail-order-status-badge--refunded,
+.user-detail-order-status-badge--refund_requested {
+  background: rgba(255, 75, 63, 0.08);
+  color: #FF4B3F;
+}

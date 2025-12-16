@@ -140,18 +140,36 @@ router.get('/:userId/orders', async (req: Request, res: Response) => {
 
     const [orders, totalCount] = await orderRepository.findAndCount({
       where: { userId },
+      relations: ['items'],
       order: { createdAt: 'DESC' },
       skip: offset,
       take: limitNum,
     });
 
-    const items = orders.map((order) => ({
-      id: order.id,
-      orderNumber: order.orderNumber,
-      status: order.status,
-      finalAmount: order.finalAmount,
-      createdAt: order.createdAt,
-    }));
+    const items = orders.map((order) => {
+      let productSummary = '-';
+      if (order.items && order.items.length > 0) {
+        const firstItem = order.items[0];
+        const firstProductName = firstItem.productName || '상품';
+        const firstQuantity = firstItem.quantity || 1;
+        const remainingCount = order.items.length - 1;
+        
+        if (remainingCount > 0) {
+          productSummary = `${firstProductName} ${firstQuantity}개 외 ${remainingCount}건`;
+        } else {
+          productSummary = `${firstProductName} ${firstQuantity}개`;
+        }
+      }
+
+      return {
+        id: order.id,
+        orderNumber: order.orderNumber,
+        status: order.status,
+        finalAmount: order.finalAmount,
+        createdAt: order.createdAt,
+        productSummary,
+      };
+    });
 
     return res.json({
       items,

@@ -23,6 +23,7 @@ interface OrderItem {
   status: string;
   finalAmount: number;
   createdAt: string;
+  productSummary: string;
 }
 
 interface InquiryItem {
@@ -274,18 +275,24 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
                   ) : orders.length === 0 ? (
                     <div className="user-detail-empty">주문 내역이 없습니다.</div>
                   ) : (
-                    <div className="user-detail-list">
+                    <div className="user-detail-order-table">
+                      <div className="user-detail-order-table-header">
+                        <div className="user-detail-order-table-cell user-detail-order-table-cell--order-number">주문번호</div>
+                        <div className="user-detail-order-table-cell user-detail-order-table-cell--order-date">주문일</div>
+                        <div className="user-detail-order-table-cell user-detail-order-table-cell--product-summary">상품 요약</div>
+                        <div className="user-detail-order-table-cell user-detail-order-table-cell--amount">결제 금액</div>
+                        <div className="user-detail-order-table-cell user-detail-order-table-cell--status">상태</div>
+                      </div>
                       {orders.map((order) => (
-                        <div key={order.id} className="user-detail-order-item">
-                          <div className="user-detail-order-header">
-                            <span className="user-detail-order-number">{order.orderNumber}</span>
-                            <span className={`user-detail-order-status user-detail-order-status--${order.status}`}>
+                        <div key={order.id} className="user-detail-order-table-row">
+                          <div className="user-detail-order-table-cell user-detail-order-table-cell--order-number">{order.orderNumber}</div>
+                          <div className="user-detail-order-table-cell user-detail-order-table-cell--order-date">{formatDate(order.createdAt)}</div>
+                          <div className="user-detail-order-table-cell user-detail-order-table-cell--product-summary">{order.productSummary}</div>
+                          <div className="user-detail-order-table-cell user-detail-order-table-cell--amount">{formatPrice(order.finalAmount)}</div>
+                          <div className="user-detail-order-table-cell user-detail-order-table-cell--status">
+                            <span className={`user-detail-order-status-badge user-detail-order-status-badge--${order.status}`}>
                               {formatOrderStatus(order.status)}
                             </span>
-                          </div>
-                          <div className="user-detail-order-info">
-                            <span className="user-detail-order-price">{formatPrice(order.finalAmount)}</span>
-                            <span className="user-detail-order-date">{formatDate(order.createdAt)}</span>
                           </div>
                         </div>
                       ))}
