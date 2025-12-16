@@ -154,8 +154,8 @@ router.get('/', async (req: Request, res: Response) => {
         email: user?.email || '-',
         totalAmount: order.finalAmount,
         paymentMethod: frontendPaymentMethod,
-        shippingCompany: raw.shipment_carrier_name || null,
-        trackingNumber: raw.shipment_tracking_number || null,
+        shippingCompany: raw.shipment_carrierName || null,
+        trackingNumber: raw.shipment_trackingNumber || null,
       };
     });
 
