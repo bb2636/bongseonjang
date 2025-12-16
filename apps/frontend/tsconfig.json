@@ -10,14 +10,11 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -35,9 +32,10 @@
       "@features/*": ["src/features/*"],
       "@styles": ["src/styles/index.ts"],
       "@styles/*": ["src/styles/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@bongkru/contract": ["../../packages/contract/src/index.ts"]
     }
   },
-  "include": ["src", "server"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

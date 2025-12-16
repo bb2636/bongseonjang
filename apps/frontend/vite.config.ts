@@ -20,6 +20,7 @@ export default defineConfig({
       '@features': path.resolve(__dirname, './src/features'),
       '@styles': path.resolve(__dirname, './src/styles'),
       '@assets': path.resolve(__dirname, './src/assets'),
+      '@bongkru/contract': path.resolve(__dirname, '../../packages/contract/src'),
     },
   },
   server: {
