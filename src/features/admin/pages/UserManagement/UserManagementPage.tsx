@@ -1,6 +1,7 @@
 import { AdminLayout } from '../../layouts';
 import { useUserManagement } from './useUserManagement';
 import { UserManagementView } from './UserManagementView';
+import { UserDetailPanel } from './UserDetailPanel';
 
 export function UserManagementPage() {
   const {
@@ -13,6 +14,9 @@ export function UserManagementPage() {
     onViewUser,
     formatDate,
     formatPhone,
+    selectedUserId,
+    isDetailPanelOpen,
+    onCloseDetailPanel,
   } = useUserManagement();
 
   return (
@@ -31,6 +35,13 @@ export function UserManagementPage() {
         formatDate={formatDate}
         formatPhone={formatPhone}
       />
+      {selectedUserId && (
+        <UserDetailPanel
+          userId={selectedUserId}
+          isOpen={isDetailPanelOpen}
+          onClose={onCloseDetailPanel}
+        />
+      )}
     </AdminLayout>
   );
 }

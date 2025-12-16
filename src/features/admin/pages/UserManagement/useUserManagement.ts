@@ -28,6 +28,9 @@ export function useUserManagement() {
   const [page, setPage] = useState(1);
   const limit = 20;
 
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false);
+
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -65,7 +68,13 @@ export function useUserManagement() {
   };
 
   const handleViewUser = (user: AdminUser) => {
-    console.log('View user:', user.id);
+    setSelectedUserId(user.id);
+    setIsDetailPanelOpen(true);
+  };
+
+  const handleCloseDetailPanel = () => {
+    setIsDetailPanelOpen(false);
+    setSelectedUserId(null);
   };
 
   const formatDate = (dateString: string): string => {
@@ -91,5 +100,8 @@ export function useUserManagement() {
     onViewUser: handleViewUser,
     formatDate,
     formatPhone,
+    selectedUserId,
+    isDetailPanelOpen,
+    onCloseDetailPanel: handleCloseDetailPanel,
   };
 }
