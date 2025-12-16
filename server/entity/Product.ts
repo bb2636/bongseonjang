@@ -29,6 +29,15 @@ export class Product {
   @Column({ type: 'text', nullable: true, name: 'detail_content' })
   detailContent!: string | null;
 
+  @Column({ type: 'date', nullable: true, name: 'sale_start_date' })
+  saleStartDate!: Date | null;
+
+  @Column({ type: 'date', nullable: true, name: 'sale_end_date' })
+  saleEndDate!: Date | null;
+
+  @Column({ type: 'int', nullable: true, name: 'countdown_days' })
+  countdownDays!: number | null;
+
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date;
 

@@ -85,4 +85,4 @@ PRIVATE_OBJECT_DIR = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
 PUBLIC_OBJECT_SEARCH_PATHS = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
 
 [objectStorage]
-defaultBucketID = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
+defaultBucketID = "replit-objstore-b7020ef3-d38f-48e5-b896-ef9af912c239"

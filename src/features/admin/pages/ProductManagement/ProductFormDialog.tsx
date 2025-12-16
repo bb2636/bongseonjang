@@ -51,6 +51,7 @@ export function ProductFormDialog({
     handleDiscountRateChange,
     handleStartDateChange,
     handleEndDateChange,
+    handleCountdownDaysChange,
     handleDescriptionChange,
     handleCautionChange,
     handleUseOptionsChange,
@@ -299,7 +300,7 @@ export function ProductFormDialog({
             )}
 
             <div className="product-form-dialog__form-row">
-              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
+              <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
                 <label className="product-form-dialog__label">판매 기간(시작일)</label>
                 <input
                   type="date"
@@ -308,7 +309,7 @@ export function ProductFormDialog({
                   onChange={(e) => handleStartDateChange(e.target.value)}
                 />
               </div>
-              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
+              <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
                 <label className="product-form-dialog__label">판매 기간(종료일)</label>
                 <input
                   type="date"
@@ -316,6 +317,23 @@ export function ProductFormDialog({
                   value={formData.endDate}
                   onChange={(e) => handleEndDateChange(e.target.value)}
                 />
+              </div>
+              <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
+                <label className="product-form-dialog__label">카운트다운</label>
+                <select
+                  className="product-form-dialog__select"
+                  value={formData.countdownDays ?? ''}
+                  onChange={(e) => handleCountdownDaysChange(e.target.value ? Number(e.target.value) : null)}
+                >
+                  <option value="">선택 안 함</option>
+                  <option value="1">1일 전</option>
+                  <option value="2">2일 전</option>
+                  <option value="3">3일 전</option>
+                  <option value="4">4일 전</option>
+                  <option value="5">5일 전</option>
+                  <option value="6">6일 전</option>
+                  <option value="7">7일 전</option>
+                </select>
               </div>
             </div>
 

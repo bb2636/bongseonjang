@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database';
 import { Product } from '../../../entity/Product';
 import { ProductCategory } from '../../../entity/ProductCategory';
-import { ProductImage } from '../../../entity/ProductImage';
+import { ProductImage, ImageType } from '../../../entity/ProductImage';
 import { ProductOption } from '../../../entity/ProductOption';
 import { ExposureCategory } from '../../../entity/ExposureCategory';
 import { ProductExposureCategory } from '../../../entity/ProductExposureCategory';
@@ -195,6 +195,9 @@ router.post('/', async (req: Request, res: Response) => {
       name,
       categoryId,
       basePrice,
+      startDate,
+      endDate,
+      countdownDays,
       description,
       caution,
       options,
@@ -217,6 +220,9 @@ router.post('/', async (req: Request, res: Response) => {
       productCategoryId: categoryId,
       basePrice,
       stockQuantity: 0,
+      saleStartDate: startDate ? new Date(startDate) : null,
+      saleEndDate: endDate ? new Date(endDate) : null,
+      countdownDays: countdownDays ?? null,
       detailContent: JSON.stringify({
         description,
         caution,
@@ -232,7 +238,7 @@ router.post('/', async (req: Request, res: Response) => {
         const image = imageRepository.create({
           productId: savedProduct.id,
           imageUrl: thumbnailUrls[i],
-          imageType: 'thumbnail',
+          imageType: ImageType.THUMBNAIL,
           isThumbnail: i === 0,
           sortOrder: i,
         });
@@ -245,7 +251,7 @@ router.post('/', async (req: Request, res: Response) => {
         const image = imageRepository.create({
           productId: savedProduct.id,
           imageUrl: detailUrls[i],
-          imageType: 'detail',
+          imageType: ImageType.DETAIL,
           isThumbnail: false,
           sortOrder: i,
         });

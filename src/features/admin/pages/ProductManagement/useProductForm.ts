@@ -35,6 +35,7 @@ export interface ProductFormData {
   discountedPrice: number;
   startDate: string;
   endDate: string;
+  countdownDays: number | null;
   description: string;
   caution: string;
   useOptions: boolean;
@@ -91,6 +92,7 @@ function createInitialFormData(): ProductFormData {
     discountedPrice: 0,
     startDate: '',
     endDate: '',
+    countdownDays: null,
     description: '',
     caution: '',
     useOptions: false,
@@ -168,6 +170,10 @@ export function useProductForm() {
 
   const handleEndDateChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, endDate: value }));
+  }, []);
+
+  const handleCountdownDaysChange = useCallback((value: number | null) => {
+    setFormData(prev => ({ ...prev, countdownDays: value }));
   }, []);
 
   const handleDescriptionChange = useCallback((value: string) => {
@@ -382,6 +388,7 @@ export function useProductForm() {
         discountRate: formData.discountEnabled ? formData.discountRate : 0,
         startDate: formData.startDate || null,
         endDate: formData.endDate || null,
+        countdownDays: formData.countdownDays,
         description: formData.description,
         caution: formData.caution,
         optionGroupName: formData.useOptions ? formData.optionGroupName : null,
@@ -441,6 +448,7 @@ export function useProductForm() {
     handleDiscountRateChange,
     handleStartDateChange,
     handleEndDateChange,
+    handleCountdownDaysChange,
     handleDescriptionChange,
     handleCautionChange,
     handleUseOptionsChange,
