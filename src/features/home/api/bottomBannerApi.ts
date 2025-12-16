@@ -2,6 +2,10 @@ import type { BottomBannerImage } from '../types/bottomBanner';
 
 const API_BASE_URL = '/api/bottom-banners';
 
+interface BottomBannerResponse {
+  data: BottomBannerImage[];
+}
+
 export async function fetchBottomBanners(): Promise<BottomBannerImage[]> {
   const response = await fetch(API_BASE_URL);
 
@@ -9,5 +13,6 @@ export async function fetchBottomBanners(): Promise<BottomBannerImage[]> {
     throw new Error('Failed to fetch bottom banners');
   }
 
-  return response.json();
+  const result: BottomBannerResponse = await response.json();
+  return result.data ?? [];
 }
