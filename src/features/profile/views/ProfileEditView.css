@@ -57,7 +57,7 @@
   flex-direction: column;
   align-items: center;
   padding: 20px 16px;
-  padding-bottom: 100px;
+  padding-bottom: 160px;
   gap: 34px;
 }
 
@@ -124,11 +124,11 @@
 
 .profile-edit__submit-container {
   position: fixed;
-  bottom: 0;
+  bottom: 110px;
   left: 0;
   right: 0;
   padding: 16px;
-  background: #FFFFFF;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 40%);
 }
 
 .profile-edit__submit-button {

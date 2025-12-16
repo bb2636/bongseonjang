@@ -1,3 +1,4 @@
+import { BottomNav } from '../../../components/BottomNav';
 import { Input, PasswordInput } from '../../../components';
 import './ProfilePasswordVerifyView.css';
 
@@ -87,6 +88,8 @@ export default function ProfilePasswordVerifyView({
           {isSubmitting ? '확인 중...' : '확인'}
         </button>
       </div>
+
+      <BottomNav />
     </div>
   );
 }
