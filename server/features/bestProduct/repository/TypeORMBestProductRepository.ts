@@ -1,9 +1,8 @@
 import { AppDataSource } from '../../../config/database';
 import { Product } from '../../../entity/Product';
+import { ProductImage } from '../../../entity/ProductImage';
 import type { BestProduct } from '../domain/BestProduct';
 import type { BestProductRepository } from './BestProductRepository';
-
-const BEST_DISPLAY_CATEGORY_NAME = '베스트';
 
 export class TypeORMBestProductRepository implements BestProductRepository {
   async findAll(): Promise<BestProduct[]> {
@@ -11,27 +10,24 @@ export class TypeORMBestProductRepository implements BestProductRepository {
     
     const products = await productRepository
       .createQueryBuilder('product')
-      .innerJoin('product.displayCategory', 'displayCategory')
-      .where('displayCategory.name = :name', { name: BEST_DISPLAY_CATEGORY_NAME })
-      .andWhere('product.isActive = :isActive', { isActive: true })
-      .orderBy('product.sortOrder', 'ASC')
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .orderBy('product.createdAt', 'DESC')
+      .limit(10)
       .getMany();
 
     return products.map((product, index) => this.toDto(product, index + 1));
   }
 
   private toDto(product: Product, rank: number): BestProduct {
-    const discountedPrice = product.isDiscounted
-      ? Math.round(product.basePrice * (1 - product.discountRate / 100))
-      : product.basePrice;
-
+    const thumbnailImage = product.images?.find((img: ProductImage) => img.isThumbnail);
+    
     return {
       id: product.id,
       name: product.name,
-      imageUrl: product.thumbnailUrl ?? undefined,
+      imageUrl: thumbnailImage?.imageUrl ?? undefined,
       originalPrice: product.basePrice,
-      discountPercent: product.isDiscounted ? product.discountRate : 0,
-      discountedPrice,
+      discountPercent: 0,
+      discountedPrice: product.basePrice,
       rank,
     };
   }
