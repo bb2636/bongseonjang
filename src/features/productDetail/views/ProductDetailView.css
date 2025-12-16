@@ -66,15 +66,5 @@
 .product-detail-view__inquiry {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 60px 20px;
-  min-height: 200px;
-}
-
-.product-detail-view__inquiry-text {
-  font-family: 'Pretendard';
-  font-weight: 400;
-  font-size: 14px;
-  color: rgba(12, 12, 12, 0.5);
-  margin: 0;
+  padding: 20px 0 40px;
 }

@@ -29,6 +29,8 @@ export default function ProductDetailPage() {
     activeTab,
     reviews,
     reviewsLoading,
+    inquiries,
+    inquiriesLoading,
     relatedProducts,
     relatedProductsLoading,
     isWishlisted,
@@ -40,6 +42,13 @@ export default function ProductDetailPage() {
     handleAddToCart,
     handleToggleWishlist,
   } = useProductDetailPage(id || '');
+
+  const handleVerifyInquiryEmail = () => {
+    setModalState({
+      type: 'alert',
+      message: '문의 등록을 위해 이메일 인증을 완료해주세요.',
+    });
+  };
 
   if (isLoading) {
     return (
@@ -141,6 +150,8 @@ export default function ProductDetailPage() {
         activeTab={activeTab}
         reviews={reviews}
         reviewsLoading={reviewsLoading}
+        inquiries={inquiries}
+        inquiriesLoading={inquiriesLoading}
         relatedProducts={relatedProducts}
         relatedProductsLoading={relatedProductsLoading}
         isWishlisted={isWishlisted}
@@ -152,6 +163,7 @@ export default function ProductDetailPage() {
         onAddToCart={handleAddToCart}
         onToggleWishlist={handleToggleWishlist}
         onWriteReviewClick={handleWriteReviewClick}
+        onVerifyInquiryEmail={handleVerifyInquiryEmail}
       />
       <AlertModal
         isOpen={modalState.type === 'alert'}

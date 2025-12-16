@@ -10,9 +10,11 @@ import BottomActionBar from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
 import ProductDetailTabs from '../components/ProductDetailTabs';
 import CountdownTimer from '../components/CountdownTimer';
+import { ProductInquirySection } from '../components/ProductInquirySection';
 import type { TabType } from '../components/ProductDetailTabs';
 import type { ProductDetail, ProductOption, Review } from '../types/productDetail';
 import type { RelatedProduct } from '../api/productDetailApi';
+import type { ProductInquiry } from '../types/productInquiry';
 import './ProductDetailView.css';
 
 interface ProductDetailViewProps {
@@ -23,6 +25,8 @@ interface ProductDetailViewProps {
   activeTab: TabType;
   reviews: Review[];
   reviewsLoading: boolean;
+  inquiries: ProductInquiry[];
+  inquiriesLoading: boolean;
   relatedProducts: RelatedProduct[];
   relatedProductsLoading: boolean;
   isWishlisted: boolean;
@@ -34,6 +38,7 @@ interface ProductDetailViewProps {
   onAddToCart: (productId: string) => void;
   onToggleWishlist: () => void;
   onWriteReviewClick: () => void;
+  onVerifyInquiryEmail: () => void;
 }
 
 export default function ProductDetailView({
@@ -44,6 +49,8 @@ export default function ProductDetailView({
   activeTab,
   reviews,
   reviewsLoading,
+  inquiries,
+  inquiriesLoading,
   relatedProducts,
   relatedProductsLoading,
   isWishlisted,
@@ -55,6 +62,7 @@ export default function ProductDetailView({
   onAddToCart,
   onToggleWishlist,
   onWriteReviewClick,
+  onVerifyInquiryEmail,
 }: ProductDetailViewProps) {
   const sliderImages = product.images.filter(
     (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
@@ -145,7 +153,14 @@ export default function ProductDetailView({
 
         {activeTab === 'inquiry' && (
           <div className="product-detail-view__inquiry">
-            <p className="product-detail-view__inquiry-text">문의 기능은 준비 중입니다.</p>
+            {inquiriesLoading ? (
+              <div className="product-detail-view__spinner" />
+            ) : (
+              <ProductInquirySection
+                inquiries={inquiries}
+                onVerifyEmail={onVerifyInquiryEmail}
+              />
+            )}
           </div>
         )}
       </div>
