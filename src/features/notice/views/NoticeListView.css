@@ -16,6 +16,17 @@
   padding: 0;
 }
 
+.notice-list__status {
+  margin: 0;
+  padding: 24px 0;
+  text-align: center;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.6);
+}
+
 .notice-list__item {
   border-bottom: 1px solid rgba(12, 12, 12, 0.06);
 }
