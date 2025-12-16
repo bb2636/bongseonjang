@@ -1,3 +1,5 @@
+export type OrderStatus = 'pending' | 'confirmed' | 'shipping' | 'delivered' | 'cancelled';
+
 export type OrderStatusFilter = 'all' | 'shipping' | 'delivered' | 'cancelled';
 
 export interface OrderHistoryItem {
@@ -12,15 +14,25 @@ export interface OrderHistoryItem {
   totalPrice: number;
 }
 
+export interface ShipmentSummary {
+  id: string;
+  carrier: string;
+  trackingNumber: string;
+  shippedAt: string | null;
+  status: OrderStatus;
+  statusLabel: string;
+}
+
 export interface OrderHistoryEntry {
   id: string;
   orderNumber: string;
   orderDate: string;
-  status: string;
+  status: OrderStatus;
   statusLabel: string;
   statusDate: string;
   items: OrderHistoryItem[];
   totalAmount: number;
+  shipment: ShipmentSummary | null;
 }
 
 export interface OrderHistoryResponse {

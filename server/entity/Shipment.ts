@@ -12,6 +12,9 @@ export class Shipment {
   @Column({ type: 'uuid' })
   orderId!: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  carrier!: string | null;
+
   @Column({ type: 'varchar', length: 50 })
   carrierCode!: string;
 

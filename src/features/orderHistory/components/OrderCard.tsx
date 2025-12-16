@@ -33,6 +33,19 @@ export function OrderCard({ order, onOrderClick }: OrderCardProps) {
         <span className="order-card__status-date">{order.statusDate}</span>
       </div>
 
+      {order.shipment && (
+        <div className="order-card__shipment">
+          <div className="order-card__shipment-row">
+            <span className="order-card__shipment-label">택배사</span>
+            <span className="order-card__shipment-value">{order.shipment.carrier}</span>
+          </div>
+          <div className="order-card__shipment-row">
+            <span className="order-card__shipment-label">운송장</span>
+            <span className="order-card__shipment-value">{order.shipment.trackingNumber}</span>
+          </div>
+        </div>
+      )}
+
       <div className="order-card__items">
         {order.items.map((item) => (
           <div key={item.id} className="order-card__item">

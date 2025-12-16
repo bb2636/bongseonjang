@@ -1,3 +1,5 @@
+export type OrderStatus = 'pending' | 'confirmed' | 'shipping' | 'delivered' | 'cancelled';
+
 export interface OrderDetailItem {
   id: string;
   productId: string | null;
@@ -19,11 +21,20 @@ export interface PaymentInfo {
   paidAt: string | null;
 }
 
+export interface ShipmentSummary {
+  id: string;
+  carrier: string;
+  trackingNumber: string;
+  shippedAt: string | null;
+  status: OrderStatus;
+  statusLabel: string;
+}
+
 export interface OrderDetail {
   id: string;
   orderNumber: string;
   orderDate: string;
-  status: string;
+  status: OrderStatus;
   statusLabel: string;
   recipientName: string;
   recipientPhone: string;
@@ -39,6 +50,7 @@ export interface OrderDetail {
   finalAmount: number;
   payment: PaymentInfo | null;
   paidAt: string | null;
+  shipments: ShipmentSummary[];
 }
 
 export async function fetchOrderDetail(orderId: string): Promise<OrderDetail> {
