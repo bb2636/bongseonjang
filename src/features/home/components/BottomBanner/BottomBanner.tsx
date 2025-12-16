@@ -9,6 +9,10 @@ interface BottomBannerProps {
 const BOTTOM_BANNER_HEIGHT = 94;
 
 export default function BottomBanner({ banners, isLoading }: BottomBannerProps) {
+  if (!isLoading && banners.length === 0) {
+    return null;
+  }
+
   return (
     <BannerCarousel
       images={banners}

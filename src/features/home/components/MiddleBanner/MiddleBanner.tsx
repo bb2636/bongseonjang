@@ -9,6 +9,10 @@ interface MiddleBannerProps {
 const MIDDLE_BANNER_HEIGHT = 94;
 
 export default function MiddleBanner({ banners, isLoading }: MiddleBannerProps) {
+  if (!isLoading && banners.length === 0) {
+    return null;
+  }
+
   return (
     <BannerCarousel
       images={banners}

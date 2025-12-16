@@ -10,6 +10,10 @@ const HERO_BANNER_HEIGHT = 247;
 const AUTOPLAY_DELAY = 3000;
 
 export default function HeroBanner({ heroImages, isLoading }: HeroBannerProps) {
+  if (!isLoading && heroImages.length === 0) {
+    return null;
+  }
+
   return (
     <BannerCarousel
       images={heroImages}
