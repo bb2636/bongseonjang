@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database';
 import { ProductInquiry } from '../../../entity/ProductInquiry';
 import { Product } from '../../../entity/Product';
+import { ProductImage } from '../../../entity/ProductImage';
 import { authMiddleware } from '../../../common/middleware/authMiddleware';
 
 const router = Router();
@@ -35,11 +36,11 @@ router.get('/me/inquiries', authMiddleware, async (req: Request, res: Response) 
     const sort = (req.query.sort as string) || 'latest';
 
     const inquiryRepository = AppDataSource.getRepository(ProductInquiry);
-    const productRepository = AppDataSource.getRepository(Product);
 
     const queryBuilder = inquiryRepository
       .createQueryBuilder('inquiry')
       .leftJoin(Product, 'product', 'product.id = inquiry.productId')
+      .leftJoin(ProductImage, 'image', 'image.productId = product.id AND image.isThumbnail = true')
       .select([
         'inquiry.id as id',
         'inquiry.inquiryType as "inquiryType"',
@@ -49,7 +50,7 @@ router.get('/me/inquiries', authMiddleware, async (req: Request, res: Response) 
         'inquiry.createdAt as "createdAt"',
         'inquiry.answeredAt as "answeredAt"',
         'product.name as "productName"',
-        'product.imageMain as "productImage"',
+        'image.imageUrl as "productImage"',
       ])
       .where('inquiry.authorId = :userId', { userId });
 
