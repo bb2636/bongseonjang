@@ -82,7 +82,7 @@ export default function ProductDetailView({
           onTabChange={onTabChange}
         />
 
-        {activeTab !== 'review' && (
+        {activeTab === 'info' && (
           <>
             <ProductImageSlider
               images={sliderImages}
