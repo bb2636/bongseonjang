@@ -66,5 +66,5 @@
 .product-detail-view__inquiry {
   display: flex;
   justify-content: center;
-  padding: 20px 0 40px;
+  padding: 20px 16px;
 }

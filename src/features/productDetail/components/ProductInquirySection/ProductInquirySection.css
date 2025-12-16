@@ -154,3 +154,11 @@
 .inquiry-item__divider {
   border-bottom: 1px solid rgba(12, 12, 12, 0.12);
 }
+
+.product-inquiry__empty {
+  padding: 40px 0;
+  text-align: center;
+  font-family: 'Pretendard';
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.5);
+}

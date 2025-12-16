@@ -87,9 +87,13 @@ export default function ProductInquirySection({ inquiries, onCreateInquiry }: Pr
       </div>
 
       <div className="product-inquiry__list">
-        {inquiries.map((inquiry) => (
-          <InquiryItem key={inquiry.id} inquiry={inquiry} />
-        ))}
+        {inquiries.length === 0 ? (
+          <div className="product-inquiry__empty">문의된 내용이 없습니다</div>
+        ) : (
+          inquiries.map((inquiry) => (
+            <InquiryItem key={inquiry.id} inquiry={inquiry} />
+          ))
+        )}
       </div>
     </section>
   );
