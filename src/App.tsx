@@ -14,6 +14,7 @@ import {
 } from "./features/signup";
 import { GuestOrderLookupPage } from "./features/orders";
 import { ProductDetailPage } from "./features/productDetail";
+import WriteInquiryPage from "./features/productDetail/pages/WriteInquiryPage";
 import { CategoryPage } from "./features/category";
 import { CategoryProductsPage } from "./features/categoryProducts";
 import { SearchPage } from "./features/search";
@@ -69,6 +70,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <ProductDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/product/:productId/inquiry/write"
+        element={
+          <ProtectedRoute>
+            <WriteInquiryPage />
           </ProtectedRoute>
         }
       />

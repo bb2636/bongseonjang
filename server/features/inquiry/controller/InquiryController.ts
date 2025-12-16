@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import type { InquiryService } from '../application/InquiryService';
 import type { InquiryType } from '../domain/Inquiry';
+import type { AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 
 export class InquiryController {
   constructor(private readonly inquiryService: InquiryService) {}
@@ -38,6 +39,39 @@ export class InquiryController {
     } catch (error) {
       console.error('Error fetching inquiry:', error);
       res.status(500).json({ error: 'Failed to fetch inquiry' });
+    }
+  }
+
+  async createInquiry(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const id = parseInt(req.params.id, 10);
+      const authorId = req.userId;
+      const { inquiryType, title, question, isPrivate, imageUrls } = req.body;
+
+      if (!authorId) {
+        res.status(401).json({ error: '로그인이 필요합니다.' });
+        return;
+      }
+
+      if (!title || !question) {
+        res.status(400).json({ error: '제목과 내용을 입력해주세요.' });
+        return;
+      }
+
+      const newInquiry = await this.inquiryService.createInquiry({
+        productId: Number.isNaN(id) ? null : req.params.id,
+        inquiryType: (inquiryType as InquiryType) || 'product',
+        authorId,
+        title,
+        question,
+        isPrivate: Boolean(isPrivate),
+        imageUrls: Array.isArray(imageUrls) ? imageUrls : [],
+      });
+
+      res.status(201).json(newInquiry);
+    } catch (error) {
+      console.error('Error creating inquiry:', error);
+      res.status(500).json({ error: 'Failed to create inquiry' });
     }
   }
 

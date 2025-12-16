@@ -3,7 +3,13 @@ import { ProductInquiry } from '../../../entity/ProductInquiry';
 import { User } from '../../../entity/User';
 import { Product } from '../../../entity/Product';
 import type { InquiryRepository } from './InquiryRepository';
-import type { InquiryListItem, InquiryDetail, InquiryFilter, InquiryType } from '../domain/Inquiry';
+import type {
+  CreateInquiryInput,
+  InquiryListItem,
+  InquiryDetail,
+  InquiryFilter,
+  InquiryType,
+} from '../domain/Inquiry';
 
 export class TypeORMInquiryRepository implements InquiryRepository {
   private get repository() {
@@ -30,12 +36,15 @@ export class TypeORMInquiryRepository implements InquiryRepository {
       .select([
         'inquiry.id as id',
         'inquiry.inquiryType as "inquiryType"',
+        'inquiry.title as title',
         'inquiry.productId as "productId"',
         'product.name as "productName"',
         'inquiry.authorId as "authorId"',
         'author.name as "authorName"',
         'author.phone as "authorPhone"',
         'inquiry.question as question',
+        'inquiry.isPrivate as "isPrivate"',
+        'inquiry.imageUrls as "imageUrls"',
         'inquiry.answer as answer',
         'inquiry.createdAt as "createdAt"',
       ]);
@@ -73,8 +82,11 @@ export class TypeORMInquiryRepository implements InquiryRepository {
       authorId: row.authorId as string,
       authorName: (row.authorName as string) || '알 수 없음',
       authorPhone: row.authorPhone as string | null,
+      title: row.title as string,
       question: row.question as string,
       isAnswered: row.answer !== null,
+      isPrivate: Boolean(row.isPrivate),
+      imageUrls: (row.imageUrls as string[]) ?? [],
       createdAt: row.createdAt as Date,
     }));
 
@@ -116,13 +128,50 @@ export class TypeORMInquiryRepository implements InquiryRepository {
       authorId: inquiry.authorId,
       authorName: author?.name || '알 수 없음',
       authorPhone: author?.phone || null,
+      title: inquiry.title,
       question: inquiry.question,
       answer: inquiry.answer,
       answeredAt: inquiry.answeredAt,
       answeredBy: inquiry.answeredBy,
       answererName: answerer?.name || null,
+      isPrivate: inquiry.isPrivate,
+      imageUrls: inquiry.imageUrls,
       createdAt: inquiry.createdAt,
       updatedAt: inquiry.updatedAt,
+    };
+  }
+
+  async createInquiry(data: CreateInquiryInput): Promise<InquiryDetail> {
+    const inquiry = this.repository.create({
+      inquiryType: data.inquiryType,
+      productId: data.productId,
+      authorId: data.authorId,
+      title: data.title,
+      question: data.question,
+      isPrivate: data.isPrivate ?? false,
+      imageUrls: data.imageUrls ?? [],
+    });
+
+    const savedInquiry = await this.repository.save(inquiry);
+
+    return {
+      id: Number(savedInquiry.id),
+      inquiryType: savedInquiry.inquiryType,
+      productId: savedInquiry.productId,
+      productName: null,
+      authorId: savedInquiry.authorId,
+      authorName: '알 수 없음',
+      authorPhone: null,
+      title: savedInquiry.title,
+      question: savedInquiry.question,
+      answer: savedInquiry.answer,
+      answeredAt: savedInquiry.answeredAt,
+      answeredBy: savedInquiry.answeredBy,
+      answererName: null,
+      isPrivate: savedInquiry.isPrivate,
+      imageUrls: savedInquiry.imageUrls,
+      createdAt: savedInquiry.createdAt,
+      updatedAt: savedInquiry.updatedAt,
     };
   }
 

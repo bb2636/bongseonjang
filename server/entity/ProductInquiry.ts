@@ -18,11 +18,20 @@ export class ProductInquiry {
   @Column({ type: 'uuid', name: 'author_id' })
   authorId!: string;
 
+  @Column({ type: 'varchar', length: 200 })
+  title!: string;
+
   @Column({ type: 'text' })
   question!: string;
 
   @Column({ type: 'text', nullable: true })
   answer!: string | null;
+
+  @Column({ type: 'boolean', name: 'is_private', default: false })
+  isPrivate!: boolean;
+
+  @Column({ type: 'text', name: 'image_urls', array: true, default: () => 'ARRAY[]::text[]' })
+  imageUrls!: string[];
 
   @Column({ type: 'timestamptz', nullable: true, name: 'answered_at' })
   answeredAt!: Date | null;

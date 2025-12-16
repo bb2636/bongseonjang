@@ -6,6 +6,9 @@ import { ReviewService, TypeORMReviewRepository } from '../../review';
 import { AppDataSource } from '../../../config/database';
 import { ProductInquiry } from '../../../entity/ProductInquiry';
 import { User } from '../../../entity/User';
+import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+import { InquiryService } from '../../inquiry/application/InquiryService';
+import { TypeORMInquiryRepository } from '../../inquiry/repository/TypeORMInquiryRepository';
 
 const router = Router();
 
@@ -14,6 +17,8 @@ const reviewRepository = new TypeORMReviewRepository();
 const reviewService = new ReviewService(reviewRepository);
 const productService = new ProductService(productRepository, reviewService);
 const productController = new ProductController(productService);
+const inquiryRepository = new TypeORMInquiryRepository();
+const inquiryService = new InquiryService(inquiryRepository);
 
 function maskAuthorName(name: string): string {
   if (!name || name.length === 0) return '***';
@@ -52,8 +57,10 @@ router.get('/:id/inquiries', async (req: Request, res: Response) => {
       .select([
         'inquiry.id as id',
         'inquiry.inquiryType as "inquiryType"',
+        'inquiry.title as title',
         'inquiry.question as question',
         'inquiry.answer as answer',
+        'inquiry.isPrivate as "isPrivate"',
         'inquiry.createdAt as "createdAt"',
         'author.name as "authorName"',
       ])
@@ -71,15 +78,48 @@ router.get('/:id/inquiries', async (req: Request, res: Response) => {
       categoryLabel: '/' + (INQUIRY_TYPE_LABELS[row.inquiryType] || '상품문의'),
       authorAlias: maskAuthorName(row.authorName || '익명'),
       createdAt: formatDate(new Date(row.createdAt)),
-      title: row.question,
+      title: row.title || row.question,
       answer: row.answer || undefined,
-      isPrivate: false,
+      isPrivate: Boolean(row.isPrivate),
     }));
 
     res.json({ inquiries, total, page, limit });
   } catch (error) {
     console.error('Failed to fetch product inquiries:', error);
     res.status(500).json({ error: 'Failed to fetch inquiries', inquiries: [] });
+  }
+});
+
+router.post('/:id/inquiries', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const authorId = req.userId;
+    const productId = req.params.id;
+    const { inquiryType, title, question, isPrivate, imageUrls } = req.body;
+
+    if (!authorId) {
+      res.status(401).json({ error: '로그인이 필요합니다.' });
+      return;
+    }
+
+    if (!title || !question) {
+      res.status(400).json({ error: '제목과 내용을 모두 입력해주세요.' });
+      return;
+    }
+
+    const createdInquiry = await inquiryService.createInquiry({
+      authorId,
+      productId,
+      inquiryType: inquiryType || 'product',
+      title,
+      question,
+      isPrivate: Boolean(isPrivate),
+      imageUrls: Array.isArray(imageUrls) ? imageUrls : [],
+    });
+
+    res.status(201).json(createdInquiry);
+  } catch (error) {
+    console.error('Failed to create product inquiry:', error);
+    res.status(500).json({ error: 'Failed to create inquiry' });
   }
 });
 

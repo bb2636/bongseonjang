@@ -147,5 +147,24 @@ export function useProductDetailPage(productId: string) {
     handleTabChange,
     handleAddToCart,
     handleToggleWishlist: handleWishlistClick,
+    handleWriteInquiryClick: () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login', { state: { from: `/product/${productId}` } });
+        return;
+      }
+
+      navigate(`/product/${productId}/inquiry/write`, {
+        state: {
+          product: product
+            ? {
+                id: product.id,
+                name: product.name,
+                thumbnailUrl: product.thumbnailUrl,
+              }
+            : undefined,
+        },
+      });
+    },
   };
 }
