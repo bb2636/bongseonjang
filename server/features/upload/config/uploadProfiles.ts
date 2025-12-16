@@ -54,7 +54,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
   'product-thumbnail': {
     purpose: 'product-thumbnail',
     storagePath: 'uploads/products/thumbnails',
-    requiresAuth: true,
+    requiresAuth: false,
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
@@ -62,7 +62,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
   'product-detail': {
     purpose: 'product-detail',
     storagePath: 'uploads/products/details',
-    requiresAuth: true,
+    requiresAuth: false,
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
