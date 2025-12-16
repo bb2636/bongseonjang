@@ -17,6 +17,26 @@ interface UserDetail {
   defaultAddress: string | null;
 }
 
+interface OrderItem {
+  id: string;
+  orderNumber: string;
+  status: string;
+  finalAmount: number;
+  createdAt: string;
+}
+
+interface InquiryItem {
+  id: number;
+  inquiryType: string;
+  productId: string | null;
+  productName: string | null;
+  question: string;
+  answer: string | null;
+  isAnswered: boolean;
+  createdAt: string;
+  answeredAt: string | null;
+}
+
 interface UserDetailPanelProps {
   userId: string;
   isOpen: boolean;
@@ -27,12 +47,19 @@ type TabType = 'basic' | 'orders' | 'inquiries';
 
 export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProps) {
   const [user, setUser] = useState<UserDetail | null>(null);
+  const [orders, setOrders] = useState<OrderItem[]>([]);
+  const [inquiries, setInquiries] = useState<InquiryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [inquiriesLoading, setInquiriesLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('basic');
 
   useEffect(() => {
     if (isOpen && userId) {
+      setActiveTab('basic');
       fetchUserDetail();
+      fetchOrders();
+      fetchInquiries();
     }
   }, [isOpen, userId]);
 
@@ -48,6 +75,36 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
       console.error('Failed to fetch user detail:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const response = await fetch(`/api/admin/users/${userId}/orders`);
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(data.items);
+      }
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const fetchInquiries = async () => {
+    setInquiriesLoading(true);
+    try {
+      const response = await fetch(`/api/admin/users/${userId}/inquiries`);
+      if (response.ok) {
+        const data = await response.json();
+        setInquiries(data.items);
+      }
+    } catch (error) {
+      console.error('Failed to fetch inquiries:', error);
+    } finally {
+      setInquiriesLoading(false);
     }
   };
 
@@ -70,6 +127,35 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
     if (gender === 'male' || gender === 'M') return '남';
     if (gender === 'female' || gender === 'F') return '여';
     return gender;
+  };
+
+  const formatPrice = (price: number): string => {
+    return price.toLocaleString('ko-KR') + '원';
+  };
+
+  const formatOrderStatus = (status: string): string => {
+    const statusMap: Record<string, string> = {
+      pending: '결제대기',
+      paid: '결제완료',
+      preparing: '상품준비중',
+      shipping: '배송중',
+      delivered: '배송완료',
+      cancelled: '주문취소',
+      refund_requested: '환불요청',
+      refunded: '환불완료',
+    };
+    return statusMap[status] || status;
+  };
+
+  const formatInquiryType = (type: string): string => {
+    const typeMap: Record<string, string> = {
+      product: '상품',
+      shipping: '배송',
+      exchange_return: '교환/반품',
+      refund: '환불',
+      other: '기타',
+    };
+    return typeMap[type] || type;
   };
 
   const handleSuspendAccount = () => {
@@ -183,14 +269,63 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
               {activeTab === 'orders' && (
                 <div className="user-detail-orders">
                   <div className="user-detail-section-title">주문내역</div>
-                  <div className="user-detail-empty">주문 내역이 없습니다.</div>
+                  {ordersLoading ? (
+                    <div className="user-detail-empty">로딩 중...</div>
+                  ) : orders.length === 0 ? (
+                    <div className="user-detail-empty">주문 내역이 없습니다.</div>
+                  ) : (
+                    <div className="user-detail-list">
+                      {orders.map((order) => (
+                        <div key={order.id} className="user-detail-order-item">
+                          <div className="user-detail-order-header">
+                            <span className="user-detail-order-number">{order.orderNumber}</span>
+                            <span className={`user-detail-order-status user-detail-order-status--${order.status}`}>
+                              {formatOrderStatus(order.status)}
+                            </span>
+                          </div>
+                          <div className="user-detail-order-info">
+                            <span className="user-detail-order-price">{formatPrice(order.finalAmount)}</span>
+                            <span className="user-detail-order-date">{formatDate(order.createdAt)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
               {activeTab === 'inquiries' && (
                 <div className="user-detail-inquiries">
                   <div className="user-detail-section-title">상품 문의</div>
-                  <div className="user-detail-empty">상품 문의가 없습니다.</div>
+                  {inquiriesLoading ? (
+                    <div className="user-detail-empty">로딩 중...</div>
+                  ) : inquiries.length === 0 ? (
+                    <div className="user-detail-empty">상품 문의가 없습니다.</div>
+                  ) : (
+                    <div className="user-detail-list">
+                      {inquiries.map((inquiry) => (
+                        <div key={inquiry.id} className="user-detail-inquiry-item">
+                          <div className="user-detail-inquiry-header">
+                            <span className="user-detail-inquiry-type">{formatInquiryType(inquiry.inquiryType)}</span>
+                            <span className={`user-detail-inquiry-status ${inquiry.isAnswered ? 'user-detail-inquiry-status--answered' : ''}`}>
+                              {inquiry.isAnswered ? '답변완료' : '답변대기'}
+                            </span>
+                          </div>
+                          {inquiry.productName && (
+                            <div className="user-detail-inquiry-product">{inquiry.productName}</div>
+                          )}
+                          <div className="user-detail-inquiry-question">{inquiry.question}</div>
+                          <div className="user-detail-inquiry-date">{formatDate(inquiry.createdAt)}</div>
+                          {inquiry.answer && (
+                            <div className="user-detail-inquiry-answer">
+                              <div className="user-detail-inquiry-answer-label">답변</div>
+                              <div className="user-detail-inquiry-answer-text">{inquiry.answer}</div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

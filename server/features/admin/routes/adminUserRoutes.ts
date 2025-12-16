@@ -3,6 +3,8 @@ import { AppDataSource } from '../../../config/database';
 import { User } from '../../../entity/User';
 import { Order } from '../../../entity/Order';
 import { ShippingAddress } from '../../../entity/ShippingAddress';
+import { ProductInquiry } from '../../../entity/ProductInquiry';
+import { Product } from '../../../entity/Product';
 
 const router = Router();
 
@@ -123,6 +125,100 @@ router.get('/:userId', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Failed to get user detail:', error);
     return res.status(500).json({ error: '사용자 정보를 불러오는데 실패했습니다' });
+  }
+});
+
+router.get('/:userId/orders', async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { page = '1', limit = '10' } = req.query;
+    const pageNum = parseInt(page as string, 10);
+    const limitNum = parseInt(limit as string, 10);
+    const offset = (pageNum - 1) * limitNum;
+
+    const orderRepository = AppDataSource.getRepository(Order);
+
+    const [orders, totalCount] = await orderRepository.findAndCount({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+      skip: offset,
+      take: limitNum,
+    });
+
+    const items = orders.map((order) => ({
+      id: order.id,
+      orderNumber: order.orderNumber,
+      status: order.status,
+      finalAmount: order.finalAmount,
+      createdAt: order.createdAt,
+    }));
+
+    return res.json({
+      items,
+      totalCount,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(totalCount / limitNum),
+    });
+  } catch (error) {
+    console.error('Failed to get user orders:', error);
+    return res.status(500).json({ error: '주문 내역을 불러오는데 실패했습니다' });
+  }
+});
+
+router.get('/:userId/inquiries', async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { page = '1', limit = '10' } = req.query;
+    const pageNum = parseInt(page as string, 10);
+    const limitNum = parseInt(limit as string, 10);
+    const offset = (pageNum - 1) * limitNum;
+
+    const inquiryRepository = AppDataSource.getRepository(ProductInquiry);
+    const productRepository = AppDataSource.getRepository(Product);
+
+    const [inquiries, totalCount] = await inquiryRepository.findAndCount({
+      where: { authorId: userId },
+      order: { createdAt: 'DESC' },
+      skip: offset,
+      take: limitNum,
+    });
+
+    const items = await Promise.all(
+      inquiries.map(async (inquiry) => {
+        let productName: string | null = null;
+        if (inquiry.productId) {
+          const product = await productRepository.findOne({
+            where: { id: inquiry.productId },
+            select: ['name'],
+          });
+          productName = product?.name || null;
+        }
+
+        return {
+          id: inquiry.id,
+          inquiryType: inquiry.inquiryType,
+          productId: inquiry.productId,
+          productName,
+          question: inquiry.question,
+          answer: inquiry.answer,
+          isAnswered: inquiry.answer !== null,
+          createdAt: inquiry.createdAt,
+          answeredAt: inquiry.answeredAt,
+        };
+      })
+    );
+
+    return res.json({
+      items,
+      totalCount,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(totalCount / limitNum),
+    });
+  } catch (error) {
+    console.error('Failed to get user inquiries:', error);
+    return res.status(500).json({ error: '상품 문의를 불러오는데 실패했습니다' });
   }
 });
 

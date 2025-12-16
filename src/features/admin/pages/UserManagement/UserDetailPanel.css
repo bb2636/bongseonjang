@@ -313,3 +313,192 @@
   flex: none;
   width: 100%;
 }
+
+.user-detail-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.user-detail-order-item {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 32px;
+  gap: 8px;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.user-detail-order-item:last-child {
+  border-bottom: none;
+}
+
+.user-detail-order-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-detail-order-number {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.user-detail-order-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  background: rgba(12, 12, 12, 0.05);
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-detail-order-status--paid,
+.user-detail-order-status--delivered {
+  background: rgba(35, 157, 255, 0.1);
+  color: #239DFF;
+}
+
+.user-detail-order-status--shipping,
+.user-detail-order-status--preparing {
+  background: rgba(255, 170, 0, 0.1);
+  color: #FF9500;
+}
+
+.user-detail-order-status--cancelled,
+.user-detail-order-status--refunded,
+.user-detail-order-status--refund_requested {
+  background: rgba(255, 75, 63, 0.1);
+  color: #FF4B3F;
+}
+
+.user-detail-order-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-detail-order-price {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 128%;
+  color: #0C0C0C;
+}
+
+.user-detail-order-date {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.user-detail-inquiry-item {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 32px;
+  gap: 8px;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.user-detail-inquiry-item:last-child {
+  border-bottom: none;
+}
+
+.user-detail-inquiry-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-detail-inquiry-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  background: rgba(12, 12, 12, 0.05);
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-detail-inquiry-status {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.user-detail-inquiry-status--answered {
+  color: #239DFF;
+}
+
+.user-detail-inquiry-product {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 140%;
+  color: #0C0C0C;
+}
+
+.user-detail-inquiry-question {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.8);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.user-detail-inquiry-date {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.user-detail-inquiry-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: rgba(12, 12, 12, 0.02);
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.user-detail-inquiry-answer-label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 128%;
+  color: #239DFF;
+}
+
+.user-detail-inquiry-answer-text {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.8);
+}
