@@ -105,3 +105,15 @@
   font-weight: 600;
   color: #0C0C0C;
 }
+
+.select__trigger--error {
+  border-color: #FF4D4D;
+}
+
+.select__trigger--error:hover {
+  border-color: #FF4D4D;
+}
+
+.select__trigger--error:focus {
+  border-color: #FF4D4D;
+}

@@ -13,6 +13,7 @@ interface SelectProps {
   placeholder?: string;
   width?: string | number;
   disabled?: boolean;
+  hasError?: boolean;
 }
 
 function ChevronDownIcon({ isOpen }: { isOpen: boolean }) {
@@ -37,6 +38,7 @@ export function Select({
   placeholder = '선택하세요',
   width = 183,
   disabled = false,
+  hasError = false,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
@@ -65,7 +67,7 @@ export function Select({
     <div className="select" ref={selectRef} style={{ width: widthStyle }}>
       <button
         type="button"
-        className={`select__trigger ${disabled ? 'select__trigger--disabled' : ''}`}
+        className={`select__trigger ${disabled ? 'select__trigger--disabled' : ''} ${hasError ? 'select__trigger--error' : ''}`}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
       >

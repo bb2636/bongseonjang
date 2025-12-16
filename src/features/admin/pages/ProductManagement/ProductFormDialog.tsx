@@ -41,6 +41,8 @@ export function ProductFormDialog({
     categories,
     isSubmitting,
     error,
+    fieldErrors,
+    touched,
     shippingLabels,
     fetchCategories,
     handleNameChange,
@@ -66,9 +68,14 @@ export function ProductFormDialog({
     handleThumbnailImageRemove,
     handleDetailImageAdd,
     handleDetailImageRemove,
+    clearFieldError,
+    markFieldTouched,
     resetForm,
     submitForm,
   } = useProductForm();
+
+  const hasError = (field: string) => touched[field] && fieldErrors[field as keyof typeof fieldErrors];
+  const getErrorMessage = (field: string) => fieldErrors[field as keyof typeof fieldErrors];
 
   useEffect(() => {
     if (isOpen) {
@@ -144,8 +151,10 @@ export function ProductFormDialog({
             <h3 className="product-form-dialog__section-title">기본 정보</h3>
 
             <div className="product-form-dialog__form-field" style={{ marginBottom: 16 }}>
-              <label className="product-form-dialog__label">썸네일 이미지 (최대 5장)</label>
-              <div className="product-form-dialog__images-container">
+              <label className="product-form-dialog__label">
+                썸네일 이미지 (최대 5장) <span className="product-form-dialog__required">*</span>
+              </label>
+              <div className={`product-form-dialog__images-container ${hasError('thumbnailImages') ? 'product-form-dialog__images-container--error' : ''}`}>
                 {formData.thumbnailImages.map((img) => (
                   <div key={img.id} className="product-form-dialog__image-slot product-form-dialog__image-slot--filled">
                     <img src={img.previewUrl} alt="썸네일" className="product-form-dialog__image-preview" />
@@ -160,7 +169,7 @@ export function ProductFormDialog({
                 ))}
                 {formData.thumbnailImages.length < 5 && (
                   <div
-                    className="product-form-dialog__image-slot"
+                    className={`product-form-dialog__image-slot ${hasError('thumbnailImages') ? 'product-form-dialog__image-slot--error' : ''}`}
                     onClick={() => thumbnailInputRef.current?.click()}
                   >
                     <span className="product-form-dialog__image-add-icon">
@@ -169,6 +178,9 @@ export function ProductFormDialog({
                   </div>
                 )}
               </div>
+              {hasError('thumbnailImages') && (
+                <span className="product-form-dialog__error-message">{getErrorMessage('thumbnailImages')}</span>
+              )}
               <input
                 ref={thumbnailInputRef}
                 type="file"
@@ -179,8 +191,10 @@ export function ProductFormDialog({
             </div>
 
             <div className="product-form-dialog__form-field" style={{ marginBottom: 16 }}>
-              <label className="product-form-dialog__label">상세페이지 이미지 (최대 5장)</label>
-              <div className="product-form-dialog__images-container">
+              <label className="product-form-dialog__label">
+                상세페이지 이미지 (최대 5장) <span className="product-form-dialog__required">*</span>
+              </label>
+              <div className={`product-form-dialog__images-container ${hasError('detailImages') ? 'product-form-dialog__images-container--error' : ''}`}>
                 {formData.detailImages.map((img) => (
                   <div key={img.id} className="product-form-dialog__image-slot product-form-dialog__image-slot--filled">
                     <img src={img.previewUrl} alt="상세" className="product-form-dialog__image-preview" />
@@ -195,7 +209,7 @@ export function ProductFormDialog({
                 ))}
                 {formData.detailImages.length < 5 && (
                   <div
-                    className="product-form-dialog__image-slot"
+                    className={`product-form-dialog__image-slot ${hasError('detailImages') ? 'product-form-dialog__image-slot--error' : ''}`}
                     onClick={() => detailInputRef.current?.click()}
                   >
                     <span className="product-form-dialog__image-add-icon">
@@ -204,6 +218,9 @@ export function ProductFormDialog({
                   </div>
                 )}
               </div>
+              {hasError('detailImages') && (
+                <span className="product-form-dialog__error-message">{getErrorMessage('detailImages')}</span>
+              )}
               <input
                 ref={detailInputRef}
                 type="file"
@@ -215,37 +232,62 @@ export function ProductFormDialog({
 
             <div className="product-form-dialog__form-row">
               <div className="product-form-dialog__form-field">
-                <label className="product-form-dialog__label">상품명</label>
+                <label className="product-form-dialog__label">
+                  상품명 <span className="product-form-dialog__required">*</span>
+                </label>
                 <input
                   type="text"
-                  className="product-form-dialog__input"
+                  className={`product-form-dialog__input ${hasError('name') ? 'product-form-dialog__input--error' : ''}`}
                   placeholder="예: 제철 생굴 2kg(손질 완료)"
                   value={formData.name}
-                  onChange={(e) => handleNameChange(e.target.value)}
+                  onChange={(e) => {
+                    handleNameChange(e.target.value);
+                    clearFieldError('name');
+                  }}
                 />
+                {hasError('name') && (
+                  <span className="product-form-dialog__error-message">{getErrorMessage('name')}</span>
+                )}
               </div>
               <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
-                <label className="product-form-dialog__label">상품 카테고리</label>
+                <label className="product-form-dialog__label">
+                  상품 카테고리 <span className="product-form-dialog__required">*</span>
+                </label>
                 <Select
                   options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
                   value={formData.categoryId}
-                  onChange={handleCategoryChange}
+                  onChange={(val) => {
+                    handleCategoryChange(val);
+                    clearFieldError('categoryId');
+                  }}
                   placeholder="선택"
                   width={200}
+                  hasError={!!hasError('categoryId')}
                 />
+                {hasError('categoryId') && (
+                  <span className="product-form-dialog__error-message">{getErrorMessage('categoryId')}</span>
+                )}
               </div>
             </div>
 
             <div className="product-form-dialog__form-row">
               <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
-                <label className="product-form-dialog__label">기본 판매가(원)</label>
+                <label className="product-form-dialog__label">
+                  기본 판매가(원) <span className="product-form-dialog__required">*</span>
+                </label>
                 <input
                   type="number"
-                  className="product-form-dialog__input"
+                  className={`product-form-dialog__input ${hasError('basePrice') ? 'product-form-dialog__input--error' : ''}`}
                   placeholder="0"
                   value={formData.basePrice || ''}
-                  onChange={(e) => handleBasePriceChange(Number(e.target.value))}
+                  onChange={(e) => {
+                    handleBasePriceChange(Number(e.target.value));
+                    clearFieldError('basePrice');
+                  }}
                 />
+                {hasError('basePrice') && (
+                  <span className="product-form-dialog__error-message">{getErrorMessage('basePrice')}</span>
+                )}
               </div>
               <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
                 <label className="product-form-dialog__label">할인율(%)</label>
@@ -296,13 +338,27 @@ export function ProductFormDialog({
             )}
 
             <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
-              <label className="product-form-dialog__label">판매 기간</label>
+              <label className="product-form-dialog__label">
+                판매 기간 <span className="product-form-dialog__required">*</span>
+              </label>
               <DateRangePicker
                 startDate={formData.startDate}
                 endDate={formData.endDate}
-                onStartDateChange={handleStartDateChange}
-                onEndDateChange={handleEndDateChange}
+                onStartDateChange={(val) => {
+                  handleStartDateChange(val);
+                  clearFieldError('startDate');
+                }}
+                onEndDateChange={(val) => {
+                  handleEndDateChange(val);
+                  clearFieldError('endDate');
+                }}
+                hasError={!!hasError('startDate') || !!hasError('endDate')}
               />
+              {(hasError('startDate') || hasError('endDate')) && (
+                <span className="product-form-dialog__error-message">
+                  {getErrorMessage('startDate') || getErrorMessage('endDate')}
+                </span>
+              )}
             </div>
 
             <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
@@ -326,14 +382,22 @@ export function ProductFormDialog({
             </div>
 
             <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
-              <label className="product-form-dialog__label">상품설명</label>
+              <label className="product-form-dialog__label">
+                상품설명 <span className="product-form-dialog__required">*</span>
+              </label>
               <textarea
-                className="product-form-dialog__textarea"
+                className={`product-form-dialog__textarea ${hasError('description') ? 'product-form-dialog__textarea--error' : ''}`}
                 placeholder="상품 특징, 소질 상태, 보관 방법, 주전 요리법 등을 입력하세요"
                 value={formData.description}
-                onChange={(e) => handleDescriptionChange(e.target.value)}
+                onChange={(e) => {
+                  handleDescriptionChange(e.target.value);
+                  clearFieldError('description');
+                }}
                 maxLength={5000}
               />
+              {hasError('description') && (
+                <span className="product-form-dialog__error-message">{getErrorMessage('description')}</span>
+              )}
               <div className="product-form-dialog__textarea-count">
                 {formData.description.length}/5000
               </div>

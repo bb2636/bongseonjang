@@ -33,6 +33,14 @@
   border-color: #239DFF;
 }
 
+.date-range-picker__input-wrapper--error {
+  border-color: #FF4D4D;
+}
+
+.date-range-picker__input-wrapper--error:hover {
+  border-color: #FF4D4D;
+}
+
 .date-range-picker__calendar-icon {
   width: 18px;
   height: 18px;

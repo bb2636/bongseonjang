@@ -6,6 +6,7 @@ interface DateRangePickerProps {
   endDate: string;
   onStartDateChange: (date: string) => void;
   onEndDateChange: (date: string) => void;
+  hasError?: boolean;
 }
 
 const DAYS_OF_WEEK = ['일', '월', '화', '수', '목', '금', '토'];
@@ -15,6 +16,7 @@ export function DateRangePicker({
   endDate,
   onStartDateChange,
   onEndDateChange,
+  hasError = false,
 }: DateRangePickerProps) {
   const [currentMonth, setCurrentMonth] = useState(() => {
     if (startDate) {
@@ -133,7 +135,7 @@ export function DateRangePicker({
     <div className="date-range-picker">
       <div className="date-range-picker__inputs">
         <div
-          className={`date-range-picker__input-wrapper ${selectingStart ? 'date-range-picker__input-wrapper--active' : ''}`}
+          className={`date-range-picker__input-wrapper ${selectingStart ? 'date-range-picker__input-wrapper--active' : ''} ${hasError ? 'date-range-picker__input-wrapper--error' : ''}`}
           onClick={() => setSelectingStart(true)}
         >
           <svg className="date-range-picker__calendar-icon" viewBox="0 0 20 20" fill="none">
@@ -148,7 +150,7 @@ export function DateRangePicker({
         </div>
         <span className="date-range-picker__separator">~</span>
         <div
-          className={`date-range-picker__input-wrapper ${!selectingStart ? 'date-range-picker__input-wrapper--active' : ''}`}
+          className={`date-range-picker__input-wrapper ${!selectingStart ? 'date-range-picker__input-wrapper--active' : ''} ${hasError ? 'date-range-picker__input-wrapper--error' : ''}`}
           onClick={() => setSelectingStart(false)}
         >
           <svg className="date-range-picker__calendar-icon" viewBox="0 0 20 20" fill="none">

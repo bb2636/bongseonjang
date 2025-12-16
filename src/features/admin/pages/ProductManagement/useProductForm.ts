@@ -101,7 +101,7 @@ function createInitialFormData(): ProductFormData {
     productInfos: [createEmptyProductInfo()],
     shippingInfo: {
       shippingFee: '',
-      shippingDescription: '',
+      shippingDescription: '전국',
     },
     thumbnailImages: [],
     detailImages: [],
@@ -113,11 +113,24 @@ export interface Category {
   name: string;
 }
 
+export interface FieldErrors {
+  name?: string;
+  categoryId?: string;
+  basePrice?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  thumbnailImages?: string;
+  detailImages?: string;
+}
+
 export function useProductForm() {
   const [formData, setFormData] = useState<ProductFormData>(createInitialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -313,25 +326,67 @@ export function useProductForm() {
   }, [formData.thumbnailImages, formData.detailImages]);
 
   const validateForm = useCallback((): boolean => {
+    const errors: FieldErrors = {};
+
     if (!formData.name.trim()) {
-      setError('상품명을 입력해주세요');
-      return false;
+      errors.name = '상품명을 입력해주세요';
     }
     if (!formData.categoryId) {
-      setError('카테고리를 선택해주세요');
-      return false;
+      errors.categoryId = '카테고리를 선택해주세요';
     }
     if (formData.basePrice <= 0) {
-      setError('판매가를 입력해주세요');
-      return false;
+      errors.basePrice = '기본 판매가를 입력해주세요';
+    }
+    if (!formData.description.trim()) {
+      errors.description = '상품설명을 입력해주세요';
+    }
+    if (!formData.startDate) {
+      errors.startDate = '판매 시작일을 선택해주세요';
+    }
+    if (!formData.endDate) {
+      errors.endDate = '판매 종료일을 선택해주세요';
     }
     if (formData.thumbnailImages.length === 0) {
-      setError('썸네일 이미지를 1장 이상 업로드해주세요');
-      return false;
+      errors.thumbnailImages = '썸네일 이미지를 최소 1장 업로드해주세요';
     }
-    setError(null);
-    return true;
+    if (formData.detailImages.length === 0) {
+      errors.detailImages = '상세페이지 이미지를 최소 1장 업로드해주세요';
+    }
+
+    setFieldErrors(errors);
+    setTouched({
+      name: true,
+      categoryId: true,
+      basePrice: true,
+      description: true,
+      startDate: true,
+      endDate: true,
+      thumbnailImages: true,
+      detailImages: true,
+    });
+
+    const hasErrors = Object.keys(errors).length > 0;
+    if (hasErrors) {
+      const firstError = Object.values(errors)[0];
+      setError(firstError || '필수 항목을 모두 입력해주세요');
+    } else {
+      setError(null);
+    }
+    
+    return !hasErrors;
   }, [formData]);
+
+  const clearFieldError = useCallback((field: keyof FieldErrors) => {
+    setFieldErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[field];
+      return newErrors;
+    });
+  }, []);
+
+  const markFieldTouched = useCallback((field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+  }, []);
 
   const uploadImage = async (file: File, purpose: string): Promise<string> => {
     const formDataUpload = new FormData();
@@ -439,6 +494,8 @@ export function useProductForm() {
     categories,
     isSubmitting,
     error,
+    fieldErrors,
+    touched,
     shippingLabels: SHIPPING_LABELS,
     fetchCategories,
     handleNameChange,
@@ -464,6 +521,8 @@ export function useProductForm() {
     handleThumbnailImageRemove,
     handleDetailImageAdd,
     handleDetailImageRemove,
+    clearFieldError,
+    markFieldTouched,
     resetForm,
     submitForm,
   };
