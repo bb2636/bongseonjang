@@ -6,6 +6,7 @@ import { useRelatedProducts } from './useRelatedProducts';
 import { useToast } from '../../../contexts/ToastContext';
 import type { ProductOption } from '../types/productDetail';
 import type { TabType } from '../components/ProductDetailTabs';
+import { useProductInquiries } from './useProductInquiries';
 
 export function useProductDetailPage(productId: string) {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export function useProductDetailPage(productId: string) {
   const { product, isLoading, error } = useProductDetail(productId);
   const { reviews, isLoading: reviewsLoading } = useProductReviews(productId);
   const { relatedProducts, isLoading: relatedProductsLoading } = useRelatedProducts(productId);
+  const { inquiries, isLoading: inquiriesLoading } = useProductInquiries(productId);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -133,6 +135,8 @@ export function useProductDetailPage(productId: string) {
     activeTab,
     reviews,
     reviewsLoading,
+    inquiries,
+    inquiriesLoading,
     relatedProducts,
     relatedProductsLoading,
     isWishlisted,
