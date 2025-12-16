@@ -24,6 +24,7 @@ import { inquiryRoutes } from '../features/inquiry';
 import { adminBannerRoutes } from '../features/banner';
 import { adminProductRoutes } from '../features/admin/routes/adminProductRoutes';
 import { adminUserRoutes } from '../features/admin/routes/adminUserRoutes';
+import { adminOrderRoutes } from '../features/admin/routes/adminOrderRoutes';
 import { userRoutes } from '../features/user';
 
 const router = Router();
@@ -55,5 +56,6 @@ router.use('/admin', adminBannerRoutes);
 router.use('/admin', adminCouponRoutes);
 router.use('/admin/products', adminProductRoutes);
 router.use('/admin/users', adminUserRoutes);
+router.use('/admin/orders', adminOrderRoutes);
 
 export default router;
