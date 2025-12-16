@@ -288,3 +288,28 @@
 .user-detail-suspend-button:hover {
   background: rgba(255, 75, 63, 0.1);
 }
+
+.user-detail-grade-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.15);
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.user-detail-info-grid--full {
+  width: 100%;
+}
+
+.user-detail-info-grid--full .user-detail-info-row-item {
+  flex: none;
+  width: 100%;
+}

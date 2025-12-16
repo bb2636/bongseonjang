@@ -154,32 +154,26 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
                   </div>
                   <div className="user-detail-info-grid">
                     <div className="user-detail-info-row-item">
-                      <div className="user-detail-info-label">연락처</div>
+                      <div className="user-detail-info-label">휴대폰</div>
                       <div className="user-detail-info-value">{formatPhone(user.phone)}</div>
                     </div>
-                    <div className="user-detail-info-row-item">
-                      <div className="user-detail-info-label">회원등급</div>
-                      <div className="user-detail-info-value">{user.membershipGrade || '일반'}</div>
-                    </div>
-                  </div>
-                  <div className="user-detail-info-grid">
                     <div className="user-detail-info-row-item">
                       <div className="user-detail-info-label">가입일</div>
                       <div className="user-detail-info-value">{formatDate(user.createdAt)}</div>
                     </div>
-                    <div className="user-detail-info-row-item">
-                      <div className="user-detail-info-label">최근 로그인</div>
-                      <div className="user-detail-info-value">{formatDate(user.lastLoginAt)}</div>
-                    </div>
                   </div>
                   <div className="user-detail-info-grid">
                     <div className="user-detail-info-row-item">
-                      <div className="user-detail-info-label">주문 건수</div>
-                      <div className="user-detail-info-value">{user.orderCount}건</div>
+                      <div className="user-detail-info-label">등급</div>
+                      <div className="user-detail-info-value">
+                        <span className="user-detail-grade-badge">{user.membershipGrade || '일반'}</span>
+                      </div>
                     </div>
+                  </div>
+                  <div className="user-detail-info-grid user-detail-info-grid--full">
                     <div className="user-detail-info-row-item">
-                      <div className="user-detail-info-label">이메일 인증</div>
-                      <div className="user-detail-info-value">{user.isEmailVerified ? '완료' : '미완료'}</div>
+                      <div className="user-detail-info-label">기본 배송지</div>
+                      <div className="user-detail-info-value">-</div>
                     </div>
                   </div>
                 </div>
