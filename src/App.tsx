@@ -40,6 +40,7 @@ import { WriteReviewPage, ReviewListPage } from "./features/review";
 import { FaqPage } from "./features/faq";
 import { MyInquiriesPage } from "./features/myInquiries";
 import { BongseonStoryPage } from "./features/about";
+import { TermsViewPage } from "./features/terms";
 import {
   AdminDashboardPage,
   AdminPlaceholderPage,
@@ -287,6 +288,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <BongseonStoryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/terms"
+        element={
+          <ProtectedRoute>
+            <TermsViewPage />
           </ProtectedRoute>
         }
       />
