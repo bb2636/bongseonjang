@@ -1,7 +1,42 @@
-# 프로젝트명
+# 봉크루 (Bongkru)
 
 ## Overview
-본 프로젝트는 사용자 친화적인 웹 애플리케이션 구축을 목표로 합니다. 효율적인 사용자 인증 및 계정 관리 시스템을 포함하며, 확장 가능하고 유지보수하기 쉬운 아키텍처를 통해 견고한 서비스를 제공합니다. 사용자 경험을 최우선으로 하여 시장 경쟁력을 확보하고, 지속적인 기능 확장을 통해 서비스 범위를 넓혀나갈 것입니다.
+본 프로젝트는 사용자 친화적인 이커머스 웹 애플리케이션 구축을 목표로 합니다. 효율적인 사용자 인증 및 계정 관리 시스템을 포함하며, 확장 가능하고 유지보수하기 쉬운 아키텍처를 통해 견고한 서비스를 제공합니다.
+
+## Project Structure (Monorepo)
+```
+bongkru/
+├── apps/
+│   ├── frontend/          # React + Vite 프론트엔드
+│   │   ├── src/           # 소스 코드
+│   │   ├── public/        # 정적 파일
+│   │   ├── package.json   # 프론트엔드 의존성
+│   │   └── vite.config.ts # Vite 설정
+│   └── backend/           # Express + TypeORM 백엔드
+│       ├── entity/        # TypeORM 엔티티
+│       ├── features/      # 기능별 모듈
+│       ├── package.json   # 백엔드 의존성
+│       └── index.ts       # 서버 진입점
+├── packages/
+│   └── contract/          # 공용 타입 패키지
+│       ├── src/           # 타입 정의 파일
+│       └── package.json   # 패키지 설정
+├── pnpm-workspace.yaml    # pnpm 워크스페이스 설정
+└── package.json           # 루트 스크립트
+```
+
+### Commands
+- `pnpm install` - 모든 의존성 설치
+- `pnpm dev` - 개발 서버 실행 (프론트엔드 + 백엔드)
+- `pnpm build` - 프로덕션 빌드
+- `pnpm --filter @bongkru/frontend dev` - 프론트엔드만 실행
+- `pnpm --filter @bongkru/backend dev` - 백엔드만 실행
+
+### Shared Types (@bongkru/contract)
+프론트엔드와 백엔드에서 공용으로 사용하는 타입 정의:
+```typescript
+import { LoginRequest, ProductDto, OrderStatus } from '@bongkru/contract';
+```
 
 ## User Preferences
 
