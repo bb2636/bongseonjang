@@ -23,7 +23,7 @@ function formatDate(date: Date): string {
 
 router.get('/me/inquiries', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?.id;
+    const userId = (req as any).userId;
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
