@@ -8,8 +8,11 @@ export interface InquiryListItem {
   authorId: string;
   authorName: string;
   authorPhone: string | null;
+  title: string;
   question: string;
   isAnswered: boolean;
+  isPrivate: boolean;
+  imageUrls: string[];
   createdAt: Date;
 }
 
@@ -21,13 +24,26 @@ export interface InquiryDetail {
   authorId: string;
   authorName: string;
   authorPhone: string | null;
+  title: string;
   question: string;
   answer: string | null;
   answeredAt: Date | null;
   answeredBy: string | null;
   answererName: string | null;
+  isPrivate: boolean;
+  imageUrls: string[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface CreateInquiryInput {
+  productId: string | null;
+  inquiryType: InquiryType;
+  authorId: string;
+  title: string;
+  question: string;
+  isPrivate?: boolean;
+  imageUrls?: string[];
 }
 
 export interface InquiryFilter {

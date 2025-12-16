@@ -40,6 +40,7 @@ export interface ProductInquiryResponse {
   title: string;
   answer?: string;
   isPrivate?: boolean;
+  imageUrls?: string[];
 }
 
 export async function fetchProductInquiries(productId: string): Promise<ProductInquiryResponse[]> {
@@ -51,4 +52,32 @@ export async function fetchProductInquiries(productId: string): Promise<ProductI
   
   const data = await response.json();
   return data.inquiries;
+}
+
+export interface CreateProductInquiryPayload {
+  inquiryType: 'product' | 'shipping' | 'exchange_return' | 'refund' | 'other';
+  title: string;
+  question: string;
+  isPrivate: boolean;
+  imageUrls?: string[];
+}
+
+export async function createProductInquiry(
+  productId: string,
+  payload: CreateProductInquiryPayload
+): Promise<void> {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_BASE_URL}/products/${productId}/inquiries`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: '문의 등록에 실패했습니다.' }));
+    throw new Error(error.error || '문의 등록에 실패했습니다.');
+  }
 }

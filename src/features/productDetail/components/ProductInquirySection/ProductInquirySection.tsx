@@ -3,7 +3,7 @@ import './ProductInquirySection.css';
 
 interface ProductInquirySectionProps {
   inquiries: ProductInquiry[];
-  onVerifyEmail: () => void;
+  onCreateInquiry: () => void;
 }
 
 function StatusBadge({ status }: { status: ProductInquiry['status'] }) {
@@ -62,12 +62,12 @@ function InquiryItem({ inquiry }: { inquiry: ProductInquiry }) {
   );
 }
 
-export default function ProductInquirySection({ inquiries, onVerifyEmail }: ProductInquirySectionProps) {
+export default function ProductInquirySection({ inquiries, onCreateInquiry }: ProductInquirySectionProps) {
   return (
     <section className="product-inquiry">
       <div className="product-inquiry__header">
-        <button className="product-inquiry__verify" type="button" onClick={onVerifyEmail}>
-          이메일 인증하기
+        <button className="product-inquiry__verify" type="button" onClick={onCreateInquiry}>
+          문의하기
         </button>
         <div className="product-inquiry__count">문의 {inquiries.length.toString().padStart(2, '0')}개</div>
       </div>

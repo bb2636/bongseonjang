@@ -38,7 +38,7 @@ interface ProductDetailViewProps {
   onAddToCart: (productId: string) => void;
   onToggleWishlist: () => void;
   onWriteReviewClick: () => void;
-  onVerifyInquiryEmail: () => void;
+  onWriteInquiryClick: () => void;
 }
 
 export default function ProductDetailView({
@@ -62,7 +62,7 @@ export default function ProductDetailView({
   onAddToCart,
   onToggleWishlist,
   onWriteReviewClick,
-  onVerifyInquiryEmail,
+  onWriteInquiryClick,
 }: ProductDetailViewProps) {
   const sliderImages = product.images.filter(
     (img) => img.imageType === 'THUMBNAIL' || img.imageType === 'GALLERY'
@@ -158,7 +158,7 @@ export default function ProductDetailView({
             ) : (
               <ProductInquirySection
                 inquiries={inquiries}
-                onVerifyEmail={onVerifyInquiryEmail}
+                onCreateInquiry={onWriteInquiryClick}
               />
             )}
           </div>

@@ -41,14 +41,8 @@ export default function ProductDetailPage() {
     handleTabChange,
     handleAddToCart,
     handleToggleWishlist,
+    handleWriteInquiryClick,
   } = useProductDetailPage(id || '');
-
-  const handleVerifyInquiryEmail = () => {
-    setModalState({
-      type: 'alert',
-      message: '문의 등록을 위해 이메일 인증을 완료해주세요.',
-    });
-  };
 
   if (isLoading) {
     return (
@@ -163,7 +157,7 @@ export default function ProductDetailPage() {
         onAddToCart={handleAddToCart}
         onToggleWishlist={handleToggleWishlist}
         onWriteReviewClick={handleWriteReviewClick}
-        onVerifyInquiryEmail={handleVerifyInquiryEmail}
+        onWriteInquiryClick={handleWriteInquiryClick}
       />
       <AlertModal
         isOpen={modalState.type === 'alert'}

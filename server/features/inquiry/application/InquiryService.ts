@@ -1,5 +1,10 @@
 import type { InquiryRepository } from '../repository/InquiryRepository';
-import type { InquiryListItem, InquiryDetail, InquiryFilter } from '../domain/Inquiry';
+import type {
+  CreateInquiryInput,
+  InquiryListItem,
+  InquiryDetail,
+  InquiryFilter,
+} from '../domain/Inquiry';
 
 export class InquiryService {
   constructor(private readonly inquiryRepository: InquiryRepository) {}
@@ -10,6 +15,10 @@ export class InquiryService {
 
   async getInquiryById(id: number): Promise<InquiryDetail | null> {
     return this.inquiryRepository.findById(id);
+  }
+
+  async createInquiry(data: CreateInquiryInput): Promise<InquiryDetail> {
+    return this.inquiryRepository.createInquiry(data);
   }
 
   async answerInquiry(id: number, answer: string, answeredBy: string): Promise<void> {
