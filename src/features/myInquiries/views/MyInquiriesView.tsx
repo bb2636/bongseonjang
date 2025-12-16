@@ -19,45 +19,53 @@ interface MyInquiriesViewProps {
   onLoadMore: () => void;
 }
 
-function InquiryCard({ inquiry, onProductClick }: { inquiry: MyInquiry; onProductClick: (productId: string) => void }) {
+function InquiryCard({ inquiry, onProductClick, isLast }: { inquiry: MyInquiry; onProductClick: (productId: string) => void; isLast: boolean }) {
   return (
-    <div className="inquiry-card">
-      <div className="inquiry-card__header">
-        {inquiry.productImage ? (
-          <img
-            src={inquiry.productImage}
-            alt={inquiry.productName || '상품'}
-            className="inquiry-card__product-image"
-            onClick={() => inquiry.productId && onProductClick(inquiry.productId)}
-          />
-        ) : (
-          <div className="inquiry-card__product-placeholder">
-            <span className="material-symbols-outlined">inventory_2</span>
-          </div>
-        )}
-        <div className="inquiry-card__info">
-          <div className="inquiry-card__meta">
-            <span className={`inquiry-card__status inquiry-card__status--${inquiry.status}`}>
-              {inquiry.status === 'answered' ? '답변완료' : '미답변'}
-            </span>
-            <span className="inquiry-card__type">{inquiry.inquiryTypeLabel}</span>
+    <>
+      <div className="inquiry-card">
+        <div className="inquiry-card__header">
+          <div className="inquiry-card__meta-row">
+            <div className="inquiry-card__meta-left">
+              <span className={`inquiry-card__status inquiry-card__status--${inquiry.status}`}>
+                {inquiry.status === 'answered' ? '답변완료' : '미답변'}
+              </span>
+              <span className="inquiry-card__type">{inquiry.inquiryTypeLabel}</span>
+            </div>
             <span className="inquiry-card__date">{inquiry.createdAt}</span>
           </div>
-          {inquiry.productName && (
-            <span
-              className="inquiry-card__product-name"
-              onClick={() => inquiry.productId && onProductClick(inquiry.productId)}
-            >
-              {inquiry.productName}
-            </span>
-          )}
+
+          <div className="inquiry-card__product-section">
+            <span className="inquiry-card__product-label">문의상품</span>
+            <div className="inquiry-card__product-info">
+              {inquiry.productImage ? (
+                <img
+                  src={inquiry.productImage}
+                  alt={inquiry.productName || '상품'}
+                  className="inquiry-card__product-image"
+                  onClick={() => inquiry.productId && onProductClick(inquiry.productId)}
+                />
+              ) : (
+                <div className="inquiry-card__product-placeholder">
+                  <span className="material-symbols-outlined">inventory_2</span>
+                </div>
+              )}
+              {inquiry.productName && (
+                <span
+                  className="inquiry-card__product-name"
+                  onClick={() => inquiry.productId && onProductClick(inquiry.productId)}
+                >
+                  {inquiry.productName}
+                </span>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="inquiry-card__content">
-        <div className="inquiry-card__question">
-          <span className="inquiry-card__icon inquiry-card__icon--question">Q</span>
+
+        <div className="inquiry-card__content">
+          <span className="inquiry-card__icon">Q</span>
           <p className="inquiry-card__text">{inquiry.question}</p>
         </div>
+
         {inquiry.answer && (
           <div className="inquiry-card__answer">
             <span className="inquiry-card__icon inquiry-card__icon--answer">A</span>
@@ -65,7 +73,8 @@ function InquiryCard({ inquiry, onProductClick }: { inquiry: MyInquiry; onProduc
           </div>
         )}
       </div>
-    </div>
+      {!isLast && <div className="inquiry-card__divider" />}
+    </>
   );
 }
 
@@ -74,12 +83,17 @@ function LoadingSkeleton() {
     <div className="my-inquiries__loading">
       {[1, 2, 3].map((i) => (
         <div key={i} className="my-inquiries__skeleton">
-          <div className="my-inquiries__skeleton-image" />
-          <div className="my-inquiries__skeleton-content">
-            <div className="my-inquiries__skeleton-line my-inquiries__skeleton-line--short" />
-            <div className="my-inquiries__skeleton-line my-inquiries__skeleton-line--medium" />
-            <div className="my-inquiries__skeleton-line" />
+          <div className="my-inquiries__skeleton-meta">
+            <div className="my-inquiries__skeleton-badge" />
+            <div className="my-inquiries__skeleton-type" />
           </div>
+          <div className="my-inquiries__skeleton-product">
+            <div className="my-inquiries__skeleton-image" />
+            <div className="my-inquiries__skeleton-content">
+              <div className="my-inquiries__skeleton-line my-inquiries__skeleton-line--medium" />
+            </div>
+          </div>
+          <div className="my-inquiries__skeleton-line" />
         </div>
       ))}
     </div>
@@ -160,8 +174,13 @@ export default function MyInquiriesView({
               총 {total}건
             </div>
             <div className="my-inquiries__list">
-              {inquiries.map((inquiry) => (
-                <InquiryCard key={inquiry.id} inquiry={inquiry} onProductClick={onProductClick} />
+              {inquiries.map((inquiry, index) => (
+                <InquiryCard 
+                  key={inquiry.id} 
+                  inquiry={inquiry} 
+                  onProductClick={onProductClick} 
+                  isLast={index === inquiries.length - 1}
+                />
               ))}
             </div>
             {hasMore && (
