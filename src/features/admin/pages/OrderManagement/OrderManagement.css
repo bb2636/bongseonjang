@@ -10,6 +10,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .order-management__toolbar-left {
@@ -21,6 +22,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .order-management__total {
@@ -39,6 +41,7 @@
   padding: 12px 16px;
   background: #f5f5f5;
   border-radius: 8px;
+  min-width: 240px;
 }
 
 .order-management__search-box input {
@@ -70,19 +73,23 @@
 .order-table__header,
 .order-table__row {
   display: grid;
-  grid-template-columns: 340px 215px 215px 215px 193px 169px 169px 169px 137px;
+  grid-template-columns: 2fr 1.2fr 1.2fr 1fr 1fr 1fr 1fr 1fr 0.8fr;
   align-items: center;
+  min-width: 0;
 }
 
 .order-table__header {
   background: rgba(12, 12, 12, 0.02);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: rgba(12, 12, 12, 0.8);
 }
 
 .order-table__header-cell {
-  padding: 12px 24px;
+  padding: 12px 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .order-table__header-cell--action {
@@ -98,11 +105,13 @@
 }
 
 .order-table__cell {
-  padding: 10px 24px;
+  padding: 10px 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 15px;
+  gap: 4px;
+  font-size: 14px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .order-table__cell--customer {
@@ -112,14 +121,18 @@
 .order-table__customer-name {
   font-weight: 600;
   color: #0c0c0c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .order-table__customer-detail {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: rgba(12, 12, 12, 0.6);
-  font-size: 14px;
+  font-size: 13px;
+  flex-wrap: wrap;
 }
 
 .order-table__bullet {
@@ -127,22 +140,26 @@
   height: 3px;
   border-radius: 50%;
   background: rgba(12, 12, 12, 0.5);
+  flex-shrink: 0;
 }
 
 .order-table__primary {
   font-weight: 600;
   color: #0c0c0c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .order-status-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 12px;
-  min-width: 63px;
+  padding: 6px 10px;
   border-radius: 34px;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .order-status--paid {
@@ -177,21 +194,22 @@
 
 .order-table__cell--action {
   align-items: center;
-}
-
-.order-table__header-cell--action,
-.order-table__cell--action {
   justify-content: center;
 }
 
 .order-table__link {
-  padding: 10px 12px;
+  padding: 8px 12px;
   border: none;
   background: transparent;
   color: #239dff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
+}
+
+.order-table__link:hover {
+  text-decoration: underline;
 }
 
 .order-table__empty {
@@ -217,21 +235,4 @@
   margin: 0;
   color: #ff4b3f;
   font-size: 15px;
-}
-
-@media (max-width: 1400px) {
-  .order-management__controls {
-    grid-template-columns: 1fr;
-  }
-
-  .order-table__header,
-  .order-table__row {
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: minmax(60px, auto);
-  }
-
-  .order-table__header-cell,
-  .order-table__cell {
-    padding: 12px 16px;
-  }
 }

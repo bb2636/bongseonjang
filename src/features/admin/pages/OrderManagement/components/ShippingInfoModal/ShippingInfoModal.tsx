@@ -98,11 +98,6 @@ export function ShippingInfoModal({
         </div>
 
         <div className="shipping-modal__content">
-          <div className="shipping-modal__order-info">
-            <span className="shipping-modal__order-label">주문번호</span>
-            <span className="shipping-modal__order-value">{orderNumber}</span>
-          </div>
-
           <div className="shipping-modal__field">
             <label className="shipping-modal__label">택배사 선택</label>
             <CustomDropdown
