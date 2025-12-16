@@ -35,6 +35,7 @@ export class ReviewService implements ReviewStatsProvider {
     const review = await this.reviewRepository.save({
       productId: request.productId,
       userId,
+      orderItemId: request.orderItemId || null,
       rating: request.rating,
       content: request.content,
     });
@@ -48,10 +49,6 @@ export class ReviewService implements ReviewStatsProvider {
       }));
       await this.reviewImageRepository.saveMany(reviewImages);
       imageUrls.push(...request.imageUrls);
-    }
-
-    if (request.orderItemId) {
-      await this.reviewableOrderItemRepository.markOrderItemAsReviewed(request.orderItemId);
     }
 
     const savedReview = await this.reviewRepository.findById(review.id);
