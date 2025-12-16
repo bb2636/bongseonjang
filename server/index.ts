@@ -1,9 +1,14 @@
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { config, initializeDatabase } from './config';
 import routes from './routes';
 import { ObjectStorageService } from './objectStorage';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -31,6 +36,17 @@ app.use('/api', routes);
 
 app.get('/api/health', (_, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+const distPath = path.join(__dirname, '..', 'dist');
+app.use(express.static(distPath));
+
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/objects')) {
+    res.sendFile(path.join(distPath, 'index.html'));
+  } else {
+    next();
+  }
 });
 
 async function startServer(): Promise<void> {
