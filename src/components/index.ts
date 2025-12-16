@@ -19,3 +19,5 @@ export type { AddressData } from './AddressInputForm';
 export { Select } from './Select';
 export type { SelectOption } from './Select';
 export { DateRangePicker } from './DateRangePicker';
+export { CustomDropdown } from './CustomDropdown';
+export type { DropdownOption } from './CustomDropdown';

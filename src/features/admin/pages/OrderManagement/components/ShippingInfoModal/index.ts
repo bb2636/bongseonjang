@@ -1,0 +1,1 @@
+export { ShippingInfoModal } from './ShippingInfoModal';

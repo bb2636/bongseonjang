@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { ConfirmDialog } from '../ConfirmDialog';
+import { CustomDropdown } from '../../../../components';
 import './FaqDetailPanel.css';
 
 interface FaqCategoryOption {
@@ -27,73 +28,6 @@ interface FaqDetail {
   isVisible: boolean;
   createdAt: string;
   updatedAt: string;
-}
-
-interface CustomDropdownProps {
-  options: FaqCategoryOption[];
-  value: number | null;
-  onChange: (id: number) => void;
-}
-
-function CustomDropdown({ options, value, onChange }: CustomDropdownProps) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const selectedOption = options.find(opt => opt.id === value);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSelect = (optionId: number) => {
-    onChange(optionId);
-    setIsDropdownOpen(false);
-  };
-
-  return (
-    <div className="faq-dropdown" ref={dropdownRef}>
-      <button
-        type="button"
-        className="faq-dropdown__trigger"
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-      >
-        <span className="faq-dropdown__selected-text">
-          {selectedOption?.name || '선택하세요'}
-        </span>
-        <svg 
-          className={`faq-dropdown__arrow ${isDropdownOpen ? 'faq-dropdown__arrow--open' : ''}`}
-          width="20" 
-          height="20" 
-          viewBox="0 0 20 20" 
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M5 7.5L10 12.5L15 7.5" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </button>
-      {isDropdownOpen && (
-        <div className="faq-dropdown__menu">
-          {options.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={`faq-dropdown__option ${option.id === value ? 'faq-dropdown__option--selected' : ''}`}
-              onClick={() => handleSelect(option.id)}
-            >
-              {option.name}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
 export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved, onSuccess, onError }: FaqDetailPanelProps) {

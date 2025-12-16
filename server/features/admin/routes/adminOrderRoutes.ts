@@ -174,4 +174,59 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
+router.put('/:orderId/shipping', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    const { carrierId, carrierName, trackingNumber } = req.body;
+
+    if (!carrierId || !carrierName || !trackingNumber) {
+      return res.status(400).json({ error: '택배사와 송장번호를 입력해주세요' });
+    }
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const shipmentRepository = AppDataSource.getRepository(Shipment);
+
+    const order = await orderRepository.findOne({ where: { id: orderId } });
+    if (!order) {
+      return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
+    }
+
+    let shipment = await shipmentRepository.findOne({ where: { orderId } });
+    
+    if (shipment) {
+      shipment.carrierCode = carrierId;
+      shipment.carrierName = carrierName;
+      shipment.trackingNumber = trackingNumber;
+      shipment.status = 'in_transit';
+      await shipmentRepository.save(shipment);
+    } else {
+      shipment = shipmentRepository.create({
+        orderId,
+        carrierCode: carrierId,
+        carrierName: carrierName,
+        trackingNumber: trackingNumber,
+        status: 'in_transit',
+      });
+      await shipmentRepository.save(shipment);
+    }
+
+    if (order.status === 'paid' || order.status === 'preparing') {
+      order.status = 'shipping';
+      await orderRepository.save(order);
+    }
+
+    return res.json({
+      success: true,
+      message: '배송 정보가 저장되었습니다',
+      shipment: {
+        carrierName: shipment.carrierName,
+        trackingNumber: shipment.trackingNumber,
+      },
+    });
+  } catch (error) {
+    console.error('Failed to update shipping info:', error);
+    return res.status(500).json({ error: '배송 정보 저장에 실패했습니다' });
+  }
+});
+
 export { router as adminOrderRoutes };

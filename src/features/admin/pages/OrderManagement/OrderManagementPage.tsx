@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '../../layouts';
-import { fetchAdminOrders, OrderStatus, PaymentMethod, AdminOrderDto } from './api/adminOrderApi';
+import { fetchAdminOrders, updateShippingInfo, OrderStatus, PaymentMethod, AdminOrderDto } from './api/adminOrderApi';
+import { ShippingInfoModal } from './components/ShippingInfoModal';
 import './OrderManagement.css';
 
 const orderStatusOptions: { code: OrderStatus; label: string }[] = [
@@ -47,10 +48,20 @@ const paymentMethodLabelMap: Record<Exclude<PaymentMethod, 'ALL'>, string> = {
   KAKAO_PAY: '카카오페이',
 };
 
+interface SelectedOrder {
+  id: string;
+  orderNumber: string;
+  shippingCompany: string | null;
+  trackingNumber: string | null;
+}
+
 export function OrderManagementPage() {
+  const queryClient = useQueryClient();
   const [orderStatusFilter, setOrderStatusFilter] = useState<OrderStatus>('ALL');
   const [paymentMethodFilter, setPaymentMethodFilter] = useState<PaymentMethod>('ALL');
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<SelectedOrder | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['adminOrders', orderStatusFilter, paymentMethodFilter, searchKeyword],
@@ -78,6 +89,26 @@ export function OrderManagementPage() {
   const renderPaymentMethod = (method: Exclude<PaymentMethod, 'ALL'> | null) => {
     if (!method) return '-';
     return paymentMethodLabelMap[method] || '-';
+  };
+
+  const handleOpenShippingModal = (order: AdminOrderDto) => {
+    setSelectedOrder({
+      id: order.id,
+      orderNumber: order.orderNumber,
+      shippingCompany: order.shippingCompany,
+      trackingNumber: order.trackingNumber,
+    });
+    setIsShippingModalOpen(true);
+  };
+
+  const handleCloseShippingModal = () => {
+    setIsShippingModalOpen(false);
+    setSelectedOrder(null);
+  };
+
+  const handleSaveShippingInfo = async (orderId: string, carrierId: string, carrierName: string, trackingNumber: string) => {
+    await updateShippingInfo(orderId, { carrierId, carrierName, trackingNumber });
+    await queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
   };
 
   return (
@@ -181,7 +212,13 @@ export function OrderManagementPage() {
                     <div className="order-table__primary">{order.trackingNumber || '-'}</div>
                   </div>
                   <div className="order-table__cell order-table__cell--action">
-                    <button type="button" className="order-table__link">보기</button>
+                    <button 
+                      type="button" 
+                      className="order-table__link"
+                      onClick={() => handleOpenShippingModal(order)}
+                    >
+                      보기
+                    </button>
                   </div>
                 </div>
               ))
@@ -189,6 +226,18 @@ export function OrderManagementPage() {
           </div>
         )}
       </div>
+
+      {selectedOrder && (
+        <ShippingInfoModal
+          isOpen={isShippingModalOpen}
+          orderId={selectedOrder.id}
+          orderNumber={selectedOrder.orderNumber}
+          currentCarrier={selectedOrder.shippingCompany}
+          currentTrackingNumber={selectedOrder.trackingNumber}
+          onClose={handleCloseShippingModal}
+          onSave={handleSaveShippingInfo}
+        />
+      )}
     </AdminLayout>
   );
 }

@@ -68,3 +68,24 @@ export async function fetchAdminOrders(params: FetchAdminOrdersParams = {}): Pro
   
   return response.json();
 }
+
+export interface UpdateShippingInfoParams {
+  carrierId: string;
+  carrierName: string;
+  trackingNumber: string;
+}
+
+export async function updateShippingInfo(orderId: string, params: UpdateShippingInfoParams): Promise<void> {
+  const response = await fetch(`/api/admin/orders/${orderId}/shipping`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || '배송 정보 저장에 실패했습니다');
+  }
+}
