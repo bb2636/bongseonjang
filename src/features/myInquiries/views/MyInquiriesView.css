@@ -187,9 +187,7 @@
   width: 100%;
 }
 
-.my-inquiries__empty-icon {
-  font-size: 48px;
-  color: rgba(12, 12, 12, 0.2);
+.my-inquiries__empty svg {
   margin-bottom: 16px;
 }
 
