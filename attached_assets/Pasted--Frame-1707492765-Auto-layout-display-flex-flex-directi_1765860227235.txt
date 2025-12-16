@@ -1,0 +1,1055 @@
+/* Frame 1707492765 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 755px;
+height: 219px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Frame 1707492763 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 755px;
+height: 42px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491856 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 142px;
+height: 42px;
+
+background: rgba(12, 12, 12, 0.04);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 주문번호 */
+
+width: 118px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492102 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 124px;
+height: 42px;
+
+background: rgba(12, 12, 12, 0.04);
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 주문일 */
+
+width: 100px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492105 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 222px;
+height: 42px;
+
+background: rgba(12, 12, 12, 0.04);
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 1;
+
+
+/* 상품 요약 */
+
+width: 198px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492106 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 151px;
+height: 42px;
+
+background: rgba(12, 12, 12, 0.04);
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* 결제 금액 */
+
+width: 127px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492104 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 116px;
+height: 42px;
+
+background: rgba(12, 12, 12, 0.04);
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* 상태 */
+
+width: 92px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.8);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492764 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 755px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492100 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 142px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 0000000000 */
+
+width: 118px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492101 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 124px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 2025-00-00 */
+
+width: 100px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492104 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 222px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 1;
+
+
+/* 제철 생굴 2팩 외 1건 */
+
+width: 198px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492105 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 151px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 39,800원 */
+
+width: 127px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492103 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 116px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492766 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 6px 10px;
+gap: 10px;
+
+width: 72px;
+height: 31px;
+
+background: rgba(59, 155, 213, 0.08);
+border-radius: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 결제완료 */
+
+width: 52px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #3B9BD5;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492765 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 755px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492100 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 142px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 0000000000 */
+
+width: 118px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492101 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 124px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 2025-00-00 */
+
+width: 100px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492104 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 222px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 1;
+
+
+/* 제철 생굴 2팩 외 1건 */
+
+width: 198px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492105 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 151px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 39,800원 */
+
+width: 127px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492103 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 116px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492766 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 6px 10px;
+gap: 10px;
+
+width: 72px;
+height: 31px;
+
+background: rgba(12, 12, 12, 0.04);
+border-radius: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 배송완료 */
+
+width: 52px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707492766 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+
+width: 755px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492100 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 142px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 0000000000 */
+
+width: 118px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492101 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 124px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 2025-00-00 */
+
+width: 100px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492104 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 222px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 1;
+
+
+/* 제철 생굴 2팩 외 1건 */
+
+width: 198px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492105 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 151px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 39,800원 */
+
+width: 127px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492103 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 10px 12px;
+gap: 10px;
+
+width: 116px;
+height: 59px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707492766 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 6px 10px;
+gap: 10px;
+
+width: 72px;
+height: 31px;
+
+background: rgba(12, 12, 12, 0.04);
+border-radius: 20px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 배송완료 */
+
+width: 52px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
