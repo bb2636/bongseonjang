@@ -8,7 +8,7 @@ const MENU_SECTIONS: MenuSection[] = [
     title: '쇼핑',
     items: [
       { id: 'orders', icon: 'contract', label: '주문내역', path: '/orders' },
-      { id: 'reviews', icon: 'reviews', label: '리뷰', path: '/reviews' },
+      { id: 'reviews', icon: 'reviews', label: '리뷰', path: '/review' },
     ],
   },
   {
@@ -67,7 +67,7 @@ export function useProfilePage() {
   }, [navigate]);
 
   const handlePendingReviewsClick = useCallback(() => {
-    navigate('/reviews/pending');
+    navigate('/review');
   }, [navigate]);
 
   const handleOrderClick = useCallback((orderId: string) => {

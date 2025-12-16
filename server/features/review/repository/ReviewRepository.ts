@@ -14,6 +14,7 @@ export interface ReviewStats {
 
 export interface ReviewRepository {
   findByProductId(productId: string): Promise<Review[]>;
+  findByUserId(userId: string): Promise<Review[]>;
   findById(id: string): Promise<Review | null>;
   getStatsByProductId(productId: string): Promise<ReviewStats>;
   save(review: Partial<Review>): Promise<Review>;

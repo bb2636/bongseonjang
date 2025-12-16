@@ -94,3 +94,34 @@ export async function fetchPendingReviewItems(): Promise<ReviewableOrderItemDto[
 
   return response.json();
 }
+
+export interface MyReviewDto {
+  id: string;
+  productId: string;
+  productName: string;
+  productImageUrl: string | null;
+  rating: number;
+  content: string;
+  imageUrls: string[];
+  createdAt: string;
+}
+
+export async function fetchMyReviews(): Promise<MyReviewDto[]> {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    return [];
+  }
+
+  const response = await fetch(`${API_BASE_URL}/reviews/my`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to load my reviews');
+  }
+
+  return response.json();
+}

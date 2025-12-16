@@ -37,3 +37,14 @@ export interface ReviewableOrderItemDto {
   productImageUrl: string | null;
   purchaseDate: string;
 }
+
+export interface MyReviewDto {
+  id: string;
+  productId: string;
+  productName: string;
+  productImageUrl: string | null;
+  rating: number;
+  content: string;
+  imageUrls: string[];
+  createdAt: string;
+}

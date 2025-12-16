@@ -245,7 +245,7 @@ export default function App() {
         }
       />
       <Route
-        path="/reviews/pending"
+        path="/review"
         element={
           <ProtectedRoute>
             <ReviewListPage />

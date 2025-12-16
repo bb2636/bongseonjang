@@ -14,6 +14,18 @@ export class TypeORMReviewRepository implements ReviewRepository {
       .getMany();
   }
 
+  async findByUserId(userId: string): Promise<Review[]> {
+    const reviewRepository = AppDataSource.getRepository(Review);
+    
+    return reviewRepository
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.user', 'user')
+      .leftJoinAndSelect('review.product', 'product')
+      .where('review.userId = :userId', { userId })
+      .orderBy('review.createdAt', 'DESC')
+      .getMany();
+  }
+
   async findById(id: string): Promise<Review | null> {
     const reviewRepository = AppDataSource.getRepository(Review);
     

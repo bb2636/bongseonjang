@@ -137,4 +137,21 @@ export class ReviewController {
       res.status(500).json({ error: 'Failed to fetch pending review items' });
     }
   }
+
+  async getMyReviews(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+
+      if (!userId) {
+        res.status(401).json({ error: 'Authentication required' });
+        return;
+      }
+
+      const reviews = await this.reviewService.getMyReviews(userId);
+      res.json(reviews);
+    } catch (error) {
+      console.error('Error fetching my reviews:', error);
+      res.status(500).json({ error: 'Failed to fetch my reviews' });
+    }
+  }
 }
