@@ -7,9 +7,9 @@
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
     "dev:backend": "tsx watch --tsconfig server/tsconfig.json server/index.ts",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "start": "node dist/server/index.js"
+    "start": "tsx --tsconfig server/tsconfig.json server/index.ts"
   },
   "keywords": [],
   "author": "",
