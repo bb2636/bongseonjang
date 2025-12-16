@@ -69,3 +69,6 @@ export { CouponIssueNewUsers } from './CouponIssueNewUsers';
 export { CouponIssueGrade } from './CouponIssueGrade';
 export { UserCoupon } from './UserCoupon';
 export type { UserCouponStatus } from './UserCoupon';
+
+export { Terms } from './Terms';
+export type { TermsType } from './Terms';

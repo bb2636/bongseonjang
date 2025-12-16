@@ -46,6 +46,7 @@ import {
   CouponManagementPage,
   OrderManagementPage,
   ProductManagementPage,
+  TermsManagementPage,
   UserManagementPage,
 } from "./features/admin";
 import { ProtectedRoute } from "./components";
@@ -292,8 +293,8 @@ export default function App() {
       <Route path="/admin/settings/*" element={<AdminPlaceholderPage />} />
       <Route path="/admin/support" element={<AdminSupportPage />} />
       <Route path="/admin/support/*" element={<AdminSupportPage />} />
-      <Route path="/admin/terms" element={<AdminPlaceholderPage />} />
-      <Route path="/admin/terms/*" element={<AdminPlaceholderPage />} />
+      <Route path="/admin/terms" element={<TermsManagementPage />} />
+      <Route path="/admin/terms/*" element={<TermsManagementPage />} />
 
       <Route
         path="*"

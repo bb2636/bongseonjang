@@ -6,3 +6,4 @@ export { BannerManagementPage } from './BannerManagement';
 export { CouponManagementPage } from './CouponManagement';
 export { ProductManagementPage } from './ProductManagement';
 export { UserManagementPage } from './UserManagement';
+export { TermsManagementPage } from './TermsManagement';
