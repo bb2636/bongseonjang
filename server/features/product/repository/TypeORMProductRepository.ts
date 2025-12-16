@@ -9,11 +9,13 @@ export class TypeORMProductRepository implements ProductRepository {
     const queryBuilder = productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .innerJoin('product.productCategory', 'productCategory')
-      .where('productCategory.name = :displayName', { displayName: displayCategoryName });
+      .innerJoin('product.productExposureCategories', 'pec')
+      .innerJoin('pec.exposureCategory', 'exposureCategory')
+      .where('exposureCategory.name = :displayName', { displayName: displayCategoryName });
 
     if (filter?.productCategory) {
       queryBuilder
+        .innerJoin('product.productCategory', 'productCategory')
         .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
     }
 
