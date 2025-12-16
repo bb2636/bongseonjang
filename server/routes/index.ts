@@ -26,6 +26,7 @@ import { adminProductRoutes } from '../features/admin/routes/adminProductRoutes'
 import { adminUserRoutes } from '../features/admin/routes/adminUserRoutes';
 import { adminOrderRoutes } from '../features/admin/routes/adminOrderRoutes';
 import { userRoutes } from '../features/user';
+import { termsRoutes, adminTermsRoutes } from '../features/terms';
 
 const router = Router();
 
@@ -49,6 +50,7 @@ router.use('/orders', orderHistoryRoutes);
 router.use('/payment', paymentRoutes);
 router.use('/address', addressRoutes);
 router.use('/upload', uploadRoutes);
+router.use('/terms', termsRoutes);
 router.use('/admin/notices', noticeRoutes);
 router.use('/admin/faqs', faqRoutes);
 router.use('/admin/inquiries', inquiryRoutes);
@@ -57,5 +59,6 @@ router.use('/admin', adminCouponRoutes);
 router.use('/admin/products', adminProductRoutes);
 router.use('/admin/users', adminUserRoutes);
 router.use('/admin/orders', adminOrderRoutes);
+router.use('/admin/terms', adminTermsRoutes);
 
 export default router;

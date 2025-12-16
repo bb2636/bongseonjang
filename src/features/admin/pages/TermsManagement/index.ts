@@ -1,0 +1,1 @@
+export { TermsManagementPage } from './TermsManagementPage';
