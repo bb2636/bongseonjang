@@ -11,6 +11,8 @@ interface TermsViewProps {
 }
 
 export default function TermsView({ terms }: TermsViewProps) {
+  const termsTitle = terms.content?.title ?? '서비스 이용약관 동의';
+
   const renderContent = () => {
     if (terms.isLoading) {
       return <p className="terms-introduction">약관을 불러오는 중입니다...</p>;
@@ -29,6 +31,7 @@ export default function TermsView({ terms }: TermsViewProps) {
 
     return (
       <>
+        <h2 className="terms-list-title">{termsTitle}</h2>
         <div className="terms-updated">
           <span className="terms-updated-label">업데이트</span>
           <time dateTime={terms.content.updatedAt} className="terms-updated-value">
@@ -67,8 +70,8 @@ export default function TermsView({ terms }: TermsViewProps) {
       </header>
 
       <main className="terms-body">
-        <section className="terms-selector" aria-label="서비스 이용약관 동의">
-          <span className="terms-selector-label">서비스 이용약관 동의</span>
+        <section className="terms-selector" aria-label={`${termsTitle} 선택`}>
+          <span className="terms-selector-label">{termsTitle}</span>
           <span className="terms-selector-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M6 8L10 12L14 8" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" />
@@ -76,7 +79,7 @@ export default function TermsView({ terms }: TermsViewProps) {
           </span>
         </section>
 
-        <section className="terms-panel" aria-label="서비스 이용약관 전문">
+        <section className="terms-panel" aria-label={`${termsTitle} 전문`}>
           {renderContent()}
         </section>
       </main>
