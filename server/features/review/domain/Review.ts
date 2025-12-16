@@ -26,4 +26,14 @@ export interface CreateReviewRequest {
   rating: number;
   content: string;
   imageUrls?: string[];
+  orderItemId?: string;
+}
+
+export interface ReviewableOrderItemDto {
+  orderItemId: string;
+  productId: string;
+  productName: string;
+  optionName: string | null;
+  productImageUrl: string | null;
+  purchaseDate: string;
 }

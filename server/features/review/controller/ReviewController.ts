@@ -39,7 +39,7 @@ export class ReviewController {
         return;
       }
 
-      const { productId, rating, content, imageUrls } = req.body;
+      const { productId, rating, content, imageUrls, orderItemId } = req.body;
 
       if (!productId || !rating || !content) {
         res.status(400).json({ error: 'productId, rating, and content are required' });
@@ -55,9 +55,10 @@ export class ReviewController {
         productId,
         rating,
         content,
-        imageUrls: imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0 
-          ? imageUrls 
+        imageUrls: imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0
+          ? imageUrls
           : undefined,
+        orderItemId,
       });
 
       res.status(201).json(review);
@@ -117,6 +118,23 @@ export class ReviewController {
     } catch (error) {
       console.error('Error checking user review:', error);
       res.status(500).json({ error: 'Failed to check user review' });
+    }
+  }
+
+  async getPendingReviewItems(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+
+      if (!userId) {
+        res.status(401).json({ error: 'Authentication required' });
+        return;
+      }
+
+      const items = await this.reviewService.getPendingReviewItems(userId);
+      res.json(items);
+    } catch (error) {
+      console.error('Error fetching pending review items:', error);
+      res.status(500).json({ error: 'Failed to fetch pending review items' });
     }
   }
 }

@@ -1,13 +1,15 @@
 import type { Review } from '../../../entity/Review';
-import type { ReviewDto, ReviewStatsDto, CreateReviewRequest } from '../domain/Review';
+import type { ReviewDto, ReviewStatsDto, CreateReviewRequest, ReviewableOrderItemDto } from '../domain/Review';
 import type { ReviewRepository } from '../repository/ReviewRepository';
 import type { ReviewImageRepository } from '../repository/ReviewImageRepository';
+import type { ReviewableOrderItemRepository } from '../repository/ReviewableOrderItemRepository';
 import type { ReviewStatsProvider } from '../../product/application/ProductService';
 
 export class ReviewService implements ReviewStatsProvider {
   constructor(
     private readonly reviewRepository: ReviewRepository,
-    private readonly reviewImageRepository: ReviewImageRepository
+    private readonly reviewImageRepository: ReviewImageRepository,
+    private readonly reviewableOrderItemRepository: ReviewableOrderItemRepository
   ) {}
 
   async getReviewsByProductId(productId: string): Promise<ReviewDto[]> {
@@ -48,6 +50,10 @@ export class ReviewService implements ReviewStatsProvider {
       imageUrls.push(...request.imageUrls);
     }
 
+    if (request.orderItemId) {
+      await this.reviewableOrderItemRepository.markOrderItemAsReviewed(request.orderItemId);
+    }
+
     const savedReview = await this.reviewRepository.findById(review.id);
     if (!savedReview) {
       throw new Error('Failed to save review');
@@ -72,6 +78,10 @@ export class ReviewService implements ReviewStatsProvider {
 
   async hasUserReviewedProduct(userId: string, productId: string): Promise<boolean> {
     return this.reviewRepository.hasUserReviewedProduct(userId, productId);
+  }
+
+  async getPendingReviewItems(userId: string): Promise<ReviewableOrderItemDto[]> {
+    return this.reviewableOrderItemRepository.findPendingReviewItemsByUserId(userId);
   }
 
   private toDto(review: Review, imageUrls: string[] = []): ReviewDto {
