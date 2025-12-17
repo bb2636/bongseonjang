@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserProfile, Order, MenuSection } from '../types/profile';
 import { fetchUserProfile, fetchRecentOrders } from '../api/profileApi';
+import { useQuickCart } from '@/contexts/QuickCartContext';
+import { useToast } from '@/contexts/ToastContext';
 
 const MENU_SECTIONS: MenuSection[] = [
   {
@@ -31,6 +33,8 @@ const MENU_SECTIONS: MenuSection[] = [
 
 export function useProfilePage() {
   const navigate = useNavigate();
+  const { openQuickCart } = useQuickCart();
+  const { showToast } = useToast();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -87,8 +91,19 @@ export function useProfilePage() {
   }, [navigate]);
 
   const handleReorderClick = useCallback((orderId: string) => {
-    console.log('Reorder:', orderId);
-  }, []);
+    const targetOrder = recentOrders.find(order => order.id === orderId);
+    const firstItem = targetOrder?.items[0];
+
+    if (!firstItem) {
+      showToast('재주문할 상품을 찾을 수 없습니다', 'error');
+      return;
+    }
+
+    openQuickCart(firstItem.productId).catch(error => {
+      console.error('Failed to open quick cart for reorder:', error);
+      showToast('상품 정보를 불러올 수 없습니다', 'error');
+    });
+  }, [openQuickCart, recentOrders, showToast]);
 
   const handleMenuItemClick = useCallback((path: string) => {
     navigate(path);
