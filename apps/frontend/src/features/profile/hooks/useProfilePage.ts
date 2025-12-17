@@ -4,6 +4,7 @@ import { UserProfile, Order, MenuSection } from '../types/profile';
 import { fetchUserProfile, fetchRecentOrders } from '../api/profileApi';
 import { useQuickCart } from '@/contexts/QuickCartContext';
 import { useToast } from '@/contexts/ToastContext';
+import { bootChannelTalk, shutdownChannelTalk } from '@/services/channelTalk';
 
 const MENU_SECTIONS: MenuSection[] = [
   {
@@ -61,6 +62,26 @@ export function useProfilePage() {
     }
     loadProfileData();
   }, []);
+
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    const initializeChannelTalk = async () => {
+      try {
+        await bootChannelTalk(profile);
+      } catch (error) {
+        console.error('Channel Talk 초기화에 실패했습니다:', error);
+      }
+    };
+
+    initializeChannelTalk();
+
+    return () => {
+      shutdownChannelTalk();
+    };
+  }, [isLoading, profile]);
 
   const handleEditProfileClick = useCallback(() => {
     navigate('/profile/verify');
