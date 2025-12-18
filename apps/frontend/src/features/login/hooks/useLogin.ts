@@ -15,9 +15,9 @@ export function useLogin() {
     }
   }, []);
 
-  const onNaverLogin = useCallback(() => {
+  const onNaverLogin = useCallback(async () => {
     try {
-      naverAuthorize();
+      await naverAuthorize();
     } catch (error) {
       console.error('네이버 로그인 설정이 올바르지 않습니다.', error);
     }

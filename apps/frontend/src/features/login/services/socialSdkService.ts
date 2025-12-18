@@ -3,7 +3,8 @@ const NAVER_CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
 const SOCIAL_REDIRECT_BASE_URL = import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL;
 
 let kakaoInitialized = false;
-let naverLoginInstance: naver.LoginWithNaverId | null = null;
+let naverSdkLoaded = false;
+let naverSdkLoading = false;
 
 export function initKakaoSdk(): boolean {
   if (kakaoInitialized) {
@@ -42,40 +43,88 @@ export function kakaoAuthorize(): void {
   });
 }
 
-export function initNaverSdk(): naver.LoginWithNaverId | null {
-  if (naverLoginInstance) {
-    return naverLoginInstance;
+function waitForNaverSdk(timeout = 5000): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+    
+    const checkSdk = () => {
+      if (window.naver?.LoginWithNaverId) {
+        naverSdkLoaded = true;
+        naverSdkLoading = false;
+        resolve();
+        return;
+      }
+      
+      if (Date.now() - startTime > timeout) {
+        naverSdkLoading = false;
+        reject(new Error('네이버 SDK 초기화 시간이 초과되었습니다.'));
+        return;
+      }
+      
+      setTimeout(checkSdk, 50);
+    };
+    
+    checkSdk();
+  });
+}
+
+function loadNaverSdk(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (naverSdkLoaded && window.naver?.LoginWithNaverId) {
+      resolve();
+      return;
+    }
+
+    if (naverSdkLoading) {
+      waitForNaverSdk()
+        .then(resolve)
+        .catch(reject);
+      return;
+    }
+
+    naverSdkLoading = true;
+
+    const script = document.createElement('script');
+    script.src = 'https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js';
+    script.charset = 'utf-8';
+    script.async = true;
+
+    script.onload = () => {
+      waitForNaverSdk()
+        .then(resolve)
+        .catch(reject);
+    };
+
+    script.onerror = () => {
+      naverSdkLoading = false;
+      reject(new Error('네이버 SDK 로드에 실패했습니다.'));
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
+export async function naverAuthorize(): Promise<void> {
+  if (!NAVER_CLIENT_ID) {
+    throw new Error('VITE_NAVER_CLIENT_ID is not configured');
   }
 
-  if (!NAVER_CLIENT_ID) {
-    console.error('VITE_NAVER_CLIENT_ID is not configured');
-    return null;
-  }
+  await loadNaverSdk();
 
   if (!window.naver) {
-    console.error('Naver SDK is not loaded');
-    return null;
+    throw new Error('네이버 SDK 초기화에 실패했습니다.');
   }
 
   const callbackUrl = `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
 
-  naverLoginInstance = new window.naver.LoginWithNaverId({
+  const naverLogin = new window.naver.LoginWithNaverId({
     clientId: NAVER_CLIENT_ID,
     callbackUrl,
     isPopup: false,
     callbackHandle: true,
   });
 
-  naverLoginInstance.init();
-  return naverLoginInstance;
-}
-
-export function naverAuthorize(): void {
-  const naverLogin = initNaverSdk();
-  
-  if (!naverLogin) {
-    throw new Error('네이버 SDK 초기화에 실패했습니다.');
-  }
+  naverLogin.init();
 
   const state = generateRandomState();
   sessionStorage.setItem('naver_oauth_state', state);
