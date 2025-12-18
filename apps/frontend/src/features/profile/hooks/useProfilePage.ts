@@ -4,7 +4,7 @@ import { UserProfile, Order, MenuSection } from '../types/profile';
 import { fetchUserProfile, fetchRecentOrders } from '../api/profileApi';
 import { useQuickCart } from '@/contexts/QuickCartContext';
 import { useToast } from '@/contexts/ToastContext';
-import { bootChannelTalk, shutdownChannelTalk } from '@/services/channelTalk';
+import { bootChannelTalk, shutdownChannelTalk, openChannelTalk } from '@/services/channelTalk';
 
 const MENU_SECTIONS: MenuSection[] = [
   {
@@ -107,9 +107,9 @@ export function useProfilePage() {
     navigate(`/orders/${orderId}`);
   }, [navigate]);
 
-  const handleReturnClick = useCallback((orderId: string) => {
-    navigate(`/orders/${orderId}/return`);
-  }, [navigate]);
+  const handleReturnClick = useCallback((_orderId: string) => {
+    openChannelTalk();
+  }, []);
 
   const handleReorderClick = useCallback((orderId: string) => {
     const targetOrder = recentOrders.find(order => order.id === orderId);
