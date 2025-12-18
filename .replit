@@ -16,10 +16,9 @@ channel = "stable-24_05"
 language = "nodejs"
 
 [deployment]
-deploymentTarget = "autoscale"
+deploymentTarget = "static"
 build = ["npm", "run", "build"]
 publicDir = "dist"
-run = ["npm", "run", "start"]
 
 [[ports]]
 localPort = 3001
@@ -30,19 +29,16 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5173
-<<<<<<< HEAD
-externalPort = 80
+localPort = 40993
+externalPort = 3000
 
-[agent]
-expertMode = true
-=======
-externalPort = 5173
+[[ports]]
+localPort = 44941
+externalPort = 3002
 
 
 [agent]
 expertMode = true
-integrations = ["javascript_object_storage:1.0.0"]
 
 [workflows]
 runButton = "Project"
@@ -56,6 +52,10 @@ author = "agent"
 task = "workflow.run"
 args = "Start application"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend server"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -65,20 +65,17 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd apps/frontend && pnpm run dev & cd apps/backend && pnpm run dev"
+args = "npm run dev:frontend"
 waitForPort = 5000
 
-[userenv]
+[[workflows.workflow]]
+name = "Backend server"
+author = "agent"
 
-[userenv.development]
-NICEPAY_CLIENT_KEY = "S2_51d9b926e7e4494cb805c76175c40f11"
-NICEPAY_SECRET_KEY = "e17c4f4a97974ccbbeae23c2bceeba1d"
-SOCIAL_REDIRECT_BASE_URL = "https://dc7d2e6a-5ba1-4d01-aad5-50c0e084c051-00-2s75sl6eze9ks.janeway.replit.dev"
+[workflows.workflow.metadata]
+outputType = "console"
 
-[userenv.shared]
-PRIVATE_OBJECT_DIR = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
-PUBLIC_OBJECT_SEARCH_PATHS = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
-
-[objectStorage]
-defaultBucketID = "replit-objstore-b7020ef3-d38f-48e5-b896-ef9af912c239"
->>>>>>> ed1d9ec50a62bd6e63165d59454a3c2ba76bb0b4
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev:backend"
+waitForPort = 3001
