@@ -111,3 +111,12 @@ export function shutdownChannelTalk() {
   window.ChannelIO('shutdown');
   isChannelTalkBooted = false;
 }
+
+export function openChannelTalk() {
+  if (!window.ChannelIO) {
+    console.error('Channel Talk이 초기화되지 않았습니다.');
+    return;
+  }
+
+  window.ChannelIO('showMessenger');
+}
