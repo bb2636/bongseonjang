@@ -66,18 +66,26 @@ export class SocialAuthService {
     }
 
     console.log('Sending token request to Kakao...');
+    
+    const params: Record<string, string> = {
+      grant_type: 'authorization_code',
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      code,
+    };
+    
+    if (clientSecret) {
+      params.client_secret = clientSecret;
+    }
+    
+    console.log('Token request params:', { ...params, code: `${code.substring(0, 20)}...` });
+    
     const tokenResponse = await fetch('https://kauth.kakao.com/oauth/token', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        client_id: clientId,
-        client_secret: clientSecret || '',
-        redirect_uri: redirectUri,
-        code,
-      }),
+      body: new URLSearchParams(params).toString(),
     });
 
     if (!tokenResponse.ok) {
