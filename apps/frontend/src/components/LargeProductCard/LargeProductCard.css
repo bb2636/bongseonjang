@@ -1,0 +1,112 @@
+.large-product-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 8px;
+  width: 340px;
+  cursor: pointer;
+}
+
+.large-product-card__image {
+  width: 340px;
+  height: 220px;
+  background: #F1F1F1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.large-product-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.large-product-card__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 12px;
+  width: 100%;
+}
+
+.large-product-card__details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 6px;
+  width: 100%;
+}
+
+.large-product-card__name {
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.large-product-card__price-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 4px;
+}
+
+.large-product-card__discount {
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #FF4B3F;
+}
+
+.large-product-card__price {
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+}
+
+.large-product-card__add-button {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 4px;
+  width: 100%;
+  height: 30px;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.large-product-card__add-button:hover {
+  background: rgba(12, 12, 12, 0.04);
+}
+
+.large-product-card__cart-icon {
+  width: 16px;
+  height: 16px;
+  color: rgba(12, 12, 12, 0.9);
+}

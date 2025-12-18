@@ -1,0 +1,107 @@
+.address-input-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.address-input-form__label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  padding: 0 4px;
+}
+
+.address-input-form__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.address-input-form__input-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 16px;
+  height: 48px;
+  background: rgba(12, 12, 12, 0.06);
+  border-radius: 4px;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+.address-input-form__input-box--full {
+  width: 100%;
+  flex: none;
+}
+
+.address-input-form__input-box--error {
+  border: 1px solid #FF4444;
+}
+
+.address-input-form__input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  outline: none;
+}
+
+.address-input-form__input::placeholder {
+  color: rgba(12, 12, 12, 0.3);
+}
+
+.address-input-form__input:read-only {
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.address-input-form__row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.address-input-form__search-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  background: #0C0C0C;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.address-input-form__search-button:active {
+  background: #2A2A2A;
+}
+
+.address-input-form__error {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 140%;
+  color: #FF4444;
+  padding: 0 4px;
+}

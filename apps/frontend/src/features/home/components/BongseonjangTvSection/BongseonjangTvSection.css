@@ -1,0 +1,77 @@
+.bongseonjang-tv {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  width: 100%;
+}
+
+.bongseonjang-tv__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.bongseonjang-tv__title {
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 128%;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+}
+
+.bongseonjang-tv__content {
+  width: 100%;
+  height: 210px;
+  background: #F1F1F1;
+}
+
+.bongseonjang-tv__content--loading,
+.bongseonjang-tv__content--empty {
+  width: 100%;
+  height: 210px;
+  background: #F1F1F1;
+}
+
+.bongseonjang-tv__swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.bongseonjang-tv__swiper .swiper-slide {
+  width: 100%;
+  height: 100%;
+}
+
+.bongseonjang-tv__link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bongseonjang-tv__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bongseonjang-tv__swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+}
+
+.bongseonjang-tv__swiper .swiper-pagination-bullet-active {
+  background: #ffffff;
+}

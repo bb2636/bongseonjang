@@ -1,0 +1,101 @@
+.product-info {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 8px;
+  background: #FFFFFF;
+}
+
+.product-info__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.product-info__name {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 138%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+  margin: 0;
+  flex: 1;
+}
+
+.product-info__share-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.product-info__rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.product-info__stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.product-info__review-count {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #3B9BD5;
+}
+
+.product-info__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.product-info__price-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+}
+
+.product-info__discount-rate {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.product-info__original-price {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.4);
+  text-decoration: line-through;
+}
+
+.product-info__discounted-price {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+}

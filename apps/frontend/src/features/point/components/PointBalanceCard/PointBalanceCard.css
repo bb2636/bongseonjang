@@ -1,0 +1,45 @@
+.point-balance-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px;
+  gap: 2px;
+  margin: 12px 16px;
+  background: rgba(12, 12, 12, 0.06);
+  border-radius: 12px;
+}
+
+.point-balance-card__label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.point-balance-card__value-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.point-balance-card__value {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 100%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.point-balance-card__unit {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  padding-bottom: 4px;
+}

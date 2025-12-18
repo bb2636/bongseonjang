@@ -1,0 +1,111 @@
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.confirm-modal-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0px 0px;
+  gap: 8px;
+  width: 280px;
+  background: #FFFFFF;
+  box-shadow: 0px -2px 70px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+}
+
+.confirm-modal-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0px;
+  width: 100%;
+  background: #FFFFFF;
+}
+
+.confirm-modal-title {
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 138%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+  text-align: center;
+}
+
+.confirm-modal-buttons {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  border-top: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.confirm-modal-cancel,
+.confirm-modal-confirm {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  width: 140px;
+  height: 52px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+}
+
+.confirm-modal-cancel {
+  color: rgba(12, 12, 12, 0.6);
+  border-right: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.confirm-modal-cancel:hover {
+  background: rgba(12, 12, 12, 0.03);
+}
+
+.confirm-modal-cancel:active {
+  background: rgba(12, 12, 12, 0.06);
+}
+
+.confirm-modal-confirm--primary {
+  color: #0C95F6;
+}
+
+.confirm-modal-confirm--primary:hover {
+  background: rgba(12, 149, 246, 0.05);
+}
+
+.confirm-modal-confirm--primary:active {
+  background: rgba(12, 149, 246, 0.1);
+}
+
+.confirm-modal-confirm--danger {
+  color: #FF4B3F;
+}
+
+.confirm-modal-confirm--danger:hover {
+  background: rgba(255, 75, 63, 0.05);
+}
+
+.confirm-modal-confirm--danger:active {
+  background: rgba(255, 75, 63, 0.1);
+}

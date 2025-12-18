@@ -1,0 +1,227 @@
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  width: 100%;
+  background: rgba(12, 12, 12, 0.02);
+}
+
+.footer__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+  gap: 16px;
+  width: 100%;
+}
+
+.footer__toggle {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.footer__toggle-text {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.footer__toggle-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.footer__toggle-icon--open {
+  transform: rotate(180deg);
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.footer__link {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.footer__link:hover {
+  text-decoration: underline;
+}
+
+.footer__info-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 16px;
+  gap: 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.footer__business-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 8px;
+  width: 100%;
+}
+
+.footer__copyright {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: rgba(12, 12, 12, 0.9);
+  margin: 0;
+}
+
+.footer__details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 2px;
+  width: 100%;
+}
+
+.footer__detail {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.7);
+  margin: 0;
+}
+
+.footer__customer-service {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 12px;
+  width: 100%;
+}
+
+.footer__cs-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.footer__cs-title {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.footer__cs-phone {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.footer__cs-hours {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+  margin: 0;
+}
+
+.footer__buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 8px;
+  width: 100%;
+}
+
+.footer__button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  gap: 6px;
+  flex: 1;
+  height: 42px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+}
+
+.footer__button--primary {
+  background: #3B9BD5;
+  border: none;
+  color: #FFFFFF;
+}
+
+.footer__button--primary:hover {
+  background: #2d8bc5;
+}
+
+.footer__button--secondary {
+  background: transparent;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  color: #3B9BD5;
+  box-sizing: border-box;
+}
+
+.footer__button--secondary:hover {
+  background: rgba(12, 12, 12, 0.02);
+}

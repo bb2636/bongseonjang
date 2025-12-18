@@ -1,0 +1,46 @@
+.banner-carousel {
+  width: 100%;
+  background: #F1F1F1;
+  flex: none;
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+.banner-carousel--loading,
+.banner-carousel--empty {
+  width: 100%;
+  background: #F1F1F1;
+}
+
+.banner-carousel__swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.banner-carousel__swiper .swiper-slide {
+  width: 100%;
+  height: 100%;
+}
+
+.banner-carousel__link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.banner-carousel__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-carousel__swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+}
+
+.banner-carousel__swiper .swiper-pagination-bullet-active {
+  background: #ffffff;
+}

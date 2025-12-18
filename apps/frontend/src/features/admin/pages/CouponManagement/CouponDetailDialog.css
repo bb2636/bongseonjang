@@ -1,0 +1,179 @@
+.coupon-detail-dialog__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.coupon-detail-dialog {
+  background: #FFFFFF;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.coupon-detail-dialog__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.coupon-detail-dialog__title {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #0C0C0C;
+  margin: 0;
+}
+
+.coupon-detail-dialog__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: rgba(12, 12, 12, 0.5);
+  transition: color 0.2s ease;
+}
+
+.coupon-detail-dialog__close:hover {
+  color: #0C0C0C;
+}
+
+.coupon-detail-dialog__content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.coupon-detail-dialog__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.coupon-detail-dialog__label {
+  flex-shrink: 0;
+  width: 80px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.coupon-detail-dialog__value {
+  flex: 1;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+  word-break: break-word;
+}
+
+.coupon-detail-dialog__badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.coupon-detail-dialog__badge--fixed {
+  background: rgba(35, 157, 255, 0.1);
+  color: #239DFF;
+}
+
+.coupon-detail-dialog__badge--rate {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34C759;
+}
+
+.coupon-detail-dialog__badge--shipping {
+  background: rgba(255, 149, 0, 0.1);
+  color: #FF9500;
+}
+
+.coupon-detail-dialog__status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.coupon-detail-dialog__status--active {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34C759;
+}
+
+.coupon-detail-dialog__status--inactive {
+  background: rgba(12, 12, 12, 0.06);
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.coupon-detail-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.coupon-detail-dialog__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 24px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  background: #FFFFFF;
+  cursor: pointer;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0C0C0C;
+  transition: all 0.2s ease;
+}
+
+.coupon-detail-dialog__button:hover {
+  background: rgba(12, 12, 12, 0.04);
+  border-color: rgba(12, 12, 12, 0.2);
+}
+
+.coupon-detail-dialog__button--edit {
+  background: #0C0C0C;
+  border-color: #0C0C0C;
+  color: #FFFFFF;
+}
+
+.coupon-detail-dialog__button--edit:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+.coupon-detail-dialog__button--delete {
+  background: #FFFFFF;
+  border-color: #FF3B30;
+  color: #FF3B30;
+}
+
+.coupon-detail-dialog__button--delete:hover {
+  background: rgba(255, 59, 48, 0.06);
+}

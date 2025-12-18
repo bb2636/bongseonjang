@@ -1,0 +1,1 @@
+export { InquiryList } from './InquiryList';

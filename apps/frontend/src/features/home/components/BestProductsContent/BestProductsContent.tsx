@@ -1,0 +1,35 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FilterChips } from '../FilterChips';
+import { ProductGridContent } from '@/components/ProductGridContent';
+import { PRODUCT_CATEGORIES } from '../../constants/productCategories';
+import { useProductsByCategory } from '../../hooks/useProductsByCategory';
+import './BestProductsContent.css';
+
+const DISPLAY_CATEGORY = '베스트';
+
+export default function BestProductsContent() {
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const { products, isLoading, error } = useProductsByCategory(DISPLAY_CATEGORY, selectedCategory);
+
+  const handleProductClick = (productId: string) => {
+    navigate(`/product/${productId}`);
+  };
+
+  return (
+    <div className="best-products-content">
+      <FilterChips
+        chips={PRODUCT_CATEGORIES}
+        selectedChipId={selectedCategory}
+        onChipSelect={setSelectedCategory}
+      />
+      <ProductGridContent
+        products={products}
+        isLoading={isLoading}
+        error={error}
+        onProductClick={handleProductClick}
+      />
+    </div>
+  );
+}

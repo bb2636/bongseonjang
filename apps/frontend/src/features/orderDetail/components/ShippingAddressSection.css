@@ -1,0 +1,22 @@
+.shipping-address-section {
+  padding: 20px;
+  border-bottom: 8px solid rgba(12, 12, 12, 0.04);
+}
+
+.shipping-address-section__title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 140%;
+  color: #0C0C0C;
+  margin: 0 0 12px 0;
+}
+
+.shipping-address-section__address {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 160%;
+  color: rgba(12, 12, 12, 0.8);
+  margin: 0;
+}

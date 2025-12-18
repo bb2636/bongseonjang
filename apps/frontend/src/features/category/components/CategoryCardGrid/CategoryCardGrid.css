@@ -1,0 +1,32 @@
+.category-brand-section {
+  padding: 24px 0 16px;
+}
+
+.category-brand-section__title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #3B9BD5;
+  margin: 0 0 16px 16px;
+}
+
+.category-card-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-card-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.category-card-scroll__inner {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px;
+  width: max-content;
+}

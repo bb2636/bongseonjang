@@ -1,0 +1,156 @@
+.product-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: #FFFFFF;
+  border-top: 1px solid rgba(12, 12, 12, 0.08);
+}
+
+.product-options__section {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-options__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #F5F5F5;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.product-options__label {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.product-options__selected {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.6);
+  flex: 1;
+  text-align: right;
+  margin-right: 8px;
+}
+
+.product-options__arrow {
+  transition: transform 0.2s ease;
+}
+
+.product-options__arrow--expanded {
+  transform: rotate(180deg);
+}
+
+.product-options__list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.product-options__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #FFFFFF;
+  border: none;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.08);
+  cursor: pointer;
+  text-align: left;
+}
+
+.product-options__item:last-child {
+  border-bottom: none;
+}
+
+.product-options__item:hover:not(:disabled) {
+  background: #F5F5F5;
+}
+
+.product-options__item--selected {
+  background: rgba(59, 155, 213, 0.1);
+}
+
+.product-options__item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.product-options__item-name {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.product-options__item-price {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.product-options__soldout {
+  color: #E53935;
+  margin-left: 4px;
+}
+
+.product-options__quantity {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.product-options__quantity-label {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.product-options__quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.product-options__quantity-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.product-options__quantity-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.product-options__quantity-value {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-size: 16px;
+  color: #0C0C0C;
+  min-width: 24px;
+  text-align: center;
+}

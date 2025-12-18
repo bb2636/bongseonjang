@@ -1,0 +1,372 @@
+/* Frame 1707491655 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+
+width: 343px;
+height: 246.25px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491655 */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 16px 0px;
+gap: 20px;
+
+width: 343px;
+height: 246.25px;
+
+border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491653 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 343px;
+height: 176.25px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491652 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 4px;
+
+width: 68px;
+height: 33px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 블** */
+
+width: 68px;
+height: 17px;
+
+/* pretendard/medium/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+letter-spacing: -0.01em;
+
+color: #0C0C0C;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491592 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 2px;
+
+width: 68px;
+height: 12px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* icons */
+
+width: 12px;
+height: 12px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* star */
+
+position: absolute;
+width: 10.48px;
+left: calc(50% - 10.48px/2 + 0px);
+top: 11.11%;
+bottom: 5.56%;
+
+background: #3B9BD5;
+
+
+/* icons */
+
+width: 12px;
+height: 12px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* star */
+
+position: absolute;
+width: 10.48px;
+left: calc(50% - 10.48px/2 + 0px);
+top: 11.11%;
+bottom: 5.56%;
+
+background: #3B9BD5;
+
+
+/* icons */
+
+width: 12px;
+height: 12px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* star */
+
+position: absolute;
+width: 10.48px;
+left: calc(50% - 10.48px/2 + 0px);
+top: 11.11%;
+bottom: 5.56%;
+
+background: #3B9BD5;
+
+
+/* icons */
+
+width: 12px;
+height: 12px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* star */
+
+position: absolute;
+width: 10.48px;
+left: calc(50% - 10.48px/2 + 0px);
+top: 11.11%;
+bottom: 5.56%;
+
+background: #3B9BD5;
+
+
+/* icons */
+
+width: 12px;
+height: 12px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* star */
+
+position: absolute;
+width: 10.48px;
+left: calc(50% - 10.48px/2 + 0px);
+top: 11.11%;
+bottom: 5.56%;
+
+background: #3B9BD5;
+
+
+/* Frame 1707491673 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 343px;
+height: 131.25px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491644 */
+
+width: 81.25px;
+height: 81.25px;
+
+background: rgba(12, 12, 12, 0.06);
+border-radius: 4px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이번엔 좀 많이 주문했다 싶었는데 또 다 먹고 재주문 하려고 늦은 후기 씁니다 너무 맛있게 잘 먹었어요 감사합니다 */
+
+width: 343px;
+height: 42px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 148%;
+/* or 21px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 2025.00.00 */
+
+width: 343px;
+height: 18px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 148%;
+/* identical to box height, or 18px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.5);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;

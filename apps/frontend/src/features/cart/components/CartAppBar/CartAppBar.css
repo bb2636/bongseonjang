@@ -1,0 +1,44 @@
+.cart-app-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 8px;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  background: #FFFFFF;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.cart-app-bar__back-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.cart-app-bar__title {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+  margin: 0;
+}
+
+.cart-app-bar__placeholder {
+  width: 42px;
+  height: 42px;
+  opacity: 0;
+}

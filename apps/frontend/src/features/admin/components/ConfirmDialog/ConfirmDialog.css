@@ -1,0 +1,111 @@
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+}
+
+.confirm-dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 0;
+  width: 434px;
+  background: #FFFFFF;
+  box-shadow: 0px -2px 70px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+}
+
+.confirm-dialog__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 24px;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.confirm-dialog__title {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 128%;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+  margin: 0;
+}
+
+.confirm-dialog__subtitle {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 138%;
+  text-align: center;
+  letter-spacing: -0.02em;
+  color: rgba(12, 12, 12, 0.8);
+  margin: 0;
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 52px;
+  border-top: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.confirm-dialog__button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 14px;
+  width: 50%;
+  height: 52px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  transition: background-color 0.2s ease;
+}
+
+.confirm-dialog__button:hover {
+  background-color: rgba(12, 12, 12, 0.04);
+}
+
+.confirm-dialog__button--cancel {
+  font-weight: 500;
+  line-height: 140%;
+  letter-spacing: -0.025em;
+  color: rgba(12, 12, 12, 0.6);
+  border-right: 1px solid rgba(12, 12, 12, 0.06);
+  border-radius: 0 0 0 20px;
+}
+
+.confirm-dialog__button--confirm {
+  font-weight: 600;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C95F6;
+  border-radius: 0 0 20px 0;
+}
+
+@media (max-width: 480px) {
+  .confirm-dialog {
+    width: 90%;
+    max-width: 434px;
+  }
+}

@@ -1,0 +1,95 @@
+.order-items-section {
+  padding: 20px;
+  border-bottom: 8px solid rgba(12, 12, 12, 0.04);
+}
+
+.order-items-section__title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 140%;
+  color: #0C0C0C;
+  margin: 0 0 16px 0;
+}
+
+.order-items-section__status {
+  margin-bottom: 16px;
+}
+
+.order-items-section__status-label {
+  display: inline-block;
+  padding: 6px 12px;
+  background: rgba(34, 139, 34, 0.1);
+  border-radius: 6px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 140%;
+  color: #228B22;
+}
+
+.order-items-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.order-items-section__item {
+  display: flex;
+  gap: 12px;
+}
+
+.order-items-section__item-image {
+  width: 62px;
+  height: 62px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(12, 12, 12, 0.04);
+}
+
+.order-items-section__item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-items-section__item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 2px;
+}
+
+.order-items-section__item-name {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 140%;
+  color: #0C0C0C;
+}
+
+.order-items-section__item-option {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 140%;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.order-items-section__item-quantity {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 140%;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.order-items-section__item-price {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 140%;
+  color: #0C0C0C;
+  margin-top: 4px;
+}

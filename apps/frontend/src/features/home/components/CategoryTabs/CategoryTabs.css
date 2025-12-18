@@ -1,0 +1,40 @@
+.category-tabs {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 38px;
+  background: #ffffff;
+}
+
+.category-tabs__tab {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  flex: 1;
+  height: 38px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  text-align: center;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.9);
+}
+
+.category-tabs__tab--active {
+  border-bottom: 2px solid #3B9BD5;
+}
+
+.category-tabs__tab--event {
+  font-weight: 600;
+  color: #FF4B3F;
+}

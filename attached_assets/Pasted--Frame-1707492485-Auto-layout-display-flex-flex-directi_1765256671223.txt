@@ -1,0 +1,805 @@
+/* Frame 1707492485 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0px;
+gap: 20px;
+
+position: absolute;
+width: 375px;
+height: 419px;
+left: 0px;
+bottom: 132px;
+
+
+
+/* Frame 1707491571 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 16px 0px;
+gap: 16px;
+
+width: 375px;
+height: 357px;
+
+background: rgba(12, 12, 12, 0.02);
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491572 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: flex-start;
+padding: 0px;
+gap: 4px;
+
+width: 108px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 봉선장 사업자 정보 */
+
+width: 88px;
+height: 15px;
+
+/* pretendard/regular/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* icons */
+
+width: 16px;
+height: 16px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Bounding box */
+
+position: absolute;
+left: 0%;
+right: 0%;
+top: 0%;
+bottom: 0%;
+
+background: #D9D9D9;
+
+
+/* arrow_drop_down */
+
+position: absolute;
+left: 34.29%;
+right: 34.29%;
+top: 42.71%;
+bottom: 40.07%;
+
+background: rgba(12, 12, 12, 0.9);
+
+
+/* Frame 1707491566 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px 16px;
+gap: 16px;
+
+width: 375px;
+height: 35px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491565 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px 0px;
+gap: 10px;
+
+width: 42px;
+height: 35px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 이용약관 */
+
+width: 42px;
+height: 15px;
+
+/* pretendard/regular/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491564 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px 0px;
+gap: 10px;
+
+width: 83px;
+height: 35px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* 개인정보처리방침 */
+
+width: 83px;
+height: 15px;
+
+/* pretendard/regular/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491563 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px 0px;
+gap: 10px;
+
+width: 42px;
+height: 35px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* 공지사항 */
+
+width: 42px;
+height: 15px;
+
+/* pretendard/regular/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491562 */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px 0px;
+gap: 10px;
+
+width: 42px;
+height: 35px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+flex-grow: 0;
+
+
+/* 투자정보 */
+
+width: 42px;
+height: 15px;
+
+/* pretendard/regular/12 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 128%;
+/* or 15px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Frame 1707491570 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 32px;
+
+width: 343px;
+height: 242px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+
+/* Frame 1707491569 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 8px;
+
+width: 343px;
+height: 135px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Copyright © 봉선장. All rights */
+
+width: 343px;
+height: 17px;
+
+/* pretendard/semibold/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+letter-spacing: -0.02em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491568 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 2px;
+
+width: 343px;
+height: 110px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 대표자 : 이봉국 */
+
+width: 343px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 개인정보관리책임자 : 최승복 */
+
+width: 343px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 전화 : 1833-2282 */
+
+width: 343px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 이메일 : contact@captainbong.com */
+
+width: 343px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 3;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 주소 : 전라북도 부안군 행안면 옥여길 76-15 */
+
+width: 343px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 4;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 통신판매업신고번호 : 2022-전북부안-0016 */
+
+width: 343px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 5;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 사업자등록번호 : 545-87-02220 */
+
+width: 343px;
+height: 14px;
+
+/* pretendard/regular/11 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 11px;
+line-height: 128%;
+/* identical to box height, or 14px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 6;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491567 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 12px;
+
+width: 343px;
+height: 75px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* Frame 1707491561 */
+
+/* Auto layout */
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 4px;
+
+width: 343px;
+height: 46px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 고객센터 */
+
+width: 52px;
+height: 19px;
+
+/* pretendard/medium/15 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 128%;
+/* or 19px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.7);
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 1833-2282 */
+
+width: 343px;
+height: 23px;
+
+/* pretendard/semibold/18 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 18px;
+line-height: 128%;
+/* identical to box height, or 23px */
+letter-spacing: -0.02em;
+
+color: rgba(12, 12, 12, 0.9);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* 평일 09:00~17:00(점심시간 13:00~14:00) */
+
+width: 343px;
+height: 17px;
+
+/* pretendard/regular/13 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 400;
+font-size: 13px;
+line-height: 128%;
+/* identical to box height, or 17px */
+letter-spacing: -0.01em;
+
+color: rgba(12, 12, 12, 0.6);
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+align-self: stretch;
+flex-grow: 0;
+
+
+/* button */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 0px;
+gap: 8px;
+
+width: 343px;
+height: 42px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* button */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 14px;
+gap: 6px;
+
+width: 167.5px;
+height: 42px;
+
+background: #3B9BD5;
+border-radius: 2px;
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* Component 1 */
+
+display: none;
+width: 24px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 로그인 */
+
+width: 41px;
+height: 20px;
+
+/* pretendard/medium/16 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 128%;
+/* or 20px */
+letter-spacing: -0.02em;
+
+/* white */
+color: #FFFFFF;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* button */
+
+box-sizing: border-box;
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 14px;
+gap: 6px;
+
+width: 167.5px;
+height: 42px;
+
+border: 1px solid rgba(12, 12, 12, 0.1);
+border-radius: 2px;
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Component 1 */
+
+display: none;
+width: 24px;
+height: 24px;
+
+
+/* Inside auto layout */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 로그인 */
+
+width: 41px;
+height: 20px;
+
+/* pretendard/medium/16 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 128%;
+/* or 20px */
+letter-spacing: -0.02em;
+
+color: #3B9BD5;
+
+
+/* Inside auto layout */
+flex: none;
+order: 1;
+flex-grow: 0;

@@ -1,0 +1,1 @@
+export { NoticeDetailPanel } from './NoticeDetailPanel';

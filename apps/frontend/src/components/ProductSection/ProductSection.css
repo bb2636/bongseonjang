@@ -1,0 +1,13 @@
+.product-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 8px;
+  width: 100%;
+}
+
+.product-section__loading {
+  padding: 20px 16px;
+  color: rgba(12, 12, 12, 0.6);
+}

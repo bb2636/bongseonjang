@@ -1,0 +1,62 @@
+.payment-info-section {
+  padding: 20px;
+  padding-bottom: 40px;
+}
+
+.payment-info-section__title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 140%;
+  color: #0C0C0C;
+  margin: 0 0 16px 0;
+}
+
+.payment-info-section__content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-info-section__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-info-section__row--total {
+  padding-bottom: 4px;
+}
+
+.payment-info-section__label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 140%;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.payment-info-section__value {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 140%;
+  color: #0C0C0C;
+  text-align: right;
+}
+
+.payment-info-section__value--total {
+  font-weight: 600;
+  font-size: 18px;
+  color: #0C0C0C;
+}
+
+.payment-info-section__value--discount {
+  color: #E74C3C;
+}
+
+.payment-info-section__divider {
+  height: 1px;
+  background: rgba(12, 12, 12, 0.08);
+  margin: 4px 0;
+}

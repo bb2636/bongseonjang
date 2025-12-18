@@ -1,0 +1,104 @@
+.cart-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #FFFFFF;
+}
+
+.cart-view__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 40px 16px;
+}
+
+.cart-view__loading p {
+  font-family: 'Pretendard';
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.cart-view__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  gap: 6px;
+  height: 22px;
+  margin-top: 8px;
+}
+
+.cart-view__select-all {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 6px;
+}
+
+.cart-view__checkbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.cart-view__select-label {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.cart-view__delete-button {
+  font-family: 'Pretendard';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.cart-view__delete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cart-view__items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  flex: 1;
+  margin-top: 16px;
+}
+
+.cart-view__empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  padding: 80px 16px;
+}
+
+.cart-view__empty p {
+  font-family: 'Pretendard';
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.5);
+}

@@ -1,0 +1,214 @@
+.address-form-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #FFFFFF;
+}
+
+.address-form-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 8px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.address-form-header__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.address-form-header__title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+}
+
+.address-form-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px 16px;
+  gap: 16px;
+  flex: 1;
+}
+
+.address-form-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.address-form-field__label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  padding: 0 4px;
+}
+
+.address-form-field__input-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 16px;
+  width: 100%;
+  height: 48px;
+  background: rgba(12, 12, 12, 0.06);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.address-form-field__input-wrapper--postal {
+  flex: 1;
+}
+
+.address-form-field__input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  outline: none;
+}
+
+.address-form-field__input::placeholder {
+  color: rgba(12, 12, 12, 0.3);
+}
+
+.address-form-field__input:read-only {
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.address-form-field__address-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.address-form-field__search-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  background: #0C0C0C;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.address-form-field__search-button:active {
+  background: #2A2A2A;
+}
+
+.address-form-field--checkbox {
+  margin-top: 8px;
+}
+
+.address-form-checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.address-form-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.address-form-checkbox__mark {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(12, 12, 12, 0.3);
+  border-radius: 4px;
+  background: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.address-form-checkbox input[type="checkbox"]:checked + .address-form-checkbox__mark {
+  background: #3B9BD5;
+  border-color: #3B9BD5;
+}
+
+.address-form-checkbox input[type="checkbox"]:checked + .address-form-checkbox__mark::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid #FFFFFF;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.address-form-checkbox__label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.address-form-submit-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  margin-top: auto;
+  background: #3B9BD5;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.address-form-submit-button:disabled {
+  background: rgba(12, 12, 12, 0.2);
+  cursor: not-allowed;
+}
+
+.address-form-submit-button:not(:disabled):active {
+  background: #2D89C4;
+}

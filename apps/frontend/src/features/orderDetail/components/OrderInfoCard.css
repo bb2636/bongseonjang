@@ -1,0 +1,25 @@
+.order-info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  background: rgba(12, 12, 12, 0.04);
+  border-radius: 12px;
+  margin: 16px 20px;
+}
+
+.order-info-card__date {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 140%;
+  color: #0C0C0C;
+}
+
+.order-info-card__number {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 140%;
+  color: rgba(12, 12, 12, 0.6);
+}

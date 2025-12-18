@@ -1,0 +1,69 @@
+.profile-view {
+  min-height: 100vh;
+  background: #FFFFFF;
+  padding-bottom: 94px;
+}
+
+.profile-view__content {
+  padding-top: 0;
+}
+
+.profile-view__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 142px);
+}
+
+.profile-view__loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(12, 12, 12, 0.1);
+  border-top-color: #3B9BD5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.profile-view__divider {
+  height: 6px;
+  background: rgba(12, 12, 12, 0.06);
+  margin: 16px 0;
+}
+
+.profile-view__error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 142px);
+  gap: 16px;
+  padding: 20px;
+}
+
+.profile-view__error-message {
+  font-size: 15px;
+  color: rgba(12, 12, 12, 0.7);
+  text-align: center;
+  margin: 0;
+}
+
+.profile-view__retry-button {
+  padding: 12px 32px;
+  background: #3B9BD5;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.profile-view__retry-button:active {
+  background: #2A8BC5;
+}

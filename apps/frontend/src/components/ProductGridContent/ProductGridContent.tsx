@@ -1,0 +1,63 @@
+import { ProductCard, ProductCardData } from '../ProductCard';
+import './ProductGridContent.css';
+
+interface ProductGridContentProps {
+  products: ProductCardData[];
+  isLoading: boolean;
+  error?: Error | null;
+  onProductClick?: (productId: string) => void;
+}
+
+export default function ProductGridContent({
+  products,
+  isLoading,
+  error,
+  onProductClick,
+}: ProductGridContentProps) {
+  if (error) {
+    return (
+      <div className="product-grid-content__error">
+        상품을 불러오는데 실패했습니다
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="product-grid-content__loading">
+        <div className="product-grid-content__skeleton-grid">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="product-grid-content__skeleton-card">
+              <div className="product-grid-content__skeleton-image" />
+              <div className="product-grid-content__skeleton-button" />
+              <div className="product-grid-content__skeleton-text" />
+              <div className="product-grid-content__skeleton-price" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="product-grid-content__empty">
+        상품이 없습니다
+      </div>
+    );
+  }
+
+  return (
+    <div className="product-grid-content">
+      <div className="product-grid-content__grid">
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onClick={() => onProductClick?.(product.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

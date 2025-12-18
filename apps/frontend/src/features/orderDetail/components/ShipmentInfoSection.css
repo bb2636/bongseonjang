@@ -1,0 +1,74 @@
+.shipment-info-section {
+  padding: 16px;
+  background: #ffffff;
+  margin-top: 8px;
+}
+
+.shipment-info-section__title {
+  margin: 0 0 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 140%;
+  color: #0c0c0c;
+}
+
+.shipment-info-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shipment-info-section__item {
+  border: 1px solid rgba(12, 12, 12, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.shipment-info-section__item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.shipment-info-section__status {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: #0c0c0c;
+}
+
+.shipment-info-section__timestamp {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.shipment-info-section__details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shipment-info-section__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shipment-info-section__label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.shipment-info-section__value {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: #0c0c0c;
+}

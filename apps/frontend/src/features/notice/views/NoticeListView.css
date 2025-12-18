@@ -1,0 +1,91 @@
+.notice-list-page {
+  min-height: 100vh;
+  background: #FFFFFF;
+}
+
+.notice-list-page__content {
+  padding: 0 16px;
+}
+
+.notice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notice-list__status {
+  margin: 0;
+  padding: 24px 0;
+  text-align: center;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.notice-list__item {
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.notice-list__item:last-child {
+  border-bottom: none;
+}
+
+.notice-list__item-button {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.notice-list__item-meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.notice-list__category {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 8px;
+  background: rgba(12, 12, 12, 0.1);
+  border-radius: 2px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.notice-list__date {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.notice-list__title {
+  width: 100%;
+  margin: 0;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 158%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}

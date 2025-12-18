@@ -1,0 +1,290 @@
+.user-management {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-management__toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  height: 44px;
+}
+
+.user-management__toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.user-management__toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-management__total {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-management__total-dot {
+  font-size: 16px;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.user-management__total-count {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-management__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.user-management__search-icon {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.user-management__search-input {
+  width: 420px;
+  height: 44px;
+  padding: 0 16px 0 48px;
+  background: #F5F5F5;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  outline: none;
+  transition: background-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.user-management__search-input:focus {
+  background: #EEEEEE;
+}
+
+.user-management__search-input::placeholder {
+  color: rgba(12, 12, 12, 0.6);
+}
+
+.user-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.user-table__header {
+  background: rgba(12, 12, 12, 0.02);
+}
+
+.user-table__header-row {
+  display: flex;
+  align-items: center;
+  height: 42px;
+}
+
+.user-table__header-cell {
+  display: flex;
+  align-items: center;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.8);
+  padding: 10px 24px;
+  box-sizing: border-box;
+}
+
+.user-table__header-cell--user {
+  flex: 1;
+}
+
+.user-table__header-cell--email {
+  flex: 1;
+}
+
+.user-table__header-cell--phone {
+  flex: 1;
+}
+
+.user-table__header-cell--orders {
+  flex: 1;
+}
+
+.user-table__header-cell--created {
+  flex: 1;
+}
+
+.user-table__header-cell--actions {
+  flex: 1;
+}
+
+.user-table__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-table__body-row {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+  background: #FFFFFF;
+  transition: background-color 0.2s ease;
+}
+
+.user-table__body-row:last-child {
+  border-bottom: none;
+}
+
+.user-table__body-row:hover {
+  background: rgba(12, 12, 12, 0.02);
+}
+
+.user-table__body-row--loading {
+  justify-content: center;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.user-table__cell {
+  display: flex;
+  align-items: center;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+  padding: 10px 24px;
+  box-sizing: border-box;
+}
+
+.user-table__cell--user {
+  flex: 1;
+  gap: 12px;
+}
+
+.user-table__cell--email {
+  flex: 1;
+}
+
+.user-table__cell--phone {
+  flex: 1;
+}
+
+.user-table__cell--orders {
+  flex: 1;
+}
+
+.user-table__cell--created {
+  flex: 1;
+}
+
+.user-table__cell--actions {
+  flex: 1;
+}
+
+.user-table__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #F5F5F5;
+  flex-shrink: 0;
+}
+
+.user-table__avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(12, 12, 12, 0.3);
+}
+
+.user-table__name {
+  font-weight: 500;
+  color: #0C0C0C;
+}
+
+.user-table__email {
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-table__phone {
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-table__orders {
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-table__created {
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.user-table__action-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  background: #FFFFFF;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: #239DFF;
+  transition: all 0.2s ease;
+}
+
+.user-table__action-button:hover {
+  background: rgba(35, 157, 255, 0.05);
+  border-color: rgba(35, 157, 255, 0.3);
+}
+
+.user-table__empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.user-table__empty-message {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.user-table__error {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(255, 59, 48, 0.05);
+  border-radius: 8px;
+}
+
+.user-table__error-message {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #FF3B30;
+}
