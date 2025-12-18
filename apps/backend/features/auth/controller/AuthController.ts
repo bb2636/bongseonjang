@@ -71,11 +71,19 @@ export class AuthController {
   }
 
   async socialLogin(req: Request, res: Response): Promise<void> {
+    console.log('=== socialLogin called ===');
+    console.log('Provider:', req.params.provider);
+    console.log('Body:', JSON.stringify(req.body));
+    
     try {
       const { provider } = req.params;
       const { code, state } = req.body;
 
+      console.log('Code length:', code?.length);
+      console.log('State:', state);
+
       if (!code) {
+        console.log('ERROR: No code provided');
         res.status(400).json({ message: 'Authorization code is required' });
         return;
       }
@@ -87,8 +95,12 @@ export class AuthController {
 
       let socialUserInfo;
 
+      console.log('Calling socialAuthService for provider:', provider);
+
       if (provider === 'kakao') {
+        console.log('Getting Kakao user info...');
         socialUserInfo = await socialAuthService.getKakaoUserInfo(code);
+        console.log('Kakao user info received:', JSON.stringify(socialUserInfo));
       } else {
         if (!state) {
           res.status(400).json({ message: 'State is required for Naver login' });
@@ -121,6 +133,8 @@ export class AuthController {
 
       res.json(result);
     } catch (error) {
+      console.error('=== socialLogin ERROR ===');
+      console.error('Error:', error);
       const message = error instanceof Error ? error.message : 'Social login failed';
       res.status(400).json({ message });
     }

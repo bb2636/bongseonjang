@@ -46,14 +46,26 @@ export interface SocialUserInfo {
 
 export class SocialAuthService {
   async getKakaoUserInfo(code: string): Promise<SocialUserInfo> {
+    console.log('=== getKakaoUserInfo START ===');
+    
     const clientId = process.env.KAKAO_REST_API_KEY;
     const clientSecret = process.env.KAKAO_CLIENT_SECRET;
-    const redirectUri = `${process.env.SOCIAL_REDIRECT_BASE_URL}/oauth/kakao/callback`;
+    const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL;
+    const redirectUri = `${baseUrl}/oauth/kakao/callback`;
+
+    console.log('Environment check:');
+    console.log('- KAKAO_REST_API_KEY:', clientId ? `${clientId.substring(0, 8)}...` : 'NOT SET');
+    console.log('- KAKAO_CLIENT_SECRET:', clientSecret ? 'SET' : 'NOT SET');
+    console.log('- SOCIAL_REDIRECT_BASE_URL:', baseUrl);
+    console.log('- Full redirect_uri:', redirectUri);
+    console.log('- Code length:', code?.length);
 
     if (!clientId || !redirectUri) {
+      console.error('Missing OAuth config!');
       throw new Error('Kakao OAuth configuration is missing');
     }
 
+    console.log('Sending token request to Kakao...');
     const tokenResponse = await fetch('https://kauth.kakao.com/oauth/token', {
       method: 'POST',
       headers: {
