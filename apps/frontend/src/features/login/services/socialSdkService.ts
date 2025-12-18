@@ -38,6 +38,7 @@ export function kakaoAuthorize(): void {
   window.Kakao.Auth.authorize({
     redirectUri,
     scope: 'profile_nickname,profile_image,account_email',
+    throughTalk: false,
   });
 }
 
