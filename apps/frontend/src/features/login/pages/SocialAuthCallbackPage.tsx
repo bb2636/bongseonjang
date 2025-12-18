@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { socialLogin, isRequiresEmailResponse } from '../api/socialAuthApi';
@@ -11,9 +11,14 @@ export default function SocialAuthCallbackPage() {
   const { loginWithToken } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isProcessingRef = useRef(false);
 
   useEffect(() => {
     async function handleCallback() {
+      if (isProcessingRef.current) {
+        return;
+      }
+      isProcessingRef.current = true;
       const code = searchParams.get('code');
       const state = searchParams.get('state');
       const errorParam = searchParams.get('error');
