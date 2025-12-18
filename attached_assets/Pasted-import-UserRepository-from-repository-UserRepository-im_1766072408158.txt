@@ -1,0 +1,289 @@
+import { UserRepository } from '../repository/UserRepository';
+import { UserAuthRepository } from '../repository/UserAuthRepository';
+import { AuthProviderRepository } from '../repository/AuthProviderRepository';
+import * as TokenService from '../domain/TokenService';
+
+const AUTH_PROVIDER_KAKAO = 'KAKAO';
+const KAKAO_USER_INFO_URL = 'https://kapi.kakao.com/v2/user/me';
+const KAKAO_TOKEN_URL = 'https://kauth.kakao.com/oauth/token';
+const KAKAO_REST_API_KEY = process.env.KAKAO_REST_API_KEY;
+const KAKAO_REDIRECT_URI = 'https://fitting-tkfkdgowjdakfas.replit.app/kakao-callback.html';
+
+interface KakaoUserInfo {
+  id: number;
+  kakao_account?: {
+    email?: string;
+    profile?: {
+      nickname?: string;
+      profile_image_url?: string;
+    };
+  };
+}
+
+interface KakaoLoginResult {
+  success: boolean;
+  isNewUser?: boolean;
+  token?: string;
+  user?: {
+    id: number;
+    nickname: string | null;
+    profileImageUrl: string | null;
+    primaryEmail: string | null;
+    loginType?: string;
+  };
+  kakaoId?: string;
+  kakaoEmail?: string;
+  kakaoNickname?: string;
+  kakaoProfileImage?: string;
+  message?: string;
+}
+
+const userRepository = new UserRepository();
+const userAuthRepository = new UserAuthRepository();
+const authProviderRepository = new AuthProviderRepository();
+
+async function fetchKakaoUserInfo(accessToken: string): Promise<KakaoUserInfo | null> {
+  try {
+    const response = await fetch(KAKAO_USER_INFO_URL, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Kakao API error:', response.status, await response.text());
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Kakao user info fetch error:', error);
+    return null;
+  }
+}
+
+interface KakaoTokenResponse {
+  access_token: string;
+  token_type: string;
+  refresh_token: string;
+  expires_in: number;
+  scope?: string;
+  refresh_token_expires_in: number;
+}
+
+async function exchangeCodeForToken(code: string): Promise<string | null> {
+  try {
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: KAKAO_REST_API_KEY || '',
+      redirect_uri: KAKAO_REDIRECT_URI,
+      code: code,
+    });
+
+    const response = await fetch(KAKAO_TOKEN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+      body: params.toString(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Kakao token exchange error:', response.status, errorData);
+      return null;
+    }
+
+    const data: KakaoTokenResponse = await response.json();
+    return data.access_token;
+  } catch (error) {
+    console.error('Kakao token exchange error:', error);
+    return null;
+  }
+}
+
+export async function loginWithKakaoCode(code: string): Promise<KakaoLoginResult> {
+  try {
+    const accessToken = await exchangeCodeForToken(code);
+
+    if (!accessToken) {
+      return {
+        success: false,
+        message: '카카오 인증 코드를 토큰으로 교환할 수 없습니다.',
+      };
+    }
+
+    return await loginWithKakao(accessToken);
+  } catch (error) {
+    console.error('Kakao login with code error:', error);
+    return {
+      success: false,
+      message: '카카오 로그인 처리 중 오류가 발생했습니다.',
+    };
+  }
+}
+
+export async function loginWithKakao(accessToken: string): Promise<KakaoLoginResult> {
+  try {
+    const kakaoUserInfo = await fetchKakaoUserInfo(accessToken);
+
+    if (!kakaoUserInfo) {
+      return {
+        success: false,
+        message: '카카오 사용자 정보를 가져올 수 없습니다.',
+      };
+    }
+
+    console.log('[Kakao] Raw user info:', JSON.stringify(kakaoUserInfo));
+
+    const kakaoId = String(kakaoUserInfo.id);
+    const kakaoEmail = kakaoUserInfo.kakao_account?.email || null;
+    const kakaoNickname = kakaoUserInfo.kakao_account?.profile?.nickname || null;
+    const kakaoProfileImage = kakaoUserInfo.kakao_account?.profile?.profile_image_url || null;
+    
+    console.log('[Kakao] Extracted - id:', kakaoId, 'email:', kakaoEmail, 'nickname:', kakaoNickname);
+
+    const authProvider = await authProviderRepository.findByCode(AUTH_PROVIDER_KAKAO);
+
+    if (!authProvider) {
+      return {
+        success: false,
+        message: '카카오 인증 제공자를 찾을 수 없습니다.',
+      };
+    }
+
+    const existingUserAuth = await userAuthRepository.findByProviderUserId(kakaoId, authProvider.id);
+
+    if (existingUserAuth) {
+      const user = await userRepository.findById(existingUserAuth.userId);
+
+      if (!user) {
+        return {
+          success: false,
+          message: '사용자 정보를 찾을 수 없습니다.',
+        };
+      }
+
+      const token = TokenService.generateToken({
+        userId: user.id,
+        email: kakaoEmail,
+        nickname: user.nickname,
+        loginType: 'KAKAO',
+      });
+
+      return {
+        success: true,
+        isNewUser: false,
+        token,
+        user: {
+          id: user.id,
+          nickname: user.nickname,
+          profileImageUrl: user.profileImageUrl,
+          primaryEmail: user.primaryEmail,
+          loginType: 'KAKAO',
+        },
+      };
+    }
+
+    return {
+      success: true,
+      isNewUser: true,
+      kakaoId,
+      kakaoEmail: kakaoEmail || undefined,
+      kakaoNickname: kakaoNickname || undefined,
+      kakaoProfileImage: kakaoProfileImage || undefined,
+      message: '신규 사용자입니다. 온보딩을 진행해주세요.',
+    };
+  } catch (error) {
+    console.error('Kakao login error:', error);
+    return {
+      success: false,
+      message: '카카오 로그인 처리 중 오류가 발생했습니다.',
+    };
+  }
+}
+
+interface KakaoRegisterResult {
+  success: boolean;
+  userId?: number;
+  token?: string;
+  user?: {
+    id: number;
+    nickname: string | null;
+    profileImageUrl: string | null;
+    primaryEmail: string | null;
+    loginType: string;
+  };
+  message: string;
+}
+
+export async function registerWithKakao(
+  kakaoId: string,
+  kakaoEmail: string | null,
+  kakaoNickname: string | null,
+  kakaoProfileImage: string | null
+): Promise<KakaoRegisterResult> {
+  try {
+    const authProvider = await authProviderRepository.findByCode(AUTH_PROVIDER_KAKAO);
+
+    if (!authProvider) {
+      return {
+        success: false,
+        message: '카카오 인증 제공자를 찾을 수 없습니다.',
+      };
+    }
+
+    const existingUserAuth = await userAuthRepository.findByProviderUserId(kakaoId, authProvider.id);
+
+    if (existingUserAuth) {
+      return {
+        success: false,
+        message: '이미 등록된 카카오 계정입니다.',
+      };
+    }
+
+    const user = await userRepository.save({
+      primaryEmail: kakaoEmail,
+      nickname: kakaoNickname,
+      profileImageUrl: kakaoProfileImage,
+    });
+
+    await userAuthRepository.save({
+      userId: user.id,
+      authProviderId: authProvider.id,
+      providerUserId: kakaoId,
+      email: kakaoEmail,
+      providerNickname: kakaoNickname,
+      providerProfileImageUrl: kakaoProfileImage,
+    });
+
+    const token = TokenService.generateToken({
+      userId: user.id,
+      email: kakaoEmail,
+      nickname: user.nickname,
+      loginType: 'KAKAO',
+    });
+
+    return {
+      success: true,
+      userId: user.id,
+      token,
+      user: {
+        id: user.id,
+        nickname: user.nickname,
+        profileImageUrl: user.profileImageUrl,
+        primaryEmail: user.primaryEmail,
+        loginType: 'KAKAO',
+      },
+      message: '카카오 회원가입이 완료되었습니다.',
+    };
+  } catch (error) {
+    console.error('Kakao register error:', error);
+    return {
+      success: false,
+      message: '카카오 회원가입 처리 중 오류가 발생했습니다.',
+    };
+  }
+}
