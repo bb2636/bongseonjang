@@ -5,9 +5,9 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   define: {
-    'import.meta.env.VITE_KAKAO_JS_KEY': JSON.stringify(process.env.KAKAO_JS_KEY),
-    'import.meta.env.VITE_NAVER_CLIENT_ID': JSON.stringify(process.env.NAVER_CLIENT_ID),
-    'import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL': JSON.stringify(process.env.SOCIAL_REDIRECT_BASE_URL),
+    'import.meta.env.VITE_KAKAO_JS_KEY': JSON.stringify(process.env.VITE_KAKAO_JS_KEY),
+    'import.meta.env.VITE_NAVER_CLIENT_ID': JSON.stringify(process.env.VITE_NAVER_CLIENT_ID),
+    'import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL': JSON.stringify(process.env.VITE_SOCIAL_REDIRECT_BASE_URL),
   },
   resolve: {
     alias: {
