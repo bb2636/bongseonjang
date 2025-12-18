@@ -11,6 +11,7 @@ declare namespace Kakao {
       loginHint?: string;
       nonce?: string;
       state?: string;
+      throughTalk?: boolean;
     }): void;
 
     function logout(callback?: () => void): void;
