@@ -69,7 +69,10 @@ export class SocialAuthService {
     });
 
     if (!tokenResponse.ok) {
-      throw new Error('Failed to get Kakao access token');
+      const errorData = await tokenResponse.text();
+      console.error('Kakao token error:', tokenResponse.status, errorData);
+      console.error('Request params:', { clientId, redirectUri, codeLength: code?.length });
+      throw new Error(`Failed to get Kakao access token: ${errorData}`);
     }
 
     const tokenData = await tokenResponse.json() as KakaoTokenResponse;
