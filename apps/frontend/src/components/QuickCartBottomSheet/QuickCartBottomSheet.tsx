@@ -152,24 +152,26 @@ export default function QuickCartBottomSheet() {
     const token = localStorage.getItem('token');
 
     try {
-      for (const item of selectedItems) {
-        const response = await fetch('/api/cart/items', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            productId: product.id,
-            productOptionId: item.option?.id || null,
-            quantity: item.quantity,
-          }),
-        });
+      const items = selectedItems.map(item => ({
+        productOptionId: item.option?.id || null,
+        quantity: item.quantity,
+      }));
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || 'Failed to add to cart');
-        }
+      const response = await fetch('/api/cart/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          items,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to add to cart');
       }
 
       refreshCart();
