@@ -78,6 +78,5 @@ waitForPort = 3001
 [userenv.shared]
 NICEPAY_CLIENT_KEY = "S2_51d9b926e7e4494cb805c76175c40f11"
 NICEPAY_SECRET_KEY = "e17c4f4a97974ccbbeae23c2bceeba1d"
-SOCIAL_REDIRECT_BASE_URL = "https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev"
 PRIVATE_OBJECT_DIR = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
 PUBLIC_OBJECT_SEARCH_PATHS = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
