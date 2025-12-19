@@ -271,3 +271,68 @@
   color: rgba(12, 12, 12, 0.4);
   cursor: not-allowed;
 }
+
+.order-table__cell--status {
+  padding: 6px 12px;
+}
+
+.order-table__status-select {
+  width: 100%;
+  height: 32px;
+  padding: 4px 24px 4px 10px;
+  border: none;
+  border-radius: 16px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 10px;
+}
+
+.order-table__status-select.order-status--paid {
+  background-color: rgba(59, 155, 213, 0.15);
+  color: #3B9BD5;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%233B9BD5' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.order-table__status-select.order-status--preparing {
+  background-color: rgba(251, 186, 45, 0.2);
+  color: #bd8100;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23bd8100' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.order-table__status-select.order-status--shipping {
+  background-color: rgba(139, 92, 246, 0.15);
+  color: #8B5CF6;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%238B5CF6' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.order-table__status-select.order-status--delivered {
+  background-color: rgba(12, 12, 12, 0.06);
+  color: rgba(12, 12, 12, 0.8);
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%230C0C0C' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.order-table__status-select.order-status--cancelled {
+  background-color: rgba(255, 75, 63, 0.1);
+  color: #ff4b3f;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23ff4b3f' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.order-table__status-select.order-status--pending {
+  background-color: rgba(251, 186, 45, 0.3);
+  color: #bd8100;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23bd8100' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.order-table__status-select:focus {
+  outline: none;
+}
+
+.order-table__status-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

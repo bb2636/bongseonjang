@@ -72,7 +72,24 @@ export async function fetchAdminOrders(params: FetchAdminOrdersParams = {}): Pro
 export interface UpdateShippingInfoParams {
   carrierId: string;
   carrierName: string;
-  trackingNumber: string;
+  trackingNumber?: string;
+}
+
+export type BackendOrderStatus = 'pending' | 'paid' | 'confirmed' | 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'refunded';
+
+export async function updateOrderStatus(orderId: string, status: BackendOrderStatus): Promise<void> {
+  const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || '주문 상태 변경에 실패했습니다');
+  }
 }
 
 export async function updateShippingInfo(orderId: string, params: UpdateShippingInfoParams): Promise<void> {

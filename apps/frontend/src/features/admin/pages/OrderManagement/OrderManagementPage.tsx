@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '../../layouts';
-import { fetchAdminOrders, updateShippingInfo, OrderStatus, PaymentMethod, AdminOrderDto } from './api/adminOrderApi';
+import { fetchAdminOrders, updateShippingInfo, updateOrderStatus, OrderStatus, PaymentMethod, AdminOrderDto, BackendOrderStatus } from './api/adminOrderApi';
 import { TrackingNumberDialog } from './components/TrackingNumberDialog';
 import './OrderManagement.css';
 
@@ -39,6 +39,23 @@ const statusClassMap: Record<Exclude<OrderStatus, 'ALL'>, string> = {
   CANCELLED: 'order-status--cancelled',
   PAYMENT_PENDING: 'order-status--pending',
 };
+
+const frontendToBackendStatus: Record<Exclude<OrderStatus, 'ALL'>, BackendOrderStatus> = {
+  PAYMENT_PENDING: 'pending',
+  PAYMENT_COMPLETED: 'paid',
+  PREPARING: 'preparing',
+  SHIPPING: 'shipping',
+  DELIVERED: 'delivered',
+  CANCELLED: 'cancelled',
+};
+
+const orderStatusChangeOptions: { code: Exclude<OrderStatus, 'ALL'>; label: string }[] = [
+  { code: 'PAYMENT_COMPLETED', label: '결제완료' },
+  { code: 'PREPARING', label: '상품준비중' },
+  { code: 'SHIPPING', label: '배송중' },
+  { code: 'DELIVERED', label: '배송완료' },
+  { code: 'CANCELLED', label: '주문취소' },
+];
 
 const paymentMethodLabelMap: Record<Exclude<PaymentMethod, 'ALL'>, string> = {
   CARD: '신용카드',
@@ -88,12 +105,17 @@ export function OrderManagementPage() {
 
   const formatPrice = (price: number) => price.toLocaleString();
 
-  const renderOrderStatus = (status: Exclude<OrderStatus, 'ALL'>) => {
-    return (
-      <span className={`order-status-pill ${statusClassMap[status]}`}>
-        {statusLabelMap[status]}
-      </span>
-    );
+  const handleStatusChange = async (order: AdminOrderDto, newStatus: Exclude<OrderStatus, 'ALL'>) => {
+    setSavingOrderId(order.id);
+    try {
+      const backendStatus = frontendToBackendStatus[newStatus];
+      await updateOrderStatus(order.id, backendStatus);
+      await queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+    } finally {
+      setSavingOrderId(null);
+    }
   };
 
   const renderPaymentMethod = (method: Exclude<PaymentMethod, 'ALL'> | null) => {
@@ -250,8 +272,19 @@ export function OrderManagementPage() {
                   <div className="order-table__cell">
                     <div className="order-table__primary">{formatPrice(order.totalAmount)}</div>
                   </div>
-                  <div className="order-table__cell">
-                    {renderOrderStatus(order.orderStatus)}
+                  <div className="order-table__cell order-table__cell--status">
+                    <select
+                      className={`order-table__status-select ${statusClassMap[order.orderStatus]}`}
+                      value={order.orderStatus}
+                      onChange={(e) => handleStatusChange(order, e.target.value as Exclude<OrderStatus, 'ALL'>)}
+                      disabled={savingOrderId === order.id}
+                    >
+                      {orderStatusChangeOptions.map((status) => (
+                        <option key={status.code} value={status.code}>
+                          {status.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="order-table__cell">
                     <div className="order-table__primary">{renderPaymentMethod(order.paymentMethod)}</div>

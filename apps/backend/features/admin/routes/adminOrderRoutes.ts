@@ -178,8 +178,8 @@ router.put('/:orderId/shipping', async (req: Request, res: Response) => {
     const { orderId } = req.params;
     const { carrierId, carrierName, trackingNumber } = req.body;
 
-    if (!carrierId || !carrierName || !trackingNumber) {
-      return res.status(400).json({ error: '택배사와 송장번호를 입력해주세요' });
+    if (!carrierId || !carrierName) {
+      return res.status(400).json({ error: '택배사를 선택해주세요' });
     }
 
     const orderRepository = AppDataSource.getRepository(Order);
@@ -191,32 +191,35 @@ router.put('/:orderId/shipping', async (req: Request, res: Response) => {
     }
 
     let shipment = await shipmentRepository.findOne({ where: { orderId } });
+    const hasTrackingNumber = trackingNumber && trackingNumber.trim() !== '';
     
     if (shipment) {
       shipment.carrierCode = carrierId;
       shipment.carrierName = carrierName;
-      shipment.trackingNumber = trackingNumber;
-      shipment.status = 'in_transit';
+      if (hasTrackingNumber) {
+        shipment.trackingNumber = trackingNumber;
+        shipment.status = 'in_transit';
+      }
       await shipmentRepository.save(shipment);
     } else {
       shipment = shipmentRepository.create({
         orderId,
         carrierCode: carrierId,
         carrierName: carrierName,
-        trackingNumber: trackingNumber,
-        status: 'in_transit',
+        trackingNumber: hasTrackingNumber ? trackingNumber : null,
+        status: hasTrackingNumber ? 'in_transit' : 'pending',
       });
       await shipmentRepository.save(shipment);
     }
 
-    if (order.status === 'paid' || order.status === 'preparing') {
+    if (hasTrackingNumber && (order.status === 'paid' || order.status === 'preparing')) {
       order.status = 'shipping';
       await orderRepository.save(order);
     }
 
     return res.json({
       success: true,
-      message: '배송 정보가 저장되었습니다',
+      message: hasTrackingNumber ? '배송 정보가 저장되었습니다' : '택배사가 저장되었습니다',
       shipment: {
         carrierName: shipment.carrierName,
         trackingNumber: shipment.trackingNumber,
@@ -225,6 +228,43 @@ router.put('/:orderId/shipping', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Failed to update shipping info:', error);
     return res.status(500).json({ error: '배송 정보 저장에 실패했습니다' });
+  }
+});
+
+router.put('/:orderId/status', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = ['pending', 'paid', 'confirmed', 'preparing', 'shipping', 'delivered', 'cancelled', 'refunded'];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({ error: '유효하지 않은 주문 상태입니다' });
+    }
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const order = await orderRepository.findOne({ where: { id: orderId } });
+    
+    if (!order) {
+      return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
+    }
+
+    order.status = status;
+    if (status === 'delivered') {
+      order.deliveredAt = new Date();
+    }
+    await orderRepository.save(order);
+
+    return res.json({
+      success: true,
+      message: '주문 상태가 변경되었습니다',
+      order: {
+        id: order.id,
+        status: order.status,
+      },
+    });
+  } catch (error) {
+    console.error('Failed to update order status:', error);
+    return res.status(500).json({ error: '주문 상태 변경에 실패했습니다' });
   }
 });
 
