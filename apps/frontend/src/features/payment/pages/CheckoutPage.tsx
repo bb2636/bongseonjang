@@ -357,7 +357,7 @@ export function CheckoutPage() {
               <button 
                 type="button" 
                 className="checkout-add-address-button"
-                onClick={() => navigate('/address/new')}
+                onClick={() => navigate('/address/add')}
               >
                 배송지 등록
               </button>
