@@ -1,0 +1,221 @@
+swiper_react.js?v=4b310f49:159 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ swiper_react.js?v=4b310f49:159
+error @ swiper_react.js?v=4b310f49:143
+resolveDispatcher @ swiper_react.js?v=4b310f49:1068
+useState2 @ swiper_react.js?v=4b310f49:1088
+(anonymous) @ swiper_react.js?v=4b310f49:6113
+renderWithHooks @ chunk-QRIPYZTF.js?v=4b310f49:11596
+updateForwardRef @ chunk-QRIPYZTF.js?v=4b310f49:14373
+beginWork @ chunk-QRIPYZTF.js?v=4b310f49:15994
+beginWork$1 @ chunk-QRIPYZTF.js?v=4b310f49:19806
+performUnitOfWork @ chunk-QRIPYZTF.js?v=4b310f49:19251
+workLoopSync @ chunk-QRIPYZTF.js?v=4b310f49:19190
+renderRootSync @ chunk-QRIPYZTF.js?v=4b310f49:19169
+recoverFromConcurrentError @ chunk-QRIPYZTF.js?v=4b310f49:18786
+performSyncWorkOnRoot @ chunk-QRIPYZTF.js?v=4b310f49:18932
+flushSyncCallbacks @ chunk-QRIPYZTF.js?v=4b310f49:9166
+(anonymous) @ chunk-QRIPYZTF.js?v=4b310f49:18677
+setTimeout
+systemSetTimeoutZero @ @tanstack_react-query.js?v=4b310f49:95
+flush @ @tanstack_react-query.js?v=4b310f49:597
+batch @ @tanstack_react-query.js?v=4b310f49:615
+#dispatch @ @tanstack_react-query.js?v=4b310f49:1222
+setData @ @tanstack_react-query.js?v=4b310f49:904
+fetch @ @tanstack_react-query.js?v=4b310f49:1122
+await in fetch
+#executeFetch @ @tanstack_react-query.js?v=4b310f49:1432
+onSubscribe @ @tanstack_react-query.js?v=4b310f49:1305
+subscribe @ @tanstack_react-query.js?v=4b310f49:19
+(anonymous) @ @tanstack_react-query.js?v=4b310f49:3245
+subscribeToStore @ chunk-QRIPYZTF.js?v=4b310f49:12032
+commitHookEffectListMount @ chunk-QRIPYZTF.js?v=4b310f49:16963
+commitPassiveMountOnFiber @ chunk-QRIPYZTF.js?v=4b310f49:18206
+commitPassiveMountEffects_complete @ chunk-QRIPYZTF.js?v=4b310f49:18179
+commitPassiveMountEffects_begin @ chunk-QRIPYZTF.js?v=4b310f49:18169
+commitPassiveMountEffects @ chunk-QRIPYZTF.js?v=4b310f49:18159
+flushPassiveEffectsImpl @ chunk-QRIPYZTF.js?v=4b310f49:19543
+flushPassiveEffects @ chunk-QRIPYZTF.js?v=4b310f49:19500
+(anonymous) @ chunk-QRIPYZTF.js?v=4b310f49:19381
+workLoop @ chunk-QRIPYZTF.js?v=4b310f49:197
+flushWork @ chunk-QRIPYZTF.js?v=4b310f49:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=4b310f49:384Understand this error
+swiper_react.js?v=4b310f49:159 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ swiper_react.js?v=4b310f49:159
+error @ swiper_react.js?v=4b310f49:143
+resolveDispatcher @ swiper_react.js?v=4b310f49:1068
+useState2 @ swiper_react.js?v=4b310f49:1088
+(anonymous) @ swiper_react.js?v=4b310f49:6113
+renderWithHooks @ chunk-QRIPYZTF.js?v=4b310f49:11596
+updateForwardRef @ chunk-QRIPYZTF.js?v=4b310f49:14373
+beginWork @ chunk-QRIPYZTF.js?v=4b310f49:15994
+callCallback2 @ chunk-QRIPYZTF.js?v=4b310f49:3680
+invokeGuardedCallbackDev @ chunk-QRIPYZTF.js?v=4b310f49:3705
+invokeGuardedCallback @ chunk-QRIPYZTF.js?v=4b310f49:3739
+beginWork$1 @ chunk-QRIPYZTF.js?v=4b310f49:19818
+performUnitOfWork @ chunk-QRIPYZTF.js?v=4b310f49:19251
+workLoopSync @ chunk-QRIPYZTF.js?v=4b310f49:19190
+renderRootSync @ chunk-QRIPYZTF.js?v=4b310f49:19169
+recoverFromConcurrentError @ chunk-QRIPYZTF.js?v=4b310f49:18786
+performSyncWorkOnRoot @ chunk-QRIPYZTF.js?v=4b310f49:18932
+flushSyncCallbacks @ chunk-QRIPYZTF.js?v=4b310f49:9166
+(anonymous) @ chunk-QRIPYZTF.js?v=4b310f49:18677
+setTimeout
+systemSetTimeoutZero @ @tanstack_react-query.js?v=4b310f49:95
+flush @ @tanstack_react-query.js?v=4b310f49:597
+batch @ @tanstack_react-query.js?v=4b310f49:615
+#dispatch @ @tanstack_react-query.js?v=4b310f49:1222
+setData @ @tanstack_react-query.js?v=4b310f49:904
+fetch @ @tanstack_react-query.js?v=4b310f49:1122
+await in fetch
+#executeFetch @ @tanstack_react-query.js?v=4b310f49:1432
+onSubscribe @ @tanstack_react-query.js?v=4b310f49:1305
+subscribe @ @tanstack_react-query.js?v=4b310f49:19
+(anonymous) @ @tanstack_react-query.js?v=4b310f49:3245
+subscribeToStore @ chunk-QRIPYZTF.js?v=4b310f49:12032
+commitHookEffectListMount @ chunk-QRIPYZTF.js?v=4b310f49:16963
+commitPassiveMountOnFiber @ chunk-QRIPYZTF.js?v=4b310f49:18206
+commitPassiveMountEffects_complete @ chunk-QRIPYZTF.js?v=4b310f49:18179
+commitPassiveMountEffects_begin @ chunk-QRIPYZTF.js?v=4b310f49:18169
+commitPassiveMountEffects @ chunk-QRIPYZTF.js?v=4b310f49:18159
+flushPassiveEffectsImpl @ chunk-QRIPYZTF.js?v=4b310f49:19543
+flushPassiveEffects @ chunk-QRIPYZTF.js?v=4b310f49:19500
+(anonymous) @ chunk-QRIPYZTF.js?v=4b310f49:19381
+workLoop @ chunk-QRIPYZTF.js?v=4b310f49:197
+flushWork @ chunk-QRIPYZTF.js?v=4b310f49:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=4b310f49:384Understand this error
+swiper_react.js?v=4b310f49:1089 Uncaught TypeError: Cannot read properties of null (reading 'useState')
+    at useState2 (swiper_react.js?v=4b310f49:1089:29)
+    at swiper_react.js?v=4b310f49:6113:77
+    at renderWithHooks (chunk-QRIPYZTF.js?v=4b310f49:11596:26)
+    at updateForwardRef (chunk-QRIPYZTF.js?v=4b310f49:14373:28)
+    at beginWork (chunk-QRIPYZTF.js?v=4b310f49:15994:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QRIPYZTF.js?v=4b310f49:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QRIPYZTF.js?v=4b310f49:3705:24)
+    at invokeGuardedCallback (chunk-QRIPYZTF.js?v=4b310f49:3739:39)
+    at beginWork$1 (chunk-QRIPYZTF.js?v=4b310f49:19818:15)
+    at performUnitOfWork (chunk-QRIPYZTF.js?v=4b310f49:19251:20)
+useState2 @ swiper_react.js?v=4b310f49:1089
+(anonymous) @ swiper_react.js?v=4b310f49:6113
+renderWithHooks @ chunk-QRIPYZTF.js?v=4b310f49:11596
+updateForwardRef @ chunk-QRIPYZTF.js?v=4b310f49:14373
+beginWork @ chunk-QRIPYZTF.js?v=4b310f49:15994
+callCallback2 @ chunk-QRIPYZTF.js?v=4b310f49:3680
+invokeGuardedCallbackDev @ chunk-QRIPYZTF.js?v=4b310f49:3705
+invokeGuardedCallback @ chunk-QRIPYZTF.js?v=4b310f49:3739
+beginWork$1 @ chunk-QRIPYZTF.js?v=4b310f49:19818
+performUnitOfWork @ chunk-QRIPYZTF.js?v=4b310f49:19251
+workLoopSync @ chunk-QRIPYZTF.js?v=4b310f49:19190
+renderRootSync @ chunk-QRIPYZTF.js?v=4b310f49:19169
+recoverFromConcurrentError @ chunk-QRIPYZTF.js?v=4b310f49:18786
+performSyncWorkOnRoot @ chunk-QRIPYZTF.js?v=4b310f49:18932
+flushSyncCallbacks @ chunk-QRIPYZTF.js?v=4b310f49:9166
+(anonymous) @ chunk-QRIPYZTF.js?v=4b310f49:18677
+setTimeout
+systemSetTimeoutZero @ @tanstack_react-query.js?v=4b310f49:95
+flush @ @tanstack_react-query.js?v=4b310f49:597
+batch @ @tanstack_react-query.js?v=4b310f49:615
+#dispatch @ @tanstack_react-query.js?v=4b310f49:1222
+setData @ @tanstack_react-query.js?v=4b310f49:904
+fetch @ @tanstack_react-query.js?v=4b310f49:1122
+await in fetch
+#executeFetch @ @tanstack_react-query.js?v=4b310f49:1432
+onSubscribe @ @tanstack_react-query.js?v=4b310f49:1305
+subscribe @ @tanstack_react-query.js?v=4b310f49:19
+(anonymous) @ @tanstack_react-query.js?v=4b310f49:3245
+subscribeToStore @ chunk-QRIPYZTF.js?v=4b310f49:12032
+commitHookEffectListMount @ chunk-QRIPYZTF.js?v=4b310f49:16963
+commitPassiveMountOnFiber @ chunk-QRIPYZTF.js?v=4b310f49:18206
+commitPassiveMountEffects_complete @ chunk-QRIPYZTF.js?v=4b310f49:18179
+commitPassiveMountEffects_begin @ chunk-QRIPYZTF.js?v=4b310f49:18169
+commitPassiveMountEffects @ chunk-QRIPYZTF.js?v=4b310f49:18159
+flushPassiveEffectsImpl @ chunk-QRIPYZTF.js?v=4b310f49:19543
+flushPassiveEffects @ chunk-QRIPYZTF.js?v=4b310f49:19500
+(anonymous) @ chunk-QRIPYZTF.js?v=4b310f49:19381
+workLoop @ chunk-QRIPYZTF.js?v=4b310f49:197
+flushWork @ chunk-QRIPYZTF.js?v=4b310f49:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=4b310f49:384Understand this error
+chunk-QRIPYZTF.js?v=4b310f49:14080 The above error occurred in the <Swiper> component:
+
+    at https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/node_modules/.vite/deps/swiper_react.js?v=4b310f49:6113:77
+    at div
+    at BannerCarousel (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/components/BannerCarousel/BannerCarousel.tsx:9:3)
+    at HeroBanner (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/features/home/components/HeroBanner/HeroBanner.tsx:5:38)
+    at div
+    at DefaultHomeContent (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/features/home/components/DefaultHomeContent/DefaultHomeContent.tsx:47:7)
+    at main
+    at div
+    at HomeShellView (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/features/home/views/HomeShellView.tsx:10:41)
+    at main
+    at div
+    at MainLayout (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/layouts/MainLayout.tsx:5:3)
+    at HomePage (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/features/home/pages/HomePage.tsx:8:17)
+    at ProtectedRoute (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/components/ProtectedRoute/ProtectedRoute.tsx:5:34)
+    at RenderedRoute (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4b310f49:6104:26)
+    at Routes (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4b310f49:6945:3)
+    at App
+    at QuickCartProvider (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/contexts/QuickCartContext.tsx:5:37)
+    at ToastProvider (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/contexts/ToastContext.tsx:6:33)
+    at CartProvider (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/contexts/CartContext.tsx:6:32)
+    at AuthProvider (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/contexts/AuthContext.tsx:5:32)
+    at Router (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4b310f49:6886:13)
+    at BrowserRouter (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/node_modules/.vite/deps/react-router-dom.js?v=4b310f49:9992:3)
+    at QueryClientProvider (https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=4b310f49:3030:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QRIPYZTF.js?v=4b310f49:14080
+update.callback @ chunk-QRIPYZTF.js?v=4b310f49:14100
+callCallback @ chunk-QRIPYZTF.js?v=4b310f49:11296
+commitUpdateQueue @ chunk-QRIPYZTF.js?v=4b310f49:11313
+commitLayoutEffectOnFiber @ chunk-QRIPYZTF.js?v=4b310f49:17141
+commitLayoutMountEffects_complete @ chunk-QRIPYZTF.js?v=4b310f49:18030
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=4b310f49:18019
+commitLayoutEffects @ chunk-QRIPYZTF.js?v=4b310f49:17970
+commitRootImpl @ chunk-QRIPYZTF.js?v=4b310f49:19406
+commitRoot @ chunk-QRIPYZTF.js?v=4b310f49:19330
+performSyncWorkOnRoot @ chunk-QRIPYZTF.js?v=4b310f49:18948
+flushSyncCallbacks @ chunk-QRIPYZTF.js?v=4b310f49:9166
+(anonymous) @ chunk-QRIPYZTF.js?v=4b310f49:18677
+setTimeout
+systemSetTimeoutZero @ @tanstack_react-query.js?v=4b310f49:95
+flush @ @tanstack_react-query.js?v=4b310f49:597
+batch @ @tanstack_react-query.js?v=4b310f49:615
+#dispatch @ @tanstack_react-query.js?v=4b310f49:1222
+setData @ @tanstack_react-query.js?v=4b310f49:904
+fetch @ @tanstack_react-query.js?v=4b310f49:1122
+await in fetch
+#executeFetch @ @tanstack_react-query.js?v=4b310f49:1432
+onSubscribe @ @tanstack_react-query.js?v=4b310f49:1305
+subscribe @ @tanstack_react-query.js?v=4b310f49:19
+(anonymous) @ @tanstack_react-query.js?v=4b310f49:3245
+subscribeToStore @ chunk-QRIPYZTF.js?v=4b310f49:12032
+commitHookEffectListMount @ chunk-QRIPYZTF.js?v=4b310f49:16963
+commitPassiveMountOnFiber @ chunk-QRIPYZTF.js?v=4b310f49:18206
+commitPassiveMountEffects_complete @ chunk-QRIPYZTF.js?v=4b310f49:18179
+commitPassiveMountEffects_begin @ chunk-QRIPYZTF.js?v=4b310f49:18169
+commitPassiveMountEffects @ chunk-QRIPYZTF.js?v=4b310f49:18159
+flushPassiveEffectsImpl @ chunk-QRIPYZTF.js?v=4b310f49:19543
+flushPassiveEffects @ chunk-QRIPYZTF.js?v=4b310f49:19500
+(anonymous) @ chunk-QRIPYZTF.js?v=4b310f49:19381
+workLoop @ chunk-QRIPYZTF.js?v=4b310f49:197
+flushWork @ chunk-QRIPYZTF.js?v=4b310f49:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=4b310f49:384Understand this error
+chunk-QRIPYZTF.js?v=4b310f49:9176 Uncaught TypeError: Cannot read properties of null (reading 'useState')
+    at useState2 (swiper_react.js?v=4b310f49:1089:29)
+    at swiper_react.js?v=4b310f49:6113:77
+    at renderWithHooks (chunk-QRIPYZTF.js?v=4b310f49:11596:26)
+    at updateForwardRef (chunk-QRIPYZTF.js?v=4b310f49:14373:28)
+    at beginWork (chunk-QRIPYZTF.js?v=4b310f49:15994:22)
+    at beginWork$1 (chunk-QRIPYZTF.js?v=4b310f49:19806:22)
+    at performUnitOfWork (chunk-QRIPYZTF.js?v=4b310f49:19251:20)
+    at workLoopSync (chunk-QRIPYZTF.js?v=4b310f49:19190:13)
+    at renderRootSync (chunk-QRIPYZTF.js?v=4b310f49:19169:15)
+    at recoverFromConcurrentError (chunk-QRIPYZTF.js?v=4b310f49:18786:28)
