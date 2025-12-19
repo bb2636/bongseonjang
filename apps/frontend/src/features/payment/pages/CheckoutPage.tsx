@@ -354,7 +354,11 @@ export function CheckoutPage() {
           ) : (
             <div className="checkout-no-address">
               <p>등록된 배송지가 없습니다</p>
-              <button type="button" className="checkout-add-address-button">
+              <button 
+                type="button" 
+                className="checkout-add-address-button"
+                onClick={() => navigate('/address/new')}
+              >
                 배송지 등록
               </button>
             </div>
