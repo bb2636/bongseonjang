@@ -26,6 +26,7 @@ export interface SignupFormData {
   isOver14: boolean;
   termsAgreed: boolean;
   privacyAgreed: boolean;
+  socialProvider?: 'kakao' | 'naver';
 }
 
 const STORAGE_KEY = 'signupFormData';

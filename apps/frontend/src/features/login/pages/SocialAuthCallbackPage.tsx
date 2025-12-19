@@ -68,7 +68,36 @@ export default function SocialAuthCallbackPage() {
         });
 
         if (result.isNewUser) {
-          navigate('/signup/complete', { replace: true });
+          const signupFormData = {
+            email: result.user.email,
+            isEmailVerified: true,
+            isCodeSent: true,
+            verificationCode: '',
+            password: '',
+            passwordConfirm: '',
+            showPassword: false,
+            showPasswordConfirm: false,
+            isPasswordSet: false,
+            name: result.user.name || '',
+            phone: '',
+            isPhoneVerified: false,
+            addressName: '',
+            zonecode: '',
+            address: '',
+            addressDetail: '',
+            birthYear: '',
+            birthMonth: '',
+            birthDay: '',
+            gender: '',
+            referralId: '',
+            isReferralIdVerified: false,
+            isOver14: false,
+            termsAgreed: false,
+            privacyAgreed: false,
+            socialProvider: provider,
+          };
+          sessionStorage.setItem('signupFormData', JSON.stringify(signupFormData));
+          navigate('/signup/email', { replace: true });
         } else {
           navigate('/', { replace: true });
         }
