@@ -61,6 +61,8 @@ export function useSignupProfileStep() {
     },
   });
 
+  const isSocialSignup = !!formData.socialProvider;
+
   const signupMutation = useMutation({
     mutationFn: () => signupService.signup({
       email: formData.email,
@@ -342,14 +344,38 @@ export function useSignupProfileStep() {
       return;
     }
 
+    if (isSocialSignup) {
+      const birthDate = formData.birthYear && formData.birthMonth && formData.birthDay
+        ? `${formData.birthYear}-${formData.birthMonth.padStart(2, '0')}-${formData.birthDay.padStart(2, '0')}`
+        : undefined;
+      
+      sessionStorage.setItem('pendingSocialProfileData', JSON.stringify({
+        name: formData.name,
+        phone: formData.phone || undefined,
+        birthDate,
+        gender: formData.gender || undefined,
+        referralId: formData.referralId || undefined,
+        addressName: formData.addressName || undefined,
+        zonecode: formData.zonecode || undefined,
+        address: formData.address || undefined,
+        addressDetail: formData.addressDetail || undefined,
+      }));
+      
+      clearFormDataFromStorage();
+      navigate('/signup/complete');
+      return;
+    }
+
     signupMutation.mutate();
-  }, [isValid, signupMutation]);
+  }, [isValid, signupMutation, isSocialSignup, navigate]);
 
   return {
     email: formData.email,
     name: formData.name,
     phone: formData.phone,
     isPhoneVerified: formData.isPhoneVerified,
+    isSocialSignup,
+    socialProvider: formData.socialProvider,
     addressName: formData.addressName,
     zonecode: formData.zonecode,
     address: formData.address,

@@ -247,4 +247,48 @@ export class UserApplicationService {
 
     return this.socialAccountRepository.deleteByUserIdAndProvider(userId, provider);
   }
+
+  async completeSocialProfile(userId: string, input: {
+    name: string;
+    phone?: string;
+    birthDate?: string;
+    gender?: string;
+    referralId?: string;
+    addressName?: string;
+    zonecode?: string;
+    address?: string;
+    addressDetail?: string;
+  }): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    await this.userRepository.update(userId, {
+      name: input.name,
+      phone: input.phone || null,
+      birthDate: input.birthDate ? new Date(input.birthDate) : null,
+      gender: input.gender || null,
+      referralId: input.referralId || null,
+    });
+
+    if (input.zonecode && input.address) {
+      const existingAddresses = await this.shippingAddressRepository.findByUserId(userId);
+      const hasDefaultAddress = existingAddresses.some(addr => addr.isDefault);
+      
+      if (!hasDefaultAddress) {
+        await this.shippingAddressRepository.create({
+          userId,
+          addressName: input.addressName || '기본 배송지',
+          recipientName: input.name,
+          recipientPhone: input.phone || '',
+          postalCode: input.zonecode,
+          address: input.address,
+          addressDetail: input.addressDetail || '',
+          isDefault: true,
+        });
+      }
+    }
+  }
 }

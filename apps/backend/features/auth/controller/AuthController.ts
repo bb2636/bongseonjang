@@ -224,4 +224,37 @@ export class AuthController {
       res.status(400).json({ message });
     }
   }
+
+  async completeSocialProfile(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      if (!req.userId) {
+        res.status(401).json({ message: 'Not authenticated' });
+        return;
+      }
+
+      const { name, phone, birthDate, gender, referralId, addressName, zonecode, address, addressDetail } = req.body;
+
+      if (!name) {
+        res.status(400).json({ message: 'Name is required' });
+        return;
+      }
+
+      await userService.completeSocialProfile(req.userId, {
+        name,
+        phone,
+        birthDate,
+        gender,
+        referralId,
+        addressName,
+        zonecode,
+        address,
+        addressDetail,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to complete profile';
+      res.status(400).json({ message });
+    }
+  }
 }

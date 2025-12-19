@@ -61,23 +61,17 @@ export default function SocialAuthCallbackPage() {
           return;
         }
 
-        loginWithToken(result.token, {
-          id: result.user.id,
-          email: result.user.email,
-          name: result.user.name,
-        });
-
         if (result.isNewUser) {
           const signupFormData = {
             email: result.user.email,
             isEmailVerified: true,
             isCodeSent: true,
             verificationCode: '',
-            password: '',
-            passwordConfirm: '',
+            password: 'SOCIAL_LOGIN_NO_PASSWORD',
+            passwordConfirm: 'SOCIAL_LOGIN_NO_PASSWORD',
             showPassword: false,
             showPasswordConfirm: false,
-            isPasswordSet: false,
+            isPasswordSet: true,
             name: result.user.name || '',
             phone: '',
             isPhoneVerified: false,
@@ -97,8 +91,17 @@ export default function SocialAuthCallbackPage() {
             socialProvider: provider,
           };
           sessionStorage.setItem('signupFormData', JSON.stringify(signupFormData));
+          sessionStorage.setItem('pendingSocialLogin', JSON.stringify({
+            token: result.token,
+            user: result.user,
+          }));
           navigate('/signup/email', { replace: true });
         } else {
+          loginWithToken(result.token, {
+            id: result.user.id,
+            email: result.user.email,
+            name: result.user.name,
+          });
           navigate('/', { replace: true });
         }
       } catch (err) {
