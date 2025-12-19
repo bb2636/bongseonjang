@@ -58,14 +58,7 @@ import "./components/ProtectedRoute/ProtectedRoute.css";
 export default function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/" element={<HomePage />} />
       <Route
         path="/product/:id"
         element={
