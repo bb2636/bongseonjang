@@ -168,16 +168,18 @@ export function useCart() {
   const handleOrder = useCallback(() => {
     if (selectedItems.size === 0) return;
     
+    const itemIds = Array.from(selectedItems).join(',');
+    
     if (isAuthenticated) {
       queryClient.prefetchQuery({
         queryKey: ['defaultAddress'],
         queryFn: fetchDefaultAddress,
         staleTime: 1000 * 60 * 5,
       });
+      navigate(`/checkout?items=${itemIds}`);
+    } else {
+      navigate(`/checkout/guest?items=${itemIds}`);
     }
-    
-    const itemIds = Array.from(selectedItems).join(',');
-    navigate(`/checkout?items=${itemIds}`);
   }, [navigate, selectedItems, queryClient, isAuthenticated]);
 
   const isAllSelected = useMemo(() => {

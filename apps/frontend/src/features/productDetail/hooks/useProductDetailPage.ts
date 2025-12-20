@@ -108,10 +108,10 @@ export function useProductDetailPage(productId: string) {
           guestWishlistStorage.addItem({
             productId: product.id,
             name: product.name,
-            originalPrice: product.originalPrice,
+            originalPrice: product.basePrice,
             discountedPrice: product.discountedPrice,
             discountRate: product.discountRate,
-            thumbnailUrl: product.thumbnailUrl,
+            thumbnailUrl: product.thumbnailUrl || '',
           });
           setIsWishlisted(true);
           showToast('찜 목록에 추가되었습니다', 'success');
