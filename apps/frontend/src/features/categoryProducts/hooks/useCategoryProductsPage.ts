@@ -1,24 +1,50 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useProductsByCategory } from '../../home/hooks/useProductsByCategory';
+import { useQuery } from '@tanstack/react-query';
+import { 
+  fetchAllProducts, 
+  fetchBestProducts, 
+  fetchNewProducts, 
+  fetchProductsByCategoryId 
+} from '../../home/api/productApi';
 import type { ProductCardData } from '@/components/ProductCard';
 
-const SLUG_TO_DISPLAY_CATEGORY: Record<string, string> = {
-  'all': '',
-  'new': '신상품',
-  'best': '베스트',
-  'seasonal': '제철 수산물',
-  'frozen': '급랭 수산물',
-  'prepared': '손질 수산물',
-  'pickled': '바담은 절임류',
-};
+const STALE_TIME = 5 * 60 * 1000;
+
+function extractCategoryId(slug: string): string | null {
+  if (slug.startsWith('category-')) {
+    return slug.replace('category-', '');
+  }
+  return null;
+}
 
 export function useCategoryProductsPage() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const activeSlug = slug || 'all';
   
-  const displayCategoryName = SLUG_TO_DISPLAY_CATEGORY[activeSlug] || '';
-  const { products, isLoading, error } = useProductsByCategory(displayCategoryName);
+  const categoryId = extractCategoryId(activeSlug);
+  const isDbCategory = categoryId !== null;
+
+  const { data, isLoading, error } = useQuery<ProductCardData[]>({
+    queryKey: ['categoryProducts', activeSlug],
+    queryFn: async () => {
+      if (activeSlug === 'all') {
+        return fetchAllProducts();
+      }
+      if (activeSlug === 'best') {
+        return fetchBestProducts();
+      }
+      if (activeSlug === 'new') {
+        return fetchNewProducts();
+      }
+      if (isDbCategory && categoryId) {
+        const result = await fetchProductsByCategoryId(categoryId);
+        return result.products;
+      }
+      return [];
+    },
+    staleTime: STALE_TIME,
+  });
 
   const handleTabChange = (newSlug: string) => {
     navigate(`/category/${newSlug}`, { replace: true });
@@ -43,7 +69,7 @@ export function useCategoryProductsPage() {
   return {
     state: {
       activeSlug,
-      products,
+      products: data ?? [],
       isLoading,
       error: error as Error | null,
     },

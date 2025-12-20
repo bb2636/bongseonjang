@@ -45,3 +45,35 @@ export async function fetchAllProducts(filter?: ProductFilter): Promise<ProductC
   
   return response.json();
 }
+
+export async function fetchProductsByCategoryId(categoryId: string, page: number = 1, limit: number = 20): Promise<{ products: ProductCardData[]; total: number }> {
+  const url = `${API_BASE_URL}/products/by-category/${encodeURIComponent(categoryId)}?page=${page}&limit=${limit}`;
+  
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch products by category');
+  }
+  
+  return response.json();
+}
+
+export async function fetchBestProducts(): Promise<ProductCardData[]> {
+  const response = await fetch(`${API_BASE_URL}/best-products`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch best products');
+  }
+  
+  return response.json();
+}
+
+export async function fetchNewProducts(): Promise<ProductCardData[]> {
+  const response = await fetch(`${API_BASE_URL}/products/fresh`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch new products');
+  }
+  
+  return response.json();
+}
