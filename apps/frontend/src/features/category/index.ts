@@ -1,3 +1,3 @@
 export { default as CategoryPage } from './pages/CategoryPage';
-export { CATEGORIES } from './types/category';
+export { STATIC_CATEGORIES } from './types/category';
 export type { Category } from './types/category';
