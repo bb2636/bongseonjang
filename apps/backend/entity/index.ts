@@ -25,6 +25,7 @@ export { Order } from './Order';
 export type { OrderStatus } from './Order';
 export { OrderItem } from './OrderItem';
 export { OrderStatusHistory } from './OrderStatusHistory';
+export { GuestOrderDetail } from './GuestOrderDetail';
 
 export { ShippingAddress } from './ShippingAddress';
 export { Shipment } from './Shipment';

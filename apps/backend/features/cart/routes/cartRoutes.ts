@@ -312,4 +312,75 @@ router.post('/items/remove-selected', authMiddleware, async (req: Request, res: 
   }
 });
 
+router.post('/merge', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.userId;
+    const { items } = req.body;
+
+    if (!Array.isArray(items)) {
+      return res.status(400).json({ error: '항목 배열이 필요합니다' });
+    }
+
+    const { Product } = await import('../../../entity/Product');
+    const productRepository = AppDataSource.getRepository(Product);
+    const productOptionRepository = AppDataSource.getRepository(ProductOption);
+    const cartRepository = AppDataSource.getRepository(Cart);
+    const cartItemRepository = AppDataSource.getRepository(CartItem);
+
+    let cart = await cartRepository.findOne({
+      where: { userId, isActive: true },
+    });
+
+    if (!cart) {
+      cart = cartRepository.create({ userId, isActive: true });
+      await cartRepository.save(cart);
+    }
+
+    let mergedCount = 0;
+    for (const item of items) {
+      if (!item.productId) continue;
+
+      const product = await productRepository.findOne({ where: { id: item.productId } });
+      if (!product) continue;
+
+      if (item.optionId) {
+        const option = await productOptionRepository.findOne({
+          where: { id: item.optionId, productId: item.productId },
+        });
+        if (!option) continue;
+      }
+
+      const existingItem = await cartItemRepository.findOne({
+        where: {
+          cartId: cart.id,
+          productId: item.productId,
+          productOptionId: item.optionId || null,
+        },
+      });
+
+      const quantity = Math.min(99, Math.max(1, Math.floor(item.quantity || 1)));
+
+      if (existingItem) {
+        existingItem.quantity += quantity;
+        await cartItemRepository.save(existingItem);
+      } else {
+        const newItem = cartItemRepository.create({
+          cartId: cart.id,
+          productId: item.productId,
+          productOptionId: item.optionId || null,
+          quantity,
+        });
+        await cartItemRepository.save(newItem);
+      }
+      mergedCount++;
+    }
+
+    return res.json({ mergedCount });
+  } catch (error) {
+    console.error('Failed to merge cart:', error);
+    return res.status(500).json({ error: '장바구니 병합에 실패했습니다' });
+  }
+});
+
 export { router as cartRoutes };

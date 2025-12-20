@@ -68,3 +68,28 @@ export async function removeSelectedItems(itemIds: string[]): Promise<{ removedC
 
   return response.json();
 }
+
+export interface MergeCartItem {
+  productId: string;
+  optionId: string | null;
+  quantity: number;
+}
+
+export async function mergeGuestCart(items: MergeCartItem[]): Promise<{ mergedCount: number }> {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('/api/cart/merge', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ items }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to merge cart');
+  }
+
+  return response.json();
+}

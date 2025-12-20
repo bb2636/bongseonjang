@@ -163,3 +163,133 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+.guest-order-results {
+  width: 100%;
+  max-width: 343px;
+  margin-top: 24px;
+}
+
+.guest-order-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.guest-order-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.guest-order-empty-sub {
+  margin-top: 8px !important;
+  font-size: 13px !important;
+  color: #999;
+}
+
+.guest-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guest-order-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.guest-order-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.guest-order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.guest-order-card-date {
+  font-size: 13px;
+  color: #666;
+}
+
+.guest-order-card-status {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #f0f0f0;
+}
+
+.guest-order-card-status--paid,
+.guest-order-card-status--preparing {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.guest-order-card-status--shipping {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+.guest-order-card-status--delivered {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.guest-order-card-status--cancelled,
+.guest-order-card-status--refunded {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+.guest-order-card-number {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+.guest-order-card-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.guest-order-card-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.guest-order-card-item-name {
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.guest-order-card-item-option {
+  color: #888;
+  font-size: 13px;
+}
+
+.guest-order-card-item-qty {
+  color: #666;
+  font-size: 13px;
+  margin-left: auto;
+}
+
+.guest-order-card-amount {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0C0C0C;
+  text-align: right;
+}
