@@ -151,3 +151,11 @@
     font-size: 16px;
   }
 }
+
+.admin-layout .toast-container {
+  bottom: 24px;
+  left: auto;
+  right: 24px;
+  transform: none;
+  align-items: flex-end;
+}
