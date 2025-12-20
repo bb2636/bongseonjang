@@ -32,7 +32,16 @@
   transition: border-color 150ms ease-in-out, background 150ms ease-in-out;
 }
 
+.input-box:focus-within {
+  border-color: #3B9BD5;
+  background: #ffffff;
+}
+
 .input-box--error {
+  border-color: #ff4444;
+}
+
+.input-box--error:focus-within {
   border-color: #ff4444;
 }
 
