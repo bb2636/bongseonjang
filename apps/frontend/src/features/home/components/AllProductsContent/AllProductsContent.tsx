@@ -6,12 +6,10 @@ import { PRODUCT_CATEGORIES } from '../../constants/productCategories';
 import { useProductsByCategory } from '../../hooks/useProductsByCategory';
 import './AllProductsContent.css';
 
-const DISPLAY_CATEGORY = '전체상품';
-
 export default function AllProductsContent() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const { products, isLoading, error } = useProductsByCategory(DISPLAY_CATEGORY, selectedCategory);
+  const { products, isLoading, error } = useProductsByCategory('', selectedCategory);
 
   const handleProductClick = (productId: string) => {
     navigate(`/product/${productId}`);
