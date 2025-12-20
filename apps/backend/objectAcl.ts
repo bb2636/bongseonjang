@@ -1,6 +1,6 @@
-import { File } from "@google-cloud/storage";
+import { Client } from "@replit/object-storage";
 
-const ACL_POLICY_METADATA_KEY = "custom:aclPolicy";
+const ACL_METADATA_PREFIX = "acl_";
 
 export enum ObjectAccessGroupType {}
 
@@ -27,7 +27,7 @@ export interface ObjectAclPolicy {
 
 function isPermissionAllowed(
   requested: ObjectPermission,
-  granted: ObjectPermission,
+  granted: ObjectPermission
 ): boolean {
   if (requested === ObjectPermission.READ) {
     return [ObjectPermission.READ, ObjectPermission.WRITE].includes(granted);
@@ -38,14 +38,14 @@ function isPermissionAllowed(
 abstract class BaseObjectAccessGroup implements ObjectAccessGroup {
   constructor(
     public readonly type: ObjectAccessGroupType,
-    public readonly id: string,
+    public readonly id: string
   ) {}
 
   public abstract hasMember(userId: string): Promise<boolean>;
 }
 
 function createObjectAccessGroup(
-  group: ObjectAccessGroup,
+  group: ObjectAccessGroup
 ): BaseObjectAccessGroup {
   switch (group.type) {
     default:
@@ -53,45 +53,68 @@ function createObjectAccessGroup(
   }
 }
 
+const aclCache = new Map<string, ObjectAclPolicy>();
+
 export async function setObjectAclPolicy(
-  objectFile: File,
-  aclPolicy: ObjectAclPolicy,
+  client: Client,
+  objectName: string,
+  aclPolicy: ObjectAclPolicy
 ): Promise<void> {
-  const [exists] = await objectFile.exists();
-  if (!exists) {
-    throw new Error(`Object not found: ${objectFile.name}`);
+  const aclObjectName = `${ACL_METADATA_PREFIX}${objectName}.json`;
+  const aclContent = JSON.stringify(aclPolicy);
+
+  const result = await client.uploadFromText(aclObjectName, aclContent);
+  if (!result.ok) {
+    throw new Error(`Failed to set ACL policy: ${result.error}`);
   }
 
-  await objectFile.setMetadata({
-    metadata: {
-      [ACL_POLICY_METADATA_KEY]: JSON.stringify(aclPolicy),
-    },
-  });
+  aclCache.set(objectName, aclPolicy);
 }
 
 export async function getObjectAclPolicy(
-  objectFile: File,
+  client: Client,
+  objectName: string
 ): Promise<ObjectAclPolicy | null> {
-  const [metadata] = await objectFile.getMetadata();
-  const aclPolicy = metadata?.metadata?.[ACL_POLICY_METADATA_KEY];
-  if (!aclPolicy) {
+  const cached = aclCache.get(objectName);
+  if (cached) {
+    return cached;
+  }
+
+  const aclObjectName = `${ACL_METADATA_PREFIX}${objectName}.json`;
+
+  const existsResult = await client.exists(aclObjectName);
+  if (!existsResult.ok || !existsResult.value) {
     return null;
   }
-  return JSON.parse(aclPolicy as string);
+
+  const downloadResult = await client.downloadAsText(aclObjectName);
+  if (!downloadResult.ok) {
+    return null;
+  }
+
+  try {
+    const aclPolicy = JSON.parse(downloadResult.value) as ObjectAclPolicy;
+    aclCache.set(objectName, aclPolicy);
+    return aclPolicy;
+  } catch {
+    return null;
+  }
 }
 
 export async function canAccessObject({
   userId,
-  objectFile,
+  client,
+  objectName,
   requestedPermission,
 }: {
   userId?: string;
-  objectFile: File;
+  client: Client;
+  objectName: string;
   requestedPermission: ObjectPermission;
 }): Promise<boolean> {
-  const aclPolicy = await getObjectAclPolicy(objectFile);
+  const aclPolicy = await getObjectAclPolicy(client, objectName);
   if (!aclPolicy) {
-    return false;
+    return true;
   }
 
   if (

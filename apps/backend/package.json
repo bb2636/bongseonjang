@@ -9,12 +9,10 @@
   },
   "dependencies": {
     "@bongkru/contract": "workspace:*",
-    "@google-cloud/storage": "^7.18.0",
     "@replit/object-storage": "^1.0.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.0.2",
     "pg": "^8.16.3",
