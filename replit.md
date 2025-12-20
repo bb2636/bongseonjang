@@ -150,6 +150,31 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 ### Database Schema Principles
 주문 시점의 가격/옵션 스냅샷 저장, 상태 변경 이력 관리 (`order_status_history`, `shipment_events`), 포인트 만료 관리 (`point_transactions.expiresAt`), Soft Delete를 위한 `isActive` 플래그 사용.
 
+## Object Storage (App Storage)
+프로젝트는 `@replit/object-storage` SDK를 사용하여 파일 저장을 관리합니다.
+
+### 특징
+- **자동 인증**: Replit 환경에서 자동으로 인증 처리
+- **환경 변수 불필요**: 버킷 설정을 위한 환경 변수가 필요 없음
+- **포크 후 자동 작동**: 프로젝트를 포크해도 별도 설정 없이 바로 작동
+
+### 파일 구조
+- `apps/backend/objectStorage.ts` - 스토리지 서비스 클래스
+- `apps/backend/objectAcl.ts` - 접근 권한(ACL) 관리
+
+### 사용 예시
+```typescript
+import { ObjectStorageService } from './objectStorage';
+
+const storageService = new ObjectStorageService();
+
+// 파일 업로드
+const objectPath = await storageService.uploadFile(buffer, 'filename.jpg', 'uploads');
+
+// 파일 다운로드
+await storageService.downloadObjectByPath(objectPath, res);
+```
+
 ## External Dependencies
 - **React 18**: 프론트엔드 라이브러리
 - **Vite**: 빌드 도구
