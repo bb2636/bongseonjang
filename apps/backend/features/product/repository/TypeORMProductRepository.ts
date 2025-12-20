@@ -134,10 +134,13 @@ export class TypeORMProductRepository implements ProductRepository {
 
   async findFreshProducts(limit: number = 10): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 
     return productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .where('product.createdAt >= :threeMonthsAgo', { threeMonthsAgo })
       .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();
