@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FilterChips } from '../FilterChips';
 import { ProductGridContent } from '@/components/ProductGridContent';
-import { PRODUCT_CATEGORIES } from '../../constants/productCategories';
+import { useProductCategories } from '../../hooks/useProductCategories';
 import { useProductsByCategory } from '../../hooks/useProductsByCategory';
 import './NewProductsContent.css';
 
@@ -11,6 +11,7 @@ const DISPLAY_CATEGORY = '신상품';
 export default function NewProductsContent() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const { categories } = useProductCategories();
   const { products, isLoading, error } = useProductsByCategory(DISPLAY_CATEGORY, selectedCategory);
 
   const handleProductClick = (productId: string) => {
@@ -20,7 +21,7 @@ export default function NewProductsContent() {
   return (
     <div className="new-products-content">
       <FilterChips
-        chips={PRODUCT_CATEGORIES}
+        chips={categories}
         selectedChipId={selectedCategory}
         onChipSelect={setSelectedCategory}
       />
