@@ -6,6 +6,7 @@ import { ReviewService, TypeORMReviewRepository, TypeORMReviewImageRepository } 
 import { TypeORMReviewableOrderItemRepository } from '../../review/repository/TypeORMReviewableOrderItemRepository';
 import { AppDataSource } from '../../../config/database';
 import { ProductInquiry } from '../../../entity/ProductInquiry';
+import { ProductCategory } from '../../../entity/ProductCategory';
 import { User } from '../../../entity/User';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { InquiryService } from '../../inquiry/application/InquiryService';
@@ -123,6 +124,35 @@ router.post('/:id/inquiries', authMiddleware, async (req: AuthenticatedRequest, 
   } catch (error) {
     console.error('Failed to create product inquiry:', error);
     res.status(500).json({ error: 'Failed to create inquiry' });
+  }
+});
+
+router.get('/categories', async (req: Request, res: Response) => {
+  try {
+    const categoryRepository = AppDataSource.getRepository(ProductCategory);
+    const categories = await categoryRepository.find({
+      where: { isActive: true },
+      order: { sortOrder: 'ASC' },
+      select: ['id', 'name', 'sortOrder'],
+    });
+    res.json(categories);
+  } catch (error) {
+    console.error('Failed to fetch product categories:', error);
+    res.status(500).json({ error: 'Failed to fetch categories', categories: [] });
+  }
+});
+
+router.get('/by-category/:categoryId', async (req: Request, res: Response) => {
+  try {
+    const { categoryId } = req.params;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    
+    const products = await productService.getProductsByCategory(categoryId, page, limit);
+    res.json(products);
+  } catch (error) {
+    console.error('Failed to fetch products by category:', error);
+    res.status(500).json({ error: 'Failed to fetch products', products: [] });
   }
 });
 

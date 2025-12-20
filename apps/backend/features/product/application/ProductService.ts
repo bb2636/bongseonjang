@@ -62,6 +62,16 @@ export class ProductService {
     return products.map((product) => this.toDto(product));
   }
 
+  async getProductsByCategory(categoryId: string, page: number = 1, limit: number = 20): Promise<{ products: ProductDto[]; total: number; page: number; limit: number }> {
+    const { products, total } = await this.productRepository.findByCategory(categoryId, page, limit);
+    return {
+      products: products.map((product) => this.toDto(product)),
+      total,
+      page,
+      limit,
+    };
+  }
+
   private toTimeDealDto(product: Product, now: number): TimeDealProductDto {
     const baseDto = this.toDto(product);
     const saleEndAt = product.saleEndDate ? new Date(product.saleEndDate).toISOString() : '';

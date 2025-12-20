@@ -145,4 +145,20 @@ export class TypeORMProductRepository implements ProductRepository {
       .limit(limit)
       .getMany();
   }
+
+  async findByCategory(categoryId: string, page: number = 1, limit: number = 20): Promise<{ products: Product[]; total: number }> {
+    const productRepository = AppDataSource.getRepository(Product);
+    const offset = (page - 1) * limit;
+
+    const [products, total] = await productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .where('product.productCategoryId = :categoryId', { categoryId })
+      .orderBy('product.createdAt', 'DESC')
+      .skip(offset)
+      .take(limit)
+      .getManyAndCount();
+
+    return { products, total };
+  }
 }
