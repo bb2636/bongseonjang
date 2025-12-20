@@ -1,6 +1,5 @@
 import { LoginResponse } from '@bongkru/contract';
-
-const API_BASE_URL = '/api';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export const loginService = {
   async loginWithEmail(email: string, password: string): Promise<LoginResponse> {

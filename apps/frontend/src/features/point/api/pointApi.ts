@@ -1,6 +1,5 @@
 import { PointWallet, PointTransaction } from '../types/point';
-
-const API_BASE_URL = '/api';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export async function fetchPointWallet(): Promise<PointWallet> {
   const response = await fetch(`${API_BASE_URL}/points/wallet`, {

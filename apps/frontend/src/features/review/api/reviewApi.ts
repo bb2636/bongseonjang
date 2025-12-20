@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export interface CheckReviewResponse {
   hasReviewed: boolean;

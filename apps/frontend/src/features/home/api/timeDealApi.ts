@@ -1,9 +1,8 @@
 import type { TimeDeal } from '../types/timeDeal';
-
-const API_BASE_URL = '/api/products/time-deals';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export async function fetchTimeDeals(): Promise<TimeDeal[]> {
-  const response = await fetch(API_BASE_URL);
+  const response = await fetch(`${API_BASE_URL}/products/time-deals`);
 
   if (!response.ok) {
     throw new Error('Failed to fetch time deals');

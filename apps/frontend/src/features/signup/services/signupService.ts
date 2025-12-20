@@ -4,10 +4,9 @@ import {
   CheckEmailResponse, 
   ReferralVerifyResponse 
 } from '@bongkru/contract';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 type SignupResult = AuthResult;
-
-const API_BASE_URL = '/api';
 
 const ERROR_MESSAGES: Record<string, string> = {
   'Email already in use': '이미 가입된 이메일입니다.',

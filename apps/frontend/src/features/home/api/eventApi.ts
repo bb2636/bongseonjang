@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
+
 export interface EventData {
   id: string;
   title: string;
@@ -8,10 +10,8 @@ export interface EventData {
   endDate?: string;
 }
 
-const API_BASE_URL = '/api/events';
-
 export async function fetchEvents(): Promise<EventData[]> {
-  const response = await fetch(API_BASE_URL);
+  const response = await fetch(`${API_BASE_URL}/events`);
   
   if (!response.ok) {
     throw new Error('Failed to fetch events');

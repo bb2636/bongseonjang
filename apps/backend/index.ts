@@ -12,7 +12,27 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5000',
+  'http://localhost:5173',
+  'https://localhost',
+  'capacitor://localhost',
+  'http://localhost',
+  process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : '',
+  process.env.REPLIT_DEPLOYMENT_URL || '',
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed) || allowed.includes(origin))) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(null, true);
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -1,9 +1,8 @@
 import type { BongcookProduct } from '../types/bongcook';
-
-const API_BASE_URL = '/api/products/tag/bongcook';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export async function fetchBongcookProducts(): Promise<BongcookProduct[]> {
-  const response = await fetch(API_BASE_URL);
+  const response = await fetch(`${API_BASE_URL}/products/tag/bongcook`);
   
   if (!response.ok) {
     throw new Error('Failed to fetch bongcook products');

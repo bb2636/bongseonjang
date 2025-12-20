@@ -1,6 +1,5 @@
 import type { ProductDetail } from '../types/productDetail';
-
-const API_BASE_URL = '/api';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export interface RelatedProduct {
   id: string;

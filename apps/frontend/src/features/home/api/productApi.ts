@@ -1,6 +1,5 @@
 import type { ProductCardData } from '@/components/ProductCard';
-
-const API_BASE_URL = '/api/products';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export interface ProductFilter {
   productCategory?: string;
@@ -17,7 +16,7 @@ export async function fetchProductsByDisplayCategory(
   }
   
   const queryString = params.toString();
-  const url = `${API_BASE_URL}/category/${encodeURIComponent(displayCategoryName)}${queryString ? `?${queryString}` : ''}`;
+  const url = `${API_BASE_URL}/products/category/${encodeURIComponent(displayCategoryName)}${queryString ? `?${queryString}` : ''}`;
   
   const response = await fetch(url);
   
@@ -36,7 +35,7 @@ export async function fetchAllProducts(filter?: ProductFilter): Promise<ProductC
   }
   
   const queryString = params.toString();
-  const url = `${API_BASE_URL}${queryString ? `?${queryString}` : ''}`;
+  const url = `${API_BASE_URL}/products${queryString ? `?${queryString}` : ''}`;
   
   const response = await fetch(url);
   

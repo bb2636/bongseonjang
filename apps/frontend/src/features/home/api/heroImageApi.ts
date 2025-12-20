@@ -1,6 +1,5 @@
 import type { HeroImageResponse } from '../types/heroImage';
-
-const API_BASE_URL = '/api';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export async function fetchHeroImages(): Promise<HeroImageResponse> {
   const response = await fetch(`${API_BASE_URL}/home/hero-images`);

@@ -1,4 +1,6 @@
-const API_BASE_URL = '/api/address';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
+
+const ADDRESS_API_URL = `${API_BASE_URL}/address`;
 
 export interface AddressResponse {
   id: string;
@@ -20,7 +22,7 @@ export async function fetchAddresses(): Promise<AddressResponse[]> {
     return [];
   }
 
-  const response = await fetch(`${API_BASE_URL}`, {
+  const response = await fetch(`${ADDRESS_API_URL}`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -40,7 +42,7 @@ export async function fetchDefaultAddress(): Promise<DefaultAddressResponse | nu
     return null;
   }
 
-  const response = await fetch(`${API_BASE_URL}/default`, {
+  const response = await fetch(`${ADDRESS_API_URL}/default`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
