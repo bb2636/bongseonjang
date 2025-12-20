@@ -1,21 +1,50 @@
-import { AppDataSource } from '../../../config/database';
-import { Product } from '../../../entity/Product';
-import { ProductImage } from '../../../entity/ProductImage';
-import type { BestProduct } from '../domain/BestProduct';
-import type { BestProductRepository } from './BestProductRepository';
+import { AppDataSource } from '../../../config/database.js';
+import { Product } from '../../../entity/Product.js';
+import { ProductImage } from '../../../entity/ProductImage.js';
+import type { BestProduct } from '../domain/BestProduct.js';
+import type { BestProductRepository } from './BestProductRepository.js';
 
 export class TypeORMBestProductRepository implements BestProductRepository {
   async findAll(): Promise<BestProduct[]> {
     const productRepository = AppDataSource.getRepository(Product);
     
-    const products = await productRepository
+    const productsWithSales = await productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .orderBy('product.createdAt', 'DESC')
+      .leftJoin('order_items', 'oi', 'oi."productId" = product.id')
+      .addSelect('COALESCE(SUM(oi.quantity), 0)', 'totalSold')
+      .groupBy('product.id')
+      .addGroupBy('images.id')
+      .orderBy('COALESCE(SUM(oi.quantity), 0)', 'DESC')
+      .addOrderBy('product.createdAt', 'DESC')
       .limit(10)
-      .getMany();
+      .getRawAndEntities();
 
-    return products.map((product, index) => this.toDto(product, index + 1));
+    const { entities, raw } = productsWithSales;
+    
+    const productSalesMap = new Map<string, number>();
+    for (const r of raw) {
+      const productId = r.product_id;
+      const sold = parseInt(r.totalSold, 10) || 0;
+      if (!productSalesMap.has(productId) || sold > (productSalesMap.get(productId) ?? 0)) {
+        productSalesMap.set(productId, sold);
+      }
+    }
+
+    const uniqueProducts = entities.filter((product: Product, index: number, self: Product[]) =>
+      index === self.findIndex((p: Product) => p.id === product.id)
+    );
+
+    uniqueProducts.sort((a: Product, b: Product) => {
+      const salesA = productSalesMap.get(a.id) ?? 0;
+      const salesB = productSalesMap.get(b.id) ?? 0;
+      if (salesB !== salesA) {
+        return salesB - salesA;
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+    return uniqueProducts.slice(0, 10).map((product: Product, index: number) => this.toDto(product, index + 1));
   }
 
   private toDto(product: Product, rank: number): BestProduct {
