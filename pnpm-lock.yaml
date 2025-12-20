@@ -30,6 +30,9 @@ importers:
       '@google-cloud/storage':
         specifier: ^7.18.0
         version: 7.18.0
+      '@replit/object-storage':
+        specifier: ^1.0.0
+        version: 1.0.0
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -515,6 +518,10 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@replit/object-storage@1.0.0':
+    resolution: {integrity: sha512-LmQjHioAI32TPiVSljtEkJRHk8XKsrwi4D0WvaKQ4RGA6TSStAjeI5Hm8ZQW0DiQI9PqXsiBXTb930SPqm7K8g==}
+    engines: {node: '>=18.0.0'}
 
   '@rolldown/pluginutils@1.0.0-beta.53':
     resolution: {integrity: sha512-vENRlFU4YbrwVqNDZ7fLvy+JR1CRkyr01jhSiDpE1u6py3OMzQfztQU2jxykW3ALNxO4kSlqIDeYyD0Y9RcQeQ==}
@@ -2677,6 +2684,13 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@replit/object-storage@1.0.0':
+    dependencies:
+      '@google-cloud/storage': 7.18.0
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
 
   '@rolldown/pluginutils@1.0.0-beta.53': {}
 
