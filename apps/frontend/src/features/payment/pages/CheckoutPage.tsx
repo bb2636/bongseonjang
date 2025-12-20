@@ -139,7 +139,8 @@ export function CheckoutPage() {
     if (isDirectMode && directProduct && directPurchaseData) {
       return directPurchaseData.items.map((item, index) => {
         const productOption = item.productOptionId 
-          ? directProduct.mainOptions.find(opt => opt.id === item.productOptionId)
+          ? directProduct.options.find(opt => opt.id === item.productOptionId) ||
+            directProduct.mainOptions.find(opt => opt.id === item.productOptionId)
           : null;
         
         const unitPrice = productOption ? productOption.price : directProduct.discountedPrice;

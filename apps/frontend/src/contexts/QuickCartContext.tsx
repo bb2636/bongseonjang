@@ -7,6 +7,7 @@ interface QuickCartProduct {
   discountedPrice: number;
   imageUrl?: string;
   isOptionRequired: boolean;
+  options: QuickCartOption[];
   mainOptions: QuickCartOption[];
 }
 
@@ -74,6 +75,14 @@ export function QuickCartProvider({ children }: QuickCartProviderProps) {
         discountedPrice,
         imageUrl: data.images?.[0]?.imageUrl,
         isOptionRequired: data.isOptionRequired,
+        options: (data.options || []).map((opt: any) => ({
+          id: opt.id,
+          groupName: '옵션 선택',
+          name: opt.name,
+          price: opt.price,
+          compareAtPrice: opt.compareAtPrice || null,
+          stockQty: opt.stockQty,
+        })),
         mainOptions: (data.mainOptions || []).map((opt: any) => ({
           id: opt.id,
           groupName: opt.groupName || '옵션 선택',

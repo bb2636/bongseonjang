@@ -25,8 +25,11 @@ export default function QuickCartBottomSheet() {
   const [noOptionQuantity, setNoOptionQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
 
-  const hasOptions = product?.mainOptions && product.mainOptions.length > 0;
-  const optionGroupName = product?.mainOptions?.[0]?.groupName || '옵션 선택';
+  const productOptions = product?.options && product.options.length > 0 
+    ? product.options 
+    : product?.mainOptions || [];
+  const hasOptions = productOptions.length > 0;
+  const optionGroupName = (product?.mainOptions?.[0] as { groupName?: string })?.groupName || '옵션 선택';
 
   useEffect(() => {
     if (isOpen && product) {
@@ -266,7 +269,7 @@ export default function QuickCartBottomSheet() {
                     </button>
                     {isDropdownOpen && (
                       <div className="quick-cart-sheet__dropdown-menu">
-                        {product.mainOptions.map((option) => (
+                        {productOptions.map((option) => (
                           <button
                             key={option.id}
                             className={`quick-cart-sheet__dropdown-item ${option.stockQty <= 0 ? 'quick-cart-sheet__dropdown-item--disabled' : ''}`}
