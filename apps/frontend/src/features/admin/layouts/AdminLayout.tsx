@@ -24,7 +24,6 @@ const menuItems: MenuItem[] = [
 ];
 
 const pageInfo: Record<string, { title: string; description: string }> = {
-  '/admin': { title: '대시보드', description: '전체 현황을 한눈에 확인합니다' },
   '/admin/users': { title: '사용자 관리', description: '가입된 사용자의 정보와 현황을 관리합니다' },
   '/admin/orders': { title: '주문관리', description: '주문 내역을 확인하고 관리합니다' },
   '/admin/products': { title: '상품관리', description: '상품 정보를 등록하고 관리합니다' },
@@ -41,13 +40,10 @@ export function AdminLayout({ children, title, description, hidePageHeader = fal
   const location = useLocation();
 
   const isActive = (path: string) => {
-    if (path === '/admin') {
-      return location.pathname === '/admin';
-    }
     return location.pathname.startsWith(path);
   };
 
-  const currentPageInfo = pageInfo[location.pathname] || pageInfo['/admin'];
+  const currentPageInfo = pageInfo[location.pathname] || pageInfo['/admin/users'];
   const pageTitle = title || currentPageInfo.title;
   const pageDescription = description || currentPageInfo.description;
 

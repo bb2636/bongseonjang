@@ -1,0 +1,42 @@
+.wishlist-skeleton {
+  padding: 16px;
+}
+
+.wishlist-skeleton__count {
+  margin-bottom: 16px;
+}
+
+.wishlist-skeleton__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.wishlist-skeleton__card {
+  display: flex;
+  flex-direction: column;
+}
+
+.wishlist-skeleton__image-wrapper {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.wishlist-skeleton__remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.wishlist-skeleton__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wishlist-skeleton__price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}

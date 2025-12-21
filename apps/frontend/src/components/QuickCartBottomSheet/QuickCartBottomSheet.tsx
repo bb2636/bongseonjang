@@ -4,6 +4,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { guestCartStorage } from '@/utils/guestStorage';
 import './QuickCartBottomSheet.css';
 
 interface SelectedItem {
@@ -24,8 +25,11 @@ export default function QuickCartBottomSheet() {
   const [noOptionQuantity, setNoOptionQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
 
-  const hasOptions = product?.mainOptions && product.mainOptions.length > 0;
-  const optionGroupName = product?.mainOptions?.[0]?.groupName || '옵션 선택';
+  const productOptions = product?.options && product.options.length > 0 
+    ? product.options 
+    : product?.mainOptions || [];
+  const hasOptions = productOptions.length > 0;
+  const optionGroupName = (product?.mainOptions?.[0] as { groupName?: string })?.groupName || '옵션 선택';
 
   useEffect(() => {
     if (isOpen && product) {
@@ -139,43 +143,50 @@ export default function QuickCartBottomSheet() {
   };
 
   const handleAddToCart = async () => {
-    if (!isAuthenticated) {
-      showToast('로그인이 필요합니다', 'error');
-      closeQuickCart();
-      navigate('/login');
-      return;
-    }
-
     if (selectedItems.length === 0 || !product) return;
 
     setIsAdding(true);
-    const token = localStorage.getItem('token');
 
     try {
-      const items = selectedItems.map(item => ({
-        productOptionId: item.option?.id || null,
-        quantity: item.quantity,
-      }));
+      if (isAuthenticated) {
+        const token = localStorage.getItem('token');
+        const items = selectedItems.map(item => ({
+          productOptionId: item.option?.id || null,
+          quantity: item.quantity,
+        }));
 
-      const response = await fetch('/api/cart/items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          productId: product.id,
-          items,
-        }),
-      });
+        const response = await fetch('/api/cart/items', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: product.id,
+            items,
+          }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to add to cart');
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to add to cart');
+        }
+      } else {
+        for (const item of selectedItems) {
+          guestCartStorage.addItem({
+            productId: product.id,
+            productName: product.name,
+            optionId: item.option?.id || null,
+            optionName: item.option?.name || null,
+            quantity: item.quantity,
+            unitPrice: item.option ? item.option.price : product.discountedPrice,
+            totalPrice: (item.option ? item.option.price : product.discountedPrice) * item.quantity,
+            thumbnailUrl: product.imageUrl || '',
+          });
+        }
       }
 
       refreshCart();
-
       showToast('장바구니에 담았습니다', 'success');
       closeQuickCart();
     } catch (error) {
@@ -186,28 +197,30 @@ export default function QuickCartBottomSheet() {
     }
   };
 
-  const handleBuyNow = () => {
-    if (!isAuthenticated) {
-      showToast('로그인이 필요합니다', 'error');
-      closeQuickCart();
-      navigate('/login');
-      return;
-    }
-
+  const handleBuyNow = async () => {
     if (selectedItems.length === 0 || !product) return;
 
     const items = selectedItems.map(item => ({
       productOptionId: item.option?.id || null,
+      optionName: item.option?.name || null,
       quantity: item.quantity,
+      unitPrice: item.option ? item.option.price : product.discountedPrice,
     }));
 
     const directPurchaseData = {
       productId: product.id,
+      productName: product.name,
+      thumbnailUrl: product.imageUrl || '',
       items,
     };
 
     closeQuickCart();
-    navigate(`/checkout?direct=true&data=${encodeURIComponent(JSON.stringify(directPurchaseData))}`);
+    
+    if (isAuthenticated) {
+      navigate(`/checkout?direct=true&data=${encodeURIComponent(JSON.stringify(directPurchaseData))}`);
+    } else {
+      navigate(`/checkout/guest?direct=true&data=${encodeURIComponent(JSON.stringify(directPurchaseData))}`);
+    }
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -256,7 +269,7 @@ export default function QuickCartBottomSheet() {
                     </button>
                     {isDropdownOpen && (
                       <div className="quick-cart-sheet__dropdown-menu">
-                        {product.mainOptions.map((option) => (
+                        {productOptions.map((option) => (
                           <button
                             key={option.id}
                             className={`quick-cart-sheet__dropdown-item ${option.stockQty <= 0 ? 'quick-cart-sheet__dropdown-item--disabled' : ''}`}

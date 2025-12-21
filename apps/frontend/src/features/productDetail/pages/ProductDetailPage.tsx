@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useProductDetailPage } from '../hooks/useProductDetailPage';
 import ProductDetailView from '../views/ProductDetailView';
+import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
 import { AlertModal } from '../../../components/AlertModal';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import { checkPurchase } from '../../orderHistory/api/orderHistoryApi';
@@ -48,11 +49,7 @@ export default function ProductDetailPage() {
   } = actions;
 
   if (isLoading) {
-    return (
-      <div className="product-detail-page__loading">
-        <div className="product-detail-page__spinner" />
-      </div>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (error || !product) {

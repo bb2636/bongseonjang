@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { mergeGuestDataToServer } from '../utils/guestDataMerge';
 
 interface User {
   id: string;
@@ -73,6 +74,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const data = await response.json();
       setUser(data.user);
       localStorage.setItem('token', data.token);
+      
+      mergeGuestDataToServer().catch(console.error);
     } finally {
       setIsLoading(false);
     }
@@ -81,6 +84,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const loginWithToken = useCallback((token: string, userData: User) => {
     localStorage.setItem('token', token);
     setUser(userData);
+    
+    mergeGuestDataToServer().catch(console.error);
   }, []);
 
   const logout = useCallback(() => {
@@ -104,6 +109,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const data = await response.json();
       setUser(data.user);
       localStorage.setItem('token', data.token);
+      
+      mergeGuestDataToServer().catch(console.error);
     } finally {
       setIsLoading(false);
     }

@@ -1,31 +1,47 @@
 import { ChangeEvent } from 'react';
-import { Input, PasswordInput } from '@components';
+import { Input } from '@components';
+import { GuestOrder } from '../../../payment/api/paymentApi';
 import './GuestOrderLookupView.css';
 
 interface GuestOrderLookupViewProps {
   guestOrderLookup: {
     ordererName: string;
-    orderNumber: string;
-    orderPassword: string;
+    phone: string;
     isLoading: boolean;
     isValid: boolean;
     errors: {
       ordererName: string | null;
-      orderNumber: string | null;
-      orderPassword: string | null;
+      phone: string | null;
     };
+    orders: GuestOrder[];
+    hasSearched: boolean;
     onOrdererNameChange: (value: string) => void;
-    onOrderNumberChange: (value: string) => void;
-    onOrderPasswordChange: (value: string) => void;
+    onPhoneChange: (value: string) => void;
     onOrdererNameBlur: () => void;
-    onOrderNumberBlur: () => void;
-    onOrderPasswordBlur: () => void;
+    onPhoneBlur: () => void;
     onSubmit: () => void;
     onBack: () => void;
+    onOrderClick: (orderId: string) => void;
   };
 }
 
+const ORDER_STATUS_MAP: Record<string, string> = {
+  pending: '결제 대기',
+  paid: '결제 완료',
+  preparing: '상품 준비중',
+  shipping: '배송중',
+  delivered: '배송 완료',
+  cancelled: '주문 취소',
+  refund_requested: '환불 요청',
+  refunded: '환불 완료',
+};
+
 export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLookupViewProps) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+  };
+
   return (
     <div className="guest-order-container">
       <header className="guest-order-header">
@@ -46,7 +62,7 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
             <Input
               label="주문자명"
               type="text"
-              placeholder="주문자명"
+              placeholder="주문자명을 입력해주세요"
               value={guestOrderLookup.ordererName}
               onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrdererNameChange(e.target.value)}
               onBlur={guestOrderLookup.onOrdererNameBlur}
@@ -54,22 +70,13 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
             />
 
             <Input
-              label="주문번호"
-              type="text"
-              placeholder="주문번호"
-              value={guestOrderLookup.orderNumber}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderNumberChange(e.target.value)}
-              onBlur={guestOrderLookup.onOrderNumberBlur}
-              error={guestOrderLookup.errors.orderNumber}
-            />
-
-            <PasswordInput
-              label="주문 비밀번호"
-              placeholder="주문 비밀번호"
-              value={guestOrderLookup.orderPassword}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderPasswordChange(e.target.value)}
-              onBlur={guestOrderLookup.onOrderPasswordBlur}
-              error={guestOrderLookup.errors.orderPassword}
+              label="휴대폰 번호"
+              type="tel"
+              placeholder="'-' 없이 숫자만 입력"
+              value={guestOrderLookup.phone}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onPhoneChange(e.target.value)}
+              onBlur={guestOrderLookup.onPhoneBlur}
+              error={guestOrderLookup.errors.phone}
             />
           </div>
 
@@ -81,6 +88,49 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
             {guestOrderLookup.isLoading ? '조회 중...' : '주문조회'}
           </button>
         </div>
+
+        {guestOrderLookup.hasSearched && (
+          <div className="guest-order-results">
+            {guestOrderLookup.orders.length === 0 ? (
+              <div className="guest-order-empty">
+                <p>조회된 주문이 없습니다.</p>
+                <p className="guest-order-empty-sub">주문자명과 휴대폰 번호를 다시 확인해주세요.</p>
+              </div>
+            ) : (
+              <div className="guest-order-list">
+                {guestOrderLookup.orders.map((order) => (
+                  <div 
+                    key={order.id} 
+                    className="guest-order-card"
+                    onClick={() => guestOrderLookup.onOrderClick(order.id)}
+                  >
+                    <div className="guest-order-card-header">
+                      <span className="guest-order-card-date">{formatDate(order.createdAt)}</span>
+                      <span className={`guest-order-card-status guest-order-card-status--${order.status}`}>
+                        {ORDER_STATUS_MAP[order.status] || order.status}
+                      </span>
+                    </div>
+                    <div className="guest-order-card-number">주문번호: {order.orderNumber}</div>
+                    <div className="guest-order-card-items">
+                      {order.items.map((item, index) => (
+                        <div key={index} className="guest-order-card-item">
+                          <span className="guest-order-card-item-name">{item.productName}</span>
+                          {item.optionName && (
+                            <span className="guest-order-card-item-option">({item.optionName})</span>
+                          )}
+                          <span className="guest-order-card-item-qty">x{item.quantity}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="guest-order-card-amount">
+                      {order.finalAmount.toLocaleString()}원
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );

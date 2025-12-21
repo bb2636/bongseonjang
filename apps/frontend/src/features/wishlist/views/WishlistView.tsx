@@ -1,5 +1,6 @@
 import { WishlistAppBar } from '../components/WishlistAppBar';
 import { WishlistProductCard } from '../components/WishlistProductCard';
+import WishlistSkeleton from '../components/WishlistSkeleton';
 import type { WishlistItem } from '../api/wishlistApi';
 import './WishlistView.css';
 
@@ -34,9 +35,7 @@ export default function WishlistView({
           onCartClick={onCartClick}
           cartCount={cartCount}
         />
-        <div className="wishlist__loading">
-          <div className="wishlist__spinner" />
-        </div>
+        <WishlistSkeleton />
       </div>
     );
   }

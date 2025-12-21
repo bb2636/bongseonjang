@@ -587,3 +587,92 @@
   font-size: 14px;
   color: rgba(12, 12, 12, 0.8);
 }
+
+.checkout-guest-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checkout-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkout-label {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0C0C0C;
+}
+
+.checkout-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  border: 1px solid rgba(12, 12, 12, 0.15);
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.checkout-input:focus {
+  outline: none;
+  border-color: #3B9BD5;
+}
+
+.checkout-input:disabled {
+  background-color: rgba(12, 12, 12, 0.05);
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.checkout-input::placeholder {
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.checkout-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #0C0C0C;
+  cursor: pointer;
+}
+
+.checkout-checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3B9BD5;
+}
+
+.checkout-address-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.checkout-input--postal {
+  flex: 1;
+  max-width: 120px;
+}
+
+.checkout-address-search-button {
+  padding: 12px 16px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #3B9BD5;
+  background-color: transparent;
+  border: 1px solid #3B9BD5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.checkout-address-search-button:hover {
+  background-color: rgba(59, 155, 213, 0.1);
+}

@@ -213,4 +213,55 @@ router.get('/count', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
+router.post('/merge', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.userId;
+    const { items } = req.body;
+
+    if (!Array.isArray(items)) {
+      return res.status(400).json({ error: '항목 배열이 필요합니다' });
+    }
+
+    const productRepository = AppDataSource.getRepository(Product);
+    const wishlistRepository = AppDataSource.getRepository(Wishlist);
+    const wishlistItemRepository = AppDataSource.getRepository(WishlistItem);
+
+    let wishlist = await wishlistRepository.findOne({
+      where: { userId },
+    });
+
+    if (!wishlist) {
+      wishlist = wishlistRepository.create({ userId });
+      await wishlistRepository.save(wishlist);
+    }
+
+    let mergedCount = 0;
+    for (const item of items) {
+      if (!item.productId) continue;
+
+      const product = await productRepository.findOne({ where: { id: item.productId } });
+      if (!product) continue;
+
+      const existingItem = await wishlistItemRepository.findOne({
+        where: { wishlistId: wishlist.id, productId: item.productId },
+      });
+
+      if (!existingItem) {
+        const newItem = wishlistItemRepository.create({
+          wishlistId: wishlist.id,
+          productId: item.productId,
+        });
+        await wishlistItemRepository.save(newItem);
+        mergedCount++;
+      }
+    }
+
+    return res.json({ mergedCount });
+  } catch (error) {
+    console.error('Failed to merge wishlist:', error);
+    return res.status(500).json({ error: '찜 목록 병합에 실패했습니다' });
+  }
+});
+
 export { router as wishlistRoutes };
