@@ -5,7 +5,8 @@ const config: CapacitorConfig = {
   appName: '봉선장',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    url: 'https://bongseonjang--tkfkdgowjdakfas.replit.app',
+    cleartext: true
   }
 };
 
