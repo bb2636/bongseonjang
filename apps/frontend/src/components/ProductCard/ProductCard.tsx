@@ -4,6 +4,16 @@ import './ProductCard.css';
 
 const FALLBACK_IMAGE = 'https://placehold.co/400x280/f5f5f5/999999?text=No+Image';
 
+export interface MainOptionData {
+  id: string;
+  groupName: string;
+  name: string;
+  price: number;
+  compareAtPrice?: number;
+  stockQty: number;
+  isDefault: boolean;
+}
+
 export interface ProductCardData {
   id: string;
   name: string;
@@ -11,6 +21,11 @@ export interface ProductCardData {
   originalPrice: number;
   discountPercent: number;
   discountedPrice: number;
+  summary?: string;
+  origin?: string;
+  reviewCount?: number;
+  averageRating?: number;
+  mainOptions?: MainOptionData[];
 }
 
 interface ProductCardProps {

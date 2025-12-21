@@ -1,5 +1,5 @@
 import type { Product } from '../../../entity/Product';
-import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, TimeDealProductDto } from '../domain/Product';
+import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, TimeDealProductDto, MainOptionDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
 
 export interface ReviewStats {
@@ -9,6 +9,7 @@ export interface ReviewStats {
 
 export interface ReviewStatsProvider {
   getReviewStatsByProductId(productId: string): Promise<ReviewStats>;
+  getReviewStatsByProductIds(productIds: string[]): Promise<Map<string, { reviewCount: number; averageRating: number }>>;
 }
 
 export class ProductService {
@@ -19,12 +20,24 @@ export class ProductService {
 
   async getProductsByDisplayCategory(displayCategoryName: string, filter?: ProductFilter): Promise<ProductDto[]> {
     const products = await this.productRepository.findByDisplayCategory(displayCategoryName, filter);
-    return products.map((product) => this.toDto(product));
+    
+    const productIds = products.map(p => p.id);
+    const reviewStatsMap = this.reviewStatsProvider 
+      ? await this.reviewStatsProvider.getReviewStatsByProductIds(productIds)
+      : new Map();
+    
+    return products.map((product) => this.toDto(product, reviewStatsMap.get(product.id)));
   }
 
   async getAllProducts(filter?: ProductFilter): Promise<ProductDto[]> {
     const products = await this.productRepository.findAll(filter);
-    return products.map((product) => this.toDto(product));
+    
+    const productIds = products.map(p => p.id);
+    const reviewStatsMap = this.reviewStatsProvider 
+      ? await this.reviewStatsProvider.getReviewStatsByProductIds(productIds)
+      : new Map();
+    
+    return products.map((product) => this.toDto(product, reviewStatsMap.get(product.id)));
   }
 
   async getProductById(id: string): Promise<ProductDetailDto | null> {
@@ -86,8 +99,30 @@ export class ProductService {
     };
   }
 
-  private toDto(product: Product): ProductDto {
+  private toDto(product: Product, reviewStats?: { reviewCount: number; averageRating: number }): ProductDto {
     const thumbnailImage = product.images?.find((img) => img.isThumbnail);
+    
+    let detailContent: { description?: string; productInfos?: Array<{ label: string; value: string }> } = {};
+    if (product.detailContent) {
+      try {
+        detailContent = JSON.parse(product.detailContent);
+      } catch (error) {
+        console.warn(`Failed to parse detailContent for product ${product.id}:`, error);
+        detailContent = {};
+      }
+    }
+    
+    const originInfo = detailContent.productInfos?.find(info => info.label === '원산지');
+    const summaryInfo = detailContent.productInfos?.find(info => info.label === '상품요약' || info.label === '요약');
+    
+    const mainOptions: MainOptionDto[] = (product.options || []).slice(0, 3).map((option) => ({
+      id: String(option.id),
+      groupName: option.optionName || '옵션',
+      name: option.optionValue,
+      price: option.price ?? product.basePrice,
+      stockQty: product.stockQuantity ?? 0,
+      isDefault: option.sortOrder === 0,
+    }));
 
     return {
       id: product.id,
@@ -96,6 +131,11 @@ export class ProductService {
       originalPrice: product.basePrice,
       discountPercent: 0,
       discountedPrice: product.basePrice,
+      summary: summaryInfo?.value || detailContent.description?.substring(0, 100),
+      origin: originInfo?.value,
+      reviewCount: reviewStats?.reviewCount ?? 0,
+      averageRating: reviewStats?.averageRating ?? 0,
+      mainOptions: mainOptions.length > 0 ? mainOptions : undefined,
     };
   }
 
@@ -104,7 +144,7 @@ export class ProductService {
       id: String(option.id),
       name: option.optionValue,
       price: option.price ?? product.basePrice,
-      stockQty: 999,
+      stockQty: product.stockQuantity ?? 0,
       isDefault: option.sortOrder === 0,
     }));
 

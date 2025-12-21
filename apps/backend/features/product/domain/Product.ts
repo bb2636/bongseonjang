@@ -6,6 +6,11 @@ export interface ProductDto {
   discountPercent: number;
   discountedPrice: number;
   isFavorite?: boolean;
+  summary?: string;
+  origin?: string;
+  reviewCount?: number;
+  averageRating?: number;
+  mainOptions?: MainOptionDto[];
 }
 
 export interface TimeDealProductDto extends ProductDto {

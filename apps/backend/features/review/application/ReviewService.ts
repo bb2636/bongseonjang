@@ -31,6 +31,10 @@ export class ReviewService implements ReviewStatsProvider {
     return this.reviewRepository.getStatsByProductId(productId);
   }
 
+  async getReviewStatsByProductIds(productIds: string[]): Promise<Map<string, { reviewCount: number; averageRating: number }>> {
+    return this.reviewRepository.getStatsByProductIds(productIds);
+  }
+
   async createReview(userId: string, request: CreateReviewRequest): Promise<ReviewDto> {
     const review = await this.reviewRepository.save({
       productId: request.productId,

@@ -71,6 +71,34 @@ export class TypeORMReviewRepository implements ReviewRepository {
     };
   }
 
+  async getStatsByProductIds(productIds: string[]): Promise<Map<string, { reviewCount: number; averageRating: number }>> {
+    const result = new Map<string, { reviewCount: number; averageRating: number }>();
+    
+    if (productIds.length === 0) {
+      return result;
+    }
+
+    const reviewRepository = AppDataSource.getRepository(Review);
+    
+    const stats = await reviewRepository
+      .createQueryBuilder('review')
+      .select('review.productId', 'productId')
+      .addSelect('COUNT(*)', 'count')
+      .addSelect('COALESCE(AVG(review.rating), 0)', 'average')
+      .where('review.productId IN (:...productIds)', { productIds })
+      .groupBy('review.productId')
+      .getRawMany();
+
+    for (const stat of stats) {
+      result.set(stat.productId, {
+        reviewCount: parseInt(stat.count, 10),
+        averageRating: parseFloat(stat.average) || 0,
+      });
+    }
+
+    return result;
+  }
+
   async save(reviewData: Partial<Review>): Promise<Review> {
     const reviewRepository = AppDataSource.getRepository(Review);
     const review = reviewRepository.create(reviewData);
