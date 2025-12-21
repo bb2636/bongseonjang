@@ -1,7 +1,4 @@
 import { useQuickCart } from '@/contexts/QuickCartContext';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/contexts/ToastContext';
-import { useNavigate } from 'react-router-dom';
 import './BottomActionBar.css';
 
 interface BottomActionBarProps {
@@ -16,25 +13,12 @@ export default function BottomActionBar({
   onToggleWishlist,
 }: BottomActionBarProps) {
   const { openQuickCart } = useQuickCart();
-  const { isAuthenticated } = useAuth();
-  const { showToast } = useToast();
-  const navigate = useNavigate();
 
   const handleBuyClick = () => {
-    if (!isAuthenticated) {
-      showToast('로그인이 필요합니다', 'error');
-      navigate('/login');
-      return;
-    }
     openQuickCart(productId);
   };
 
   const handleWishlistClick = () => {
-    if (!isAuthenticated) {
-      showToast('로그인이 필요합니다', 'error');
-      navigate('/login');
-      return;
-    }
     onToggleWishlist();
   };
 

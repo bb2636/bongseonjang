@@ -146,6 +146,21 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 - **쿠폰/포인트**: `coupons`, `coupon_issuances`, `point_wallets`, `point_transactions` 테이블. 포인트 만료 관리.
 - **찜**: `wishlists`, `wishlist_items` 테이블.
 - **고객센터**: `support_tickets`, `support_messages` 테이블.
+- **비회원 결제**: 비회원도 장바구니/찜/결제 가능. localStorage에 버전 관리 스키마로 저장. 로그인 시 서버로 자동 병합.
+
+### Guest Checkout System
+비회원 결제 시스템 구현:
+- **저장소**: `guestStorage.ts` - 버전 관리 스키마(v1)로 localStorage에 장바구니/찜 저장
+- **병합**: `guestDataMerge.ts` - 로그인/회원가입 시 localStorage 데이터를 서버로 자동 병합
+- **DB 테이블**: `guest_order_details` - 비회원 주문 상세 정보 (이름, 해시된 전화번호, 마지막 4자리, 이메일)
+- **보안**: 휴대폰 번호는 SHA-256 해시로 저장, 마지막 4자리만 표시용으로 별도 저장
+- **주문 조회**: 이름 + 휴대폰 번호로 비회원 주문 조회 가능
+- **API 엔드포인트**:
+  - `POST /api/payment/prepare-guest` - 비회원 결제 준비
+  - `POST /api/payment/guest/lookup` - 비회원 주문 조회
+  - `GET /api/payment/guest/order/:orderId` - 비회원 주문 상세
+  - `POST /api/cart/merge` - 장바구니 병합 (수량 1~99 제한)
+  - `POST /api/wishlist/merge` - 찜 목록 병합
 
 ### Database Schema Principles
 주문 시점의 가격/옵션 스냅샷 저장, 상태 변경 이력 관리 (`order_status_history`, `shipment_events`), 포인트 만료 관리 (`point_transactions.expiresAt`), Soft Delete를 위한 `isActive` 플래그 사용.

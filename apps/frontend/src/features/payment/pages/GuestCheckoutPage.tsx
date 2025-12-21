@@ -1,18 +1,19 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCart } from '../../cart/api/cartApi';
-import { fetchDefaultAddress, fetchAddresses, AddressResponse } from '../../address/api/addressApi';
-import { fetchUserProfile } from '../../profile/api/profileApi';
-import { preparePayment, prepareDirectPayment, DirectPurchaseItem } from '../api/paymentApi';
+import { prepareGuestPayment, GuestCartItem } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
-import type { ProductDetail } from '../../productDetail/types/productDetail';
+import { guestCartStorage } from '../../../utils/guestStorage';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
 import { DeliveryRequestBottomSheet } from '../components/DeliveryRequestBottomSheet';
-import { AddressSelectBottomSheet } from '../components/AddressSelectBottomSheet';
 import './CheckoutPage.css';
+
+interface DirectPurchaseItem {
+  productOptionId: string | null;
+  quantity: number;
+}
 
 interface DirectPurchaseData {
   productId: string;
@@ -21,29 +22,25 @@ interface DirectPurchaseData {
 
 interface DisplayItem {
   id: string;
+  productId: string;
   productName: string;
   productImageUrl: string;
+  optionId: string | null;
   optionName: string | null;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
 }
 
-declare global {
-  interface Window {
-    AUTHNICE: {
-      requestPay: (options: {
-        clientId: string;
-        method: string;
-        orderId: string;
-        amount: number;
-        goodsName: string;
-        returnUrl: string;
-        vbankHolder?: string;
-        fnError: (result: { errorMsg: string }) => void;
-      }) => void;
-    };
-  }
+interface DaumPostcodeData {
+  zonecode: string;
+  address: string;
+  addressType: 'R' | 'J';
+  bname: string;
+  buildingName: string;
+  jibunAddress: string;
+  roadAddress: string;
+  userSelectedType: 'R' | 'J';
 }
 
 const DELIVERY_REQUEST_OPTIONS = [
@@ -55,7 +52,7 @@ const DELIVERY_REQUEST_OPTIONS = [
   '직접 입력',
 ];
 
-export function CheckoutPage() {
+export function GuestCheckoutPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { user } = useAuth();
@@ -74,26 +71,31 @@ export function CheckoutPage() {
     }
   }, [isDirectMode, directDataParam]);
 
+  useEffect(() => {
+    if (user) {
+      navigate('/checkout' + window.location.search, { replace: true });
+    }
+  }, [user, navigate]);
+
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
+
+  const [recipientName, setRecipientName] = useState('');
+  const [recipientPhone, setRecipientPhone] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [address, setAddress] = useState('');
+  const [addressDetail, setAddressDetail] = useState('');
+  const [sameAsOrderer, setSameAsOrderer] = useState(true);
+
   const [deliveryRequest, setDeliveryRequest] = useState('');
   const [customDeliveryRequest, setCustomDeliveryRequest] = useState('');
   const [isDeliverySheetOpen, setIsDeliverySheetOpen] = useState(false);
-  const [isAddressSheetOpen, setIsAddressSheetOpen] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
-  const hasUserSelectedAddress = useRef(false);
   const [isProductsExpanded, setIsProductsExpanded] = useState(true);
-  const [pointInput, setPointInput] = useState('');
-  const [usedPoints, setUsedPoints] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
   const [termsAgreed, setTermsAgreed] = useState(false);
-
-  const { data: cart, isLoading: isCartLoading } = useQuery({
-    queryKey: ['cart'],
-    queryFn: fetchCart,
-    staleTime: 1000 * 60 * 5,
-    enabled: !isDirectMode,
-  });
 
   const { data: directProduct, isLoading: isDirectProductLoading } = useQuery({
     queryKey: ['directProduct', directPurchaseData?.productId],
@@ -102,38 +104,12 @@ export function CheckoutPage() {
     enabled: isDirectMode && !!directPurchaseData?.productId,
   });
 
-  const { data: defaultAddress, isLoading: isAddressLoading } = useQuery({
-    queryKey: ['defaultAddress'],
-    queryFn: fetchDefaultAddress,
-    enabled: !!user,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const { data: addresses = [], isLoading: isAddressesLoading } = useQuery({
-    queryKey: ['addresses'],
-    queryFn: fetchAddresses,
-    enabled: !!user,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const { data: userProfile, isLoading: isProfileLoading } = useQuery({
-    queryKey: ['userProfile'],
-    queryFn: fetchUserProfile,
-    enabled: !!user,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const isLoading = isDirectMode 
-    ? (isDirectProductLoading || isAddressLoading || isAddressesLoading || isProfileLoading)
-    : (isCartLoading || isAddressLoading || isAddressesLoading || isProfileLoading);
-
   useEffect(() => {
-    if (defaultAddress && !hasUserSelectedAddress.current) {
-      setSelectedAddress(defaultAddress);
+    if (sameAsOrderer) {
+      setRecipientName(guestName);
+      setRecipientPhone(guestPhone);
     }
-  }, [defaultAddress]);
-
-  const currentAddress = selectedAddress || defaultAddress;
+  }, [sameAsOrderer, guestName, guestPhone]);
 
   const displayItems: DisplayItem[] = useMemo(() => {
     if (isDirectMode && directProduct && directPurchaseData) {
@@ -147,8 +123,10 @@ export function CheckoutPage() {
         
         return {
           id: `direct-${index}`,
+          productId: directProduct.id,
           productName: directProduct.name,
           productImageUrl: directProduct.thumbnailUrl || '',
+          optionId: item.productOptionId,
           optionName: productOption?.name || null,
           quantity: item.quantity,
           unitPrice,
@@ -157,22 +135,25 @@ export function CheckoutPage() {
       });
     }
     
-    const cartSelectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
+    const guestCart = guestCartStorage.getItems();
+    const cartSelectedItems = guestCart.filter(item => selectedItemIds.includes(item.id));
     return cartSelectedItems.map(item => ({
       id: item.id,
+      productId: item.productId,
       productName: item.productName,
-      productImageUrl: item.productImageUrl,
-      optionName: item.productOptionName || null,
+      productImageUrl: item.thumbnailUrl,
+      optionId: item.optionId,
+      optionName: item.optionName,
       quantity: item.quantity,
-      unitPrice: item.totalPrice / item.quantity,
+      unitPrice: item.unitPrice,
       totalPrice: item.totalPrice,
     }));
-  }, [isDirectMode, directProduct, directPurchaseData, cart, selectedItemIds]);
+  }, [isDirectMode, directProduct, directPurchaseData, selectedItemIds]);
 
   const productAmount = displayItems.reduce((sum, item) => sum + item.totalPrice, 0);
-  const availablePoints = userProfile?.points ?? 0;
-  const couponCount = userProfile?.couponCount ?? 0;
-  const finalAmount = productAmount - usedPoints;
+  const finalAmount = productAmount;
+
+  const isLoading = isDirectMode ? isDirectProductLoading : false;
 
   useEffect(() => {
     if (isDirectMode) {
@@ -195,34 +176,58 @@ export function CheckoutPage() {
     }
   };
 
-  const handlePointInputChange = (value: string) => {
-    const numericValue = value.replace(/[^0-9]/g, '');
-    setPointInput(numericValue);
+  const handleAddressSearch = () => {
+    const daumWindow = window as unknown as { daum?: { Postcode: new (options: { oncomplete: (data: DaumPostcodeData) => void }) => { open: () => void } } };
+    if (!daumWindow.daum?.Postcode) {
+      showToast('주소 검색 기능을 불러오는 중입니다. 잠시 후 다시 시도해주세요.', 'error');
+      return;
+    }
+    
+    new daumWindow.daum.Postcode({
+      oncomplete: (data: DaumPostcodeData) => {
+        setPostalCode(data.zonecode);
+        setAddress(data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress);
+      },
+    }).open();
   };
 
-  const handleUseAllPoints = () => {
-    const maxUsable = Math.min(availablePoints, productAmount);
-    setPointInput(maxUsable.toString());
-    setUsedPoints(maxUsable);
+  const handlePhoneChange = (setter: (value: string) => void) => (value: string) => {
+    const cleaned = value.replace(/[^0-9]/g, '');
+    setter(cleaned);
   };
 
-  const handleApplyPoints = () => {
-    const points = parseInt(pointInput) || 0;
-    const maxUsable = Math.min(points, availablePoints, productAmount);
-    setUsedPoints(maxUsable);
-    setPointInput(maxUsable.toString());
+  const validateForm = (): boolean => {
+    if (!guestName.trim()) {
+      showToast('주문자명을 입력해주세요', 'error');
+      return false;
+    }
+    if (!guestPhone.trim() || guestPhone.length < 10) {
+      showToast('주문자 휴대폰 번호를 정확히 입력해주세요', 'error');
+      return false;
+    }
+    if (!recipientName.trim()) {
+      showToast('수령인 이름을 입력해주세요', 'error');
+      return false;
+    }
+    if (!recipientPhone.trim() || recipientPhone.length < 10) {
+      showToast('수령인 휴대폰 번호를 정확히 입력해주세요', 'error');
+      return false;
+    }
+    if (!postalCode || !address) {
+      showToast('배송지를 입력해주세요', 'error');
+      return false;
+    }
+    if (displayItems.length === 0) {
+      showToast('결제할 상품이 없습니다', 'error');
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!currentAddress) {
-      showToast('배송지를 등록해주세요', 'error');
-      return;
-    }
-
-    if (displayItems.length === 0) {
-      showToast('결제할 상품이 없습니다', 'error');
+    if (!validateForm()) {
       return;
     }
 
@@ -236,32 +241,30 @@ export function CheckoutPage() {
         : deliveryRequest;
 
     try {
-      let paymentData;
-      
-      if (isDirectMode && directPurchaseData) {
-        paymentData = await prepareDirectPayment({
-          productId: directPurchaseData.productId,
-          items: directPurchaseData.items,
-          recipientName: currentAddress.recipientName,
-          recipientPhone: currentAddress.recipientPhone,
-          postalCode: currentAddress.postalCode,
-          address: currentAddress.address,
-          addressDetail: currentAddress.addressDetail,
-          deliveryRequest: finalDeliveryRequest,
-          paymentMethod,
-        });
-      } else {
-        paymentData = await preparePayment({
-          selectedItemIds,
-          recipientName: currentAddress.recipientName,
-          recipientPhone: currentAddress.recipientPhone,
-          postalCode: currentAddress.postalCode,
-          address: currentAddress.address,
-          addressDetail: currentAddress.addressDetail,
-          deliveryRequest: finalDeliveryRequest,
-          paymentMethod,
-        });
-      }
+      const cartItems: GuestCartItem[] = displayItems.map(item => ({
+        productId: item.productId,
+        productName: item.productName,
+        optionId: item.optionId,
+        optionName: item.optionName,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        totalPrice: item.totalPrice,
+        thumbnailUrl: item.productImageUrl,
+      }));
+
+      const paymentData = await prepareGuestPayment({
+        cartItems,
+        guestName,
+        guestPhone,
+        guestEmail: guestEmail || undefined,
+        recipientName,
+        recipientPhone,
+        postalCode,
+        address,
+        addressDetail: addressDetail || undefined,
+        deliveryRequest: finalDeliveryRequest || undefined,
+        paymentMethod,
+      });
 
       setPaymentStep('connecting');
 
@@ -280,7 +283,7 @@ export function CheckoutPage() {
         amount: paymentData.amount,
         goodsName: paymentData.goodsName,
         returnUrl: paymentData.returnUrl,
-        ...(paymentMethod === 'vbank' && { vbankHolder: currentAddress.recipientName }),
+        ...(paymentMethod === 'vbank' && { vbankHolder: recipientName }),
         fnError: (result) => {
           showToast(`결제 오류: ${result.errorMsg}`, 'error');
           setIsProcessing(false);
@@ -319,51 +322,123 @@ export function CheckoutPage() {
             <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
-        <h1 className="checkout-title">주문/결제</h1>
+        <h1 className="checkout-title">비회원 주문/결제</h1>
         <div style={{ width: 24 }} />
       </header>
 
       <form className="checkout-form" onSubmit={handleSubmit}>
-        <section className="checkout-address-card">
-          {currentAddress ? (
-            <>
-              <div className="checkout-address-header">
-                <div className="checkout-address-name-row">
-                  <span className="checkout-address-name">{currentAddress.addressName}</span>
-                  {currentAddress.isDefault && (
-                    <span className="checkout-address-default-label">기본배송지</span>
-                  )}
-                </div>
-                <button 
-                  type="button" 
-                  className="checkout-address-change-button"
-                  onClick={() => setIsAddressSheetOpen(true)}
+        <section className="checkout-section">
+          <div className="checkout-section-header">
+            <h2 className="checkout-section-title">주문자 정보</h2>
+          </div>
+          <div className="checkout-guest-form">
+            <div className="checkout-input-group">
+              <label className="checkout-label">주문자명 *</label>
+              <input
+                type="text"
+                className="checkout-input"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                placeholder="이름을 입력해주세요"
+              />
+            </div>
+            <div className="checkout-input-group">
+              <label className="checkout-label">휴대폰 번호 *</label>
+              <input
+                type="tel"
+                className="checkout-input"
+                value={guestPhone}
+                onChange={(e) => handlePhoneChange(setGuestPhone)(e.target.value)}
+                placeholder="'-' 없이 숫자만 입력"
+                maxLength={11}
+              />
+            </div>
+            <div className="checkout-input-group">
+              <label className="checkout-label">이메일 (선택)</label>
+              <input
+                type="email"
+                className="checkout-input"
+                value={guestEmail}
+                onChange={(e) => setGuestEmail(e.target.value)}
+                placeholder="주문 확인 메일을 받으실 이메일"
+              />
+            </div>
+          </div>
+        </section>
+
+        <div className="checkout-divider" />
+
+        <section className="checkout-section">
+          <div className="checkout-section-header">
+            <h2 className="checkout-section-title">배송지 정보</h2>
+          </div>
+          <div className="checkout-guest-form">
+            <label className="checkout-checkbox-label">
+              <input
+                type="checkbox"
+                checked={sameAsOrderer}
+                onChange={(e) => setSameAsOrderer(e.target.checked)}
+              />
+              <span>주문자 정보와 동일</span>
+            </label>
+            
+            <div className="checkout-input-group">
+              <label className="checkout-label">수령인 *</label>
+              <input
+                type="text"
+                className="checkout-input"
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+                placeholder="수령인 이름"
+                disabled={sameAsOrderer}
+              />
+            </div>
+            <div className="checkout-input-group">
+              <label className="checkout-label">수령인 연락처 *</label>
+              <input
+                type="tel"
+                className="checkout-input"
+                value={recipientPhone}
+                onChange={(e) => handlePhoneChange(setRecipientPhone)(e.target.value)}
+                placeholder="'-' 없이 숫자만 입력"
+                maxLength={11}
+                disabled={sameAsOrderer}
+              />
+            </div>
+            <div className="checkout-input-group">
+              <label className="checkout-label">주소 *</label>
+              <div className="checkout-address-input-row">
+                <input
+                  type="text"
+                  className="checkout-input checkout-input--postal"
+                  value={postalCode}
+                  readOnly
+                  placeholder="우편번호"
+                />
+                <button
+                  type="button"
+                  className="checkout-address-search-button"
+                  onClick={handleAddressSearch}
                 >
-                  변경
+                  주소 검색
                 </button>
               </div>
-              <div className="checkout-address-details">
-                <p className="checkout-address-detail-text">{currentAddress.recipientName}</p>
-                <p className="checkout-address-detail-text">
-                  ({currentAddress.postalCode}) {currentAddress.address} {currentAddress.addressDetail}
-                </p>
-                <p className="checkout-address-detail-text">
-                  {formatPhoneNumber(currentAddress.recipientPhone)}
-                </p>
-              </div>
-            </>
-          ) : (
-            <div className="checkout-no-address">
-              <p>등록된 배송지가 없습니다</p>
-              <button 
-                type="button" 
-                className="checkout-add-address-button"
-                onClick={() => navigate('/address/add')}
-              >
-                배송지 등록
-              </button>
+              <input
+                type="text"
+                className="checkout-input"
+                value={address}
+                readOnly
+                placeholder="주소를 검색해주세요"
+              />
+              <input
+                type="text"
+                className="checkout-input"
+                value={addressDetail}
+                onChange={(e) => setAddressDetail(e.target.value)}
+                placeholder="상세주소 입력"
+              />
             </div>
-          )}
+          </div>
         </section>
 
         <div className="checkout-divider" />
@@ -434,84 +509,6 @@ export function CheckoutPage() {
           )}
         </section>
 
-        <section className="checkout-section">
-          <div 
-            className="checkout-section-header checkout-section-header--clickable"
-          >
-            <h2 className="checkout-section-title">포인트 할인</h2>
-            <svg 
-              className="checkout-expand-icon checkout-expand-icon--expanded"
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none"
-            >
-              <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <div className="checkout-point-section">
-            <div className="checkout-point-input-row">
-              <div className="checkout-point-input-wrapper">
-                <input
-                  type="text"
-                  className="checkout-point-input"
-                  value={pointInput}
-                  onChange={(e) => handlePointInputChange(e.target.value)}
-                  onBlur={handleApplyPoints}
-                  placeholder="0"
-                />
-                {pointInput && (
-                  <button 
-                    type="button" 
-                    className="checkout-point-clear"
-                    onClick={() => { setPointInput(''); setUsedPoints(0); }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="10" fill="rgba(0,0,0,0.3)"/>
-                      <path d="M8 8L16 16M16 8L8 16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </button>
-                )}
-              </div>
-              <button 
-                type="button" 
-                className="checkout-point-all-button"
-                onClick={handleUseAllPoints}
-              >
-                전액 사용
-              </button>
-            </div>
-            <p className="checkout-point-available">
-              사용 가능 포인트 <span className="checkout-point-value">{availablePoints.toLocaleString()}p</span>
-            </p>
-          </div>
-        </section>
-
-        <section className="checkout-section">
-          <div 
-            className="checkout-section-header checkout-section-header--clickable"
-          >
-            <h2 className="checkout-section-title">쿠폰 할인</h2>
-            <svg 
-              className="checkout-expand-icon checkout-expand-icon--expanded"
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none"
-            >
-              <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <div className="checkout-coupon-section">
-            <select className="checkout-select">
-              <option>적용할 수 있는 쿠폰이 없습니다</option>
-            </select>
-            <p className="checkout-coupon-available">
-              보유쿠폰 <span className="checkout-coupon-value">{couponCount}장</span>
-            </p>
-          </div>
-        </section>
-
         <section className="checkout-section checkout-section--summary">
           <div className="checkout-section-header">
             <h2 className="checkout-section-title">최종 결제금액</h2>
@@ -521,12 +518,6 @@ export function CheckoutPage() {
               <span className="checkout-summary-label">총 상품금액</span>
               <span className="checkout-summary-value">{productAmount.toLocaleString()}원</span>
             </div>
-            {usedPoints > 0 && (
-              <div className="checkout-summary-row">
-                <span className="checkout-summary-label">포인트 할인</span>
-                <span className="checkout-summary-value checkout-summary-value--discount">-{usedPoints.toLocaleString()}원</span>
-              </div>
-            )}
           </div>
           <div className="checkout-final-amount">
             <span className="checkout-final-amount-value">{finalAmount.toLocaleString()}원</span>
@@ -589,7 +580,7 @@ export function CheckoutPage() {
         <button
           type="submit"
           className="checkout-submit-button"
-          disabled={isProcessing || !currentAddress || !termsAgreed}
+          disabled={isProcessing || !termsAgreed}
         >
           {isProcessing ? '처리 중...' : `${finalAmount.toLocaleString()}원 결제하기`}
         </button>
@@ -598,22 +589,9 @@ export function CheckoutPage() {
       <DeliveryRequestBottomSheet
         isOpen={isDeliverySheetOpen}
         onClose={() => setIsDeliverySheetOpen(false)}
-        options={DELIVERY_REQUEST_OPTIONS}
         selectedOption={deliveryRequest}
+        options={DELIVERY_REQUEST_OPTIONS}
         onSelect={handleDeliveryRequestChange}
-      />
-
-      <AddressSelectBottomSheet
-        isOpen={isAddressSheetOpen}
-        onClose={() => setIsAddressSheetOpen(false)}
-        addresses={addresses}
-        selectedAddressId={currentAddress?.id || null}
-        onSelect={(address) => {
-          hasUserSelectedAddress.current = true;
-          setSelectedAddress(address);
-        }}
-        onEdit={(address) => navigate(`/address/edit/${address.id}`)}
-        onAddNew={() => navigate('/address/add')}
       />
     </div>
   );

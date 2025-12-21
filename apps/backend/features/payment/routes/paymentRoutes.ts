@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import * as crypto from 'crypto';
 import { AppDataSource } from '../../../config/database';
 import { Order } from '../../../entity/Order';
 import { OrderItem } from '../../../entity/OrderItem';
@@ -6,7 +7,12 @@ import { Payment } from '../../../entity/Payment';
 import { Cart } from '../../../entity/Cart';
 import { CartItem } from '../../../entity/CartItem';
 import { ProductOption } from '../../../entity/ProductOption';
+import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+
+function hashPhone(phone: string): string {
+  return crypto.createHash('sha256').update(phone).digest('hex');
+}
 
 const router = Router();
 
@@ -487,6 +493,272 @@ router.get('/order/:orderId', authMiddleware, async (req: Request, res: Response
     return res.json(order);
   } catch (error) {
     console.error('Failed to get order:', error);
+    return res.status(500).json({ error: '주문 조회에 실패했습니다' });
+  }
+});
+
+interface GuestCartItem {
+  productId: string;
+  productName: string;
+  optionId: string | null;
+  optionName: string | null;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  thumbnailUrl: string;
+}
+
+router.post('/prepare-guest', async (req: Request, res: Response) => {
+  try {
+    const { 
+      cartItems,
+      guestName,
+      guestPhone,
+      guestEmail,
+      recipientName, 
+      recipientPhone, 
+      postalCode, 
+      address, 
+      addressDetail, 
+      deliveryRequest, 
+      returnUrl: clientReturnUrl, 
+      paymentMethod 
+    } = req.body;
+
+    if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+      return res.status(400).json({ error: '결제할 상품을 선택해주세요' });
+    }
+
+    if (!guestName || !guestPhone) {
+      return res.status(400).json({ error: '주문자 정보를 입력해주세요' });
+    }
+
+    if (!recipientName || !recipientPhone || !postalCode || !address) {
+      return res.status(400).json({ error: '배송지 정보를 입력해주세요' });
+    }
+
+    if (!clientReturnUrl) {
+      return res.status(400).json({ error: '콜백 URL이 필요합니다' });
+    }
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const orderItemRepository = AppDataSource.getRepository(OrderItem);
+    const paymentRepository = AppDataSource.getRepository(Payment);
+    const guestOrderDetailRepository = AppDataSource.getRepository(GuestOrderDetail);
+
+    let totalProductPrice = 0;
+    const goodsNames: string[] = [];
+
+    for (const item of cartItems as GuestCartItem[]) {
+      totalProductPrice += item.totalPrice;
+      goodsNames.push(item.productName);
+    }
+
+    const orderNumber = generateOrderNumber();
+    const finalAmount = totalProductPrice;
+
+    let returnUrlOrigin: string;
+    try {
+      returnUrlOrigin = new URL(clientReturnUrl).origin;
+    } catch {
+      return res.status(400).json({ error: '올바르지 않은 콜백 URL입니다' });
+    }
+
+    const order = orderRepository.create({
+      orderNumber,
+      userId: null,
+      status: 'pending',
+      totalProductPrice,
+      totalDiscountAmount: 0,
+      usedPoints: 0,
+      couponDiscountAmount: 0,
+      finalAmount,
+      earnedPoints: 0,
+      recipientName,
+      recipientPhone,
+      postalCode,
+      address,
+      addressDetail: addressDetail || null,
+      deliveryRequest: deliveryRequest || null,
+      cartItemIdsSnapshot: [],
+      returnUrl: returnUrlOrigin,
+    });
+
+    await orderRepository.save(order);
+
+    for (const item of cartItems as GuestCartItem[]) {
+      const orderItem = orderItemRepository.create({
+        orderId: order.id,
+        productId: item.productId,
+        productName: item.productName,
+        optionName: item.optionName,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        totalPrice: item.totalPrice,
+      });
+      await orderItemRepository.save(orderItem);
+    }
+
+    const guestOrderDetail = guestOrderDetailRepository.create({
+      orderId: order.id,
+      guestName,
+      guestPhoneHash: hashPhone(guestPhone),
+      guestPhoneLast4: guestPhone.slice(-4),
+      guestEmail: guestEmail || null,
+    });
+    await guestOrderDetailRepository.save(guestOrderDetail);
+
+    const paymentMethodMap: Record<string, 'card' | 'bank_transfer' | 'virtual_account'> = {
+      'card': 'card',
+      'bank': 'bank_transfer',
+      'vbank': 'virtual_account',
+    };
+    const mappedMethod = paymentMethodMap[paymentMethod] || 'card';
+
+    const payment = paymentRepository.create({
+      orderId: order.id,
+      status: 'pending',
+      method: mappedMethod,
+      amount: finalAmount,
+      pgProvider: 'nicepay',
+    });
+
+    await paymentRepository.save(payment);
+
+    const goodsName = goodsNames.length > 1 
+      ? `${goodsNames[0]} 외 ${goodsNames.length - 1}건` 
+      : goodsNames[0];
+
+    console.log('[NicePay] Prepare guest payment - returnUrl:', clientReturnUrl);
+
+    return res.json({
+      orderId: order.id,
+      orderNumber,
+      clientKey: NICEPAY_CLIENT_KEY,
+      amount: finalAmount,
+      goodsName,
+      returnUrl: clientReturnUrl,
+    });
+  } catch (error) {
+    console.error('Failed to prepare guest payment:', error);
+    return res.status(500).json({ error: '결제 준비에 실패했습니다' });
+  }
+});
+
+router.post('/guest/lookup', async (req: Request, res: Response) => {
+  try {
+    const { guestName, guestPhone } = req.body;
+
+    if (!guestName || !guestPhone) {
+      return res.status(400).json({ error: '주문자 이름과 휴대폰 번호를 입력해주세요' });
+    }
+
+    const phoneHash = hashPhone(guestPhone);
+
+    const guestOrderDetailRepository = AppDataSource.getRepository(GuestOrderDetail);
+    const orderRepository = AppDataSource.getRepository(Order);
+
+    const guestDetails = await guestOrderDetailRepository.find({
+      where: { 
+        guestName,
+        guestPhoneHash: phoneHash,
+      },
+    });
+
+    if (guestDetails.length === 0) {
+      return res.json({ orders: [] });
+    }
+
+    const orderIds = guestDetails.map(g => g.orderId);
+    const { In } = await import('typeorm');
+    
+    const orders = await orderRepository.find({
+      where: { id: In(orderIds) },
+      relations: ['items'],
+      order: { createdAt: 'DESC' },
+    });
+
+    const ordersWithGuestInfo = orders.map(order => {
+      const guestDetail = guestDetails.find(g => g.orderId === order.id);
+      return {
+        id: order.id,
+        orderNumber: order.orderNumber,
+        status: order.status,
+        totalProductPrice: order.totalProductPrice,
+        finalAmount: order.finalAmount,
+        recipientName: order.recipientName,
+        recipientPhone: order.recipientPhone.slice(0, -4) + '****',
+        address: order.address,
+        createdAt: order.createdAt,
+        paidAt: order.paidAt,
+        items: order.items.map(item => ({
+          productId: item.productId,
+          productName: item.productName,
+          optionName: item.optionName,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          totalPrice: item.totalPrice,
+        })),
+        isClaimed: !!guestDetail?.claimedUserId,
+      };
+    });
+
+    return res.json({ orders: ordersWithGuestInfo });
+  } catch (error) {
+    console.error('Failed to lookup guest orders:', error);
+    return res.status(500).json({ error: '주문 조회에 실패했습니다' });
+  }
+});
+
+router.get('/guest/order/:orderId', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const guestOrderDetailRepository = AppDataSource.getRepository(GuestOrderDetail);
+
+    const order = await orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['items'],
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
+    }
+
+    const guestDetail = await guestOrderDetailRepository.findOne({
+      where: { orderId },
+    });
+
+    if (!guestDetail) {
+      return res.status(403).json({ error: '비회원 주문이 아닙니다' });
+    }
+
+    return res.json({
+      id: order.id,
+      orderNumber: order.orderNumber,
+      status: order.status,
+      totalProductPrice: order.totalProductPrice,
+      finalAmount: order.finalAmount,
+      recipientName: order.recipientName,
+      recipientPhone: order.recipientPhone,
+      postalCode: order.postalCode,
+      address: order.address,
+      addressDetail: order.addressDetail,
+      deliveryRequest: order.deliveryRequest,
+      createdAt: order.createdAt,
+      paidAt: order.paidAt,
+      items: order.items.map(item => ({
+        productId: item.productId,
+        productName: item.productName,
+        optionName: item.optionName,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        totalPrice: item.totalPrice,
+      })),
+    });
+  } catch (error) {
+    console.error('Failed to get guest order:', error);
     return res.status(500).json({ error: '주문 조회에 실패했습니다' });
   }
 });

@@ -12,7 +12,7 @@ import {
   PrivacyPage,
   SignupCompletePage,
 } from "./features/signup";
-import { GuestOrderLookupPage } from "./features/orders";
+import { GuestOrderLookupPage, GuestOrderDetailPage } from "./features/orders";
 import { ProductDetailPage } from "./features/productDetail";
 import WriteInquiryPage from "./features/productDetail/pages/WriteInquiryPage";
 import { CategoryPage } from "./features/category";
@@ -32,6 +32,7 @@ import { InProgressOrdersPage } from "./features/orderHistory/pages/InProgressOr
 import { OrderDetailPage, PaymentCompletePage } from "./features/orderDetail";
 import { CartPage } from "./features/cart/pages/CartPage";
 import { CheckoutPage } from "./features/payment/pages/CheckoutPage";
+import { GuestCheckoutPage } from "./features/payment/pages/GuestCheckoutPage";
 import { PaymentSuccessPage } from "./features/payment/pages/PaymentSuccessPage";
 import { PaymentFailPage } from "./features/payment/pages/PaymentFailPage";
 import { NoticeListPage } from "./features/notice";
@@ -58,14 +59,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route
-        path="/product/:id"
-        element={
-          <ProtectedRoute>
-            <ProductDetailPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/product/:id" element={<ProductDetailPage />} />
       <Route
         path="/product/:productId/inquiry/write"
         element={
@@ -85,30 +79,10 @@ export default function App() {
       <Route path="/signup/terms" element={<TermsPage />} />
       <Route path="/signup/privacy" element={<PrivacyPage />} />
       <Route path="/orders/guest" element={<GuestOrderLookupPage />} />
-      <Route
-        path="/category"
-        element={
-          <ProtectedRoute>
-            <CategoryPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/category/:slug"
-        element={
-          <ProtectedRoute>
-            <CategoryProductsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/search"
-        element={
-          <ProtectedRoute>
-            <SearchPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/orders/guest/:orderId" element={<GuestOrderDetailPage />} />
+      <Route path="/category" element={<CategoryPage />} />
+      <Route path="/category/:slug" element={<CategoryProductsPage />} />
+      <Route path="/search" element={<SearchPage />} />
       <Route
         path="/profile"
         element={
@@ -165,22 +139,8 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/wishlist"
-        element={
-          <ProtectedRoute>
-            <WishlistPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/cart"
-        element={
-          <ProtectedRoute>
-            <CartPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/wishlist" element={<WishlistPage />} />
+      <Route path="/cart" element={<CartPage />} />
       <Route
         path="/orders"
         element={
@@ -209,24 +169,11 @@ export default function App() {
         path="/payment/complete/:orderId"
         element={<PaymentCompletePage />}
       />
-      <Route
-        path="/checkout"
-        element={
-          <ProtectedRoute>
-            <CheckoutPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/checkout/guest" element={<GuestCheckoutPage />} />
       <Route path="/payment/success" element={<PaymentSuccessPage />} />
       <Route path="/payment/fail" element={<PaymentFailPage />} />
-      <Route
-        path="/notice"
-        element={
-          <ProtectedRoute>
-            <NoticeListPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/notice" element={<NoticeListPage />} />
       <Route
         path="/address/add"
         element={
@@ -259,14 +206,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/faq"
-        element={
-          <ProtectedRoute>
-            <FaqPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/faq" element={<FaqPage />} />
       <Route
         path="/my-inquiries"
         element={
@@ -275,22 +215,8 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/about"
-        element={
-          <ProtectedRoute>
-            <BongseonStoryPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/terms"
-        element={
-          <ProtectedRoute>
-            <TermsViewPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/about" element={<BongseonStoryPage />} />
+      <Route path="/terms" element={<TermsViewPage />} />
 
       {/* Admin Routes */}
       <Route path="/admin" element={<Navigate to="/admin/users" replace />} />

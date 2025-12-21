@@ -150,4 +150,43 @@ export class CartController {
       res.status(500).json({ error: 'Failed to clear cart' });
     }
   }
+
+  async mergeGuestCart(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+      }
+
+      const { items } = req.body;
+
+      if (!Array.isArray(items)) {
+        res.status(400).json({ error: 'Items array is required' });
+        return;
+      }
+
+      let mergedCount = 0;
+      for (const item of items) {
+        if (item.productId) {
+          try {
+            await this.cartService.addItem(
+              userId,
+              item.productId,
+              item.optionId ?? null,
+              item.quantity ?? 1
+            );
+            mergedCount++;
+          } catch (err) {
+            console.error('Error merging cart item:', err);
+          }
+        }
+      }
+
+      res.json({ mergedCount });
+    } catch (error) {
+      console.error('Error merging guest cart:', error);
+      res.status(500).json({ error: 'Failed to merge guest cart' });
+    }
+  }
 }

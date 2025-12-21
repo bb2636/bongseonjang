@@ -1,13 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
 import { wishlistApi, WishlistItem } from '../api/wishlistApi';
 import { useToast } from '../../../contexts/ToastContext';
 import { useCart } from '../../../contexts/CartContext';
+import { guestWishlistStorage, GuestWishlistItem } from '../../../utils/guestStorage';
 
 export function useWishlist() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { cartCount } = useCart();
+  const { isAuthenticated } = useAuth();
   
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [count, setCount] = useState(0);
@@ -15,24 +18,40 @@ export function useWishlist() {
 
   const fetchWishlistData = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setItems([]);
-        setCount(0);
-        setIsLoading(false);
-        return;
-      }
+      if (isAuthenticated) {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setItems([]);
+          setCount(0);
+          setIsLoading(false);
+          return;
+        }
 
-      const data = await wishlistApi.fetchWishlist();
-      setItems(data.items);
-      setCount(data.count);
+        const data = await wishlistApi.fetchWishlist();
+        setItems(data.items);
+        setCount(data.count);
+      } else {
+        const guestItems = guestWishlistStorage.getItems();
+        const mappedItems: WishlistItem[] = guestItems.map((item: GuestWishlistItem) => ({
+          id: `guest_${item.productId}`,
+          productId: item.productId,
+          name: item.name,
+          originalPrice: item.originalPrice,
+          discountedPrice: item.discountedPrice,
+          discountRate: item.discountRate,
+          thumbnailUrl: item.thumbnailUrl,
+          addedAt: item.addedAt,
+        }));
+        setItems(mappedItems);
+        setCount(guestItems.length);
+      }
     } catch (error) {
       console.error('Failed to fetch wishlist:', error);
       showToast('찜 목록을 불러오는데 실패했습니다', 'error');
     } finally {
       setIsLoading(false);
     }
-  }, [showToast]);
+  }, [isAuthenticated, showToast]);
 
   useEffect(() => {
     fetchWishlistData();
@@ -40,7 +59,11 @@ export function useWishlist() {
 
   const handleRemoveFromWishlist = useCallback(async (productId: string) => {
     try {
-      await wishlistApi.removeFromWishlist(productId);
+      if (isAuthenticated) {
+        await wishlistApi.removeFromWishlist(productId);
+      } else {
+        guestWishlistStorage.removeItem(productId);
+      }
       setItems((prev) => prev.filter((item) => item.productId !== productId));
       setCount((prev) => Math.max(0, prev - 1));
       showToast('찜 목록에서 삭제되었습니다', 'success');
@@ -48,10 +71,10 @@ export function useWishlist() {
       console.error('Failed to remove from wishlist:', error);
       showToast('찜 삭제에 실패했습니다', 'error');
     }
-  }, [showToast]);
+  }, [isAuthenticated, showToast]);
 
   const handleAddToCart = useCallback((productId: string) => {
-    navigate(`/products/${productId}`);
+    navigate(`/product/${productId}`);
   }, [navigate]);
 
   const handleBack = useCallback(() => {
@@ -63,7 +86,7 @@ export function useWishlist() {
   }, [navigate]);
 
   const handleProductClick = useCallback((productId: string) => {
-    navigate(`/products/${productId}`);
+    navigate(`/product/${productId}`);
   }, [navigate]);
 
   return {
@@ -71,6 +94,7 @@ export function useWishlist() {
     count,
     isLoading,
     cartCount,
+    isGuest: !isAuthenticated,
     handleRemoveFromWishlist,
     handleAddToCart,
     handleBack,

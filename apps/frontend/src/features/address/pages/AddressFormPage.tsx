@@ -217,6 +217,7 @@ export function AddressFormPage() {
               placeholder="휴대폰 번호를 입력해주세요"
               value={formData.recipientPhone}
               onChange={(e) => handleInputChange('recipientPhone', e.target.value)}
+              maxLength={11}
             />
           </div>
         </div>

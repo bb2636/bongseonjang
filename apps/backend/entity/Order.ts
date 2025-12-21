@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import type { User } from './User';
 import type { OrderItem } from './OrderItem';
 import type { ShippingAddress } from './ShippingAddress';
+import type { GuestOrderDetail } from './GuestOrderDetail';
 
 export type OrderStatus = 'pending' | 'paid' | 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'refund_requested' | 'refunded';
 
@@ -13,8 +14,8 @@ export class Order {
   @Column({ type: 'varchar', length: 20, unique: true })
   orderNumber!: string;
 
-  @Column({ type: 'uuid' })
-  userId!: string;
+  @Column({ type: 'uuid', nullable: true })
+  userId!: string | null;
 
   @Column({ type: 'uuid', nullable: true })
   shippingAddressId!: string | null;
@@ -79,9 +80,9 @@ export class Order {
   @Column({ type: 'varchar', length: 500, nullable: true })
   returnUrl!: string | null;
 
-  @ManyToOne('User', { onDelete: 'CASCADE' })
+  @ManyToOne('User', { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'userId' })
-  user!: User;
+  user!: User | null;
 
   @ManyToOne('ShippingAddress', { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'shippingAddressId' })
@@ -89,4 +90,7 @@ export class Order {
 
   @OneToMany('OrderItem', 'order')
   items!: OrderItem[];
+
+  @OneToOne('GuestOrderDetail', 'order')
+  guestOrderDetail!: GuestOrderDetail | null;
 }

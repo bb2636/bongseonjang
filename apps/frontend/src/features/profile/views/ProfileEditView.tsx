@@ -102,6 +102,7 @@ export default function ProfileEditView({
             value={phone}
             onChange={(e) => onPhoneChange(e.target.value)}
             error={phoneError}
+            maxLength={11}
           />
 
           <div className="profile-edit__password-section">
