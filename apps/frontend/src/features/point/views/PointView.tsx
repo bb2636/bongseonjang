@@ -2,6 +2,7 @@ import { PointWallet, PointHistoryGroup } from '../types/point';
 import PointAppBar from '../components/PointAppBar/PointAppBar';
 import PointBalanceCard from '../components/PointBalanceCard/PointBalanceCard';
 import PointHistoryList from '../components/PointHistoryList/PointHistoryList';
+import PointSkeleton from '../components/PointSkeleton';
 import './PointView.css';
 
 interface PointViewProps {
@@ -28,9 +29,7 @@ export default function PointView({ state, actions }: PointViewProps) {
           onBackClick={actions.onBackClick}
           onCartClick={actions.onCartClick}
         />
-        <div className="point-view__loading">
-          <div className="point-view__loading-spinner" />
-        </div>
+        <PointSkeleton />
       </div>
     );
   }
