@@ -3,6 +3,7 @@
 	"appName": "봉선장",
 	"webDir": "dist",
 	"server": {
-		"androidScheme": "https"
+		"androidScheme": "https",
+		"url": "https://bongseonjang--tkfkdgowjdakfas.replit.app"
 	}
 }
