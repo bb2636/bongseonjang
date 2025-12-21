@@ -83,5 +83,8 @@ PRIVATE_OBJECT_DIR = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
 PUBLIC_OBJECT_SEARCH_PATHS = "replit-objstore-8da8d982-0ae3-4bdd-bf1b-4113adb63209"
 SOCIAL_REDIRECT_BASE_URL = "https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev"
 
+[userenv.production]
+DEV_DATABASE_URL = "postgresql://postgres:password@helium/heliumdb?sslmode=disable"
+
 [objectStorage]
 defaultBucketID = "replit-objstore-8b208dd8-505c-4b83-97d0-c78d38fe6527"
