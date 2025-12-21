@@ -1,13 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../contexts/AuthContext';
 import { socialLogin, isRequiresEmailResponse } from '../api/socialAuthApi';
+import { fetchHomeData } from '../../home/api/homeDataApi';
 import './SocialAuthCallbackPage.css';
 
 export default function SocialAuthCallbackPage() {
   const { provider } = useParams<{ provider: 'kakao' | 'naver' }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { loginWithToken } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -102,6 +105,10 @@ export default function SocialAuthCallbackPage() {
             email: result.user.email,
             name: result.user.name,
           });
+          queryClient.prefetchQuery({
+            queryKey: ['homeData'],
+            queryFn: fetchHomeData,
+          });
           navigate('/', { replace: true });
         }
       } catch (err) {
@@ -112,7 +119,7 @@ export default function SocialAuthCallbackPage() {
     }
 
     handleCallback();
-  }, [provider, searchParams, navigate, loginWithToken]);
+  }, [provider, searchParams, navigate, loginWithToken, queryClient]);
 
   if (error) {
     return (

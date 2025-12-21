@@ -1,28 +1,22 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useHeroImages } from './useHeroImages';
-import { useTimeDeals } from './useTimeDeals';
-import { useBestProducts } from './useBestProducts';
-import { useMiddleBanners } from './useMiddleBanners';
-import { useFreshFoods } from './useFreshFoods';
-import { useMdPicks } from './useMdPicks';
-import { useBadameunProducts } from './useBadameunProducts';
-import { useBongseonjangTvImages } from './useBongseonjangTvImages';
-import { useBongcookProducts } from './useBongcookProducts';
-import { useBottomBanners } from './useBottomBanners';
+import { useHomeData } from './useHomeData';
 
 export function useDefaultHomeContent() {
   const navigate = useNavigate();
-  const { heroImages, isLoading: isHeroImagesLoading } = useHeroImages();
-  const { timeDeals, isLoading: isTimeDealsLoading } = useTimeDeals();
-  const { bestProducts, isLoading: isBestProductsLoading } = useBestProducts();
-  const { middleBanners, isLoading: isMiddleBannersLoading } = useMiddleBanners();
-  const { freshFoods, isLoading: isFreshFoodsLoading } = useFreshFoods();
-  const { mdPicks, isLoading: isMdPicksLoading } = useMdPicks();
-  const { badameunProducts, isLoading: isBadameunLoading } = useBadameunProducts();
-  const { tvImages: bongseonjangTvImages, isLoading: isBongseonjangTvLoading } = useBongseonjangTvImages();
-  const { bongcookProducts, isLoading: isBongcookLoading } = useBongcookProducts();
-  const { bottomBanners, isLoading: isBottomBannersLoading } = useBottomBanners();
+  const {
+    heroImages,
+    timeDeals,
+    bestProducts,
+    middleBanners,
+    freshProducts,
+    mdPicks,
+    badameunProducts,
+    bongseonjangTv,
+    bongcookProducts,
+    bottomBanners,
+    isLoading,
+  } = useHomeData();
 
   const onSubCategoryClick = useCallback((categoryId: string) => {
     navigate(`/category/${categoryId}`);
@@ -50,31 +44,31 @@ export function useDefaultHomeContent() {
 
   return {
     heroImages,
-    isHeroImagesLoading,
+    isHeroImagesLoading: isLoading,
     onSubCategoryClick,
     onHeartClick,
     timeDeals,
-    isTimeDealsLoading,
+    isTimeDealsLoading: isLoading,
     bestProducts,
-    isBestProductsLoading,
+    isBestProductsLoading: isLoading,
     onViewAllBestProducts,
     middleBanners,
-    isMiddleBannersLoading,
-    freshFoods,
-    isFreshFoodsLoading,
+    isMiddleBannersLoading: isLoading,
+    freshFoods: freshProducts,
+    isFreshFoodsLoading: isLoading,
     onViewAllFreshFoods,
     mdPicks,
-    isMdPicksLoading,
+    isMdPicksLoading: isLoading,
     badameunProducts,
-    isBadameunLoading,
+    isBadameunLoading: isLoading,
     onViewAllBadameun,
-    bongseonjangTvImages,
-    isBongseonjangTvLoading,
+    bongseonjangTvImages: bongseonjangTv,
+    isBongseonjangTvLoading: isLoading,
     bongcookProducts,
-    isBongcookLoading,
+    isBongcookLoading: isLoading,
     onViewAllBongcook,
     bottomBanners,
-    isBottomBannersLoading,
+    isBottomBannersLoading: isLoading,
   };
 }
 
