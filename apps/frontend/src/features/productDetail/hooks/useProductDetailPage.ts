@@ -11,7 +11,7 @@ import { useProductInquiries } from './useProductInquiries';
 export function useProductDetailPage(productId: string) {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { product, isLoading, error } = useProductDetail(productId);
+  const { product, isLoading, error, isFetchingDetail, isPartialOnly } = useProductDetail(productId);
   const { reviews, isLoading: reviewsLoading } = useProductReviews(productId);
   const { relatedProducts, isLoading: relatedProductsLoading } = useRelatedProducts(productId);
   const { inquiries, isLoading: inquiriesLoading } = useProductInquiries(productId);
@@ -149,6 +149,8 @@ export function useProductDetailPage(productId: string) {
     state: {
       product,
       isLoading,
+      isFetchingDetail,
+      isPartialOnly,
       error,
       selectedOption,
       quantity,

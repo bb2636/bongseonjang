@@ -7,7 +7,8 @@ export function useProductListCache() {
 
   const primeProductDetailCache = (products: ProductCardData[]) => {
     products.forEach((product) => {
-      const existingData = queryClient.getQueryData<ProductDetail>(['product', product.id]);
+      const productIdStr = String(product.id);
+      const existingData = queryClient.getQueryData<ProductDetail>(['product', productIdStr]);
       
       if (!existingData) {
         const partialDetail: Partial<ProductDetail> = {
@@ -44,13 +45,13 @@ export function useProductListCache() {
           }] : [],
         };
 
-        queryClient.setQueryData(['product', product.id, 'partial'], partialDetail);
+        queryClient.setQueryData(['product', productIdStr, 'partial'], partialDetail);
       }
     });
   };
 
   const getPartialProductData = (productId: string): Partial<ProductDetail> | undefined => {
-    return queryClient.getQueryData(['product', productId, 'partial']);
+    return queryClient.getQueryData(['product', String(productId), 'partial']);
   };
 
   return {
