@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import { ProtectedRoute } from "./components";
+import { HomePageSkeleton } from "./components/HomePageSkeleton";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
@@ -200,7 +201,11 @@ export default function App() {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={
+          <Suspense fallback={<HomePageSkeleton />}>
+            <HomePage />
+          </Suspense>
+        } />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route
           path="/product/:productId/inquiry/write"
