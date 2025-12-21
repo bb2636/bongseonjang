@@ -24,12 +24,7 @@ export default function ProductDetailPage() {
   const {
     product,
     isLoading,
-    isFetchingDetail,
-    isPartialOnly,
     error,
-    selectedOption,
-    quantity,
-    totalPrice,
     activeTab,
     reviews,
     reviewsLoading,
@@ -40,9 +35,6 @@ export default function ProductDetailPage() {
     isWishlisted,
   } = state;
   const {
-    handleOptionSelect,
-    handleQuantityChange,
-    handleCartClick,
     handleShare,
     handleTabChange,
     handleAddToCart,
@@ -140,9 +132,6 @@ export default function ProductDetailPage() {
     <>
       <ProductDetailView
         product={product}
-        selectedOption={selectedOption}
-        quantity={quantity}
-        totalPrice={totalPrice}
         activeTab={activeTab}
         reviews={reviews}
         reviewsLoading={reviewsLoading}
@@ -151,9 +140,6 @@ export default function ProductDetailPage() {
         relatedProducts={relatedProducts}
         relatedProductsLoading={relatedProductsLoading}
         isWishlisted={isWishlisted}
-        onOptionSelect={handleOptionSelect}
-        onQuantityChange={handleQuantityChange}
-        onCartClick={handleCartClick}
         onShare={handleShare}
         onTabChange={handleTabChange}
         onAddToCart={handleAddToCart}
