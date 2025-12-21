@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import HomePage from "./features/home/pages/HomePage";
 import {
@@ -42,7 +42,6 @@ import { MyInquiriesPage } from "./features/myInquiries";
 import { BongseonStoryPage } from "./features/about";
 import { TermsViewPage } from "./features/terms";
 import {
-  AdminDashboardPage,
   AdminPlaceholderPage,
   AdminSupportPage,
   BannerManagementPage,
@@ -294,7 +293,7 @@ export default function App() {
       />
 
       {/* Admin Routes */}
-      <Route path="/admin" element={<AdminDashboardPage />} />
+      <Route path="/admin" element={<Navigate to="/admin/users" replace />} />
       <Route path="/admin/products" element={<ProductManagementPage />} />
       <Route path="/admin/products/*" element={<ProductManagementPage />} />
       <Route path="/admin/orders" element={<OrderManagementPage />} />
