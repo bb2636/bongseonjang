@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { config, initializeDatabase } from './config';
 import routes from './routes';
 import { ObjectStorageService } from './objectStorage';
+import { runProductionSeed } from './seeds/productionSeed.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -91,6 +92,8 @@ app.use((req, res, next) => {
 async function startServer(): Promise<void> {
   try {
     await initializeDatabase();
+    
+    await runProductionSeed();
     
     app.listen(config.port, '0.0.0.0', () => {
       console.log(`Server is running on port ${config.port}`);
