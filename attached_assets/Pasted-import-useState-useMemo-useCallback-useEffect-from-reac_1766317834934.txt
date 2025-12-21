@@ -13,8 +13,12 @@ import { useProductInquiries } from './useProductInquiries';
 export function useProductDetailPage(productId: string) {
   const navigate = useNavigate();
   const { showToast } = useToast();
+<<<<<<< HEAD
   const { isAuthenticated } = useAuth();
+  const { product, isLoading, error } = useProductDetail(productId);
+=======
   const { product, isLoading, error, isFetchingDetail, isPartialOnly } = useProductDetail(productId);
+>>>>>>> 8c3525b1137bbc9c7810c43a4669790c03655f08
   const { reviews, isLoading: reviewsLoading } = useProductReviews(productId);
   const { relatedProducts, isLoading: relatedProductsLoading } = useRelatedProducts(productId);
   const { inquiries, isLoading: inquiriesLoading } = useProductInquiries(productId);

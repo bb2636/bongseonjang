@@ -556,13 +556,31 @@ export function ProductFormDialog({
             <h3 className="product-form-dialog__section-title">배송 정보</h3>
             <div className="product-form-dialog__shipping-row">
               <span className="product-form-dialog__shipping-label">{shippingLabels.shippingFee}</span>
-              <input
-                type="text"
-                className="product-form-dialog__input product-form-dialog__shipping-value"
-                placeholder="예: 3500원, 30만원 이상 구매 시 무료배송"
-                value={formData.shippingInfo.shippingFee}
-                onChange={(e) => handleShippingInfoChange('shippingFee', e.target.value)}
-              />
+              <div className="product-form-dialog__shipping-input-wrapper">
+                <input
+                  type="number"
+                  className="product-form-dialog__input product-form-dialog__shipping-number-input"
+                  placeholder="3500"
+                  value={formData.shippingInfo.shippingFee ?? ''}
+                  onChange={(e) => handleShippingInfoChange('shippingFee', e.target.value ? Number(e.target.value) : null)}
+                  min="0"
+                />
+                <span className="product-form-dialog__shipping-unit">원</span>
+              </div>
+            </div>
+            <div className="product-form-dialog__shipping-row">
+              <span className="product-form-dialog__shipping-label">{shippingLabels.freeShippingThreshold}</span>
+              <div className="product-form-dialog__shipping-input-wrapper">
+                <input
+                  type="number"
+                  className="product-form-dialog__input product-form-dialog__shipping-number-input"
+                  placeholder="30000"
+                  value={formData.shippingInfo.freeShippingThreshold ?? ''}
+                  onChange={(e) => handleShippingInfoChange('freeShippingThreshold', e.target.value ? Number(e.target.value) : null)}
+                  min="0"
+                />
+                <span className="product-form-dialog__shipping-unit">원 이상 구매 시 무료</span>
+              </div>
             </div>
             <div className="product-form-dialog__shipping-row">
               <span className="product-form-dialog__shipping-label">{shippingLabels.shippingDescription}</span>

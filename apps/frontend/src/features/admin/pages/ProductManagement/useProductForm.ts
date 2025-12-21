@@ -15,7 +15,8 @@ export interface ProductInfo {
 }
 
 export interface ShippingInfo {
-  shippingFee: string;
+  shippingFee: number | null;
+  freeShippingThreshold: number | null;
   shippingDescription: string;
 }
 
@@ -49,6 +50,7 @@ export interface ProductFormData {
 
 const SHIPPING_LABELS = {
   shippingFee: '택배비',
+  freeShippingThreshold: '무료배송 기준',
   shippingDescription: '배송가능지역',
 };
 
@@ -100,7 +102,8 @@ function createInitialFormData(): ProductFormData {
     options: [createEmptyOption()],
     productInfos: [createEmptyProductInfo()],
     shippingInfo: {
-      shippingFee: '',
+      shippingFee: null,
+      freeShippingThreshold: null,
       shippingDescription: '전국',
     },
     thumbnailImages: [],
@@ -251,7 +254,7 @@ export function useProductForm() {
     }));
   }, []);
 
-  const handleShippingInfoChange = useCallback((field: keyof ShippingInfo, value: string) => {
+  const handleShippingInfoChange = useCallback((field: keyof ShippingInfo, value: string | number | null) => {
     setFormData(prev => ({
       ...prev,
       shippingInfo: { ...prev.shippingInfo, [field]: value },

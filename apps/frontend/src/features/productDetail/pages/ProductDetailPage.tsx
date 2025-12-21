@@ -24,6 +24,8 @@ export default function ProductDetailPage() {
   const {
     product,
     isLoading,
+    isFetchingDetail,
+    isPartialOnly,
     error,
     selectedOption,
     quantity,

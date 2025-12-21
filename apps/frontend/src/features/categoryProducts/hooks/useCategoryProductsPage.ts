@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { 
@@ -7,6 +8,7 @@ import {
   fetchProductsByCategoryId 
 } from '../../home/api/productApi';
 import type { ProductCardData } from '@/components/ProductCard';
+import { useProductListCache } from '../../productDetail/hooks/useProductListCache';
 
 const STALE_TIME = 5 * 60 * 1000;
 
@@ -21,6 +23,7 @@ export function useCategoryProductsPage() {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const activeSlug = slug || 'all';
+  const { primeProductDetailCache } = useProductListCache();
   
   const categoryId = extractCategoryId(activeSlug);
   const isDbCategory = categoryId !== null;
@@ -45,6 +48,12 @@ export function useCategoryProductsPage() {
     },
     staleTime: STALE_TIME,
   });
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      primeProductDetailCache(data);
+    }
+  }, [data, primeProductDetailCache]);
 
   const handleTabChange = (newSlug: string) => {
     navigate(`/category/${newSlug}`, { replace: true });
