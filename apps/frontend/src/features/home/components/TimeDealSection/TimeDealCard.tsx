@@ -56,7 +56,7 @@ export function TimeDealCard({ deal }: TimeDealCardProps) {
       <div className="time-deal-card__image-container">
         <div className="time-deal-card__image">
           {deal.imageUrl && (
-            <img src={deal.imageUrl} alt={deal.name} />
+            <img src={deal.imageUrl} alt={deal.name} loading="lazy" />
           )}
         </div>
         <div className="time-deal-card__timer">

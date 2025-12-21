@@ -38,7 +38,7 @@ export default function SubCategoryCards({
           >
             <div className="sub-category-card__image">
               {category.imageUrl && (
-                <img src={category.imageUrl} alt={category.name} />
+                <img src={category.imageUrl} alt={category.name} loading="lazy" />
               )}
             </div>
             <span className="sub-category-card__name">{category.name}</span>

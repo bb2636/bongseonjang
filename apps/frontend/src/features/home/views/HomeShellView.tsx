@@ -17,15 +17,15 @@ export default function HomeShellView({ shell }: HomeShellViewProps) {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'default':
+      case "default":
         return <DefaultHomeContent />;
-      case 'best':
+      case "best":
         return <BestProductsContent />;
-      case 'new':
+      case "new":
         return <NewProductsContent />;
-      case 'event':
+      case "event":
         return <EventsContent />;
-      case 'all':
+      case "all":
         return <AllProductsContent />;
       default:
         return <DefaultHomeContent />;
@@ -35,7 +35,7 @@ export default function HomeShellView({ shell }: HomeShellViewProps) {
   return (
     <div className="home-shell">
       <AppBar onLogoClick={onLogoClick} />
-      
+
       <main className="home-shell__content">
         <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />
         {renderContent()}

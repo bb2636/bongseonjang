@@ -28,7 +28,7 @@ export default function LargeProductCard({ product }: LargeProductCardProps) {
     <div className="large-product-card" onClick={handleCardClick}>
       <div className="large-product-card__image">
         {product.imageUrl && (
-          <img src={product.imageUrl} alt={product.name} />
+          <img src={product.imageUrl} alt={product.name} loading="lazy" />
         )}
       </div>
 

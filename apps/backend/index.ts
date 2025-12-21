@@ -48,6 +48,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/uploads', (req, res) => {
+  res.redirect(301, `/objects${req.path}`);
+});
+
 app.use('/objects', async (req, res, next) => {
   if (req.method !== 'GET') {
     return next();

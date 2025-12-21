@@ -1,0 +1,10 @@
+.lazy-section {
+  width: 100%;
+}
+
+.lazy-section--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background-secondary, #f9f9f9);
+}

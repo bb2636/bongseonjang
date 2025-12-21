@@ -56,7 +56,7 @@ export default function BannerCarousel({
         loop={loop}
         className="banner-carousel__swiper"
       >
-        {images.map((image) => (
+        {images.map((image, index) => (
           <SwiperSlide key={image.id}>
             {image.linkUrl ? (
               <a href={image.linkUrl} className="banner-carousel__link">
@@ -64,6 +64,7 @@ export default function BannerCarousel({
                   src={image.imageUrl}
                   alt=""
                   className="banner-carousel__image"
+                  loading={index === 0 ? "eager" : "lazy"}
                 />
               </a>
             ) : (
@@ -71,6 +72,7 @@ export default function BannerCarousel({
                 src={image.imageUrl}
                 alt=""
                 className="banner-carousel__image"
+                loading={index === 0 ? "eager" : "lazy"}
                 onClick={() => onSlideClick?.(image)}
                 style={onSlideClick ? { cursor: 'pointer' } : undefined}
               />

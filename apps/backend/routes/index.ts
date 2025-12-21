@@ -26,12 +26,14 @@ import { adminUserRoutes } from '../features/admin/routes/adminUserRoutes';
 import { adminOrderRoutes } from '../features/admin/routes/adminOrderRoutes';
 import { userRoutes } from '../features/user';
 import { termsRoutes, adminTermsRoutes } from '../features/terms';
+import homeDataRoutes from '../features/home/routes/homeDataRoutes';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/email-verification', emailVerificationRoutes);
 router.use('/referral', referralRoutes);
+router.use('/home', homeDataRoutes);
 router.use('/home', publicHeroRoutes);
 router.use('/middle-banners', publicMiddleBannerRoutes);
 router.use('/bottom-banners', publicBottomBannerRoutes);

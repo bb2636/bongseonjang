@@ -24,6 +24,7 @@ export default function EventCard({ event, onClick }: EventCardProps) {
             src={event.imageUrl}
             alt={event.title}
             className="event-card__image"
+            loading="lazy"
             onError={handleImageError}
           />
         </div>

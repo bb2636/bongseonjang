@@ -50,7 +50,7 @@ export default function BongseonjangTvSection({ tvImages, isLoading }: Bongseonj
           className="bongseonjang-tv__swiper"
           style={{ height: TV_BANNER_HEIGHT }}
         >
-          {tvImages.map((image) => (
+          {tvImages.map((image, index) => (
             <SwiperSlide key={image.id}>
               {image.linkUrl ? (
                 <a href={image.linkUrl} className="bongseonjang-tv__link">
@@ -58,6 +58,7 @@ export default function BongseonjangTvSection({ tvImages, isLoading }: Bongseonj
                     src={image.imageUrl}
                     alt=""
                     className="bongseonjang-tv__image"
+                    loading={index === 0 ? "eager" : "lazy"}
                   />
                 </a>
               ) : (
@@ -65,6 +66,7 @@ export default function BongseonjangTvSection({ tvImages, isLoading }: Bongseonj
                   src={image.imageUrl}
                   alt=""
                   className="bongseonjang-tv__image"
+                  loading={index === 0 ? "eager" : "lazy"}
                 />
               )}
             </SwiperSlide>

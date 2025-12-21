@@ -11,6 +11,7 @@ import { BongcookSection } from "../BongcookSection";
 import { BottomBanner } from "../BottomBanner";
 import { Footer } from "../Footer";
 import { Spacer } from "@/components/Spacer";
+import LazySection from "@/components/LazySection";
 import { useDefaultHomeContent } from "../../hooks/useDefaultHomeContent";
 import './DefaultHomeContent.css';
 
@@ -59,44 +60,58 @@ export default function DefaultHomeContent() {
         onViewAll={onViewAllBestProducts}
       />
       <Spacer height={20} />
-      <MiddleBanner
-        banners={middleBanners}
-        isLoading={isMiddleBannersLoading}
-      />
+      <LazySection minHeight={200}>
+        <MiddleBanner
+          banners={middleBanners}
+          isLoading={isMiddleBannersLoading}
+        />
+      </LazySection>
       <Spacer height={20} />
-      <MdPickSection
-        products={mdPicks}
-        isLoading={isMdPicksLoading}
-      />
+      <LazySection minHeight={300}>
+        <MdPickSection
+          products={mdPicks}
+          isLoading={isMdPicksLoading}
+        />
+      </LazySection>
       <Spacer height={20} />
-      <FreshFoodSection
-        products={freshFoods}
-        isLoading={isFreshFoodsLoading}
-        onHeartClick={onHeartClick}
-        onViewAll={onViewAllFreshFoods}
-      />
+      <LazySection minHeight={300}>
+        <FreshFoodSection
+          products={freshFoods}
+          isLoading={isFreshFoodsLoading}
+          onHeartClick={onHeartClick}
+          onViewAll={onViewAllFreshFoods}
+        />
+      </LazySection>
       <Spacer height={20} />
-      <BadameunSection
-        products={badameunProducts}
-        isLoading={isBadameunLoading}
-        onViewAll={onViewAllBadameun}
-      />
+      <LazySection minHeight={300}>
+        <BadameunSection
+          products={badameunProducts}
+          isLoading={isBadameunLoading}
+          onViewAll={onViewAllBadameun}
+        />
+      </LazySection>
       <Spacer height={20} />
-      <BongseonjangTvSection
-        tvImages={bongseonjangTvImages}
-        isLoading={isBongseonjangTvLoading}
-      />
+      <LazySection minHeight={250}>
+        <BongseonjangTvSection
+          tvImages={bongseonjangTvImages}
+          isLoading={isBongseonjangTvLoading}
+        />
+      </LazySection>
       <Spacer height={20} />
-      <BongcookSection
-        products={bongcookProducts}
-        isLoading={isBongcookLoading}
-        onViewAll={onViewAllBongcook}
-      />
+      <LazySection minHeight={300}>
+        <BongcookSection
+          products={bongcookProducts}
+          isLoading={isBongcookLoading}
+          onViewAll={onViewAllBongcook}
+        />
+      </LazySection>
       <Spacer height={20} />
-      <BottomBanner
-        banners={bottomBanners}
-        isLoading={isBottomBannersLoading}
-      />
+      <LazySection minHeight={200}>
+        <BottomBanner
+          banners={bottomBanners}
+          isLoading={isBottomBannersLoading}
+        />
+      </LazySection>
       <Spacer height={20} />
       <Footer />
     </div>

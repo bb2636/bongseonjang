@@ -45,6 +45,7 @@ export default function ProductCard({
           src={imageError || !product.imageUrl ? FALLBACK_IMAGE : product.imageUrl}
           alt={product.name}
           className="product-card__image"
+          loading="lazy"
           onError={handleImageError}
         />
       </div>
