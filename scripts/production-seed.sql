@@ -118,7 +118,7 @@ INSERT INTO banners (id, title, image_url, link_url, sort_no, is_active, banner_
 ON CONFLICT (id) DO NOTHING;
 
 -- 10. 데모 사용자 (users) - 리뷰용
-INSERT INTO users (id, email, name, password, phone, created_at, updated_at) VALUES
+INSERT INTO users (id, email, name, password, phone, "createdAt", "updatedAt") VALUES
 ('cb171eab-09dd-469f-9015-234141d3e5c1', 'demo1@bongseonjang.com', '김수산', '$2b$10$rQZ8r5EXQnQwQnPU5xyXx.dummyhash', '010-1234-5678', NOW(), NOW()),
 ('e3e7d1c1-8a66-470b-bdb3-a4d2b690f5ea', 'demo2@bongseonjang.com', '이해산', '$2b$10$rQZ8r5EXQnQwQnPU5xyXx.dummyhash', '010-9876-5432', NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
