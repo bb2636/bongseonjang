@@ -1,10 +1,10 @@
 import { CategoryCard } from '../CategoryCard';
 import './CategoryCardGrid.css';
 
-import obadaImage from '../../../../assets/image/category/obada.svg';
-import fourseasonImage from '../../../../assets/image/category/fourseason.svg';
-import bongcookImage from '../../../../assets/image/category/bongcook.svg';
-import badameunImage from '../../../../assets/image/category/badameun.svg';
+import obadaImage from '../../../../assets/image/category/obada.webp';
+import fourseasonImage from '../../../../assets/image/category/fourseason.webp';
+import bongcookImage from '../../../../assets/image/category/bongcook.webp';
+import badameunImage from '../../../../assets/image/category/badameun.webp';
 
 interface BrandCategory {
   id: string;
