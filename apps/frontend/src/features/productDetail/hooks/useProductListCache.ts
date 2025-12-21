@@ -1,21 +1,45 @@
+import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { ProductCardData } from '@/components/ProductCard';
 import type { ProductDetail } from '../types/productDetail';
 
+interface CacheableProduct {
+  id: string;
+  name: string;
+  imageUrl?: string;
+  originalPrice?: number;
+  discountPercent: number;
+  discountedPrice: number;
+  summary?: string;
+  origin?: string;
+  reviewCount?: number;
+  averageRating?: number;
+  mainOptions?: Array<{
+    id: string;
+    groupName: string;
+    name: string;
+    price: number;
+    compareAtPrice?: number;
+    stockQty: number;
+    isDefault: boolean;
+  }>;
+}
+
 export function useProductListCache() {
   const queryClient = useQueryClient();
 
-  const primeProductDetailCache = (products: ProductCardData[]) => {
+  const primeCache = useCallback((products: CacheableProduct[]) => {
     products.forEach((product) => {
       const productIdStr = String(product.id);
       const existingData = queryClient.getQueryData<ProductDetail>(['product', productIdStr]);
       
       if (!existingData) {
+        const basePrice = product.originalPrice ?? product.discountedPrice;
         const partialDetail: Partial<ProductDetail> = {
           id: product.id,
           name: product.name,
           thumbnailUrl: product.imageUrl,
-          basePrice: product.originalPrice,
+          basePrice,
           discountRate: product.discountPercent,
           isDiscounted: product.discountPercent > 0,
           discountedPrice: product.discountedPrice,
@@ -48,14 +72,19 @@ export function useProductListCache() {
         queryClient.setQueryData(['product', productIdStr, 'partial'], partialDetail);
       }
     });
-  };
+  }, [queryClient]);
 
-  const getPartialProductData = (productId: string): Partial<ProductDetail> | undefined => {
+  const primeProductDetailCache = useCallback((products: ProductCardData[]) => {
+    primeCache(products);
+  }, [primeCache]);
+
+  const getPartialProductData = useCallback((productId: string): Partial<ProductDetail> | undefined => {
     return queryClient.getQueryData(['product', String(productId), 'partial']);
-  };
+  }, [queryClient]);
 
   return {
     primeProductDetailCache,
+    primeCache,
     getPartialProductData,
   };
 }
