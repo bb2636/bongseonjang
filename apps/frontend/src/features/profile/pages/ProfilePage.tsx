@@ -1,8 +1,18 @@
-import { useProfilePage } from '../hooks/useProfilePage';
 import ProfileView from '../views/ProfileView';
+import GuestProfileView from '../views/GuestProfileView';
+import { useProfilePage } from '../hooks/useProfilePage';
+
+function AuthenticatedProfilePage() {
+  const { state, actions } = useProfilePage();
+  return <ProfileView state={state} actions={actions} />;
+}
 
 export default function ProfilePage() {
-  const { state, actions } = useProfilePage();
+  const isLoggedIn = !!localStorage.getItem('accessToken');
   
-  return <ProfileView state={state} actions={actions} />;
+  if (!isLoggedIn) {
+    return <GuestProfileView />;
+  }
+
+  return <AuthenticatedProfilePage />;
 }

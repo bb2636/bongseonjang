@@ -230,14 +230,7 @@ export default function App() {
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/category/:slug" element={<CategoryProductsPage />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route
           path="/profile/verify"
           element={
