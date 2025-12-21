@@ -1,13 +1,28 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useHomeData } from './useHomeData';
+import { useAboveFoldData } from './useAboveFoldData';
+import { useBelowFoldData } from './useBelowFoldData';
 
 export function useDefaultHomeContent() {
   const navigate = useNavigate();
+  const [shouldLoadBelowFold, setShouldLoadBelowFold] = useState(false);
+  const triggerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShouldLoadBelowFold(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   const {
     heroImages,
     timeDeals,
     bestProducts,
+    isLoading: isAboveFoldLoading,
+  } = useAboveFoldData();
+
+  const {
     middleBanners,
     freshProducts,
     mdPicks,
@@ -15,8 +30,8 @@ export function useDefaultHomeContent() {
     bongseonjangTv,
     bongcookProducts,
     bottomBanners,
-    isLoading,
-  } = useHomeData();
+    isLoading: isBelowFoldLoading,
+  } = useBelowFoldData(shouldLoadBelowFold);
 
   const onSubCategoryClick = useCallback((categoryId: string) => {
     navigate(`/category/${categoryId}`);
@@ -44,31 +59,32 @@ export function useDefaultHomeContent() {
 
   return {
     heroImages,
-    isHeroImagesLoading: isLoading,
+    isHeroImagesLoading: isAboveFoldLoading,
     onSubCategoryClick,
     onHeartClick,
     timeDeals,
-    isTimeDealsLoading: isLoading,
+    isTimeDealsLoading: isAboveFoldLoading,
     bestProducts,
-    isBestProductsLoading: isLoading,
+    isBestProductsLoading: isAboveFoldLoading,
     onViewAllBestProducts,
     middleBanners,
-    isMiddleBannersLoading: isLoading,
+    isMiddleBannersLoading: isBelowFoldLoading || !shouldLoadBelowFold,
     freshFoods: freshProducts,
-    isFreshFoodsLoading: isLoading,
+    isFreshFoodsLoading: isBelowFoldLoading || !shouldLoadBelowFold,
     onViewAllFreshFoods,
     mdPicks,
-    isMdPicksLoading: isLoading,
+    isMdPicksLoading: isBelowFoldLoading || !shouldLoadBelowFold,
     badameunProducts,
-    isBadameunLoading: isLoading,
+    isBadameunLoading: isBelowFoldLoading || !shouldLoadBelowFold,
     onViewAllBadameun,
     bongseonjangTvImages: bongseonjangTv,
-    isBongseonjangTvLoading: isLoading,
+    isBongseonjangTvLoading: isBelowFoldLoading || !shouldLoadBelowFold,
     bongcookProducts,
-    isBongcookLoading: isLoading,
+    isBongcookLoading: isBelowFoldLoading || !shouldLoadBelowFold,
     onViewAllBongcook,
     bottomBanners,
-    isBottomBannersLoading: isLoading,
+    isBottomBannersLoading: isBelowFoldLoading || !shouldLoadBelowFold,
+    triggerRef,
   };
 }
 

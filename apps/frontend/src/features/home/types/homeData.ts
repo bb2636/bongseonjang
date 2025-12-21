@@ -22,7 +22,33 @@ export interface HomeData {
   bottomBanners: BottomBannerImage[];
 }
 
+export interface AboveFoldData {
+  heroImages: HeroImage[];
+  timeDeals: TimeDeal[];
+  bestProducts: BestProduct[];
+}
+
+export interface BelowFoldData {
+  middleBanners: MiddleBannerImage[];
+  freshProducts: FreshFood[];
+  mdPicks: MdPickProduct[];
+  badameunProducts: BadameunProduct[];
+  bongseonjangTv: BongseonjangTvImage[];
+  bongcookProducts: BongcookProduct[];
+  bottomBanners: BottomBannerImage[];
+}
+
 export interface HomeDataResponse {
   success: boolean;
   data: HomeData;
+}
+
+export interface AboveFoldDataResponse {
+  success: boolean;
+  data: AboveFoldData;
+}
+
+export interface BelowFoldDataResponse {
+  success: boolean;
+  data: BelowFoldData;
 }

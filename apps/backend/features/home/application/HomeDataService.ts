@@ -93,4 +93,44 @@ export class HomeDataService {
       bottomBanners,
     };
   }
+
+  async getAboveFoldData(): Promise<Pick<HomeDataResponse, 'heroImages' | 'timeDeals' | 'bestProducts'>> {
+    const [heroImages, timeDeals, bestProducts] = await Promise.all([
+      this.getBannersByPosition('HOME_HERO'),
+      this.productService.getTimeDeals(10),
+      this.bestProductService.getBestProducts(),
+    ]);
+
+    return { heroImages, timeDeals, bestProducts };
+  }
+
+  async getBelowFoldData(): Promise<Omit<HomeDataResponse, 'heroImages' | 'timeDeals' | 'bestProducts'>> {
+    const [
+      middleBanners,
+      freshProducts,
+      mdPicks,
+      badameunProducts,
+      bongseonjangTv,
+      bongcookProducts,
+      bottomBanners,
+    ] = await Promise.all([
+      this.getBannersByPosition('HOME_MIDDLE'),
+      this.productService.getFreshProducts(10),
+      this.productService.getProductsByTag('md_pick', 10),
+      this.productService.getProductsByTag('badameun', 10),
+      this.bongseonjangTvService.getAllImages(),
+      this.productService.getProductsByTag('bongcook', 10),
+      this.getBannersByPosition('HOME_BOTTOM'),
+    ]);
+
+    return {
+      middleBanners,
+      freshProducts,
+      mdPicks,
+      badameunProducts,
+      bongseonjangTv,
+      bongcookProducts,
+      bottomBanners,
+    };
+  }
 }
