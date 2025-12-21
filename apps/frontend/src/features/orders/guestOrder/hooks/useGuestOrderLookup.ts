@@ -112,7 +112,7 @@ export function useGuestOrderLookup() {
   }, [navigate]);
 
   const onOrderClick = useCallback((orderId: string) => {
-    navigate(`/orders/${orderId}`);
+    navigate(`/orders/guest/${orderId}`);
   }, [navigate]);
 
   return {

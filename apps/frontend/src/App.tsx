@@ -12,7 +12,7 @@ import {
   PrivacyPage,
   SignupCompletePage,
 } from "./features/signup";
-import { GuestOrderLookupPage } from "./features/orders";
+import { GuestOrderLookupPage, GuestOrderDetailPage } from "./features/orders";
 import { ProductDetailPage } from "./features/productDetail";
 import WriteInquiryPage from "./features/productDetail/pages/WriteInquiryPage";
 import { CategoryPage } from "./features/category";
@@ -80,6 +80,7 @@ export default function App() {
       <Route path="/signup/terms" element={<TermsPage />} />
       <Route path="/signup/privacy" element={<PrivacyPage />} />
       <Route path="/orders/guest" element={<GuestOrderLookupPage />} />
+      <Route path="/orders/guest/:orderId" element={<GuestOrderDetailPage />} />
       <Route path="/category" element={<CategoryPage />} />
       <Route path="/category/:slug" element={<CategoryProductsPage />} />
       <Route path="/search" element={<SearchPage />} />

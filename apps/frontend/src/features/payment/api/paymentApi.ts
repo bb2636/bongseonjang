@@ -189,3 +189,31 @@ export async function lookupGuestOrders(data: GuestOrderLookupRequest): Promise<
 
   return response.json();
 }
+
+export interface GuestOrderDetail {
+  id: string;
+  orderNumber: string;
+  status: string;
+  totalProductPrice: number;
+  finalAmount: number;
+  recipientName: string;
+  recipientPhone: string;
+  postalCode: string;
+  address: string;
+  addressDetail: string | null;
+  deliveryRequest: string | null;
+  createdAt: string;
+  paidAt: string | null;
+  items: GuestOrderItem[];
+}
+
+export async function fetchGuestOrderDetail(orderId: string): Promise<GuestOrderDetail> {
+  const response = await fetch(`/api/payment/guest/order/${orderId}`);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || '주문 조회에 실패했습니다');
+  }
+
+  return response.json();
+}

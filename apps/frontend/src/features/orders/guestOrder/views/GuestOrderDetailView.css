@@ -1,0 +1,255 @@
+.guest-order-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f8f8f8;
+  font-family: var(--font-family-base);
+}
+
+.guest-order-detail__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 8px;
+  height: 48px;
+  background: #ffffff;
+}
+
+.guest-order-detail__back-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.guest-order-detail__title {
+  font-family: var(--font-family-base);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: #0C0C0C;
+  margin: 0;
+}
+
+.guest-order-detail__spacer {
+  width: 42px;
+  height: 42px;
+}
+
+.guest-order-detail__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.guest-order-detail__section {
+  background: #ffffff;
+  padding: 20px 16px;
+}
+
+.guest-order-detail__section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0C0C0C;
+  margin: 0 0 16px;
+}
+
+.guest-order-detail__order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.guest-order-detail__order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.guest-order-detail__order-date {
+  font-size: 14px;
+  color: #666;
+}
+
+.guest-order-detail__order-status {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #f0f0f0;
+}
+
+.guest-order-detail__order-status--paid,
+.guest-order-detail__order-status--preparing {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.guest-order-detail__order-status--shipping {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+.guest-order-detail__order-status--delivered {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.guest-order-detail__order-status--cancelled,
+.guest-order-detail__order-status--refunded {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+.guest-order-detail__order-number {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+}
+
+.guest-order-detail__info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.guest-order-detail__info-row:last-child {
+  border-bottom: none;
+}
+
+.guest-order-detail__info-row--total {
+  padding-top: 16px;
+  margin-top: 8px;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: none;
+}
+
+.guest-order-detail__info-label {
+  font-size: 14px;
+  color: #666;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.guest-order-detail__info-value {
+  font-size: 14px;
+  color: #0C0C0C;
+  text-align: right;
+  word-break: break-word;
+}
+
+.guest-order-detail__info-value--total {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.guest-order-detail__items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.guest-order-detail__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.guest-order-detail__item:last-child {
+  border-bottom: none;
+}
+
+.guest-order-detail__item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.guest-order-detail__item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0C0C0C;
+}
+
+.guest-order-detail__item-option {
+  font-size: 13px;
+  color: #888;
+}
+
+.guest-order-detail__item-qty {
+  font-size: 13px;
+  color: #666;
+}
+
+.guest-order-detail__item-price {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0C0C0C;
+  flex-shrink: 0;
+}
+
+.guest-order-detail__loading {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.guest-order-detail__skeleton-block {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  height: 100px;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.guest-order-detail__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.guest-order-detail__error p {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 20px;
+}
+
+.guest-order-detail__error-button {
+  padding: 10px 24px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.guest-order-detail__error-button:hover {
+  opacity: 0.9;
+}
