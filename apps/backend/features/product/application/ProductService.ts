@@ -119,7 +119,7 @@ export class ProductService {
       id: String(option.id),
       groupName: option.optionName || '옵션',
       name: option.optionValue,
-      price: option.price || product.basePrice,
+      price: (option.price != null && option.price > 0) ? option.price : product.basePrice,
       stockQty: product.stockQuantity ?? 0,
       isDefault: option.sortOrder === 0,
     }));
@@ -143,7 +143,7 @@ export class ProductService {
     const options: ProductOptionDto[] = (product.options || []).map((option) => ({
       id: String(option.id),
       name: option.optionValue,
-      price: option.price || product.basePrice,
+      price: (option.price != null && option.price > 0) ? option.price : product.basePrice,
       stockQty: product.stockQuantity ?? 0,
       isDefault: option.sortOrder === 0,
     }));

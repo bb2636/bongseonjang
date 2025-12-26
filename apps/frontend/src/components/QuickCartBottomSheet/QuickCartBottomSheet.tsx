@@ -120,7 +120,7 @@ export default function QuickCartBottomSheet() {
 
   const calculateItemPrice = (item: SelectedItem): number => {
     if (item.option) {
-      const optionPrice = item.option.price || product?.discountedPrice || 0;
+      const optionPrice = (item.option.price != null && item.option.price > 0) ? item.option.price : (product?.basePrice ?? 0);
       return optionPrice * item.quantity;
     }
     if (product) {
@@ -174,7 +174,9 @@ export default function QuickCartBottomSheet() {
         }
       } else {
         for (const item of selectedItems) {
-          const unitPrice = item.option ? (item.option.price || product.discountedPrice) : product.discountedPrice;
+          const unitPrice = item.option 
+            ? ((item.option.price != null && item.option.price > 0) ? item.option.price : product.basePrice) 
+            : product.discountedPrice;
           guestCartStorage.addItem({
             productId: product.id,
             productName: product.name,
@@ -206,7 +208,9 @@ export default function QuickCartBottomSheet() {
       productOptionId: item.option?.id || null,
       optionName: item.option?.name || null,
       quantity: item.quantity,
-      unitPrice: item.option ? (item.option.price || product.discountedPrice) : product.discountedPrice,
+      unitPrice: item.option 
+        ? ((item.option.price != null && item.option.price > 0) ? item.option.price : product.basePrice) 
+        : product.discountedPrice,
     }));
 
     const directPurchaseData = {
