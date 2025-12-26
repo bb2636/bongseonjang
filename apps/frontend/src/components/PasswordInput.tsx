@@ -1,5 +1,7 @@
-import { InputHTMLAttributes, forwardRef, useState } from 'react';
+import { InputHTMLAttributes, forwardRef, useState, FormEvent } from 'react';
 import './PasswordInput.css';
+
+const KOREAN_REGEX = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
 
 interface PasswordInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string;
@@ -44,6 +46,14 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         setInternalShowPassword(prev => !prev);
       }
     };
+
+    const handleInput = (e: FormEvent<HTMLInputElement>) => {
+      const input = e.currentTarget;
+      const filtered = input.value.replace(KOREAN_REGEX, '');
+      if (input.value !== filtered) {
+        input.value = filtered;
+      }
+    };
     
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
     
@@ -72,6 +82,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
               id={inputId}
               type={showPassword ? 'text' : 'password'}
               className={inputClasses}
+              onInput={handleInput}
               {...props}
             />
             <button
