@@ -111,8 +111,8 @@ export function useSignupProfileStep() {
     if (!value.trim()) {
       return '휴대폰 번호를 입력해주세요';
     }
-    if (!/^[0-9]{10,11}$/.test(value.replace(/-/g, ''))) {
-      return '올바른 휴대폰 번호를 입력해주세요';
+    if (!/^[0-9]{11}$/.test(value.replace(/-/g, ''))) {
+      return '휴대폰 번호 11자리를 입력해주세요';
     }
     return null;
   }, []);
