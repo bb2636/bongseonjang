@@ -176,6 +176,13 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 ### 파일 구조
 - `apps/backend/objectStorage.ts` - 스토리지 서비스 클래스
 - `apps/backend/objectAcl.ts` - 접근 권한(ACL) 관리
+- `apps/backend/common/utils/imageUrl.ts` - 이미지 URL 변환 유틸리티
+
+### 이미지 URL 변환
+Object Storage의 상대 경로(`/objects/...`)를 배포 환경에서도 작동하도록 절대 URL로 변환합니다:
+- 개발 환경: `REPLIT_DEV_DOMAIN` 환경 변수 사용
+- Capacitor APK: 절대 URL로 백엔드 이미지에 접근
+- 적용 위치: ProductService, HomeDataService, ReviewService, CartRoutes, WishlistRoutes 등
 
 ### 사용 예시
 ```typescript
