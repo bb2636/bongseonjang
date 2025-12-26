@@ -115,13 +115,24 @@ router.post('/review-image', authMiddleware, reviewUpload.single('image'), async
 });
 
 router.get('/objects/*objectPath', async (req, res) => {
+  console.log('[DEBUG] GET /objects/* called');
+  console.log('[DEBUG] req.params:', JSON.stringify(req.params));
+  console.log('[DEBUG] req.url:', req.url);
+  
   const objectStorageService = new ObjectStorageService();
   const objectPathArr = (req.params as any).objectPath || [];
+  console.log('[DEBUG] objectPathArr:', objectPathArr);
+  
   const objectPath = Array.isArray(objectPathArr) ? objectPathArr.join('/') : objectPathArr;
+  console.log('[DEBUG] objectPath:', objectPath);
+  console.log('[DEBUG] Full path to download:', `/objects/${objectPath}`);
+  
   try {
     await objectStorageService.downloadObjectByPath(`/objects/${objectPath}`, res);
+    console.log('[DEBUG] Download successful for:', `/objects/${objectPath}`);
   } catch (error) {
-    console.error('Error serving object:', error);
+    console.error('[DEBUG] Error serving object:', error);
+    console.error('[DEBUG] Failed path:', `/objects/${objectPath}`);
     res.status(404).json({ error: 'Object not found' });
   }
 });
