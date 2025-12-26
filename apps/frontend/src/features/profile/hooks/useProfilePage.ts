@@ -139,8 +139,7 @@ export function useProfilePage() {
   }, []);
 
   const handleLogoutConfirm = useCallback(() => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('token');
     setIsLogoutModalOpen(false);
     navigate('/login');
   }, [navigate]);
