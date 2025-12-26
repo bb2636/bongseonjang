@@ -41,12 +41,21 @@ export class ObjectStorageService {
     storagePath: string = "uploads",
     isPublic: boolean = true
   ): Promise<string> {
+    console.log('[DEBUG uploadFile] originalFilename:', originalFilename);
+    console.log('[DEBUG uploadFile] storagePath:', storagePath);
+    console.log('[DEBUG uploadFile] buffer length:', buffer.length);
+    console.log('[DEBUG uploadFile] buffer type:', typeof buffer);
+    console.log('[DEBUG uploadFile] isBuffer:', Buffer.isBuffer(buffer));
+    
     const objectId = randomUUID();
     const extension = originalFilename.split(".").pop() || "bin";
     const normalizedPath = storagePath.replace(/^\/+|\/+$/g, "");
     const objectName = `${normalizedPath}/${objectId}.${extension}`;
+    
+    console.log('[DEBUG uploadFile] objectName:', objectName);
 
     const result = await this.client.uploadFromBytes(objectName, buffer);
+    console.log('[DEBUG uploadFile] uploadResult:', JSON.stringify(result));
     
     if (!result.ok) {
       throw new Error(`Failed to upload file: ${result.error}`);
