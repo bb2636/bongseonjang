@@ -1,4 +1,9 @@
 :root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  
   --color-primary: #3B9BD5;
   --color-primary-dark: #2A7AB0;
   --color-secondary: #6c757d;
