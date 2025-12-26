@@ -20,6 +20,15 @@ export const toAbsoluteImageUrl = (path: string | null | undefined): string => {
   }
   
   if (path.startsWith('http://') || path.startsWith('https://')) {
+    // Check if it's an old replit.dev URL with /objects/ path
+    // These need to be rebased to the current domain
+    const replitDevMatch = path.match(/^https?:\/\/[^\/]*\.replit\.dev(\/objects\/.*)$/);
+    if (replitDevMatch) {
+      const relativePath = replitDevMatch[1];
+      const baseUrl = getBaseUrl();
+      return baseUrl ? `${baseUrl}${relativePath}` : relativePath;
+    }
+    // External URLs (Unsplash, etc.) - return as-is
     return path;
   }
   
