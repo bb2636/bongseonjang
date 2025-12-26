@@ -18,7 +18,6 @@ language = "nodejs"
 [deployment]
 deploymentTarget = "autoscale"
 build = ["npm", "run", "build"]
-publicDir = "dist"
 run = ["npm", "run", "start"]
 
 [[ports]]
