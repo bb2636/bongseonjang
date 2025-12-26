@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
 
 interface PlatformInfo {
   isInApp: boolean;
   isFlutterWebView: boolean;
   isReactNativeWebView: boolean;
+  isCapacitorAndroid: boolean;
+  isCapacitorIOS: boolean;
   isPwa: boolean;
   isWebBrowser: boolean;
 }
@@ -65,20 +68,37 @@ function checkUserAgent(): boolean {
   return inAppPatterns.some(pattern => ua.includes(pattern));
 }
 
+function checkCapacitorPlatform(): { isAndroid: boolean; isIOS: boolean } {
+  try {
+    const platform = Capacitor.getPlatform();
+    return {
+      isAndroid: platform === 'android',
+      isIOS: platform === 'ios',
+    };
+  } catch {
+    return { isAndroid: false, isIOS: false };
+  }
+}
+
 function computePlatformInfo(): PlatformInfo {
   const isFlutterWebView = checkIsFlutterWebView();
   const isReactNativeWebView = checkIsReactNativeWebView();
   const isPwa = checkIsPwa();
   const isUrlParamApp = checkUrlParam();
   const isUserAgentApp = checkUserAgent();
+  const capacitorPlatform = checkCapacitorPlatform();
 
-  const isInApp = isFlutterWebView || isReactNativeWebView || isUrlParamApp || isUserAgentApp;
+  const isCapacitorAndroid = capacitorPlatform.isAndroid;
+  const isCapacitorIOS = capacitorPlatform.isIOS;
+  const isInApp = isFlutterWebView || isReactNativeWebView || isUrlParamApp || isUserAgentApp || isCapacitorAndroid || isCapacitorIOS;
   const isWebBrowser = !isInApp && !isPwa;
 
   return {
     isInApp,
     isFlutterWebView,
     isReactNativeWebView,
+    isCapacitorAndroid,
+    isCapacitorIOS,
     isPwa,
     isWebBrowser,
   };
@@ -99,6 +119,13 @@ export function usePlatformDetect(): PlatformInfo {
       mediaQuery.removeEventListener('change', handleDisplayModeChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (platformInfo.isCapacitorAndroid) {
+      document.documentElement.style.setProperty('--safe-area-top', '0px');
+      document.documentElement.style.setProperty('--safe-area-bottom', '0px');
+    }
+  }, [platformInfo.isCapacitorAndroid]);
 
   return platformInfo;
 }

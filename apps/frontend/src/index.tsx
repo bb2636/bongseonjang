@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './styles/global.css';
 import { AuthProvider, ToastProvider, CartProvider, QuickCartProvider } from './contexts';
-import { ToastManager, QuickCartBottomSheet } from './components';
+import { ToastManager, QuickCartBottomSheet, PlatformInit } from './components';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,17 +25,19 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>
-          <CartProvider>
-            <ToastProvider>
-              <QuickCartProvider>
-                <App />
-                <QuickCartBottomSheet />
-                <ToastManager />
-              </QuickCartProvider>
-            </ToastProvider>
-          </CartProvider>
-        </AuthProvider>
+        <PlatformInit>
+          <AuthProvider>
+            <CartProvider>
+              <ToastProvider>
+                <QuickCartProvider>
+                  <App />
+                  <QuickCartBottomSheet />
+                  <ToastManager />
+                </QuickCartProvider>
+              </ToastProvider>
+            </CartProvider>
+          </AuthProvider>
+        </PlatformInit>
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>
