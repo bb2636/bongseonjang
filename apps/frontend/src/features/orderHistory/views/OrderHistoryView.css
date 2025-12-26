@@ -8,7 +8,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 8px;
+  padding: calc(10px + var(--safe-area-top, 0px)) 8px 10px 8px;
   background: #fff;
   position: sticky;
   top: 0;
