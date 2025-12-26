@@ -107,27 +107,33 @@ export class ObjectStorageService {
 
     const downloadResult = await this.client.downloadAsBytes(objectName);
     console.log('[DEBUG downloadObjectByPath] downloadResult.ok:', downloadResult.ok);
-    console.log('[DEBUG downloadObjectByPath] downloadResult.value length:', downloadResult.ok ? downloadResult.value.length : 'N/A');
     
     if (!downloadResult.ok) {
       console.log('[DEBUG downloadObjectByPath] Download failed');
       throw new ObjectNotFoundError();
     }
 
+    // SDK returns Array with Buffer at index 0
+    const fileBuffer = Array.isArray(downloadResult.value) 
+      ? downloadResult.value[0] 
+      : downloadResult.value;
+    
+    console.log('[DEBUG downloadObjectByPath] fileBuffer length:', fileBuffer.length);
+
     const mimeType = this.getMimeTypeFromPath(objectName);
     const aclPolicy = await getObjectAclPolicy(this.client, objectName);
     const isPublic = aclPolicy?.visibility === "public";
 
     console.log('[DEBUG downloadObjectByPath] mimeType:', mimeType);
-    console.log('[DEBUG downloadObjectByPath] Content-Length:', downloadResult.value.length);
+    console.log('[DEBUG downloadObjectByPath] Content-Length:', fileBuffer.length);
 
     res.set({
       "Content-Type": mimeType,
-      "Content-Length": downloadResult.value.length,
+      "Content-Length": fileBuffer.length,
       "Cache-Control": `${isPublic ? "public" : "private"}, max-age=3600`,
     });
 
-    res.send(downloadResult.value);
+    res.send(fileBuffer);
     console.log('[DEBUG downloadObjectByPath] Response sent successfully');
   }
 
