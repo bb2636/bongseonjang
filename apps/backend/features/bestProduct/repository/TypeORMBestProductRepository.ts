@@ -3,6 +3,7 @@ import { Product } from '../../../entity/Product.js';
 import { ProductImage } from '../../../entity/ProductImage.js';
 import type { BestProduct } from '../domain/BestProduct.js';
 import type { BestProductRepository } from './BestProductRepository.js';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 export class TypeORMBestProductRepository implements BestProductRepository {
   async findAll(): Promise<BestProduct[]> {
@@ -53,7 +54,7 @@ export class TypeORMBestProductRepository implements BestProductRepository {
     return {
       id: product.id,
       name: product.name,
-      imageUrl: thumbnailImage?.imageUrl ?? undefined,
+      imageUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl) || undefined,
       originalPrice: product.basePrice,
       discountPercent: 0,
       discountedPrice: product.basePrice,

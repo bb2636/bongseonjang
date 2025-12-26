@@ -4,6 +4,7 @@ import type { ReviewRepository } from '../repository/ReviewRepository';
 import type { ReviewImageRepository } from '../repository/ReviewImageRepository';
 import type { ReviewableOrderItemRepository } from '../repository/ReviewableOrderItemRepository';
 import type { ReviewStatsProvider } from '../../product/application/ProductService';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 export class ReviewService implements ReviewStatsProvider {
   constructor(
@@ -108,13 +109,13 @@ export class ReviewService implements ReviewStatsProvider {
       userName: review.user?.name || '익명',
       rating: review.rating,
       content: review.content,
-      imageUrls,
+      imageUrls: imageUrls.map(url => toAbsoluteImageUrl(url)),
       createdAt: review.createdAt.toISOString(),
     };
   }
 
   private toMyReviewDto(review: Review, imageUrls: string[] = []): MyReviewDto {
-    const productImageUrl = review.product?.images?.[0]?.imageUrl || null;
+    const productImageUrl = toAbsoluteImageUrl(review.product?.images?.[0]?.imageUrl) || null;
     
     return {
       id: review.id,
@@ -123,7 +124,7 @@ export class ReviewService implements ReviewStatsProvider {
       productImageUrl,
       rating: review.rating,
       content: review.content,
-      imageUrls,
+      imageUrls: imageUrls.map(url => toAbsoluteImageUrl(url)),
       createdAt: review.createdAt.toISOString(),
     };
   }

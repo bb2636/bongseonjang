@@ -2,6 +2,7 @@ import { AppDataSource } from '../../../config/database';
 import { Event } from '../../../entity/Event';
 import type { EventDto } from '../domain/Event';
 import type { EventRepository } from './EventRepository';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 export class TypeORMEventRepository implements EventRepository {
   async findAllActive(): Promise<EventDto[]> {
@@ -25,7 +26,7 @@ export class TypeORMEventRepository implements EventRepository {
       id: event.id,
       title: event.title,
       description: event.description ?? undefined,
-      imageUrl: event.imageUrl,
+      imageUrl: toAbsoluteImageUrl(event.imageUrl),
       linkUrl: event.linkUrl ?? undefined,
       startDate: event.startDate?.toISOString(),
       endDate: event.endDate?.toISOString(),

@@ -6,6 +6,7 @@ import { Product } from '../../../entity/Product';
 import { ProductImage } from '../../../entity/ProductImage';
 import { ProductOption } from '../../../entity/ProductOption';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 const router = Router();
 
@@ -61,7 +62,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
           name: product.name,
           originalPrice: product.basePrice,
           discountedPrice: lowestPrice,
-          thumbnailUrl: thumbnailImage?.imageUrl || '',
+          thumbnailUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl) || '',
           addedAt: item.createdAt,
         };
       })

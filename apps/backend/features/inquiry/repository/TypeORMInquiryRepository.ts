@@ -10,6 +10,7 @@ import type {
   InquiryFilter,
   InquiryType,
 } from '../domain/Inquiry';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 export class TypeORMInquiryRepository implements InquiryRepository {
   private get repository() {
@@ -86,7 +87,7 @@ export class TypeORMInquiryRepository implements InquiryRepository {
       question: row.question as string,
       isAnswered: row.answer !== null,
       isPrivate: Boolean(row.isPrivate),
-      imageUrls: (row.imageUrls as string[]) ?? [],
+      imageUrls: ((row.imageUrls as string[]) ?? []).map(url => toAbsoluteImageUrl(url)),
       createdAt: row.createdAt as Date,
     }));
 
@@ -135,7 +136,7 @@ export class TypeORMInquiryRepository implements InquiryRepository {
       answeredBy: inquiry.answeredBy,
       answererName: answerer?.name || null,
       isPrivate: inquiry.isPrivate,
-      imageUrls: inquiry.imageUrls,
+      imageUrls: (inquiry.imageUrls ?? []).map(url => toAbsoluteImageUrl(url)),
       createdAt: inquiry.createdAt,
       updatedAt: inquiry.updatedAt,
     };
@@ -169,7 +170,7 @@ export class TypeORMInquiryRepository implements InquiryRepository {
       answeredBy: savedInquiry.answeredBy,
       answererName: null,
       isPrivate: savedInquiry.isPrivate,
-      imageUrls: savedInquiry.imageUrls,
+      imageUrls: (savedInquiry.imageUrls ?? []).map(url => toAbsoluteImageUrl(url)),
       createdAt: savedInquiry.createdAt,
       updatedAt: savedInquiry.updatedAt,
     };

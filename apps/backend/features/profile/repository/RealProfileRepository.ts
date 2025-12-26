@@ -8,6 +8,7 @@ import { WishlistItem } from '../../../entity/WishlistItem';
 import { OrderItem } from '../../../entity/OrderItem';
 import { Order as OrderEntity } from '../../../entity/Order';
 import { Review } from '../../../entity/Review';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 const GRADE_DISPLAY_MAP: Record<MembershipGrade, string> = {
   [MembershipGrade.BRONZE]: '브론즈',
@@ -104,7 +105,7 @@ export class RealProfileRepository implements ProfileRepository {
         id: item.id,
         productId: item.productId || '',
         productName: item.productName,
-        imageUrl: item.productImageUrl || 'https://placehold.co/62x62/f5f5f5/999999?text=Product',
+        imageUrl: toAbsoluteImageUrl(item.productImageUrl) || 'https://placehold.co/62x62/f5f5f5/999999?text=Product',
         quantity: item.quantity,
         price: item.unitPrice,
       })),

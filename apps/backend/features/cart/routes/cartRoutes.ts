@@ -6,6 +6,7 @@ import { ProductImage } from '../../../entity/ProductImage';
 import { ProductOption } from '../../../entity/ProductOption';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { In } from 'typeorm';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 const router = Router();
 
@@ -58,7 +59,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         id: item.id,
         productId: item.productId,
         productName: item.product?.name ?? '',
-        productImageUrl: thumbnailMap.get(item.productId) ?? 'https://placehold.co/58x58/f5f5f5/999999?text=No+Image',
+        productImageUrl: toAbsoluteImageUrl(thumbnailMap.get(item.productId)) || 'https://placehold.co/58x58/f5f5f5/999999?text=No+Image',
         productOptionId: item.productOptionId,
         optionName: optionDisplay,
         quantity: item.quantity,

@@ -6,6 +6,7 @@ import { repositories } from '../../../config/repositories';
 import { TypeORMProductRepository } from '../../product/repository/TypeORMProductRepository';
 import { ReviewService, TypeORMReviewRepository, TypeORMReviewImageRepository } from '../../review';
 import { TypeORMReviewableOrderItemRepository } from '../../review/repository/TypeORMReviewableOrderItemRepository';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 export interface HomeDataResponse {
   heroImages: Array<{ id: number; imageUrl: string; linkUrl: string | null }>;
@@ -50,7 +51,7 @@ export class HomeDataService {
 
     return activeBanners.map(banner => ({
       id: banner.id,
-      imageUrl: banner.imageUrl,
+      imageUrl: toAbsoluteImageUrl(banner.imageUrl),
       linkUrl: banner.linkUrl ?? null,
     }));
   }
