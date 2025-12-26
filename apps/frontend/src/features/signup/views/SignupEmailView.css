@@ -192,6 +192,17 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-top: 8px;
+}
+
+.signup-code-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
 }
 
 .signup-code-input {
@@ -207,10 +218,24 @@
   color: rgba(16, 17, 18, 0.4);
 }
 
+.signup-code-timer {
+  font-size: 14px;
+  color: #3B9BD5;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .signup-timer-text {
   font-size: 14px;
   color: #3B9BD5;
   font-weight: 500;
+}
+
+.signup-success-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #4CAF50;
 }
 
 .signup-confirm-button {

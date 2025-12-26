@@ -97,6 +97,11 @@ interface ProfileStepProps {
   showPhoneModal: boolean;
   phoneModalMessage: string;
   isPhoneVerifySuccess: boolean;
+  phoneVerificationCode: string;
+  phoneCodeTimer: number;
+  isPhoneCodeSent: boolean;
+  isPhoneCodeSending: boolean;
+  isPhoneCodeVerifying: boolean;
   showErrorModal: boolean;
   errorModalMessage: string;
   onCloseErrorModal: () => void;
@@ -105,6 +110,9 @@ interface ProfileStepProps {
   onNameBlur: () => void;
   onPhoneBlur: () => void;
   onPhoneVerify: () => void;
+  onSendPhoneCode: () => void;
+  onVerifyPhoneCode: () => void;
+  onPhoneVerificationCodeChange: (value: string) => void;
   onAddressSearchResult: (postalCode: string, address: string) => void;
   onAddressSearchError: (message: string) => void;
   onAddressDetailChange: (value: string) => void;
@@ -384,7 +392,7 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
       <div className="signup-text-field">
         <label className="signup-label">휴대폰</label>
         <div className="signup-verify-input-row">
-          <div className={getInputBoxClass(!!profileStep.errors.phone)}>
+          <div className={getInputBoxClass(!!profileStep.errors.phone, profileStep.isPhoneVerified)}>
             <input
               className="signup-form-input"
               type="tel"
@@ -393,13 +401,50 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
               onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onPhoneChange(e.target.value)}
               onBlur={profileStep.onPhoneBlur}
               maxLength={11}
+              disabled={profileStep.isPhoneVerified}
             />
             {profileStep.errors.phone && (
               <span className="signup-error">{profileStep.errors.phone}</span>
             )}
           </div>
-          <button className="signup-black-verify-button" onClick={profileStep.onPhoneVerify}>인증</button>
+          <button 
+            className="signup-black-verify-button" 
+            onClick={profileStep.onSendPhoneCode}
+            disabled={profileStep.isPhoneCodeSending || profileStep.isPhoneVerified}
+          >
+            {profileStep.isPhoneCodeSending ? '발송중...' : (profileStep.isPhoneCodeSent && profileStep.phoneCodeTimer > 0 ? '재전송' : '인증')}
+          </button>
         </div>
+        {profileStep.isPhoneCodeSent && !profileStep.isPhoneVerified && (
+          <div className="signup-code-input-row">
+            <div className="signup-code-input-wrapper">
+              <input
+                className="signup-code-input"
+                type="text"
+                inputMode="numeric"
+                placeholder="인증번호 6자리"
+                value={profileStep.phoneVerificationCode}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onPhoneVerificationCodeChange(e.target.value)}
+                maxLength={6}
+              />
+              {profileStep.phoneCodeTimer > 0 && (
+                <span className="signup-code-timer">
+                  {Math.floor(profileStep.phoneCodeTimer / 60)}:{String(profileStep.phoneCodeTimer % 60).padStart(2, '0')}
+                </span>
+              )}
+            </div>
+            <button 
+              className="signup-black-verify-button"
+              onClick={profileStep.onVerifyPhoneCode}
+              disabled={profileStep.isPhoneCodeVerifying || profileStep.phoneCodeTimer <= 0}
+            >
+              {profileStep.isPhoneCodeVerifying ? '확인중...' : '확인'}
+            </button>
+          </div>
+        )}
+        {profileStep.isPhoneVerified && (
+          <span className="signup-success-text">휴대폰 인증이 완료되었습니다</span>
+        )}
       </div>
 
       <AddressInputForm

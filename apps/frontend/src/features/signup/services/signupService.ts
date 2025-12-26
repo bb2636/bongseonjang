@@ -95,6 +95,38 @@ export const signupService = {
     return response.json();
   },
 
+  async sendPhoneVerificationCode(phone: string): Promise<{ success: boolean; message: string }> {
+    const response = await fetch(`${API_BASE_URL}/auth/phone/send-code`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || '인증번호 발송에 실패했습니다');
+    }
+
+    return data;
+  },
+
+  async verifyPhoneCode(phone: string, code: string): Promise<{ success: boolean; message: string }> {
+    const response = await fetch(`${API_BASE_URL}/auth/phone/verify-code`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, code }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || '인증에 실패했습니다');
+    }
+
+    return data;
+  },
+
   async signup(data: SignupData): Promise<SignupResult> {
     const birthDate = `${data.birthYear}-${data.birthMonth.padStart(2, '0')}-${data.birthDay.padStart(2, '0')}`;
     

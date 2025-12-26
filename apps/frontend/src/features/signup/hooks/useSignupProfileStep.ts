@@ -1,9 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useSignupFormState, clearFormDataFromStorage } from './useSignupFormState';
 import { signupService } from '../services/signupService';
 import { useAuth } from '@/contexts/AuthContext';
+
+const PHONE_CODE_EXPIRY_SECONDS = 180;
 
 interface TouchedFields {
   name: boolean;
@@ -37,10 +39,49 @@ export function useSignupProfileStep() {
   const [phoneModalMessage, setPhoneModalMessage] = useState('');
   const [isPhoneVerifySuccess, setIsPhoneVerifySuccess] = useState(false);
 
+  const [phoneVerificationCode, setPhoneVerificationCode] = useState('');
+  const [phoneCodeTimer, setPhoneCodeTimer] = useState(0);
+  const [isPhoneCodeSent, setIsPhoneCodeSent] = useState(false);
+  const [isPhoneCodeSending, setIsPhoneCodeSending] = useState(false);
+  const [isPhoneCodeVerifying, setIsPhoneCodeVerifying] = useState(false);
+  const [timerTrigger, setTimerTrigger] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState('');
   
   const onCloseErrorModal = useCallback(() => setShowErrorModal(false), []);
+
+  useEffect(() => {
+    if (timerTrigger === 0) {
+      return;
+    }
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
+    timerRef.current = setInterval(() => {
+      setPhoneCodeTimer((prev) => {
+        if (prev <= 1) {
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [timerTrigger]);
 
   const referralMutation = useMutation({
     mutationFn: (referralId: string) => signupService.verifyReferralId(referralId),
@@ -206,22 +247,89 @@ export function useSignupProfileStep() {
     setTouched(prev => ({ ...prev, phone: true }));
   }, []);
 
-  const onPhoneVerify = useCallback(() => {
+  const onSendPhoneCode = useCallback(async () => {
     setTouched(prev => ({ ...prev, phone: true }));
     
     if (!isPhoneValid) {
-      setPhoneModalMessage('올바른 휴대폰 번호를 입력해주세요');
+      setPhoneModalMessage('휴대폰 번호 11자리를 입력해주세요');
       setIsPhoneVerifySuccess(false);
       setShowPhoneModal(true);
       return;
     }
     
-    // Mock: 휴대폰 인증 성공 처리 (나중에 Solapi 연동 시 실제 인증으로 대체)
-    updateFormData({ isPhoneVerified: true });
-    setPhoneModalMessage('휴대폰 인증이 완료되었습니다');
-    setIsPhoneVerifySuccess(true);
-    setShowPhoneModal(true);
-  }, [isPhoneValid, updateFormData]);
+    setIsPhoneCodeSending(true);
+    
+    try {
+      const result = await signupService.sendPhoneVerificationCode(formData.phone);
+      
+      if (result.success) {
+        setIsPhoneCodeSent(true);
+        setPhoneCodeTimer(PHONE_CODE_EXPIRY_SECONDS);
+        setTimerTrigger((prev) => prev + 1);
+        setPhoneVerificationCode('');
+        setPhoneModalMessage('인증번호가 발송되었습니다');
+        setIsPhoneVerifySuccess(true);
+        setShowPhoneModal(true);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '인증번호 발송에 실패했습니다';
+      setPhoneModalMessage(message);
+      setIsPhoneVerifySuccess(false);
+      setShowPhoneModal(true);
+    } finally {
+      setIsPhoneCodeSending(false);
+    }
+  }, [isPhoneValid, formData.phone]);
+
+  const onVerifyPhoneCode = useCallback(async () => {
+    if (!phoneVerificationCode.trim()) {
+      setPhoneModalMessage('인증번호를 입력해주세요');
+      setIsPhoneVerifySuccess(false);
+      setShowPhoneModal(true);
+      return;
+    }
+    
+    if (phoneCodeTimer <= 0) {
+      setPhoneModalMessage('인증번호가 만료되었습니다. 다시 요청해주세요');
+      setIsPhoneVerifySuccess(false);
+      setShowPhoneModal(true);
+      return;
+    }
+    
+    setIsPhoneCodeVerifying(true);
+    
+    try {
+      const result = await signupService.verifyPhoneCode(formData.phone, phoneVerificationCode);
+      
+      if (result.success) {
+        updateFormData({ isPhoneVerified: true });
+        setPhoneCodeTimer(0);
+        setPhoneModalMessage('휴대폰 인증이 완료되었습니다');
+        setIsPhoneVerifySuccess(true);
+        setShowPhoneModal(true);
+      } else {
+        setPhoneModalMessage(result.message);
+        setIsPhoneVerifySuccess(false);
+        setShowPhoneModal(true);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '인증에 실패했습니다';
+      setPhoneModalMessage(message);
+      setIsPhoneVerifySuccess(false);
+      setShowPhoneModal(true);
+    } finally {
+      setIsPhoneCodeVerifying(false);
+    }
+  }, [phoneVerificationCode, phoneCodeTimer, formData.phone, updateFormData]);
+
+  const onPhoneVerificationCodeChange = useCallback((value: string) => {
+    const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 6);
+    setPhoneVerificationCode(numbersOnly);
+  }, []);
+
+  const onPhoneVerify = useCallback(() => {
+    onSendPhoneCode();
+  }, [onSendPhoneCode]);
   
   const onClosePhoneModal = useCallback(() => {
     setShowPhoneModal(false);
@@ -406,6 +514,11 @@ export function useSignupProfileStep() {
     showPhoneModal,
     phoneModalMessage,
     isPhoneVerifySuccess,
+    phoneVerificationCode,
+    phoneCodeTimer,
+    isPhoneCodeSent,
+    isPhoneCodeSending,
+    isPhoneCodeVerifying,
     showErrorModal,
     errorModalMessage,
     onCloseErrorModal,
@@ -414,6 +527,9 @@ export function useSignupProfileStep() {
     onNameBlur,
     onPhoneBlur,
     onPhoneVerify,
+    onSendPhoneCode,
+    onVerifyPhoneCode,
+    onPhoneVerificationCodeChange,
     onBirthYearChange,
     onBirthMonthChange,
     onBirthDayChange,

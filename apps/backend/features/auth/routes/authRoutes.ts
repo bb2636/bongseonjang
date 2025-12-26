@@ -17,4 +17,7 @@ router.post('/social/complete-profile', authMiddleware, (req, res) => authContro
 router.get('/social/accounts', authMiddleware, (req, res) => authController.getLinkedAccounts(req, res));
 router.delete('/social/:provider', authMiddleware, (req, res) => authController.unlinkAccount(req, res));
 
+router.post('/phone/send-code', (req, res) => authController.sendPhoneVerificationCode(req, res));
+router.post('/phone/verify-code', (req, res) => authController.verifyPhoneCode(req, res));
+
 export default router;

@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { UserApplicationService } from '../application/UserApplicationService.js';
 import { SocialAuthService } from '../domain/SocialAuthService.js';
+import { getPhoneVerificationService } from '../application/phoneVerificationFactory.js';
 import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
 import { SocialProvider } from '../../../entity/UserSocialAccount.js';
 import { LoginRequest, SignupRequest } from '@bongkru/contract';
 
 const userService = new UserApplicationService();
 const socialAuthService = new SocialAuthService();
+const phoneVerificationService = getPhoneVerificationService();
 
 export class AuthController {
   async register(req: Request, res: Response): Promise<void> {
@@ -255,6 +257,43 @@ export class AuthController {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to complete profile';
       res.status(400).json({ message });
+    }
+  }
+
+  async sendPhoneVerificationCode(req: Request, res: Response): Promise<void> {
+    try {
+      const { phone } = req.body;
+
+      if (!phone) {
+        res.status(400).json({ success: false, message: '휴대폰 번호를 입력해주세요' });
+        return;
+      }
+
+      if (!/^[0-9]{11}$/.test(phone.replace(/-/g, ''))) {
+        res.status(400).json({ success: false, message: '올바른 휴대폰 번호를 입력해주세요' });
+        return;
+      }
+
+      const result = await phoneVerificationService.sendCode(phone.replace(/-/g, ''));
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ success: false, message: '인증번호 발송에 실패했습니다' });
+    }
+  }
+
+  async verifyPhoneCode(req: Request, res: Response): Promise<void> {
+    try {
+      const { phone, code } = req.body;
+
+      if (!phone || !code) {
+        res.status(400).json({ success: false, message: '휴대폰 번호와 인증번호를 입력해주세요' });
+        return;
+      }
+
+      const result = await phoneVerificationService.verifyCode(phone.replace(/-/g, ''), code);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ success: false, message: '인증번호 확인에 실패했습니다' });
     }
   }
 }
