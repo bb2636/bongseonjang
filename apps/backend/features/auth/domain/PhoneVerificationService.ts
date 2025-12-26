@@ -1,6 +1,7 @@
 export interface SendCodeResult {
   success: boolean;
   message: string;
+  devCode?: string;
 }
 
 export interface VerifyCodeResult {

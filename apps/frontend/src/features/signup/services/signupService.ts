@@ -95,7 +95,7 @@ export const signupService = {
     return response.json();
   },
 
-  async sendPhoneVerificationCode(phone: string): Promise<{ success: boolean; message: string }> {
+  async sendPhoneVerificationCode(phone: string): Promise<{ success: boolean; message: string; devCode?: string }> {
     const response = await fetch(`${API_BASE_URL}/auth/phone/send-code`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -106,6 +106,10 @@ export const signupService = {
 
     if (!response.ok) {
       throw new Error(data.message || '인증번호 발송에 실패했습니다');
+    }
+
+    if (data.devCode) {
+      console.log(`[테스트용] 인증번호: ${data.devCode}`);
     }
 
     return data;

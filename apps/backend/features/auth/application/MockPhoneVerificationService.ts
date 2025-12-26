@@ -20,7 +20,8 @@ export class MockPhoneVerificationService implements PhoneVerificationService {
 
     return { 
       success: true, 
-      message: '인증번호가 발송되었습니다' 
+      message: '인증번호가 발송되었습니다',
+      devCode: code
     };
   }
 
