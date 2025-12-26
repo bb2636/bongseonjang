@@ -111,6 +111,14 @@ INSERT INTO banners (id, title, image_url, link_url, sort_no, is_active, banner_
 (12, '급랭 수산물 특가', 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=400&fit=crop', '/category/당일수산', 3, true, 1, NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
+-- 9-1. 이벤트 (events)
+INSERT INTO events (id, title, description, "imageUrl", "linkUrl", "startDate", "endDate", "sortOrder", "isActive", "createdAt", "updatedAt") VALUES
+('e1111111-1111-1111-1111-111111111111', '신규 회원 가입 이벤트', '신규 회원 가입 시 3,000원 할인 쿠폰 증정!', 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&h=400&fit=crop', '/signup', NOW(), NOW() + INTERVAL '30 days', 1, true, NOW(), NOW()),
+('e2222222-2222-2222-2222-222222222222', '첫 구매 무료배송', '첫 구매 고객님께 무료배송 혜택을 드립니다!', 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800&h=400&fit=crop', '/products', NOW(), NOW() + INTERVAL '60 days', 2, true, NOW(), NOW()),
+('e3333333-3333-3333-3333-333333333333', '제철 수산물 특가전', '제철 수산물 최대 30% 할인!', 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=800&h=400&fit=crop', '/category/제철수산', NOW(), NOW() + INTERVAL '14 days', 3, true, NOW(), NOW()),
+('e4444444-4444-4444-4444-444444444444', '바담은 젓갈 기획전', '프리미엄 젓갈 모음전 - 밥도둑 시리즈', 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=800&h=400&fit=crop', '/category/젓갈액젓', NOW(), NOW() + INTERVAL '21 days', 4, true, NOW(), NOW())
+ON CONFLICT (id) DO NOTHING;
+
 -- 10. 데모 사용자 (users) - 리뷰용
 INSERT INTO users (id, email, name, password, phone, "createdAt", "updatedAt") VALUES
 ('cb171eab-09dd-469f-9015-234141d3e5c1', 'demo1@bongseonjang.com', '김수산', '$2b$10$rQZ8r5EXQnQwQnPU5xyXx.dummyhash', '010-1234-5678', NOW(), NOW()),
