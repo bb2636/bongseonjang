@@ -465,7 +465,7 @@ export function ProductFormDialog({
                       <input
                         type="text"
                         className="product-form-dialog__input product-form-dialog__option-input"
-                        placeholder="옵션명"
+                        placeholder="예) 수량, 중량, 크기"
                         value={option.optionValue}
                         onChange={(e) => handleOptionChange(option.id, 'optionValue', e.target.value)}
                       />
