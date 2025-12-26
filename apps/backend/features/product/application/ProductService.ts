@@ -1,6 +1,7 @@
 import type { Product } from '../../../entity/Product';
 import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, TimeDealProductDto, MainOptionDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 export interface ReviewStats {
   reviewCount: number;
@@ -127,7 +128,7 @@ export class ProductService {
     return {
       id: product.id,
       name: product.name,
-      imageUrl: thumbnailImage?.imageUrl,
+      imageUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl),
       originalPrice: product.basePrice,
       discountPercent: 0,
       discountedPrice: product.basePrice,
@@ -154,7 +155,7 @@ export class ProductService {
 
     const images: ProductImageDto[] = (product.images || []).map((image) => ({
       id: String(image.id),
-      imageUrl: image.imageUrl,
+      imageUrl: toAbsoluteImageUrl(image.imageUrl),
       imageType: image.imageType as 'THUMBNAIL' | 'DETAIL' | 'GALLERY',
       sortOrder: image.sortOrder,
     }));
@@ -166,7 +167,7 @@ export class ProductService {
       name: product.name,
       summary: undefined,
       description: product.detailContent ?? undefined,
-      thumbnailUrl: thumbnailImage?.imageUrl,
+      thumbnailUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl),
       basePrice: product.basePrice,
       discountRate: 0,
       isDiscounted: false,
