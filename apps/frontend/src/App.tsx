@@ -20,6 +20,12 @@ const EmailLoginPage = lazy(() =>
 const SocialAuthCallbackPage = lazy(() =>
   import("./features/login").then((m) => ({ default: m.SocialAuthCallbackPage }))
 );
+const PasswordResetRequestPage = lazy(() =>
+  import("./features/login").then((m) => ({ default: m.PasswordResetRequestPage }))
+);
+const PasswordResetConfirmPage = lazy(() =>
+  import("./features/login").then((m) => ({ default: m.PasswordResetConfirmPage }))
+);
 
 const SignupEmailPage = lazy(() =>
   import("./features/signup").then((m) => ({ default: m.SignupEmailPage }))
@@ -217,6 +223,8 @@ export default function App() {
         />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/login/email" element={<EmailLoginPage />} />
+        <Route path="/login/password-reset" element={<PasswordResetRequestPage />} />
+        <Route path="/login/password-reset/confirm" element={<PasswordResetConfirmPage />} />
         <Route
           path="/oauth/:provider/callback"
           element={<SocialAuthCallbackPage />}

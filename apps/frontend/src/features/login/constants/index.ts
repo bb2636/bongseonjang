@@ -3,6 +3,8 @@ export const LOGIN_ROUTES = {
   EMAIL_LOGIN: '/login/email',
   EMAIL_SIGNUP: '/signup/email',
   GUEST_ORDER: '/orders/guest',
+  PASSWORD_RESET: '/login/password-reset',
+  PASSWORD_RESET_CONFIRM: '/login/password-reset/confirm',
 } as const;
 
 export const SOCIAL_PROVIDERS = {

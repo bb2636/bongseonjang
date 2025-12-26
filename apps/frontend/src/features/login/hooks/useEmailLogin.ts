@@ -102,11 +102,11 @@ export function useEmailLogin() {
   }, [email, password, loginMutation, validateEmail, validatePassword]);
 
   const onForgotPassword = useCallback(() => {
-    console.log('비밀번호 찾기로 이동');
-  }, []);
+    navigate(LOGIN_ROUTES.PASSWORD_RESET);
+  }, [navigate]);
 
   const onBack = useCallback(() => {
-    navigate(LOGIN_ROUTES.LOGIN);
+    navigate('/');
   }, [navigate]);
 
   return {

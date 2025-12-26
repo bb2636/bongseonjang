@@ -37,11 +37,7 @@ export function useLogin() {
   }, [navigate]);
 
   const onClose = useCallback(() => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   }, [navigate]);
 
   return {

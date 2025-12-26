@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authRoutes } from '../features/auth';
+import { authRoutes, passwordResetRoutes } from '../features/auth';
 import { emailVerificationRoutes } from '../features/emailVerification';
 import { referralRoutes } from '../features/referral';
 import { bestProductRoutes } from '../features/bestProduct';
@@ -31,6 +31,7 @@ import homeDataRoutes from '../features/home/routes/homeDataRoutes';
 const router = Router();
 
 router.use('/auth', authRoutes);
+router.use('/auth/password-reset', passwordResetRoutes);
 router.use('/email-verification', emailVerificationRoutes);
 router.use('/referral', referralRoutes);
 router.use('/home', homeDataRoutes);
