@@ -39,14 +39,17 @@ export function ProductFormDialog({
   const {
     formData,
     categories,
+    exposureCategories,
     isSubmitting,
     error,
     fieldErrors,
     touched,
     shippingLabels,
     fetchCategories,
+    fetchExposureCategories,
     handleNameChange,
     handleCategoryChange,
+    handleExposureCategoryChange,
     handleBasePriceChange,
     handleDiscountEnabledChange,
     handleDiscountRateChange,
@@ -80,8 +83,9 @@ export function ProductFormDialog({
   useEffect(() => {
     if (isOpen) {
       fetchCategories();
+      fetchExposureCategories();
     }
-  }, [isOpen, fetchCategories]);
+  }, [isOpen, fetchCategories, fetchExposureCategories]);
 
   if (!isOpen) return null;
 
@@ -266,6 +270,25 @@ export function ProductFormDialog({
                 />
                 {hasError('categoryId') && (
                   <span className="product-form-dialog__error-message">{getErrorMessage('categoryId')}</span>
+                )}
+              </div>
+              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
+                <label className="product-form-dialog__label">
+                  노출 카테고리 <span className="product-form-dialog__required">*</span>
+                </label>
+                <Select
+                  options={exposureCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
+                  value={formData.exposureCategoryId}
+                  onChange={(val) => {
+                    handleExposureCategoryChange(val);
+                    clearFieldError('exposureCategoryId');
+                  }}
+                  placeholder="노출 카테고리를 선택해주세요"
+                  width={200}
+                  hasError={!!hasError('exposureCategoryId')}
+                />
+                {hasError('exposureCategoryId') && (
+                  <span className="product-form-dialog__error-message">{getErrorMessage('exposureCategoryId')}</span>
                 )}
               </div>
             </div>

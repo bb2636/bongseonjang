@@ -194,6 +194,7 @@ router.post('/', async (req: Request, res: Response) => {
     const {
       name,
       categoryId,
+      exposureCategoryId,
       basePrice,
       startDate,
       endDate,
@@ -211,9 +212,14 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(400).json({ error: '필수 필드를 입력해주세요' });
     }
 
+    if (!exposureCategoryId) {
+      return res.status(400).json({ error: '노출 카테고리를 선택해주세요' });
+    }
+
     const productRepository = AppDataSource.getRepository(Product);
     const optionRepository = AppDataSource.getRepository(ProductOption);
     const imageRepository = AppDataSource.getRepository(ProductImage);
+    const productExposureCategoryRepository = AppDataSource.getRepository(ProductExposureCategory);
 
     const product = productRepository.create({
       name,
@@ -275,6 +281,12 @@ router.post('/', async (req: Request, res: Response) => {
       }
       await productRepository.update(savedProduct.id, { stockQuantity: totalStock });
     }
+
+    const productExposureCategory = productExposureCategoryRepository.create({
+      productId: savedProduct.id,
+      exposureCategoryId: Number(exposureCategoryId),
+    });
+    await productExposureCategoryRepository.save(productExposureCategory);
 
     return res.json({ success: true, productId: savedProduct.id });
   } catch (error) {

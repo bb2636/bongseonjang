@@ -30,6 +30,7 @@ export interface ImageFile {
 export interface ProductFormData {
   name: string;
   categoryId: string;
+  exposureCategoryId: string;
   basePrice: number;
   discountEnabled: boolean;
   discountRate: number;
@@ -88,6 +89,7 @@ function createInitialFormData(): ProductFormData {
   return {
     name: '',
     categoryId: '',
+    exposureCategoryId: '',
     basePrice: 0,
     discountEnabled: false,
     discountRate: 0,
@@ -116,9 +118,15 @@ export interface Category {
   name: string;
 }
 
+export interface ExposureCategory {
+  id: string;
+  name: string;
+}
+
 export interface FieldErrors {
   name?: string;
   categoryId?: string;
+  exposureCategoryId?: string;
   basePrice?: string;
   description?: string;
   startDate?: string;
@@ -132,6 +140,7 @@ export function useProductForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [exposureCategories, setExposureCategories] = useState<ExposureCategory[]>([]);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -153,6 +162,25 @@ export function useProductForm() {
 
   const handleCategoryChange = useCallback((categoryId: string) => {
     setFormData(prev => ({ ...prev, categoryId }));
+  }, []);
+
+  const handleExposureCategoryChange = useCallback((exposureCategoryId: string) => {
+    setFormData(prev => ({ ...prev, exposureCategoryId }));
+  }, []);
+
+  const fetchExposureCategories = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/products/exposure-categories');
+      if (response.ok) {
+        const data = await response.json();
+        setExposureCategories((data.categories || []).map((cat: { id: number; name: string }) => ({
+          id: String(cat.id),
+          name: cat.name,
+        })));
+      }
+    } catch (err) {
+      console.error('Failed to fetch exposure categories:', err);
+    }
   }, []);
 
   const handleBasePriceChange = useCallback((value: number) => {
@@ -337,6 +365,9 @@ export function useProductForm() {
     if (!formData.categoryId) {
       errors.categoryId = '카테고리를 선택해주세요';
     }
+    if (!formData.exposureCategoryId) {
+      errors.exposureCategoryId = '노출 카테고리를 선택해주세요';
+    }
     if (formData.basePrice <= 0) {
       errors.basePrice = '기본 판매가를 입력해주세요';
     }
@@ -360,6 +391,7 @@ export function useProductForm() {
     setTouched({
       name: true,
       categoryId: true,
+      exposureCategoryId: true,
       basePrice: true,
       description: true,
       startDate: true,
@@ -441,6 +473,7 @@ export function useProductForm() {
       const productData = {
         name: formData.name,
         categoryId: formData.categoryId,
+        exposureCategoryId: formData.exposureCategoryId,
         basePrice: formData.discountEnabled ? formData.discountedPrice : formData.basePrice,
         originalPrice: formData.basePrice,
         discountRate: formData.discountEnabled ? formData.discountRate : 0,
@@ -495,14 +528,17 @@ export function useProductForm() {
   return {
     formData,
     categories,
+    exposureCategories,
     isSubmitting,
     error,
     fieldErrors,
     touched,
     shippingLabels: SHIPPING_LABELS,
     fetchCategories,
+    fetchExposureCategories,
     handleNameChange,
     handleCategoryChange,
+    handleExposureCategoryChange,
     handleBasePriceChange,
     handleDiscountEnabledChange,
     handleDiscountRateChange,
