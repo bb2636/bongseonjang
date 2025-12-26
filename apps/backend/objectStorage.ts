@@ -78,25 +78,39 @@ export class ObjectStorageService {
   }
 
   async downloadObjectByPath(objectPath: string, res: Response): Promise<void> {
+    console.log('[DEBUG downloadObjectByPath] objectPath:', objectPath);
+    
     if (!objectPath.startsWith("/objects/")) {
+      console.log('[DEBUG downloadObjectByPath] Invalid path - does not start with /objects/');
       throw new ObjectNotFoundError();
     }
 
     const objectName = objectPath.slice("/objects/".length);
+    console.log('[DEBUG downloadObjectByPath] objectName:', objectName);
 
     const existsResult = await this.client.exists(objectName);
+    console.log('[DEBUG downloadObjectByPath] existsResult:', JSON.stringify(existsResult));
+    
     if (!existsResult.ok || !existsResult.value) {
+      console.log('[DEBUG downloadObjectByPath] Object does not exist');
       throw new ObjectNotFoundError();
     }
 
     const downloadResult = await this.client.downloadAsBytes(objectName);
+    console.log('[DEBUG downloadObjectByPath] downloadResult.ok:', downloadResult.ok);
+    console.log('[DEBUG downloadObjectByPath] downloadResult.value length:', downloadResult.ok ? downloadResult.value.length : 'N/A');
+    
     if (!downloadResult.ok) {
+      console.log('[DEBUG downloadObjectByPath] Download failed');
       throw new ObjectNotFoundError();
     }
 
     const mimeType = this.getMimeTypeFromPath(objectName);
     const aclPolicy = await getObjectAclPolicy(this.client, objectName);
     const isPublic = aclPolicy?.visibility === "public";
+
+    console.log('[DEBUG downloadObjectByPath] mimeType:', mimeType);
+    console.log('[DEBUG downloadObjectByPath] Content-Length:', downloadResult.value.length);
 
     res.set({
       "Content-Type": mimeType,
@@ -105,6 +119,7 @@ export class ObjectStorageService {
     });
 
     res.send(downloadResult.value);
+    console.log('[DEBUG downloadObjectByPath] Response sent successfully');
   }
 
   async getObjectEntityFile(objectPath: string): Promise<{ objectName: string; exists: boolean }> {
