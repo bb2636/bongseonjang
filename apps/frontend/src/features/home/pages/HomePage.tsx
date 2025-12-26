@@ -8,21 +8,12 @@ export default function HomePage() {
   const shell = useHomeShell();
   
   useEffect(() => {
-    const startPrefetching = () => {
-      prefetchCriticalPages();
-      
-      setTimeout(() => {
-        prefetchSecondaryPages();
-      }, 2000);
-    };
-
-    if (typeof requestIdleCallback !== 'undefined') {
-      const idleId = requestIdleCallback(startPrefetching, { timeout: 3000 });
-      return () => cancelIdleCallback(idleId);
-    } else {
-      const timer = setTimeout(startPrefetching, 1500);
-      return () => clearTimeout(timer);
-    }
+    prefetchCriticalPages();
+    const timer = setTimeout(() => {
+      prefetchSecondaryPages();
+    }, 1000);
+    
+    return () => clearTimeout(timer);
   }, []);
   
   return (
