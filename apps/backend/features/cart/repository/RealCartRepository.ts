@@ -41,7 +41,8 @@ export class RealCartRepository implements CartRepository {
     const productImages = await this.getProductThumbnails(productIds);
 
     const cartItems: CartItemDto[] = items.map(item => {
-      const basePrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
+      const optionPrice = item.productOption?.price;
+      const basePrice = (optionPrice != null && optionPrice > 0) ? optionPrice : (item.product?.basePrice ?? 0);
       const unitPrice = basePrice;
       const totalPrice = unitPrice * item.quantity;
 
@@ -110,7 +111,8 @@ export class RealCartRepository implements CartRepository {
     }
 
     const productImages = await this.getProductThumbnails([productId]);
-    const basePrice = existingItem.productOption?.price ?? existingItem.product?.basePrice ?? 0;
+    const optionPrice = existingItem.productOption?.price;
+    const basePrice = (optionPrice != null && optionPrice > 0) ? optionPrice : (existingItem.product?.basePrice ?? 0);
     const unitPrice = basePrice;
 
     return {
@@ -149,7 +151,8 @@ export class RealCartRepository implements CartRepository {
     await cartItemRepository.save(item);
 
     const productImages = await this.getProductThumbnails([item.productId]);
-    const basePrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
+    const optionPrice = item.productOption?.price;
+    const basePrice = (optionPrice != null && optionPrice > 0) ? optionPrice : (item.product?.basePrice ?? 0);
     const unitPrice = basePrice;
 
     return {

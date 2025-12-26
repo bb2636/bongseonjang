@@ -46,7 +46,8 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
     }
 
     const cartItems = items.map(item => {
-      const unitPrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
+      const optionPrice = item.productOption?.price;
+      const unitPrice = (optionPrice != null && optionPrice > 0) ? optionPrice : (item.product?.basePrice ?? 0);
       const totalPrice = unitPrice * item.quantity;
 
       const optionDisplay = item.productOption 

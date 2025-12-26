@@ -120,7 +120,8 @@ export default function QuickCartBottomSheet() {
 
   const calculateItemPrice = (item: SelectedItem): number => {
     if (item.option) {
-      return item.option.price * item.quantity;
+      const optionPrice = (item.option.price != null && item.option.price > 0) ? item.option.price : (product?.basePrice ?? 0);
+      return optionPrice * item.quantity;
     }
     if (product) {
       return product.discountedPrice * item.quantity;
@@ -173,14 +174,17 @@ export default function QuickCartBottomSheet() {
         }
       } else {
         for (const item of selectedItems) {
+          const unitPrice = item.option 
+            ? ((item.option.price != null && item.option.price > 0) ? item.option.price : product.basePrice) 
+            : product.discountedPrice;
           guestCartStorage.addItem({
             productId: product.id,
             productName: product.name,
             optionId: item.option?.id || null,
             optionName: item.option?.name || null,
             quantity: item.quantity,
-            unitPrice: item.option ? item.option.price : product.discountedPrice,
-            totalPrice: (item.option ? item.option.price : product.discountedPrice) * item.quantity,
+            unitPrice,
+            totalPrice: unitPrice * item.quantity,
             thumbnailUrl: product.imageUrl || '',
           });
         }
@@ -204,7 +208,9 @@ export default function QuickCartBottomSheet() {
       productOptionId: item.option?.id || null,
       optionName: item.option?.name || null,
       quantity: item.quantity,
-      unitPrice: item.option ? item.option.price : product.discountedPrice,
+      unitPrice: item.option 
+        ? ((item.option.price != null && item.option.price > 0) ? item.option.price : product.basePrice) 
+        : product.discountedPrice,
     }));
 
     const directPurchaseData = {

@@ -108,7 +108,8 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     const goodsNames: string[] = [];
 
     for (const item of cartItems) {
-      const unitPrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
+      const optionPrice = item.productOption?.price;
+      const unitPrice = (optionPrice != null && optionPrice > 0) ? optionPrice : (item.product?.basePrice ?? 0);
       totalProductPrice += unitPrice * item.quantity;
       goodsNames.push(item.product?.name ?? '상품');
     }
@@ -148,7 +149,8 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     await orderRepository.save(order);
 
     for (const item of cartItems) {
-      const unitPrice = item.productOption?.price ?? item.product?.basePrice ?? 0;
+      const optionPrice = item.productOption?.price;
+      const unitPrice = (optionPrice != null && optionPrice > 0) ? optionPrice : (item.product?.basePrice ?? 0);
 
       const optionDisplay = item.productOption 
         ? `${item.productOption.optionName}: ${item.productOption.optionValue}`
@@ -379,7 +381,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
         const option = await productOptionRepository.findOne({ where: { id: item.productOptionId } });
         if (option) {
           optionDisplay = `${option.optionName}: ${option.optionValue}`;
-          if (option.price !== null) {
+          if (option.price !== null && option.price > 0) {
             unitPrice = option.price;
           }
         }
