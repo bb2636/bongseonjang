@@ -283,7 +283,7 @@ export function ProductFormDialog({
                     handleExposureCategoryChange(val);
                     clearFieldError('exposureCategoryId');
                   }}
-                  placeholder="노출 카테고리를 선택해주세요"
+                  placeholder="선택"
                   width={200}
                   hasError={!!hasError('exposureCategoryId')}
                 />
