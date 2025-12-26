@@ -9,6 +9,7 @@ export interface AdminUser {
   createdAt: string;
   membershipGrade: string;
   profileImage: string | null;
+  socialProviders: string[];
 }
 
 interface UserListResponse {

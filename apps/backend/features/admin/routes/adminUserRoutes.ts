@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { AppDataSource } from '../../../config/database';
 import { User } from '../../../entity/User';
+import { UserSocialAccount } from '../../../entity/UserSocialAccount';
 import { Order } from '../../../entity/Order';
 import { ShippingAddress } from '../../../entity/ShippingAddress';
 import { ProductInquiry } from '../../../entity/ProductInquiry';
@@ -17,6 +18,7 @@ interface AdminUserListItem {
   createdAt: Date;
   membershipGrade: string;
   profileImage: string | null;
+  socialProviders: string[];
 }
 
 router.get('/', async (req: Request, res: Response) => {
@@ -28,6 +30,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const userRepository = AppDataSource.getRepository(User);
     const orderRepository = AppDataSource.getRepository(Order);
+    const socialAccountRepository = AppDataSource.getRepository(UserSocialAccount);
 
     let queryBuilder = userRepository.createQueryBuilder('user');
 
@@ -47,6 +50,21 @@ router.get('/', async (req: Request, res: Response) => {
       .take(limitNum)
       .getMany();
 
+    const userIds = users.map(user => user.id);
+    const socialAccounts = userIds.length > 0 
+      ? await socialAccountRepository
+          .createQueryBuilder('social')
+          .where('social.userId IN (:...userIds)', { userIds })
+          .getMany()
+      : [];
+
+    const socialProvidersByUserId = new Map<string, string[]>();
+    socialAccounts.forEach(account => {
+      const providers = socialProvidersByUserId.get(account.userId) || [];
+      providers.push(account.provider);
+      socialProvidersByUserId.set(account.userId, providers);
+    });
+
     const items: AdminUserListItem[] = await Promise.all(
       users.map(async (user) => {
         const orderCount = await orderRepository.count({
@@ -62,6 +80,7 @@ router.get('/', async (req: Request, res: Response) => {
           createdAt: user.createdAt,
           membershipGrade: user.membershipGrade,
           profileImage: user.profileImage,
+          socialProviders: socialProvidersByUserId.get(user.id) || [],
         };
       })
     );
