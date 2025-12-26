@@ -16,11 +16,13 @@ export class MockPhoneVerificationService implements PhoneVerificationService {
 
     this.codes.set(phone, { code, expiresAt });
     
+    // TODO: 실제 SMS 발송 서비스(Solapi 등)로 교체 필요
     console.log(`[Mock SMS] ${phone}: 인증번호 ${code}`);
 
     return { 
       success: true, 
       message: '인증번호가 발송되었습니다',
+      // TODO: 프로덕션에서는 devCode 제거
       devCode: code
     };
   }

@@ -108,6 +108,7 @@ export const signupService = {
       throw new Error(data.message || '인증번호 발송에 실패했습니다');
     }
 
+    // TODO: 프로덕션에서는 devCode 로깅 제거
     if (data.devCode) {
       console.log(`[테스트용] 인증번호: ${data.devCode}`);
     }
