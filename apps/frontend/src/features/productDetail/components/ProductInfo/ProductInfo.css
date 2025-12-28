@@ -40,6 +40,10 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .product-info__stars {

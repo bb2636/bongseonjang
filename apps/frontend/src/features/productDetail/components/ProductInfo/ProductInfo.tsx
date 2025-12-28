@@ -9,6 +9,7 @@ interface ProductInfoProps {
   reviewCount: number;
   averageRating: number;
   onShare?: () => void;
+  onReviewClick?: () => void;
 }
 
 function formatPrice(price: number): string {
@@ -41,6 +42,7 @@ export default function ProductInfo({
   reviewCount,
   averageRating,
   onShare,
+  onReviewClick,
 }: ProductInfoProps) {
   const filledStars = Math.round(averageRating);
 
@@ -57,14 +59,18 @@ export default function ProductInfo({
         </button>
       </div>
 
-      <div className="product-info__rating">
+      <button 
+        type="button" 
+        className="product-info__rating" 
+        onClick={onReviewClick}
+      >
         <div className="product-info__stars">
           {[1, 2, 3, 4, 5].map((star) => (
             <StarIcon key={star} filled={star <= filledStars} />
           ))}
         </div>
         <span className="product-info__review-count">({reviewCount})</span>
-      </div>
+      </button>
 
       <div className="product-info__price">
         {isDiscounted && (

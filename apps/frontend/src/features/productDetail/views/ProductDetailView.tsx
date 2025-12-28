@@ -91,6 +91,7 @@ export default function ProductDetailView({
               reviewCount={product.reviewCount}
               averageRating={product.averageRating}
               onShare={onShare}
+              onReviewClick={() => onTabChange('review')}
             />
 
             <ProductBenefits
