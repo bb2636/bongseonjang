@@ -207,8 +207,9 @@ export function useProductForm() {
 
   const handleDiscountRateChange = useCallback((rate: number) => {
     setFormData(prev => {
-      const newDiscountedPrice = Math.round(prev.basePrice * (1 - rate / 100));
-      return { ...prev, discountRate: rate, discountedPrice: newDiscountedPrice };
+      const validRate = (rate < 0 || rate > 100) ? 0 : rate;
+      const newDiscountedPrice = Math.round(prev.basePrice * (1 - validRate / 100));
+      return { ...prev, discountRate: validRate, discountedPrice: newDiscountedPrice };
     });
   }, []);
 
