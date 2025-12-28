@@ -11,6 +11,7 @@ export function ProductManagementPage() {
     error,
     searchQuery,
     isFormDialogOpen,
+    selectedProduct,
     onSearchChange,
     onAddProduct,
     onCloseFormDialog,
@@ -41,6 +42,7 @@ export function ProductManagementPage() {
         isOpen={isFormDialogOpen}
         onClose={onCloseFormDialog}
         onSuccess={onFormSuccess}
+        productId={selectedProduct?.id}
       />
     </AdminLayout>
   );

@@ -8,6 +8,7 @@ interface ProductFormDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  productId?: string;
 }
 
 function PlusIcon() {
@@ -30,7 +31,9 @@ export function ProductFormDialog({
   isOpen,
   onClose,
   onSuccess,
+  productId,
 }: ProductFormDialogProps) {
+  const isEditMode = !!productId;
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const detailInputRef = useRef<HTMLInputElement>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -41,12 +44,14 @@ export function ProductFormDialog({
     categories,
     exposureCategories,
     isSubmitting,
+    isLoading,
     error,
     fieldErrors,
     touched,
     shippingLabels,
     fetchCategories,
     fetchExposureCategories,
+    loadProduct,
     handleNameChange,
     handleCategoryChange,
     handleExposureCategoryChange,
@@ -84,8 +89,13 @@ export function ProductFormDialog({
     if (isOpen) {
       fetchCategories();
       fetchExposureCategories();
+      if (productId) {
+        loadProduct(productId);
+      } else {
+        resetForm();
+      }
     }
-  }, [isOpen, fetchCategories, fetchExposureCategories]);
+  }, [isOpen, productId, fetchCategories, fetchExposureCategories, loadProduct, resetForm]);
 
   if (!isOpen) return null;
 
@@ -138,7 +148,7 @@ export function ProductFormDialog({
       <div className="product-form-dialog">
         <header className="product-form-dialog__header">
           <div className="product-form-dialog__header-spacer" />
-          <h2 className="product-form-dialog__title">신규 상품 추가</h2>
+          <h2 className="product-form-dialog__title">{isEditMode ? '상품 수정' : '신규 상품 추가'}</h2>
           <button
             className="product-form-dialog__close-button"
             onClick={onClose}
@@ -151,6 +161,13 @@ export function ProductFormDialog({
         </header>
 
         <div className="product-form-dialog__content">
+          {isLoading ? (
+            <div className="product-form-dialog__loading">
+              <div className="product-form-dialog__loading-spinner" />
+              <p>상품 정보를 불러오는 중...</p>
+            </div>
+          ) : (
+          <>
           <section className="product-form-dialog__section">
             <h3 className="product-form-dialog__section-title">기본 정보</h3>
 
@@ -616,6 +633,8 @@ export function ProductFormDialog({
               />
             </div>
           </section>
+          </>
+          )}
         </div>
 
         {error && (
@@ -629,7 +648,7 @@ export function ProductFormDialog({
             type="button"
             className="product-form-dialog__reset-button"
             onClick={handleReset}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoading}
           >
             초기화
           </button>
@@ -637,16 +656,16 @@ export function ProductFormDialog({
             type="button"
             className="product-form-dialog__submit-button"
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isLoading}
           >
-            {isSubmitting ? '저장 중...' : '등록'}
+            {isSubmitting ? '저장 중...' : (isEditMode ? '수정' : '등록')}
           </button>
         </footer>
       </div>
 
       <ConfirmModal
         isOpen={showConfirmModal}
-        title="상품을 등록하시겠습니까?"
+        title={isEditMode ? '상품을 수정하시겠습니까?' : '상품을 등록하시겠습니까?'}
         onCancel={() => setShowConfirmModal(false)}
         onConfirm={handleConfirmSubmit}
         cancelText="취소"
@@ -655,7 +674,7 @@ export function ProductFormDialog({
 
       <Snackbar
         isOpen={showSnackbar}
-        title="상품이 등록되었습니다"
+        title={isEditMode ? '상품이 수정되었습니다' : '상품이 등록되었습니다'}
         onClose={handleSnackbarClose}
       />
     </div>

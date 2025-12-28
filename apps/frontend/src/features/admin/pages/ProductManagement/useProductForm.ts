@@ -138,11 +138,13 @@ export interface FieldErrors {
 export function useProductForm() {
   const [formData, setFormData] = useState<ProductFormData>(createInitialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [exposureCategories, setExposureCategories] = useState<ExposureCategory[]>([]);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -347,14 +349,110 @@ export function useProductForm() {
 
   const resetForm = useCallback(() => {
     formData.thumbnailImages.forEach(img => {
-      if (img.previewUrl) URL.revokeObjectURL(img.previewUrl);
+      if (img.previewUrl && img.previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(img.previewUrl);
+      }
     });
     formData.detailImages.forEach(img => {
-      if (img.previewUrl) URL.revokeObjectURL(img.previewUrl);
+      if (img.previewUrl && img.previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(img.previewUrl);
+      }
     });
     setFormData(createInitialFormData());
     setError(null);
+    setEditingProductId(null);
+    setFieldErrors({});
+    setTouched({});
   }, [formData.thumbnailImages, formData.detailImages]);
+
+  const loadProduct = useCallback(async (productId: string): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+    setEditingProductId(productId);
+
+    try {
+      const response = await fetch(`/api/admin/products/${productId}`);
+      if (!response.ok) {
+        throw new Error('상품 정보를 불러오는데 실패했습니다');
+      }
+
+      const data = await response.json();
+
+      const formatDate = (dateStr: string | null): string => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date.toISOString().split('T')[0];
+      };
+
+      const thumbnailImages: ImageFile[] = (data.thumbnailImages || []).map((img: { id: string; imageUrl: string }) => ({
+        id: img.id || generateId(),
+        file: null,
+        previewUrl: img.imageUrl,
+        uploadedUrl: img.imageUrl,
+      }));
+
+      const detailImages: ImageFile[] = (data.detailImages || []).map((img: { id: string; imageUrl: string }) => ({
+        id: img.id || generateId(),
+        file: null,
+        previewUrl: img.imageUrl,
+        uploadedUrl: img.imageUrl,
+      }));
+
+      const options: ProductOption[] = (data.options || []).length > 0
+        ? data.options.map((opt: { id?: string; optionName: string; optionValue: string; price: number | null; stock: number }) => ({
+            id: opt.id || generateId(),
+            optionName: opt.optionName || '',
+            optionValue: opt.optionValue || '',
+            price: opt.price,
+            stock: opt.stock || 0,
+          }))
+        : [createEmptyOption()];
+
+      const productInfos: ProductInfo[] = (data.productInfos || []).length > 0
+        ? data.productInfos.map((info: { label: string; value: string }) => ({
+            id: generateId(),
+            label: info.label || '',
+            value: info.value || '',
+          }))
+        : [createEmptyProductInfo()];
+
+      const hasOptions = data.options && data.options.length > 0;
+      const optionGroupName = hasOptions && data.options[0]?.optionName ? data.options[0].optionName : '';
+
+      setFormData({
+        name: data.name || '',
+        categoryId: data.categoryId || '',
+        exposureCategoryId: data.exposureCategoryId ? String(data.exposureCategoryId) : '',
+        basePrice: data.basePrice || 0,
+        discountEnabled: false,
+        discountRate: 0,
+        discountedPrice: data.basePrice || 0,
+        startDate: formatDate(data.saleStartDate),
+        endDate: formatDate(data.saleEndDate),
+        countdownDays: data.countdownDays ?? null,
+        description: data.description || '',
+        caution: data.caution || '',
+        useOptions: hasOptions,
+        optionGroupName,
+        options,
+        productInfos,
+        shippingInfo: data.shippingInfo || {
+          shippingFee: null,
+          freeShippingThreshold: null,
+          shippingDescription: '전국',
+        },
+        thumbnailImages,
+        detailImages,
+      });
+
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '상품 정보를 불러오는데 실패했습니다');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const validateForm = useCallback((): boolean => {
     const errors: FieldErrors = {};
@@ -449,6 +547,8 @@ export function useProductForm() {
     setIsSubmitting(true);
     setError(null);
 
+    const isUpdate = !!editingProductId;
+
     try {
       const thumbnailUrls: string[] = [];
       for (const img of formData.thumbnailImages) {
@@ -485,6 +585,7 @@ export function useProductForm() {
         optionGroupName: formData.useOptions ? formData.optionGroupName : null,
         options: formData.useOptions
           ? formData.options.filter(opt => opt.optionValue.trim()).map(opt => ({
+              id: isUpdate ? opt.id : undefined,
               optionName: formData.optionGroupName || '옵션',
               optionValue: opt.optionValue,
               price: opt.price,
@@ -502,8 +603,12 @@ export function useProductForm() {
         detailUrls,
       };
 
-      const response = await fetch('/api/admin/products', {
-        method: 'POST',
+      const url = isUpdate
+        ? `/api/admin/products/${editingProductId}`
+        : '/api/admin/products';
+      
+      const response = await fetch(url, {
+        method: isUpdate ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -512,30 +617,33 @@ export function useProductForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || '상품 등록에 실패했습니다');
+        throw new Error(errorData.message || (isUpdate ? '상품 수정에 실패했습니다' : '상품 등록에 실패했습니다'));
       }
 
       resetForm();
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : '상품 등록에 실패했습니다');
+      setError(err instanceof Error ? err.message : (isUpdate ? '상품 수정에 실패했습니다' : '상품 등록에 실패했습니다'));
       return false;
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, validateForm, resetForm]);
+  }, [formData, validateForm, resetForm, editingProductId]);
 
   return {
     formData,
     categories,
     exposureCategories,
     isSubmitting,
+    isLoading,
     error,
     fieldErrors,
     touched,
+    editingProductId,
     shippingLabels: SHIPPING_LABELS,
     fetchCategories,
     fetchExposureCategories,
+    loadProduct,
     handleNameChange,
     handleCategoryChange,
     handleExposureCategoryChange,

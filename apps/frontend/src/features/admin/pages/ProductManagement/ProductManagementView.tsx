@@ -133,7 +133,7 @@ export function ProductManagementView({
                       className="product-table__action-button product-table__action-button--view"
                       onClick={() => onViewProduct(product)}
                     >
-                      보기
+                      수정
                     </button>
                   </div>
                 </div>

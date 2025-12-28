@@ -189,6 +189,255 @@ router.get('/categories', async (_req: Request, res: Response) => {
   }
 });
 
+router.get('/:productId', async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+
+    const productRepository = AppDataSource.getRepository(Product);
+    const categoryRepository = AppDataSource.getRepository(ProductCategory);
+    const imageRepository = AppDataSource.getRepository(ProductImage);
+    const optionRepository = AppDataSource.getRepository(ProductOption);
+    const exposureCategoryRepository = AppDataSource.getRepository(ExposureCategory);
+    const productExposureCategoryRepository = AppDataSource.getRepository(ProductExposureCategory);
+
+    const product = await productRepository.findOne({ where: { id: productId } });
+    if (!product) {
+      return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    }
+
+    const category = await categoryRepository.findOne({
+      where: { id: product.productCategoryId },
+    });
+
+    const thumbnailImages = await imageRepository.find({
+      where: { productId: product.id, imageType: ImageType.THUMBNAIL },
+      order: { sortOrder: 'ASC' },
+    });
+
+    const detailImages = await imageRepository.find({
+      where: { productId: product.id, imageType: ImageType.DETAIL },
+      order: { sortOrder: 'ASC' },
+    });
+
+    const options = await optionRepository.find({
+      where: { productId: product.id },
+      order: { sortOrder: 'ASC' },
+    });
+
+    const productExposureCategories = await productExposureCategoryRepository.find({
+      where: { productId: product.id },
+    });
+
+    let exposureCategoryId: number | null = null;
+    if (productExposureCategories.length > 0) {
+      exposureCategoryId = productExposureCategories[0].exposureCategoryId;
+    }
+
+    let detailContent: {
+      description?: string;
+      caution?: string;
+      productInfos?: Array<{ label: string; value: string }>;
+      shippingInfo?: {
+        shippingFee: number | null;
+        freeShippingThreshold: number | null;
+        shippingDescription: string;
+      };
+    } = {};
+    
+    try {
+      if (product.detailContent) {
+        detailContent = JSON.parse(product.detailContent);
+      }
+    } catch {
+      console.error('Failed to parse detailContent');
+    }
+
+    return res.json({
+      id: product.id,
+      name: product.name,
+      categoryId: product.productCategoryId,
+      categoryName: category?.name || '미분류',
+      exposureCategoryId,
+      basePrice: product.basePrice,
+      stockQuantity: product.stockQuantity,
+      saleStartDate: product.saleStartDate,
+      saleEndDate: product.saleEndDate,
+      countdownDays: product.countdownDays,
+      description: detailContent.description || '',
+      caution: detailContent.caution || '',
+      productInfos: detailContent.productInfos || [],
+      shippingInfo: detailContent.shippingInfo || {
+        shippingFee: null,
+        freeShippingThreshold: null,
+        shippingDescription: '전국',
+      },
+      thumbnailImages: thumbnailImages.map(img => ({
+        id: img.id,
+        imageUrl: img.imageUrl,
+        sortOrder: img.sortOrder,
+      })),
+      detailImages: detailImages.map(img => ({
+        id: img.id,
+        imageUrl: img.imageUrl,
+        sortOrder: img.sortOrder,
+      })),
+      options: options.map(opt => ({
+        id: opt.id,
+        optionName: opt.optionName,
+        optionValue: opt.optionValue,
+        price: opt.price,
+        stock: opt.stockQuantity || 0,
+        sortOrder: opt.sortOrder,
+      })),
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+    });
+  } catch (error) {
+    console.error('Failed to get product details:', error);
+    return res.status(500).json({ error: '상품 정보를 불러오는데 실패했습니다' });
+  }
+});
+
+router.put('/:productId', async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const {
+      name,
+      categoryId,
+      exposureCategoryId,
+      basePrice,
+      startDate,
+      endDate,
+      countdownDays,
+      description,
+      caution,
+      options,
+      productInfos,
+      shippingInfo,
+      thumbnailUrls,
+      detailUrls,
+    } = req.body;
+
+    if (!name || !categoryId || !basePrice) {
+      return res.status(400).json({ error: '필수 필드를 입력해주세요' });
+    }
+
+    if (!exposureCategoryId) {
+      return res.status(400).json({ error: '노출 카테고리를 선택해주세요' });
+    }
+
+    const productRepository = AppDataSource.getRepository(Product);
+    const optionRepository = AppDataSource.getRepository(ProductOption);
+    const imageRepository = AppDataSource.getRepository(ProductImage);
+    const productExposureCategoryRepository = AppDataSource.getRepository(ProductExposureCategory);
+
+    const product = await productRepository.findOne({ where: { id: productId } });
+    if (!product) {
+      return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    }
+
+    product.name = name;
+    product.productCategoryId = categoryId;
+    product.basePrice = basePrice;
+    product.saleStartDate = startDate ? new Date(startDate) : null;
+    product.saleEndDate = endDate ? new Date(endDate) : null;
+    product.countdownDays = countdownDays ?? null;
+    product.detailContent = JSON.stringify({
+      description,
+      caution,
+      productInfos,
+      shippingInfo,
+    });
+
+    await productRepository.save(product);
+
+    await imageRepository.delete({ productId, imageType: ImageType.THUMBNAIL });
+    await imageRepository.delete({ productId, imageType: ImageType.DETAIL });
+
+    if (Array.isArray(thumbnailUrls)) {
+      for (let i = 0; i < thumbnailUrls.length; i++) {
+        const image = imageRepository.create({
+          productId,
+          imageUrl: thumbnailUrls[i],
+          imageType: ImageType.THUMBNAIL,
+          isThumbnail: i === 0,
+          sortOrder: i,
+        });
+        await imageRepository.save(image);
+      }
+    }
+
+    if (Array.isArray(detailUrls)) {
+      for (let i = 0; i < detailUrls.length; i++) {
+        const image = imageRepository.create({
+          productId,
+          imageUrl: detailUrls[i],
+          imageType: ImageType.DETAIL,
+          isThumbnail: false,
+          sortOrder: i,
+        });
+        await imageRepository.save(image);
+      }
+    }
+
+    const existingOptions = await optionRepository.find({ where: { productId } });
+    const existingOptionIds = new Set(existingOptions.map(opt => opt.id));
+    const submittedOptionIds = new Set<string>();
+
+    if (Array.isArray(options) && options.length > 0) {
+      let totalStock = 0;
+      for (let i = 0; i < options.length; i++) {
+        const opt = options[i];
+        
+        if (opt.id && existingOptionIds.has(opt.id)) {
+          await optionRepository.update(opt.id, {
+            optionName: opt.optionName || '옵션',
+            optionValue: opt.optionValue,
+            price: opt.price,
+            stockQuantity: opt.stock || 0,
+            sortOrder: i,
+          });
+          submittedOptionIds.add(opt.id);
+        } else {
+          const option = optionRepository.create({
+            productId,
+            optionName: opt.optionName || '옵션',
+            optionValue: opt.optionValue,
+            price: opt.price,
+            stockQuantity: opt.stock || 0,
+            sortOrder: i,
+          });
+          await optionRepository.save(option);
+        }
+        totalStock += opt.stock || 0;
+      }
+      
+      for (const existingOpt of existingOptions) {
+        if (!submittedOptionIds.has(existingOpt.id)) {
+          await optionRepository.delete({ id: existingOpt.id });
+        }
+      }
+      
+      await productRepository.update(productId, { stockQuantity: totalStock });
+    } else {
+      await optionRepository.delete({ productId });
+      await productRepository.update(productId, { stockQuantity: 0 });
+    }
+
+    await productExposureCategoryRepository.delete({ productId });
+    const productExposureCategory = productExposureCategoryRepository.create({
+      productId,
+      exposureCategoryId: Number(exposureCategoryId),
+    });
+    await productExposureCategoryRepository.save(productExposureCategory);
+
+    return res.json({ success: true, productId });
+  } catch (error) {
+    console.error('Failed to update product:', error);
+    return res.status(500).json({ error: '상품 수정에 실패했습니다' });
+  }
+});
+
 router.post('/', async (req: Request, res: Response) => {
   try {
     const {
