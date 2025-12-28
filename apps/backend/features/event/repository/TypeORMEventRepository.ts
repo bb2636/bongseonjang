@@ -21,6 +21,20 @@ export class TypeORMEventRepository implements EventRepository {
     return events.map((event) => this.toDto(event));
   }
 
+  async findById(id: string): Promise<EventDto | null> {
+    const eventRepository = AppDataSource.getRepository(Event);
+    
+    const event = await eventRepository.findOne({
+      where: { id, isActive: true }
+    });
+
+    if (!event) {
+      return null;
+    }
+
+    return this.toDto(event);
+  }
+
   private toDto(event: Event): EventDto {
     return {
       id: event.id,

@@ -1,12 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../../hooks/useEvents';
 import { EventCard } from '../EventCard';
+import type { EventData } from '../../api/eventApi';
 import './EventsContent.css';
 
 export default function EventsContent() {
+  const navigate = useNavigate();
   const { events, isLoading, error } = useEvents();
 
-  const handleEventClick = (eventId: string) => {
-    console.log('Event clicked:', eventId);
+  const handleEventClick = (event: EventData) => {
+    if (event.linkUrl) {
+      window.open(event.linkUrl, '_blank');
+    } else {
+      navigate(`/event/${event.id}`);
+    }
   };
 
   if (isLoading) {
@@ -48,7 +55,7 @@ export default function EventsContent() {
           <EventCard
             key={event.id}
             event={event}
-            onClick={() => handleEventClick(event.id)}
+            onClick={() => handleEventClick(event)}
           />
         ))}
       </div>

@@ -10,5 +10,6 @@ const eventService = new EventService(eventRepository);
 const eventController = new EventController(eventService);
 
 router.get('/', (req, res) => eventController.getActiveEvents(req, res));
+router.get('/:id', (req, res) => eventController.getEventById(req, res));
 
 export default router;

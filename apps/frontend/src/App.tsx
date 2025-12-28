@@ -146,6 +146,9 @@ const BongseonStoryPage = lazy(() =>
 const TermsViewPage = lazy(() =>
   import("./features/terms").then((m) => ({ default: m.TermsViewPage }))
 );
+const EventDetailPage = lazy(() =>
+  import("./features/event").then((m) => ({ default: m.EventDetailPage }))
+);
 
 const AdminPlaceholderPage = lazy(() =>
   import("./features/admin").then((m) => ({ default: m.AdminPlaceholderPage }))
@@ -365,6 +368,7 @@ export default function App() {
         />
         <Route path="/about" element={<BongseonStoryPage />} />
         <Route path="/terms" element={<TermsViewPage />} />
+        <Route path="/event/:id" element={<EventDetailPage />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<Navigate to="/admin/users" replace />} />
