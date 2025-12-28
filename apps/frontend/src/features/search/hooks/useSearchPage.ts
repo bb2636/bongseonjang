@@ -129,9 +129,9 @@ export function useSearchPage() {
     await performSearch(term);
   }, [performSearch]);
 
-  const handlePopularSearchClick = useCallback((_term: string) => {
-    // 현재 인기검색어 클릭 시 아무 동작 안함
-  }, []);
+  const handlePopularSearchClick = useCallback(async (term: string) => {
+    await performSearch(term);
+  }, [performSearch]);
 
   const handleSortChange = useCallback((newSort: SortBy) => {
     setSortBy(newSort);
