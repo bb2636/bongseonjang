@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlatformDetect } from '@/hooks/usePlatformDetect';
+import { useAuth } from '@/contexts/AuthContext';
 import './Footer.css';
 
 export default function Footer() {
   const navigate = useNavigate();
   const { isWebBrowser } = usePlatformDetect();
+  const { isAuthenticated } = useAuth();
   const [isBusinessInfoOpen, setIsBusinessInfoOpen] = useState(false);
 
   const toggleBusinessInfo = () => {
@@ -78,13 +80,15 @@ export default function Footer() {
           </div>
 
           <div className="footer__buttons">
-            <button 
-              type="button" 
-              className="footer__button footer__button--primary"
-              onClick={handleLoginClick}
-            >
-              로그인
-            </button>
+            {!isAuthenticated && (
+              <button 
+                type="button" 
+                className="footer__button footer__button--primary"
+                onClick={handleLoginClick}
+              >
+                로그인
+              </button>
+            )}
             {isWebBrowser && (
               <button 
                 type="button" 
