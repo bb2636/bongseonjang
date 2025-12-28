@@ -6,7 +6,7 @@ import { Capacitor } from '@capacitor/core';
 import App from './App';
 import './styles/global.css';
 import { AuthProvider, ToastProvider, CartProvider, QuickCartProvider } from './contexts';
-import { ToastManager, QuickCartBottomSheet, PlatformInit } from './components';
+import { ToastManager, QuickCartBottomSheet, PlatformInit, ScrollToTop } from './components';
 
 (function initPlatformSafeArea() {
   const platform = Capacitor.getPlatform();
@@ -41,6 +41,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop />
         <PlatformInit>
           <AuthProvider>
             <CartProvider>
