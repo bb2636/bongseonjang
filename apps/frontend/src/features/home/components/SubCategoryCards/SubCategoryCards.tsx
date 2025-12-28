@@ -16,10 +16,10 @@ interface SubCategoryCardsProps {
 }
 
 const DEFAULT_CATEGORIES: SubCategory[] = [
-  { id: 'seasonal', name: '제철 수산물', imageUrl: seasonalSeafood },
-  { id: 'prepared', name: '손질 수산물', imageUrl: preparedSeafood },
-  { id: 'frozen', name: '급랭 수산물', imageUrl: expressSeafood },
-  { id: 'pickled', name: '바담은 절임류', imageUrl: pickledSeafood },
+  { id: 'category-11111111-1111-1111-1111-111111111111', name: '제철 수산물', imageUrl: seasonalSeafood },
+  { id: 'category-33333333-3333-3333-3333-333333333333', name: '손질 수산물', imageUrl: preparedSeafood },
+  { id: 'category-22222222-2222-2222-2222-222222222222', name: '급랭 수산물', imageUrl: expressSeafood },
+  { id: 'category-55555555-5555-5555-5555-555555555555', name: '바담은 절임류', imageUrl: pickledSeafood },
 ];
 
 export default function SubCategoryCards({ 
