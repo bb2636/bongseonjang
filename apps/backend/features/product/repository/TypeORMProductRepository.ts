@@ -5,6 +5,7 @@ import type { ProductRepository, ProductFilter } from './ProductRepository';
 export class TypeORMProductRepository implements ProductRepository {
   async findByDisplayCategory(displayCategoryName: string, filter?: ProductFilter): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
+    const now = new Date();
     
     const queryBuilder = productRepository
       .createQueryBuilder('product')
@@ -12,7 +13,8 @@ export class TypeORMProductRepository implements ProductRepository {
       .leftJoinAndSelect('product.options', 'options')
       .innerJoin('product.productExposureCategories', 'pec')
       .innerJoin('pec.exposureCategory', 'exposureCategory')
-      .where('exposureCategory.name = :displayName', { displayName: displayCategoryName });
+      .where('exposureCategory.name = :displayName', { displayName: displayCategoryName })
+      .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now });
 
     if (filter?.productCategory) {
       queryBuilder
@@ -88,6 +90,7 @@ export class TypeORMProductRepository implements ProductRepository {
 
   async findRelatedProducts(productId: string, limit: number): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
+    const now = new Date();
 
     const currentProduct = await productRepository.findOne({
       where: { id: productId },
@@ -103,6 +106,7 @@ export class TypeORMProductRepository implements ProductRepository {
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .where('product.productCategoryId = :categoryId', { categoryId: currentProduct.productCategoryId })
       .andWhere('product.id != :productId', { productId })
+      .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now })
       .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();
@@ -125,10 +129,12 @@ export class TypeORMProductRepository implements ProductRepository {
 
   async findByTag(tag: string, limit: number = 10): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
+    const now = new Date();
 
     return productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .where('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now })
       .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();
@@ -138,11 +144,13 @@ export class TypeORMProductRepository implements ProductRepository {
     const productRepository = AppDataSource.getRepository(Product);
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    const now = new Date();
 
     return productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .where('product.createdAt >= :threeMonthsAgo', { threeMonthsAgo })
+      .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now })
       .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();
@@ -151,11 +159,13 @@ export class TypeORMProductRepository implements ProductRepository {
   async findByCategory(categoryId: string, page: number = 1, limit: number = 20): Promise<{ products: Product[]; total: number }> {
     const productRepository = AppDataSource.getRepository(Product);
     const offset = (page - 1) * limit;
+    const now = new Date();
 
     const [products, total] = await productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .where('product.productCategoryId = :categoryId', { categoryId })
+      .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now })
       .orderBy('product.createdAt', 'DESC')
       .skip(offset)
       .take(limit)

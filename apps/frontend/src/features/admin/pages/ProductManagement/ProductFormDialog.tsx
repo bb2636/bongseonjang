@@ -350,6 +350,8 @@ export function ProductFormDialog({
                     type="number"
                     className="product-form-dialog__input"
                     placeholder="0"
+                    min={0}
+                    max={100}
                     value={formData.discountRate || ''}
                     onChange={(e) => handleDiscountRateChange(Number(e.target.value))}
                     disabled={!formData.discountEnabled}
