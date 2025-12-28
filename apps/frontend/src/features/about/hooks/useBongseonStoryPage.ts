@@ -4,7 +4,7 @@ export function useBongseonStoryPage() {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(-1);
+    navigate('/profile');
   };
 
   const handleCartClick = () => {
