@@ -27,6 +27,7 @@ const INQUIRY_OPTIONS: Array<{
   { value: 'other', label: '기타문의' },
 ];
 
+const MAX_TITLE_LENGTH = 50;
 const MAX_CONTENT_LENGTH = 500;
 
 function ChevronDownIcon() {
@@ -146,7 +147,10 @@ export default function WriteInquiryPage() {
   };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
+    const value = event.target.value;
+    if (value.length <= MAX_TITLE_LENGTH) {
+      setTitle(value);
+    }
   };
 
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
