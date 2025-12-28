@@ -21,8 +21,8 @@ export class Shipment {
   @Column({ type: 'varchar', length: 100, nullable: true })
   carrierName!: string | null;
 
-  @Column({ type: 'varchar', length: 100 })
-  trackingNumber!: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  trackingNumber!: string | null;
 
   @Column({ type: 'varchar', length: 20, default: 'pending' })
   status!: ShipmentStatus;
