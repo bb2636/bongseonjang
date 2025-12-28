@@ -66,7 +66,7 @@
 .order-table {
   border: 1px solid rgba(12, 12, 12, 0.08);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   background: #fff;
 }
 
@@ -217,6 +217,7 @@
 
 .order-table__cell--carrier {
   padding: 6px 12px;
+  overflow: visible;
 }
 
 .order-table__carrier-select {
@@ -245,6 +246,7 @@
 
 .order-table__cell--tracking {
   padding: 6px 12px;
+  overflow: visible;
 }
 
 .order-table__tracking-button {
