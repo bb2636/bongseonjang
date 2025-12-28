@@ -38,6 +38,8 @@ export function ProductFormDialog({
   const detailInputRef = useRef<HTMLInputElement>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const initializedRef = useRef(false);
+  const lastProductIdRef = useRef<string | undefined>(undefined);
 
   const {
     formData,
@@ -86,9 +88,21 @@ export function ProductFormDialog({
   const getErrorMessage = (field: string) => fieldErrors[field as keyof typeof fieldErrors];
 
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) {
+      initializedRef.current = false;
+      lastProductIdRef.current = undefined;
+      return;
+    }
+
+    const shouldInitialize = !initializedRef.current || lastProductIdRef.current !== productId;
+    
+    if (shouldInitialize) {
+      initializedRef.current = true;
+      lastProductIdRef.current = productId;
+      
       fetchCategories();
       fetchExposureCategories();
+      
       if (productId) {
         loadProduct(productId);
       } else {
