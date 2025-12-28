@@ -15,8 +15,7 @@ interface QuickCartOption {
   id: string;
   groupName: string;
   name: string;
-  price: number;
-  compareAtPrice: number | null;
+  additionalPrice: number;
   stockQty: number;
 }
 
@@ -79,16 +78,14 @@ export function QuickCartProvider({ children }: QuickCartProviderProps) {
           id: opt.id,
           groupName: '옵션 선택',
           name: opt.name,
-          price: opt.price,
-          compareAtPrice: opt.compareAtPrice || null,
+          additionalPrice: opt.additionalPrice ?? 0,
           stockQty: opt.stockQty,
         })),
         mainOptions: (data.mainOptions || []).map((opt: any) => ({
           id: opt.id,
           groupName: opt.groupName || '옵션 선택',
           name: opt.name,
-          price: opt.price,
-          compareAtPrice: opt.compareAtPrice,
+          additionalPrice: opt.additionalPrice ?? 0,
           stockQty: opt.stockQty,
         })),
       };

@@ -108,8 +108,9 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     const goodsNames: string[] = [];
 
     for (const item of cartItems) {
-      const optionPrice = item.productOption?.price;
-      const unitPrice = (optionPrice != null && optionPrice > 0) ? optionPrice : (item.product?.basePrice ?? 0);
+      const productBasePrice = item.product?.basePrice ?? 0;
+      const additionalPrice = item.productOption?.price ?? 0;
+      const unitPrice = productBasePrice + additionalPrice;
       totalProductPrice += unitPrice * item.quantity;
       goodsNames.push(item.product?.name ?? '상품');
     }
@@ -149,8 +150,9 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     await orderRepository.save(order);
 
     for (const item of cartItems) {
-      const optionPrice = item.productOption?.price;
-      const unitPrice = (optionPrice != null && optionPrice > 0) ? optionPrice : (item.product?.basePrice ?? 0);
+      const productBasePrice = item.product?.basePrice ?? 0;
+      const additionalPrice = item.productOption?.price ?? 0;
+      const unitPrice = productBasePrice + additionalPrice;
 
       const optionDisplay = item.productOption 
         ? `${item.productOption.optionName}: ${item.productOption.optionValue}`

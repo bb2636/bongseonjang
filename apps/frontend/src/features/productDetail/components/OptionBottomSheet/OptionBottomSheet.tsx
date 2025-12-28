@@ -13,6 +13,7 @@ interface OptionBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
   productName: string;
+  basePrice: number;
   mainOptions: MainOption[];
   subOptions: SubOption[];
   onAddToCart: (items: SelectedItem[]) => void;
@@ -23,6 +24,7 @@ export default function OptionBottomSheet({
   isOpen,
   onClose,
   productName,
+  basePrice,
   mainOptions,
   subOptions,
   onAddToCart,
@@ -98,13 +100,13 @@ export default function OptionBottomSheet({
     setSelectedItems((prev) => prev.filter((item) => item.id !== itemId));
   }, []);
 
-  const calculateItemPrice = (item: SelectedItem): number => {
-    const basePrice = item.mainOption.price;
-    const additionalPrice = item.subOption?.additionalPrice || 0;
-    return (basePrice + additionalPrice) * item.quantity;
+  const calculateItemPrice = (item: SelectedItem, productBasePrice: number): number => {
+    const mainAdditionalPrice = item.mainOption.additionalPrice;
+    const subAdditionalPrice = item.subOption?.additionalPrice || 0;
+    return (productBasePrice + mainAdditionalPrice + subAdditionalPrice) * item.quantity;
   };
 
-  const totalPrice = selectedItems.reduce((sum, item) => sum + calculateItemPrice(item), 0);
+  const totalPrice = selectedItems.reduce((sum, item) => sum + calculateItemPrice(item, basePrice), 0);
 
   const formatPrice = (price: number): string => {
     return price.toLocaleString('ko-KR') + '원';
@@ -170,7 +172,9 @@ export default function OptionBottomSheet({
                   disabled={option.stockQty <= 0}
                 >
                   <span className="option-bottom-sheet__option-name">{option.name}</span>
-                  <span className="option-bottom-sheet__option-price">{formatPrice(option.price)}</span>
+                  <span className="option-bottom-sheet__option-price">
+                    {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : formatPrice(basePrice)}
+                  </span>
                 </button>
               ))}
             </div>
@@ -214,10 +218,7 @@ export default function OptionBottomSheet({
           {selectedItems.length > 0 && (
             <div className="option-bottom-sheet__selected-items">
               {selectedItems.map((item) => {
-                const itemPrice = calculateItemPrice(item);
-                const originalPrice = item.mainOption.compareAtPrice 
-                  ? (item.mainOption.compareAtPrice + (item.subOption?.additionalPrice || 0)) * item.quantity 
-                  : null;
+                const itemPrice = calculateItemPrice(item, basePrice);
                 const optionLabel = item.subOption 
                   ? `${item.mainOption.name} / ${item.subOption.name}`
                   : item.mainOption.name;
@@ -243,9 +244,6 @@ export default function OptionBottomSheet({
                     <div className="option-bottom-sheet__selected-footer">
                       <div className="option-bottom-sheet__price-info">
                         <span className="option-bottom-sheet__selected-price">{formatPrice(itemPrice)}</span>
-                        {originalPrice && originalPrice > itemPrice && (
-                          <span className="option-bottom-sheet__original-price">{formatPrice(originalPrice)}</span>
-                        )}
                       </div>
                       <div className="option-bottom-sheet__quantity-controls">
                         <button

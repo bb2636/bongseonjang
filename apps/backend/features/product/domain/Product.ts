@@ -21,8 +21,7 @@ export interface TimeDealProductDto extends ProductDto {
 export interface ProductOptionDto {
   id: string;
   name: string;
-  price: number;
-  compareAtPrice?: number;
+  additionalPrice: number;
   stockQty: number;
   isDefault: boolean;
 }
@@ -31,8 +30,7 @@ export interface MainOptionDto {
   id: string;
   groupName: string;
   name: string;
-  price: number;
-  compareAtPrice?: number;
+  additionalPrice: number;
   stockQty: number;
   isDefault: boolean;
 }

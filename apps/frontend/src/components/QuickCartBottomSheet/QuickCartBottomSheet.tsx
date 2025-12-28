@@ -119,24 +119,14 @@ export default function QuickCartBottomSheet() {
   };
 
   const calculateItemPrice = (item: SelectedItem): number => {
-    if (item.option) {
-      const optionPrice = (item.option.price != null && item.option.price > 0) ? item.option.price : (product?.basePrice ?? 0);
-      return optionPrice * item.quantity;
+    if (item.option && product) {
+      const finalPrice = product.basePrice + item.option.additionalPrice;
+      return finalPrice * item.quantity;
     }
     if (product) {
       return product.discountedPrice * item.quantity;
     }
     return 0;
-  };
-
-  const getOriginalPrice = (item: SelectedItem): number | null => {
-    if (item.option?.compareAtPrice) {
-      return item.option.compareAtPrice * item.quantity;
-    }
-    if (product && product.basePrice > product.discountedPrice) {
-      return product.basePrice * item.quantity;
-    }
-    return null;
   };
 
   const formatPrice = (price: number): string => {
@@ -175,7 +165,7 @@ export default function QuickCartBottomSheet() {
       } else {
         for (const item of selectedItems) {
           const unitPrice = item.option 
-            ? ((item.option.price != null && item.option.price > 0) ? item.option.price : product.basePrice) 
+            ? product.basePrice + item.option.additionalPrice
             : product.discountedPrice;
           guestCartStorage.addItem({
             productId: product.id,
@@ -209,7 +199,7 @@ export default function QuickCartBottomSheet() {
       optionName: item.option?.name || null,
       quantity: item.quantity,
       unitPrice: item.option 
-        ? ((item.option.price != null && item.option.price > 0) ? item.option.price : product.basePrice) 
+        ? product.basePrice + item.option.additionalPrice
         : product.discountedPrice,
     }));
 
@@ -283,7 +273,9 @@ export default function QuickCartBottomSheet() {
                             disabled={option.stockQty <= 0}
                           >
                             <span>{option.name}</span>
-                            <span className="quick-cart-sheet__dropdown-price">{formatPrice(option.price)}</span>
+                            <span className="quick-cart-sheet__dropdown-price">
+                              {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : formatPrice(product.basePrice)}
+                            </span>
                           </button>
                         ))}
                       </div>
@@ -295,7 +287,6 @@ export default function QuickCartBottomSheet() {
                   <div className="quick-cart-sheet__selected-items">
                     {selectedItems.map((item) => {
                       const itemPrice = calculateItemPrice(item);
-                      const originalPrice = getOriginalPrice(item);
 
                       return (
                         <div key={item.id} className="quick-cart-sheet__selected-item">
@@ -310,9 +301,6 @@ export default function QuickCartBottomSheet() {
                           <div className="quick-cart-sheet__selected-footer">
                             <div className="quick-cart-sheet__price-info">
                               <span className="quick-cart-sheet__selected-price">{formatPrice(itemPrice)}</span>
-                              {originalPrice && originalPrice > itemPrice && (
-                                <span className="quick-cart-sheet__original-price">{formatPrice(originalPrice)}</span>
-                              )}
                             </div>
                             <div className="quick-cart-sheet__quantity-controls">
                               <button

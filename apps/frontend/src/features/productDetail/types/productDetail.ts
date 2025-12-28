@@ -1,8 +1,7 @@
 export interface ProductOption {
   id: string;
   name: string;
-  price: number;
-  compareAtPrice?: number;
+  additionalPrice: number;
   stockQty: number;
   isDefault: boolean;
 }
@@ -11,8 +10,7 @@ export interface MainOption {
   id: string;
   groupName: string;
   name: string;
-  price: number;
-  compareAtPrice?: number;
+  additionalPrice: number;
   stockQty: number;
   isDefault: boolean;
 }

@@ -528,7 +528,7 @@ export function ProductFormDialog({
                       <input
                         type="number"
                         className="product-form-dialog__input product-form-dialog__option-input--price"
-                        placeholder="판매가(원)"
+                        placeholder="추가금액 (0=기본가)"
                         value={option.price || ''}
                         onChange={(e) => handleOptionChange(option.id, 'price', e.target.value ? Number(e.target.value) : null)}
                       />
