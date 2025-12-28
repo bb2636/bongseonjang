@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 export interface ProductOption {
   id: string;
@@ -137,6 +137,8 @@ export interface FieldErrors {
 
 export function useProductForm() {
   const [formData, setFormData] = useState<ProductFormData>(createInitialFormData);
+  const formDataRef = useRef(formData);
+  formDataRef.current = formData;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -348,12 +350,13 @@ export function useProductForm() {
   }, []);
 
   const resetForm = useCallback(() => {
-    formData.thumbnailImages.forEach(img => {
+    const currentFormData = formDataRef.current;
+    currentFormData.thumbnailImages.forEach(img => {
       if (img.previewUrl && img.previewUrl.startsWith('blob:')) {
         URL.revokeObjectURL(img.previewUrl);
       }
     });
-    formData.detailImages.forEach(img => {
+    currentFormData.detailImages.forEach(img => {
       if (img.previewUrl && img.previewUrl.startsWith('blob:')) {
         URL.revokeObjectURL(img.previewUrl);
       }
@@ -363,7 +366,7 @@ export function useProductForm() {
     setEditingProductId(null);
     setFieldErrors({});
     setTouched({});
-  }, [formData.thumbnailImages, formData.detailImages]);
+  }, []);
 
   const loadProduct = useCallback(async (productId: string): Promise<boolean> => {
     setIsLoading(true);
