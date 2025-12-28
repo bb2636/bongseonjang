@@ -27,7 +27,7 @@ const INQUIRY_OPTIONS: Array<{
   { value: 'other', label: '기타문의' },
 ];
 
-const MAX_CONTENT_LENGTH = 1000;
+const MAX_CONTENT_LENGTH = 500;
 
 function ChevronDownIcon() {
   return (
