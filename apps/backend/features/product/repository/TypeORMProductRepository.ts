@@ -33,11 +33,12 @@ export class TypeORMProductRepository implements ProductRepository {
     const queryBuilder = productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .leftJoinAndSelect('product.options', 'options')
-      .leftJoinAndSelect('product.productCategory', 'productCategory');
+      .leftJoinAndSelect('product.options', 'options');
 
     if (filter?.productCategory) {
-      queryBuilder.andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
+      queryBuilder
+        .innerJoin('product.productCategory', 'productCategory')
+        .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
     }
 
     if (filter?.search) {
