@@ -134,9 +134,10 @@ export class TypeORMProductRepository implements ProductRepository {
     const queryBuilder = productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .innerJoin('product.productTags', 'productTags')
-      .innerJoin('productTags.tag', 'tag')
-      .where('tag.name = :tagName', { tagName: tag })
+      .leftJoinAndSelect('product.options', 'options')
+      .innerJoin('product.productExposureCategories', 'pec')
+      .innerJoin('pec.exposureCategory', 'exposureCategory')
+      .where('exposureCategory.name = :tagName', { tagName: tag })
       .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now });
 
     if (filter?.productCategory) {
