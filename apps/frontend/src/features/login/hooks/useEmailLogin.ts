@@ -106,7 +106,7 @@ export function useEmailLogin() {
   }, [navigate]);
 
   const onBack = useCallback(() => {
-    navigate('/');
+    navigate('/login', { replace: true });
   }, [navigate]);
 
   return {

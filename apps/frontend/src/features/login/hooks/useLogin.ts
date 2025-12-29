@@ -24,7 +24,7 @@ export function useLogin() {
   }, []);
 
   const onEmailLogin = useCallback(() => {
-    navigate(LOGIN_ROUTES.EMAIL_LOGIN);
+    navigate(LOGIN_ROUTES.EMAIL_LOGIN, { replace: true });
   }, [navigate]);
 
   const onEmailSignup = useCallback(() => {
