@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ProductInquiry } from '../../types/productInquiry';
 import './ProductInquirySection.css';
 
@@ -40,7 +41,21 @@ function LockIcon() {
   );
 }
 
-function InquiryContent({ inquiry }: { inquiry: ProductInquiry }) {
+function ChevronIcon({ isExpanded }: { isExpanded: boolean }) {
+  return (
+    <svg 
+      className={`inquiry-item__chevron ${isExpanded ? 'inquiry-item__chevron--expanded' : ''}`}
+      width="16" 
+      height="16" 
+      viewBox="0 0 24 24" 
+      fill="none"
+    >
+      <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function InquiryContent({ inquiry, isExpanded }: { inquiry: ProductInquiry; isExpanded: boolean }) {
   const isLocked = inquiry.isPrivate === true && inquiry.status !== 'answered';
   const isAnswered = inquiry.status === 'answered';
 
@@ -56,8 +71,8 @@ function InquiryContent({ inquiry }: { inquiry: ProductInquiry }) {
         )}
         <p className="inquiry-item__text">{inquiry.title}</p>
       </div>
-      {isAnswered && inquiry.answer && (
-        <div className="inquiry-item__row">
+      {isExpanded && isAnswered && inquiry.answer && (
+        <div className="inquiry-item__row inquiry-item__answer">
           <span className="inquiry-item__label inquiry-item__label--answer">A</span>
           <p className="inquiry-item__text">{inquiry.answer}</p>
         </div>
@@ -66,17 +81,43 @@ function InquiryContent({ inquiry }: { inquiry: ProductInquiry }) {
   );
 }
 
-function InquiryItem({ inquiry }: { inquiry: ProductInquiry }) {
+function InquiryItem({ 
+  inquiry, 
+  isExpanded, 
+  onToggle 
+}: { 
+  inquiry: ProductInquiry; 
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  const isAnswered = inquiry.status === 'answered';
+  const isClickable = isAnswered && !!inquiry.answer;
+
   return (
-    <div className="inquiry-item">
-      <InquiryMeta inquiry={inquiry} />
-      <InquiryContent inquiry={inquiry} />
+    <div 
+      className={`inquiry-item ${isClickable ? 'inquiry-item--clickable' : ''}`}
+      onClick={isClickable ? onToggle : undefined}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onKeyDown={isClickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') onToggle(); } : undefined}
+    >
+      <div className="inquiry-item__header">
+        <InquiryMeta inquiry={inquiry} />
+        {isClickable && <ChevronIcon isExpanded={isExpanded} />}
+      </div>
+      <InquiryContent inquiry={inquiry} isExpanded={isExpanded} />
       <div className="inquiry-item__divider" />
     </div>
   );
 }
 
 export default function ProductInquirySection({ inquiries, onCreateInquiry }: ProductInquirySectionProps) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const handleToggle = (id: string) => {
+    setExpandedId(prev => prev === id ? null : id);
+  };
+
   return (
     <section className="product-inquiry">
       <button className="product-inquiry__button" type="button" onClick={onCreateInquiry}>
@@ -90,7 +131,12 @@ export default function ProductInquirySection({ inquiries, onCreateInquiry }: Pr
           <div className="product-inquiry__empty">문의된 내용이 없습니다</div>
         ) : (
           inquiries.map((inquiry) => (
-            <InquiryItem key={inquiry.id} inquiry={inquiry} />
+            <InquiryItem 
+              key={inquiry.id} 
+              inquiry={inquiry} 
+              isExpanded={expandedId === inquiry.id}
+              onToggle={() => handleToggle(inquiry.id)}
+            />
           ))
         )}
       </div>

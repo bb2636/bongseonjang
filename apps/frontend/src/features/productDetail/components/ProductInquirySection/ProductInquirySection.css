@@ -42,6 +42,45 @@
   gap: 12px;
 }
 
+.inquiry-item--clickable {
+  cursor: pointer;
+}
+
+.inquiry-item--clickable:active {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.inquiry-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.inquiry-item__chevron {
+  color: rgba(12, 12, 12, 0.4);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.inquiry-item__chevron--expanded {
+  transform: rotate(180deg);
+}
+
+.inquiry-item__answer {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .inquiry-item__meta {
   display: flex;
   justify-content: space-between;
