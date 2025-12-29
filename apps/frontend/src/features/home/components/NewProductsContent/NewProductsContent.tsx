@@ -4,12 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { FilterChips } from '../FilterChips';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import { useProductCategories } from '../../hooks/useProductCategories';
-import { fetchNewProducts, fetchProductsByDisplayCategory, type ProductFilter } from '../../api/productApi';
+import { fetchNewProducts, type ProductFilter } from '../../api/productApi';
 import type { ProductCardData } from '@/components/ProductCard';
 import { useProductListCache } from '../../../productDetail/hooks/useProductListCache';
 import './NewProductsContent.css';
-
-const DISPLAY_CATEGORY = '신상품';
 
 export default function NewProductsContent() {
   const navigate = useNavigate();
@@ -24,12 +22,7 @@ export default function NewProductsContent() {
 
   const { data, isLoading, error } = useQuery<ProductCardData[]>({
     queryKey: ['products', 'new', selectedCategory],
-    queryFn: () => {
-      if (filter.productCategory) {
-        return fetchProductsByDisplayCategory(DISPLAY_CATEGORY, filter);
-      }
-      return fetchNewProducts();
-    },
+    queryFn: () => fetchNewProducts(filter),
     staleTime: 5 * 60 * 1000,
   });
 

@@ -5,7 +5,6 @@ import {
   fetchAllProducts, 
   fetchBestProducts,
   fetchNewProducts,
-  fetchProductsByDisplayCategory,
   fetchProductsByCategoryId,
   type ProductFilter,
 } from '../../home/api/productApi';
@@ -23,14 +22,6 @@ function isStaticCategory(slug: string): boolean {
 
 function isFilterableCategory(slug: string): boolean {
   return FILTERABLE_SLUGS.includes(slug);
-}
-
-function getDisplayCategoryName(slug: string): string {
-  const categoryMap: Record<string, string> = {
-    'best': '베스트',
-    'new': '신상품',
-  };
-  return categoryMap[slug] || '';
 }
 
 export function useCategoryProductsPage() {
@@ -58,12 +49,11 @@ export function useCategoryProductsPage() {
       if (activeSlug === 'all') {
         return fetchAllProducts(filter);
       }
-      if (activeSlug === 'best' || activeSlug === 'new') {
-        const displayCategoryName = getDisplayCategoryName(activeSlug);
-        if (filter.productCategory) {
-          return fetchProductsByDisplayCategory(displayCategoryName, filter);
-        }
-        return activeSlug === 'best' ? fetchBestProducts() : fetchNewProducts();
+      if (activeSlug === 'best') {
+        return fetchBestProducts(filter);
+      }
+      if (activeSlug === 'new') {
+        return fetchNewProducts(filter);
       }
       if (isDbCategory && categoryId) {
         const result = await fetchProductsByCategoryId(categoryId);

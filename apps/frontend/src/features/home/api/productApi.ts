@@ -58,8 +58,17 @@ export async function fetchProductsByCategoryId(categoryId: string, page: number
   return response.json();
 }
 
-export async function fetchBestProducts(): Promise<ProductCardData[]> {
-  const response = await fetch(`${API_BASE_URL}/best-products`);
+export async function fetchBestProducts(filter?: ProductFilter): Promise<ProductCardData[]> {
+  const params = new URLSearchParams();
+  
+  if (filter?.productCategory && filter.productCategory !== 'all') {
+    params.set('productCategory', filter.productCategory);
+  }
+  
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/best-products${queryString ? `?${queryString}` : ''}`;
+  
+  const response = await fetch(url);
   
   if (!response.ok) {
     throw new Error('Failed to fetch best products');
@@ -68,8 +77,17 @@ export async function fetchBestProducts(): Promise<ProductCardData[]> {
   return response.json();
 }
 
-export async function fetchNewProducts(): Promise<ProductCardData[]> {
-  const response = await fetch(`${API_BASE_URL}/products/fresh`);
+export async function fetchNewProducts(filter?: ProductFilter): Promise<ProductCardData[]> {
+  const params = new URLSearchParams();
+  
+  if (filter?.productCategory && filter.productCategory !== 'all') {
+    params.set('productCategory', filter.productCategory);
+  }
+  
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/products/fresh${queryString ? `?${queryString}` : ''}`;
+  
+  const response = await fetch(url);
   
   if (!response.ok) {
     throw new Error('Failed to fetch new products');

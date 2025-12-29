@@ -4,12 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { FilterChips } from '../FilterChips';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import { useProductCategories } from '../../hooks/useProductCategories';
-import { fetchBestProducts, fetchProductsByDisplayCategory, type ProductFilter } from '../../api/productApi';
+import { fetchBestProducts, type ProductFilter } from '../../api/productApi';
 import type { ProductCardData } from '@/components/ProductCard';
 import { useProductListCache } from '../../../productDetail/hooks/useProductListCache';
 import './BestProductsContent.css';
-
-const DISPLAY_CATEGORY = '베스트';
 
 export default function BestProductsContent() {
   const navigate = useNavigate();
@@ -24,12 +22,7 @@ export default function BestProductsContent() {
 
   const { data, isLoading, error } = useQuery<ProductCardData[]>({
     queryKey: ['products', 'best', selectedCategory],
-    queryFn: () => {
-      if (filter.productCategory) {
-        return fetchProductsByDisplayCategory(DISPLAY_CATEGORY, filter);
-      }
-      return fetchBestProducts();
-    },
+    queryFn: () => fetchBestProducts(filter),
     staleTime: 5 * 60 * 1000,
   });
 
