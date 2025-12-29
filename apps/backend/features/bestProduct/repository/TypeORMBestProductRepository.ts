@@ -2,17 +2,23 @@ import { AppDataSource } from '../../../config/database.js';
 import { Product } from '../../../entity/Product.js';
 import { ProductImage } from '../../../entity/ProductImage.js';
 import type { BestProduct } from '../domain/BestProduct.js';
-import type { BestProductRepository } from './BestProductRepository.js';
+import type { BestProductRepository, BestProductFilter } from './BestProductRepository.js';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 export class TypeORMBestProductRepository implements BestProductRepository {
-  async findAll(): Promise<BestProduct[]> {
+  async findAll(filter?: BestProductFilter): Promise<BestProduct[]> {
     const productRepository = AppDataSource.getRepository(Product);
     
-    const productsWithSales = await productRepository
+    const queryBuilder = productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .leftJoin('order_items', 'oi', 'oi."productId" = product.id')
+      .leftJoin('order_items', 'oi', 'oi."productId" = product.id');
+
+    if (filter?.productCategoryId) {
+      queryBuilder.andWhere('product.productCategoryId = :categoryId', { categoryId: filter.productCategoryId });
+    }
+
+    const productsWithSales = await queryBuilder
       .addSelect('COALESCE(SUM(oi.quantity), 0)', 'totalSold')
       .groupBy('product.id')
       .addGroupBy('images.id')

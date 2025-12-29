@@ -1,5 +1,9 @@
 import type { BestProduct } from '../domain/BestProduct';
 
+export interface BestProductFilter {
+  productCategoryId?: string;
+}
+
 export interface BestProductRepository {
-  findAll(): Promise<BestProduct[]>;
+  findAll(filter?: BestProductFilter): Promise<BestProduct[]>;
 }

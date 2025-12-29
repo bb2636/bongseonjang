@@ -112,7 +112,14 @@ export class ProductController {
   async getFreshProducts(req: Request, res: Response): Promise<void> {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
-      const products = await this.productService.getFreshProducts(limit);
+      const { productCategory } = req.query;
+      
+      const filter: ProductFilter = {};
+      if (productCategory && typeof productCategory === 'string') {
+        filter.productCategory = productCategory;
+      }
+      
+      const products = await this.productService.getFreshProducts(limit, filter);
       res.json(products);
     } catch (error) {
       console.error('Error fetching fresh products:', error);

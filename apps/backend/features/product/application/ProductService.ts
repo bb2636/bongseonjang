@@ -71,8 +71,8 @@ export class ProductService {
     return products.map((product) => this.toDto(product));
   }
 
-  async getFreshProducts(limit: number = 10): Promise<ProductDto[]> {
-    const products = await this.productRepository.findFreshProducts(limit);
+  async getFreshProducts(limit: number = 10, filter?: ProductFilter): Promise<ProductDto[]> {
+    const products = await this.productRepository.findFreshProducts(limit, filter);
     return products.map((product) => this.toDto(product));
   }
 

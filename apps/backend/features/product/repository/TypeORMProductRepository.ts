@@ -152,17 +152,25 @@ export class TypeORMProductRepository implements ProductRepository {
       .getMany();
   }
 
-  async findFreshProducts(limit: number = 10): Promise<Product[]> {
+  async findFreshProducts(limit: number = 10, filter?: ProductFilter): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
     const now = new Date();
 
-    return productRepository
+    const queryBuilder = productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .where('product.createdAt >= :threeMonthsAgo', { threeMonthsAgo })
-      .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now })
+      .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now });
+
+    if (filter?.productCategory) {
+      queryBuilder
+        .innerJoin('product.productCategory', 'productCategory')
+        .andWhere('productCategory.id = :productCategoryId', { productCategoryId: filter.productCategory });
+    }
+
+    return queryBuilder
       .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();

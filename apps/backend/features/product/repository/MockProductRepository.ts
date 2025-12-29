@@ -26,7 +26,7 @@ export class MockProductRepository implements ProductRepository {
     return [];
   }
 
-  async findFreshProducts(_limit?: number): Promise<Product[]> {
+  async findFreshProducts(_limit?: number, _filter?: ProductFilter): Promise<Product[]> {
     return [];
   }
 
