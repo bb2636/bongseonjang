@@ -127,14 +127,25 @@ export class TypeORMProductRepository implements ProductRepository {
       .getMany();
   }
 
-  async findByTag(tag: string, limit: number = 10): Promise<Product[]> {
+  async findByTag(tag: string, limit: number = 100, filter?: ProductFilter): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
     const now = new Date();
 
-    return productRepository
+    const queryBuilder = productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .where('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now })
+      .innerJoin('product.productTags', 'productTags')
+      .innerJoin('productTags.tag', 'tag')
+      .where('tag.name = :tagName', { tagName: tag })
+      .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now });
+
+    if (filter?.productCategory) {
+      queryBuilder
+        .innerJoin('product.productCategory', 'productCategory')
+        .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
+    }
+
+    return queryBuilder
       .orderBy('product.createdAt', 'DESC')
       .limit(limit)
       .getMany();

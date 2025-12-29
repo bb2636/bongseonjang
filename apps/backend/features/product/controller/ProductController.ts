@@ -93,8 +93,15 @@ export class ProductController {
   async getProductsByTag(req: Request, res: Response): Promise<void> {
     try {
       const { tag } = req.params;
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 10;
-      const products = await this.productService.getProductsByTag(tag, limit);
+      const { productCategory, limit: limitQuery } = req.query;
+      const limit = limitQuery ? parseInt(limitQuery as string, 10) : 100;
+      
+      const filter: ProductFilter = {};
+      if (productCategory && typeof productCategory === 'string') {
+        filter.productCategory = productCategory;
+      }
+      
+      const products = await this.productService.getProductsByTag(tag, limit, filter);
       res.json(products);
     } catch (error) {
       console.error('Error fetching products by tag:', error);

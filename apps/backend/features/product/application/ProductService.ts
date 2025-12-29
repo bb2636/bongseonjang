@@ -66,8 +66,8 @@ export class ProductService {
     return products.map((product) => this.toTimeDealDto(product, now));
   }
 
-  async getProductsByTag(tag: string, limit: number = 10): Promise<ProductDto[]> {
-    const products = await this.productRepository.findByTag(tag, limit);
+  async getProductsByTag(tag: string, limit: number = 100, filter?: ProductFilter): Promise<ProductDto[]> {
+    const products = await this.productRepository.findByTag(tag, limit, filter);
     return products.map((product) => this.toDto(product));
   }
 

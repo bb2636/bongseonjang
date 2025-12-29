@@ -77,3 +77,25 @@ export async function fetchNewProducts(): Promise<ProductCardData[]> {
   
   return response.json();
 }
+
+export async function fetchProductsByTag(
+  tag: string,
+  filter?: ProductFilter
+): Promise<ProductCardData[]> {
+  const params = new URLSearchParams();
+  
+  if (filter?.productCategory && filter.productCategory !== 'all') {
+    params.set('productCategory', filter.productCategory);
+  }
+  
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/products/tag/${encodeURIComponent(tag)}${queryString ? `?${queryString}` : ''}`;
+  
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch products by tag');
+  }
+  
+  return response.json();
+}
