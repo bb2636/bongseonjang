@@ -54,6 +54,8 @@ const frontendToBackendStatus: Record<Exclude<OrderStatus, 'ALL'>, BackendOrderS
 };
 
 const orderStatusChangeOptions: { code: Exclude<OrderStatus, 'ALL'>; label: string }[] = [
+  { code: 'PAYMENT_PENDING', label: '입금 전' },
+  { code: 'PAYMENT_FAILED', label: '결제실패' },
   { code: 'PAYMENT_COMPLETED', label: '결제완료' },
   { code: 'PREPARING', label: '상품준비중' },
   { code: 'SHIPPING', label: '배송중' },
