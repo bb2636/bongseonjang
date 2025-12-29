@@ -114,14 +114,13 @@ export class TypeORMProductRepository implements ProductRepository {
 
   async findTimeDeals(limit: number = 10): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
-    const now = new Date();
 
     return productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .where('product.saleEndDate IS NOT NULL')
-      .andWhere('product.saleEndDate > :now', { now })
-      .andWhere('product.saleStartDate IS NULL OR product.saleStartDate <= :now', { now })
+      .andWhere('product.saleEndDate >= CURRENT_DATE')
+      .andWhere('(product.saleStartDate IS NULL OR product.saleStartDate <= CURRENT_DATE)')
       .orderBy('product.saleEndDate', 'ASC')
       .limit(limit)
       .getMany();
