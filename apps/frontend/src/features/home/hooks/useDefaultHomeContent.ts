@@ -42,11 +42,11 @@ export function useDefaultHomeContent() {
   }, []);
 
   const onViewAllBestProducts = useCallback(() => {
-    navigate('/best-products');
+    navigate('/category/best');
   }, [navigate]);
 
   const onViewAllFreshFoods = useCallback(() => {
-    navigate('/fresh-foods');
+    navigate('/category/new');
   }, [navigate]);
 
   const onViewAllBadameun = useCallback(() => {
