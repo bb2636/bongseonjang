@@ -25,7 +25,7 @@ export function useProductCategories() {
         setIsLoading(true);
         const apiCategories = await apiClient.get<ApiCategory[]>('/products/categories');
         const mappedCategories = apiCategories.map((cat) => ({
-          id: cat.name,
+          id: cat.id,
           label: cat.name,
         }));
         setCategories([ALL_CATEGORY, ...mappedCategories]);
