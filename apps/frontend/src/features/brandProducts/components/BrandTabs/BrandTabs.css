@@ -1,7 +1,4 @@
 .brand-tabs {
-  position: sticky;
-  top: 56px;
-  z-index: 10;
   background-color: #fff;
   border-bottom: 1px solid #eee;
 }

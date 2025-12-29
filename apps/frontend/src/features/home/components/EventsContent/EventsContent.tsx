@@ -9,11 +9,7 @@ export default function EventsContent() {
   const { events, isLoading, error } = useEvents();
 
   const handleEventClick = (event: EventData) => {
-    if (event.linkUrl) {
-      window.open(event.linkUrl, '_blank');
-    } else {
-      navigate(`/event/${event.id}`);
-    }
+    navigate(`/event/${event.id}`);
   };
 
   if (isLoading) {

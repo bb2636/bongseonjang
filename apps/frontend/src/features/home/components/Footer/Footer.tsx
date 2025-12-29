@@ -52,7 +52,7 @@ export default function Footer() {
           <button type="button" className="footer__link" onClick={() => navigate('/terms')}>이용약관</button>
           <button type="button" className="footer__link" onClick={() => navigate('/terms?type=PRIVACY_POLICY')}>개인정보처리방침</button>
           <button type="button" className="footer__link" onClick={() => navigate('/notice')}>공지사항</button>
-          <button type="button" className="footer__link" onClick={() => window.open('https://captainbong.com', '_blank')}>투자정보</button>
+          <button type="button" className="footer__link" onClick={() => navigate('/notice')}>투자정보</button>
         </nav>
 
         <div className="footer__info-container">
