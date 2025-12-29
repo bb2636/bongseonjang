@@ -175,6 +175,8 @@
 .banner-table__body {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
 .banner-table__body-row {
