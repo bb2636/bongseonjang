@@ -26,8 +26,6 @@ export interface ProductCardData {
   reviewCount?: number;
   averageRating?: number;
   mainOptions?: MainOptionData[];
-  categoryId?: string;
-  categoryName?: string;
 }
 
 interface ProductCardProps {
