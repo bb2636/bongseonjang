@@ -3,7 +3,9 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { 
   fetchAllProducts, 
-  fetchProductsByTag,
+  fetchBestProducts,
+  fetchNewProducts,
+  fetchProductsByDisplayCategory,
   fetchProductsByCategoryId,
   type ProductFilter,
 } from '../../home/api/productApi';
@@ -23,12 +25,12 @@ function isFilterableCategory(slug: string): boolean {
   return FILTERABLE_SLUGS.includes(slug);
 }
 
-function getTagName(slug: string): string {
-  const tagMap: Record<string, string> = {
+function getDisplayCategoryName(slug: string): string {
+  const categoryMap: Record<string, string> = {
     'best': '베스트',
     'new': '신상품',
   };
-  return tagMap[slug] || '';
+  return categoryMap[slug] || '';
 }
 
 export function useCategoryProductsPage() {
@@ -57,8 +59,11 @@ export function useCategoryProductsPage() {
         return fetchAllProducts(filter);
       }
       if (activeSlug === 'best' || activeSlug === 'new') {
-        const tagName = getTagName(activeSlug);
-        return fetchProductsByTag(tagName, filter);
+        const displayCategoryName = getDisplayCategoryName(activeSlug);
+        if (filter.productCategory) {
+          return fetchProductsByDisplayCategory(displayCategoryName, filter);
+        }
+        return activeSlug === 'best' ? fetchBestProducts() : fetchNewProducts();
       }
       if (isDbCategory && categoryId) {
         const result = await fetchProductsByCategoryId(categoryId);
