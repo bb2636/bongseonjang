@@ -153,6 +153,10 @@ const EventDetailPage = lazy(() =>
   import("./features/event").then((m) => ({ default: m.EventDetailPage }))
 );
 
+const BrandProductsPage = lazy(() =>
+  import("./features/brandProducts").then((m) => ({ default: m.BrandProductsPage }))
+);
+
 const AdminPlaceholderPage = lazy(() =>
   import("./features/admin").then((m) => ({ default: m.AdminPlaceholderPage }))
 );
@@ -243,6 +247,7 @@ export default function App() {
         <Route path="/orders/guest/:orderId" element={<GuestOrderDetailPage />} />
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/category/:slug" element={<CategoryProductsPage />} />
+        <Route path="/brand/:brandId" element={<BrandProductsPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route

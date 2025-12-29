@@ -25,7 +25,7 @@ export function useCategoryPage() {
   };
 
   const handleBrandClick = (brandId: string) => {
-    navigate(`/?brand=${brandId}`);
+    navigate(`/brand/${brandId}`);
   };
 
   return {
