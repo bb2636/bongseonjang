@@ -75,11 +75,16 @@ export class InquiryController {
     }
   }
 
-  async answerInquiry(req: Request, res: Response): Promise<void> {
+  async answerInquiry(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const id = parseInt(req.params.id, 10);
       const { answer } = req.body;
-      const answeredBy = (req as any).user?.id || 'aaaa1111-1111-1111-1111-111111111111';
+      const answeredBy = req.userId;
+
+      if (!answeredBy) {
+        res.status(401).json({ error: '로그인이 필요합니다.' });
+        return;
+      }
 
       if (!answer) {
         res.status(400).json({ error: 'Answer is required' });

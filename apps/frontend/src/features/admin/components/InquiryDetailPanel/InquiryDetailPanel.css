@@ -137,6 +137,8 @@
 .inquiry-panel__value--content {
   flex: 1;
   min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 150%;
@@ -145,6 +147,8 @@
 .inquiry-panel__value--answer {
   flex: 1;
   min-height: 120px;
+  max-height: 300px;
+  overflow-y: auto;
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 150%;
