@@ -54,10 +54,19 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
     }
   }, [isOpen, inquiryId]);
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
+
   const fetchInquiry = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/admin/inquiries/${inquiryId}`);
+      const response = await fetch(`/api/admin/inquiries/${inquiryId}`, {
+        headers: {
+          ...getAuthHeaders(),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setInquiry(data);
@@ -95,7 +104,10 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
     try {
       const response = await fetch(`/api/admin/inquiries/${inquiryId}/answer`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
         credentials: 'include',
         body: JSON.stringify({
           answer: answerText,

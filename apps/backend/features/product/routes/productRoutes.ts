@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { ProductController } from '../controller/ProductController';
 import { ProductService } from '../application/ProductService';
 import { TypeORMProductRepository } from '../repository/TypeORMProductRepository';
@@ -13,6 +13,14 @@ import { InquiryService } from '../../inquiry/application/InquiryService';
 import { TypeORMInquiryRepository } from '../../inquiry/repository/TypeORMInquiryRepository';
 
 const router = Router();
+
+function optionalAuth(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    return authMiddleware(req, res, next);
+  }
+  next();
+}
 
 const productRepository = new TypeORMProductRepository();
 const reviewRepository = new TypeORMReviewRepository();
@@ -46,9 +54,10 @@ const INQUIRY_TYPE_LABELS: Record<string, string> = {
   other: '기타문의',
 };
 
-router.get('/:id/inquiries', async (req: Request, res: Response) => {
+router.get('/:id/inquiries', optionalAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const productId = req.params.id;
+    const currentUserId = req.userId;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const offset = (page - 1) * limit;
@@ -66,6 +75,7 @@ router.get('/:id/inquiries', async (req: Request, res: Response) => {
         'inquiry.answer as answer',
         'inquiry.isPrivate as "isPrivate"',
         'inquiry.createdAt as "createdAt"',
+        'inquiry.authorId as "authorId"',
         'author.name as "authorName"',
       ])
       .where('inquiry.productId = :productId', { productId })
@@ -83,8 +93,10 @@ router.get('/:id/inquiries', async (req: Request, res: Response) => {
       authorAlias: maskAuthorName(row.authorName || '익명'),
       createdAt: formatDate(new Date(row.createdAt)),
       title: row.title || row.question,
+      question: row.question,
       answer: row.answer || undefined,
       isPrivate: Boolean(row.isPrivate),
+      isAuthor: currentUserId ? String(row.authorId) === String(currentUserId) : false,
     }));
 
     res.json({ inquiries, total, page, limit });

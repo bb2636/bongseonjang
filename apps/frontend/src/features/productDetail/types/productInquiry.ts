@@ -7,6 +7,8 @@ export interface ProductInquiry {
   authorAlias: string;
   createdAt: string;
   title: string;
+  question?: string;
   answer?: string;
   isPrivate?: boolean;
+  isAuthor?: boolean;
 }

@@ -56,7 +56,8 @@ function ChevronIcon({ isExpanded }: { isExpanded: boolean }) {
 }
 
 function InquiryContent({ inquiry, isExpanded }: { inquiry: ProductInquiry; isExpanded: boolean }) {
-  const isLocked = inquiry.isPrivate === true && inquiry.status !== 'answered';
+  const isAuthor = inquiry.isAuthor === true;
+  const isLocked = inquiry.isPrivate === true && inquiry.status !== 'answered' && !isAuthor;
   const isAnswered = inquiry.status === 'answered';
 
   return (
@@ -71,11 +72,20 @@ function InquiryContent({ inquiry, isExpanded }: { inquiry: ProductInquiry; isEx
         )}
         <p className="inquiry-item__text">{inquiry.title}</p>
       </div>
-      {isExpanded && isAnswered && inquiry.answer && (
-        <div className="inquiry-item__row inquiry-item__answer">
-          <span className="inquiry-item__label inquiry-item__label--answer">A</span>
-          <p className="inquiry-item__text">{inquiry.answer}</p>
-        </div>
+      {isExpanded && (
+        <>
+          {inquiry.question && (
+            <div className="inquiry-item__row inquiry-item__question-detail">
+              <p className="inquiry-item__text inquiry-item__text--detail">{inquiry.question}</p>
+            </div>
+          )}
+          {isAnswered && inquiry.answer && (
+            <div className="inquiry-item__row inquiry-item__answer">
+              <span className="inquiry-item__label inquiry-item__label--answer">A</span>
+              <p className="inquiry-item__text">{inquiry.answer}</p>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -91,7 +101,8 @@ function InquiryItem({
   onToggle: () => void;
 }) {
   const isAnswered = inquiry.status === 'answered';
-  const isClickable = isAnswered && !!inquiry.answer;
+  const isAuthor = inquiry.isAuthor === true;
+  const isClickable = (isAnswered && !!inquiry.answer) || isAuthor;
 
   return (
     <div 

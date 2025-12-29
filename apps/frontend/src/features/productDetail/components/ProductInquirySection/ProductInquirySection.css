@@ -184,6 +184,16 @@
   color: rgba(12, 12, 12, 0.8);
 }
 
+.inquiry-item__text--detail {
+  padding-left: 24px;
+  color: rgba(12, 12, 12, 0.6);
+  font-size: 13px;
+}
+
+.inquiry-item__question-detail {
+  animation: fadeIn 0.2s ease;
+}
+
 .inquiry-item__divider {
   border-bottom: 1px solid rgba(12, 12, 12, 0.12);
 }

@@ -37,13 +37,18 @@ export interface ProductInquiryResponse {
   authorAlias: string;
   createdAt: string;
   title: string;
+  question?: string;
   answer?: string;
   isPrivate?: boolean;
+  isAuthor?: boolean;
   imageUrls?: string[];
 }
 
 export async function fetchProductInquiries(productId: string): Promise<ProductInquiryResponse[]> {
-  const response = await fetch(`${API_BASE_URL}/products/${productId}/inquiries`);
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_BASE_URL}/products/${productId}/inquiries`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
   
   if (!response.ok) {
     throw new Error('Failed to fetch product inquiries');
