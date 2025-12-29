@@ -287,7 +287,10 @@ export function InquiryList({ onView, refreshTrigger }: InquiryListProps) {
                   <button
                     type="button"
                     className="inquiry-list__view-button"
-                    onClick={() => onView(inquiry.id)}
+                    onClick={() => {
+                      console.log('View button clicked for inquiry:', inquiry.id);
+                      onView(inquiry.id);
+                    }}
                   >
                     보기
                   </button>

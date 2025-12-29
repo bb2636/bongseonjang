@@ -169,6 +169,7 @@ export function AdminSupportPage() {
   };
 
   const handleInquiryView = (id: number) => {
+    console.log('handleInquiryView called with id:', id);
     setSelectedInquiryId(id);
     setIsInquiryPanelOpen(true);
   };
@@ -283,16 +284,14 @@ export function AdminSupportPage() {
         />
       )}
 
-      {selectedInquiryId && (
-        <InquiryDetailPanel
-          inquiryId={selectedInquiryId}
-          isOpen={isInquiryPanelOpen}
-          onClose={handleInquiryPanelClose}
-          onSaved={handleInquiryPanelSaved}
-          onSuccess={handleInquirySuccess}
-          onError={handleInquiryError}
-        />
-      )}
+      <InquiryDetailPanel
+        inquiryId={selectedInquiryId ?? 0}
+        isOpen={isInquiryPanelOpen && selectedInquiryId !== null}
+        onClose={handleInquiryPanelClose}
+        onSaved={handleInquiryPanelSaved}
+        onSuccess={handleInquirySuccess}
+        onError={handleInquiryError}
+      />
 
       {showAddForm && (
         <NoticeAddForm 

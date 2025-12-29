@@ -7,6 +7,7 @@
   background: rgba(0, 0, 0, 0.3);
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.3s ease, visibility 0.3s ease;
   z-index: 999;
 }
@@ -14,6 +15,7 @@
 .inquiry-panel-overlay--visible {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .inquiry-panel {
@@ -29,10 +31,12 @@
   transform: translateX(100%);
   transition: transform 0.3s ease;
   z-index: 1000;
+  pointer-events: none;
 }
 
 .inquiry-panel--open {
   transform: translateX(0);
+  pointer-events: auto;
 }
 
 .inquiry-panel__header {
