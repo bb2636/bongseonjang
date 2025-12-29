@@ -1,0 +1,12 @@
+.brand-products-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.brand-products-page__content {
+  flex: 1;
+  padding: 16px;
+  padding-bottom: 80px;
+}
