@@ -107,6 +107,7 @@ export function useCart() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
+      refreshCartContext();
     },
   });
 
@@ -146,6 +147,7 @@ export function useCart() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
+      refreshCartContext();
     },
   });
 
@@ -182,6 +184,7 @@ export function useCart() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
+      refreshCartContext();
     },
   });
 
