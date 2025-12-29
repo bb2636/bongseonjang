@@ -6,3 +6,11 @@ export interface Notice {
   title: string;
   createdAt: string;
 }
+
+export interface NoticeDetail {
+  id: string;
+  category: NoticeCategory;
+  title: string;
+  content: string;
+  createdAt: string;
+}

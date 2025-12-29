@@ -1,5 +1,5 @@
 import { apiClient } from '../../../services';
-import { Notice, NoticeCategory } from '../types/notice';
+import { Notice, NoticeCategory, NoticeDetail } from '../types/notice';
 
 interface NoticeListItemDto {
   id: number;
@@ -13,6 +13,18 @@ interface NoticeListItemDto {
 interface NoticeListResponse {
   notices: NoticeListItemDto[];
   total: number;
+}
+
+interface NoticeDetailDto {
+  id: number;
+  title: string;
+  content: string;
+  typeId: number;
+  typeCode: string;
+  typeName: string;
+  isVisible: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const DEFAULT_NOTICE_CATEGORY: NoticeCategory = '일반';
@@ -55,4 +67,16 @@ export async function fetchNotices(): Promise<Notice[]> {
   const response = await apiClient.get<NoticeListResponse>('/admin/notices');
 
   return mapNoticeListItems(response.notices);
+}
+
+export async function fetchNoticeById(id: string): Promise<NoticeDetail> {
+  const response = await apiClient.get<NoticeDetailDto>(`/admin/notices/${id}`);
+
+  return {
+    id: response.id.toString(),
+    category: resolveNoticeCategory(response.typeName || response.typeCode),
+    title: response.title,
+    content: response.content,
+    createdAt: formatNoticeDate(response.createdAt),
+  };
 }

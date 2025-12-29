@@ -1,5 +1,6 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
+import { Link } from 'react-router-dom';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import './BannerCarousel.css';
@@ -22,6 +23,10 @@ interface BannerCarouselProps {
 }
 
 const DEFAULT_AUTOPLAY_DELAY = 3000;
+
+function isInternalLink(url: string): boolean {
+  return url.startsWith('/');
+}
 
 export default function BannerCarousel({
   images = [],
@@ -47,6 +52,46 @@ export default function BannerCarousel({
   if (autoplay) swiperModules.push(Autoplay);
   if (pagination) swiperModules.push(Pagination);
 
+  const renderSlideContent = (image: BannerImage, index: number) => {
+    const imgElement = (
+      <img
+        src={image.imageUrl}
+        alt=""
+        className="banner-carousel__image"
+        loading={index === 0 ? "eager" : "lazy"}
+      />
+    );
+
+    if (image.linkUrl) {
+      if (isInternalLink(image.linkUrl)) {
+        return (
+          <Link to={image.linkUrl} className="banner-carousel__link">
+            {imgElement}
+          </Link>
+        );
+      }
+      return (
+        <a href={image.linkUrl} className="banner-carousel__link" target="_blank" rel="noopener noreferrer">
+          {imgElement}
+        </a>
+      );
+    }
+
+    if (onSlideClick) {
+      return (
+        <button
+          type="button"
+          className="banner-carousel__button"
+          onClick={() => onSlideClick(image)}
+        >
+          {imgElement}
+        </button>
+      );
+    }
+
+    return imgElement;
+  };
+
   return (
     <div className="banner-carousel" style={style}>
       <Swiper
@@ -58,25 +103,7 @@ export default function BannerCarousel({
       >
         {images.map((image, index) => (
           <SwiperSlide key={image.id}>
-            {image.linkUrl ? (
-              <a href={image.linkUrl} className="banner-carousel__link">
-                <img
-                  src={image.imageUrl}
-                  alt=""
-                  className="banner-carousel__image"
-                  loading={index === 0 ? "eager" : "lazy"}
-                />
-              </a>
-            ) : (
-              <img
-                src={image.imageUrl}
-                alt=""
-                className="banner-carousel__image"
-                loading={index === 0 ? "eager" : "lazy"}
-                onClick={() => onSlideClick?.(image)}
-                style={onSlideClick ? { cursor: 'pointer' } : undefined}
-              />
-            )}
+            {renderSlideContent(image, index)}
           </SwiperSlide>
         ))}
       </Swiper>

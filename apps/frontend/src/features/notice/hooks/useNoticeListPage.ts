@@ -31,7 +31,7 @@ export function useNoticeListPage() {
   };
 
   const handleNoticeClick = (noticeId: string) => {
-    console.log('Notice clicked:', noticeId);
+    navigate(`/notice/${noticeId}`);
   };
 
   return {
