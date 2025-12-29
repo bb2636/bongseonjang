@@ -67,7 +67,7 @@ export default function OrderCard({
                 <span className="order-card__item-name">{item.productName}</span>
                 <span className="order-card__item-quantity">수량 : {item.quantity}개</span>
               </div>
-              <span className="order-card__item-price">{formatPrice(item.price)}</span>
+              <span className="order-card__item-price">{formatPrice(item.price * item.quantity)}</span>
             </div>
           </div>
         ))}
