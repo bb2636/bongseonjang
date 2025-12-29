@@ -4,17 +4,20 @@ import './BottomActionBar.css';
 interface BottomActionBarProps {
   productId: string;
   isWishlisted?: boolean;
+  isSoldOut?: boolean;
   onToggleWishlist: () => void;
 }
 
 export default function BottomActionBar({
   productId,
   isWishlisted = false,
+  isSoldOut = false,
   onToggleWishlist,
 }: BottomActionBarProps) {
   const { openQuickCart } = useQuickCart();
 
   const handleBuyClick = () => {
+    if (isSoldOut) return;
     openQuickCart(productId);
   };
 
@@ -46,10 +49,11 @@ export default function BottomActionBar({
         </button>
 
         <button
-          className="bottom-action-bar__buy-btn"
+          className={`bottom-action-bar__buy-btn ${isSoldOut ? 'bottom-action-bar__buy-btn--sold-out' : ''}`}
           onClick={handleBuyClick}
+          disabled={isSoldOut}
         >
-          구매하기
+          {isSoldOut ? '품절' : '구매하기'}
         </button>
       </div>
 

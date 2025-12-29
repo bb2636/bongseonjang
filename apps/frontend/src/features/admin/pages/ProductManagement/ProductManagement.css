@@ -325,6 +325,16 @@
   border-color: rgba(35, 157, 255, 0.3);
 }
 
+.product-table__action-button--delete {
+  color: #FF3B30;
+  border-color: rgba(255, 59, 48, 0.2);
+}
+
+.product-table__action-button--delete:hover {
+  background: rgba(255, 59, 48, 0.05);
+  border-color: rgba(255, 59, 48, 0.3);
+}
+
 .product-table__empty {
   text-align: center;
   padding: 80px 20px;

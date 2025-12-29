@@ -144,6 +144,16 @@ export function useProductDetailPage(productId: string) {
     return unitPrice * quantity;
   }, [product, selectedOption, quantity]);
 
+  const isSoldOut = useMemo(() => {
+    if (!product) return false;
+    
+    if (product.options && product.options.length > 0) {
+      return product.options.every(option => option.stockQty === 0);
+    }
+    
+    return (product.stockQuantity ?? 0) === 0;
+  }, [product]);
+
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
   };
@@ -190,6 +200,7 @@ export function useProductDetailPage(productId: string) {
       relatedProducts,
       relatedProductsLoading,
       isWishlisted,
+      isSoldOut,
     },
     actions: {
       handleOptionSelect,

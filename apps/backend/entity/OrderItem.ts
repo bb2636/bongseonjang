@@ -22,6 +22,9 @@ export class OrderItem {
   @Column({ type: 'varchar', length: 200, nullable: true, name: 'option_name' })
   optionName!: string | null;
 
+  @Column({ type: 'bigint', nullable: true })
+  productOptionId!: number | null;
+
   @Column({ type: 'int' })
   unitPrice!: number;
 

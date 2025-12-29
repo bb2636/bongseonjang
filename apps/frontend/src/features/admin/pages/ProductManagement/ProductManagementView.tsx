@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { AdminProduct } from './useProductManagement';
+import { ConfirmModal } from '../../../../components/ConfirmModal';
 import './ProductManagement.css';
 
 interface ProductManagementViewProps {
@@ -10,6 +12,7 @@ interface ProductManagementViewProps {
   onSearchChange: (query: string) => void;
   onAddProduct: () => void;
   onViewProduct: (product: AdminProduct) => void;
+  onDeleteProduct: (product: AdminProduct) => void;
   formatPrice: (price: number) => string;
   getExposureLabel: (product: AdminProduct) => string;
 }
@@ -31,9 +34,27 @@ export function ProductManagementView({
   onSearchChange,
   onAddProduct,
   onViewProduct,
+  onDeleteProduct,
   formatPrice,
   getExposureLabel,
 }: ProductManagementViewProps) {
+  const [deleteConfirmProduct, setDeleteConfirmProduct] = useState<AdminProduct | null>(null);
+
+  const handleDeleteClick = (product: AdminProduct) => {
+    setDeleteConfirmProduct(product);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteConfirmProduct) {
+      onDeleteProduct(deleteConfirmProduct);
+      setDeleteConfirmProduct(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmProduct(null);
+  };
+
   return (
     <div className="product-management">
       <div className="product-management__toolbar">
@@ -135,6 +156,12 @@ export function ProductManagementView({
                     >
                       수정
                     </button>
+                    <button
+                      className="product-table__action-button product-table__action-button--delete"
+                      onClick={() => handleDeleteClick(product)}
+                    >
+                      삭제
+                    </button>
                   </div>
                 </div>
               ))
@@ -142,6 +169,16 @@ export function ProductManagementView({
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={deleteConfirmProduct !== null}
+        title={`'${deleteConfirmProduct?.name}' 상품을 삭제하시겠습니까?`}
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        cancelText="취소"
+        confirmText="삭제"
+        confirmColor="danger"
+      />
     </div>
   );
 }

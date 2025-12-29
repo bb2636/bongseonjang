@@ -26,6 +26,7 @@ interface ProductDetailViewProps {
   relatedProducts: RelatedProduct[];
   relatedProductsLoading: boolean;
   isWishlisted: boolean;
+  isSoldOut: boolean;
   onShare: () => void;
   onTabChange: (tab: TabType) => void;
   onAddToCart: (productId: string) => void;
@@ -44,6 +45,7 @@ export default function ProductDetailView({
   relatedProducts,
   relatedProductsLoading,
   isWishlisted,
+  isSoldOut,
   onShare,
   onTabChange,
   onAddToCart,
@@ -146,6 +148,7 @@ export default function ProductDetailView({
       <BottomActionBar
         productId={product.id}
         isWishlisted={isWishlisted}
+        isSoldOut={isSoldOut}
         onToggleWishlist={onToggleWishlist}
       />
     </div>

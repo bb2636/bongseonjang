@@ -9,6 +9,8 @@ export interface CartItemDto {
   unitPrice: number;
   compareAtPrice: number | null;
   totalPrice: number;
+  stockQuantity: number;
+  isAvailable: boolean;
 }
 
 export interface CartDto {

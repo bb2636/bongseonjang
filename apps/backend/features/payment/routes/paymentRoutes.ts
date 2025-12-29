@@ -8,6 +8,7 @@ import { Cart } from '../../../entity/Cart';
 import { CartItem } from '../../../entity/CartItem';
 import { ProductOption } from '../../../entity/ProductOption';
 import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
+import { Product } from '../../../entity/Product';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 
 function hashPhone(phone: string): string {
@@ -163,6 +164,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
         productId: item.productId,
         productName: item.product?.name ?? '',
         optionName: optionDisplay,
+        productOptionId: item.productOptionId || null,
         quantity: item.quantity,
         unitPrice,
         totalPrice: unitPrice * item.quantity,
@@ -271,6 +273,130 @@ async function handlePaymentCallback(req: Request, res: Response) {
     if (result.resultCode === '0000') {
       console.log('[NicePay Callback] Payment approved successfully');
       
+      const orderItemRepository = AppDataSource.getRepository(OrderItem);
+      const productRepository = AppDataSource.getRepository(Product);
+      
+      const orderItems = await orderItemRepository.find({
+        where: { orderId },
+      });
+      
+      const stockCheckResult = await AppDataSource.transaction(async (transactionalEntityManager: typeof AppDataSource.manager) => {
+        const insufficientStockProducts: string[] = [];
+        const productUpdates: Array<{ productId: string; quantityToDeduct: number }> = [];
+        const optionUpdates: Array<{ optionId: number; quantityToDeduct: number }> = [];
+        
+        const productQuantityMap = new Map<string, number>();
+        const optionQuantityMap = new Map<number, { quantity: number; productName: string }>();
+        
+        for (const item of orderItems) {
+          if (item.productId) {
+            const currentQty = productQuantityMap.get(item.productId) || 0;
+            productQuantityMap.set(item.productId, currentQty + item.quantity);
+          }
+          if (item.productOptionId) {
+            const existing = optionQuantityMap.get(item.productOptionId);
+            if (existing) {
+              existing.quantity += item.quantity;
+            } else {
+              optionQuantityMap.set(item.productOptionId, { 
+                quantity: item.quantity, 
+                productName: item.productName 
+              });
+            }
+          }
+        }
+        
+        for (const [productId, totalQuantity] of productQuantityMap) {
+          const product = await transactionalEntityManager
+            .getRepository(Product)
+            .createQueryBuilder('product')
+            .setLock('pessimistic_write')
+            .where('product.id = :id', { id: productId })
+            .getOne();
+          
+          if (!product) {
+            insufficientStockProducts.push(`상품을 찾을 수 없음 (ID: ${productId})`);
+            continue;
+          }
+          
+          if (product.stockQuantity < totalQuantity) {
+            insufficientStockProducts.push(`${product.name} (재고: ${product.stockQuantity}, 필요: ${totalQuantity})`);
+          } else {
+            productUpdates.push({ productId, quantityToDeduct: totalQuantity });
+          }
+        }
+        
+        for (const [optionId, { quantity: totalQuantity, productName }] of optionQuantityMap) {
+          const option = await transactionalEntityManager
+            .getRepository(ProductOption)
+            .createQueryBuilder('option')
+            .setLock('pessimistic_write')
+            .where('option.id = :optionId', { optionId })
+            .getOne();
+          
+          if (!option) {
+            insufficientStockProducts.push(`옵션을 찾을 수 없음 (ID: ${optionId})`);
+            continue;
+          }
+          
+          if (option.stockQuantity < totalQuantity) {
+            insufficientStockProducts.push(`${productName} - ${option.optionName}: ${option.optionValue} (재고: ${option.stockQuantity}, 필요: ${totalQuantity})`);
+          } else {
+            optionUpdates.push({ optionId, quantityToDeduct: totalQuantity });
+          }
+        }
+        
+        if (insufficientStockProducts.length > 0) {
+          return { success: false, insufficientProducts: insufficientStockProducts };
+        }
+        
+        for (const update of productUpdates) {
+          await transactionalEntityManager
+            .getRepository(Product)
+            .decrement({ id: update.productId }, 'stockQuantity', update.quantityToDeduct);
+        }
+        
+        for (const update of optionUpdates) {
+          await transactionalEntityManager
+            .getRepository(ProductOption)
+            .decrement({ id: update.optionId }, 'stockQuantity', update.quantityToDeduct);
+        }
+        
+        return { success: true, insufficientProducts: [] };
+      });
+      
+      if (!stockCheckResult.success) {
+        console.log('[NicePay Callback] Stock insufficient, cancelling payment:', stockCheckResult.insufficientProducts);
+        
+        const cancelResponse = await fetch(`https://sandbox-api.nicepay.co.kr/v1/payments/${tid}/cancel`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${credentials}`,
+          },
+          body: JSON.stringify({
+            reason: '재고 부족으로 인한 주문 취소',
+            orderId: orderId,
+          }),
+        });
+        
+        const cancelResult = await cancelResponse.json() as { resultCode: string; resultMsg: string };
+        console.log('[NicePay Callback] Cancel result:', cancelResult);
+        
+        order.status = 'stock_insufficient';
+        await orderRepository.save(order);
+        
+        if (payment) {
+          payment.status = 'cancelled';
+          payment.pgTransactionId = tid;
+          payment.failReason = `재고 부족: ${stockCheckResult.insufficientProducts.join(', ')}`;
+          await paymentRepository.save(payment);
+        }
+        
+        const errorMessage = `재고 부족: ${stockCheckResult.insufficientProducts.join(', ')}`;
+        return res.redirect(`${frontendUrl}/payment/fail?orderNumber=${order.orderNumber}&message=${encodeURIComponent(errorMessage)}`);
+      }
+      
       order.status = 'paid';
       order.paidAt = new Date();
       await orderRepository.save(order);
@@ -370,6 +496,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       productId: string;
       productName: string;
       optionName: string | null;
+      productOptionId: number | null;
       quantity: number;
       unitPrice: number;
       totalPrice: number;
@@ -395,6 +522,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
         productId,
         productName: product.name,
         optionName: optionDisplay,
+        productOptionId: item.productOptionId || null,
         quantity: item.quantity,
         unitPrice,
         totalPrice: itemTotal,

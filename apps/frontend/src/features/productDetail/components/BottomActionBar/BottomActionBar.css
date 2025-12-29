@@ -57,6 +57,15 @@
   background: #2a8bc5;
 }
 
+.bottom-action-bar__buy-btn--sold-out {
+  background: #9E9E9E;
+  cursor: not-allowed;
+}
+
+.bottom-action-bar__buy-btn--sold-out:active {
+  background: #9E9E9E;
+}
+
 .bottom-action-bar__home-indicator {
   width: 100%;
   height: 34px;

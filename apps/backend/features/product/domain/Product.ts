@@ -77,4 +77,5 @@ export interface ProductDetailDto {
   images: ProductImageDto[];
   reviewCount: number;
   averageRating: number;
+  stockQuantity: number;
 }

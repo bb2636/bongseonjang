@@ -21,6 +21,9 @@ export class ProductOption {
   @Column({ type: 'int', default: 0, name: 'sort_order' })
   sortOrder!: number;
 
+  @Column({ type: 'int', default: 0, name: 'stock_quantity' })
+  stockQuantity!: number;
+
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date;
 

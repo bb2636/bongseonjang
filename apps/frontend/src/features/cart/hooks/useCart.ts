@@ -203,13 +203,17 @@ export function useCart() {
   const toggleSelectAll = useCallback(() => {
     if (!cart) return;
     
-    const allItemIds = cart.items.map(item => item.id);
-    const allSelected = allItemIds.every(id => selectedItems.has(id));
+    const availableItems = cart.items.filter(item => {
+      const isSoldOut = item.isAvailable === false || (item.stockQuantity !== undefined && item.stockQuantity === 0);
+      return !isSoldOut;
+    });
+    const availableItemIds = availableItems.map(item => item.id);
+    const allSelected = availableItemIds.length > 0 && availableItemIds.every(id => selectedItems.has(id));
     
     if (allSelected) {
       setSelectedItems(new Set());
     } else {
-      setSelectedItems(new Set(allItemIds));
+      setSelectedItems(new Set(availableItemIds));
     }
   }, [cart, selectedItems]);
 
@@ -270,7 +274,12 @@ export function useCart() {
 
   const isAllSelected = useMemo(() => {
     if (!cart || cart.items.length === 0) return false;
-    return cart.items.every(item => selectedItems.has(item.id));
+    const availableItems = cart.items.filter(item => {
+      const isSoldOut = item.isAvailable === false || (item.stockQuantity !== undefined && item.stockQuantity === 0);
+      return !isSoldOut;
+    });
+    if (availableItems.length === 0) return false;
+    return availableItems.every(item => selectedItems.has(item.id));
   }, [cart, selectedItems]);
 
   const selectedSummary = useMemo(() => {
@@ -278,7 +287,11 @@ export function useCart() {
       return { subtotal: 0, itemCount: 0 };
     }
 
-    const selectedCartItems = cart.items.filter(item => selectedItems.has(item.id));
+    const selectedCartItems = cart.items.filter(item => {
+      if (!selectedItems.has(item.id)) return false;
+      const isSoldOut = item.isAvailable === false || (item.stockQuantity !== undefined && item.stockQuantity === 0);
+      return !isSoldOut;
+    });
     const subtotal = selectedCartItems.reduce((sum, item) => sum + item.totalPrice, 0);
     const itemCount = selectedCartItems.reduce((sum, item) => sum + item.quantity, 0);
 

@@ -33,6 +33,7 @@ export default function ProductDetailPage() {
     relatedProducts,
     relatedProductsLoading,
     isWishlisted,
+    isSoldOut,
   } = state;
   const {
     handleShare,
@@ -140,6 +141,7 @@ export default function ProductDetailPage() {
         relatedProducts={relatedProducts}
         relatedProductsLoading={relatedProductsLoading}
         isWishlisted={isWishlisted}
+        isSoldOut={isSoldOut}
         onShare={handleShare}
         onTabChange={handleTabChange}
         onAddToCart={handleAddToCart}

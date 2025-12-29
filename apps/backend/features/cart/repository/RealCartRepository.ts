@@ -45,6 +45,8 @@ export class RealCartRepository implements CartRepository {
       const additionalPrice = item.productOption?.price ?? 0;
       const unitPrice = productBasePrice + additionalPrice;
       const totalPrice = unitPrice * item.quantity;
+      const stockQuantity = item.product?.stockQuantity ?? 0;
+      const isAvailable = stockQuantity > 0;
 
       return {
         id: item.id,
@@ -57,6 +59,8 @@ export class RealCartRepository implements CartRepository {
         unitPrice,
         compareAtPrice: null,
         totalPrice,
+        stockQuantity,
+        isAvailable,
       };
     });
 
@@ -114,6 +118,8 @@ export class RealCartRepository implements CartRepository {
     const productBasePrice = existingItem.product?.basePrice ?? 0;
     const additionalPrice = existingItem.productOption?.price ?? 0;
     const unitPrice = productBasePrice + additionalPrice;
+    const stockQuantity = existingItem.product?.stockQuantity ?? 0;
+    const isAvailable = stockQuantity > 0;
 
     return {
       id: existingItem.id,
@@ -126,6 +132,8 @@ export class RealCartRepository implements CartRepository {
       unitPrice,
       compareAtPrice: null,
       totalPrice: unitPrice * existingItem.quantity,
+      stockQuantity,
+      isAvailable,
     };
   }
 
@@ -154,6 +162,8 @@ export class RealCartRepository implements CartRepository {
     const productBasePrice = item.product?.basePrice ?? 0;
     const additionalPrice = item.productOption?.price ?? 0;
     const unitPrice = productBasePrice + additionalPrice;
+    const stockQuantity = item.product?.stockQuantity ?? 0;
+    const isAvailable = stockQuantity > 0;
 
     return {
       id: item.id,
@@ -166,6 +176,8 @@ export class RealCartRepository implements CartRepository {
       unitPrice,
       compareAtPrice: null,
       totalPrice: unitPrice * item.quantity,
+      stockQuantity,
+      isAvailable,
     };
   }
 

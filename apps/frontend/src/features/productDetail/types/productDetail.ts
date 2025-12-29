@@ -69,4 +69,5 @@ export interface ProductDetail {
   images: ProductImage[];
   reviewCount: number;
   averageRating: number;
+  stockQuantity?: number;
 }

@@ -544,4 +544,30 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
+router.delete('/:productId', async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+
+    const productRepository = AppDataSource.getRepository(Product);
+    const optionRepository = AppDataSource.getRepository(ProductOption);
+    const imageRepository = AppDataSource.getRepository(ProductImage);
+    const productExposureCategoryRepository = AppDataSource.getRepository(ProductExposureCategory);
+
+    const product = await productRepository.findOne({ where: { id: productId } });
+    if (!product) {
+      return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    }
+
+    await productExposureCategoryRepository.delete({ productId });
+    await optionRepository.delete({ productId });
+    await imageRepository.delete({ productId });
+    await productRepository.delete({ id: productId });
+
+    return res.json({ success: true, message: '상품이 삭제되었습니다' });
+  } catch (error) {
+    console.error('Failed to delete product:', error);
+    return res.status(500).json({ error: '상품 삭제에 실패했습니다' });
+  }
+});
+
 export { router as adminProductRoutes };

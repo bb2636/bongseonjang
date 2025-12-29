@@ -18,6 +18,7 @@ export function CartItem({
   onRemove,
 }: CartItemProps) {
   const navigate = useNavigate();
+  const isSoldOut = item.isAvailable === false || (item.stockQuantity !== undefined && item.stockQuantity === 0);
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('ko-KR') + '원';
@@ -34,37 +35,50 @@ export function CartItem({
   };
 
   const handleDecrease = () => {
+    if (isSoldOut) return;
     if (item.quantity > 1) {
       onQuantityChange(item.id, item.quantity - 1);
     }
   };
 
   const handleIncrease = () => {
+    if (isSoldOut) return;
     onQuantityChange(item.id, item.quantity + 1);
   };
 
+  const handleToggleSelect = () => {
+    if (isSoldOut) return;
+    onToggleSelect(item.id);
+  };
+
   return (
-    <div className="cart-item">
+    <div className={`cart-item ${isSoldOut ? 'cart-item--sold-out' : ''}`}>
       <div className="cart-item__main">
         <button
-          className={`cart-item__checkbox ${isSelected ? 'cart-item__checkbox--checked' : ''}`}
-          onClick={() => onToggleSelect(item.id)}
+          className={`cart-item__checkbox ${isSelected && !isSoldOut ? 'cart-item__checkbox--checked' : ''} ${isSoldOut ? 'cart-item__checkbox--disabled' : ''}`}
+          onClick={handleToggleSelect}
+          disabled={isSoldOut}
         >
-          {isSelected && (
+          {isSelected && !isSoldOut && (
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <rect width="16" height="16" rx="2" fill="#3B9BD5"/>
               <path d="M4 8L7 11L12 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           )}
-          {!isSelected && (
+          {(!isSelected || isSoldOut) && (
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" stroke="rgba(12, 12, 12, 0.5)"/>
+              <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" stroke="rgba(12, 12, 12, 0.3)"/>
             </svg>
           )}
         </button>
         <div className="cart-item__content">
           <div className="cart-item__info">
-            <p className="cart-item__name">{item.productName}</p>
+            <div className="cart-item__name-row">
+              <p className="cart-item__name">{item.productName}</p>
+              {isSoldOut && (
+                <span className="cart-item__sold-out-badge">품절</span>
+              )}
+            </div>
             {getOptionText() && (
               <p className="cart-item__option">{getOptionText()}</p>
             )}
@@ -78,21 +92,26 @@ export function CartItem({
               <img
                 src={item.productImageUrl}
                 alt={item.productName}
-                className="cart-item__image"
+                className={`cart-item__image ${isSoldOut ? 'cart-item__image--sold-out' : ''}`}
               />
+              {isSoldOut && (
+                <div className="cart-item__image-overlay">
+                  <span>품절</span>
+                </div>
+              )}
             </button>
             <div className="cart-item__price-quantity">
               <div className="cart-item__price-row">
-                <span className="cart-item__price">{formatPrice(item.unitPrice)}</span>
+                <span className={`cart-item__price ${isSoldOut ? 'cart-item__price--sold-out' : ''}`}>{formatPrice(item.unitPrice)}</span>
                 {item.compareAtPrice && item.compareAtPrice > item.unitPrice && (
                   <span className="cart-item__compare-price">{formatPrice(item.compareAtPrice)}</span>
                 )}
               </div>
-              <div className="cart-item__quantity-control">
+              <div className={`cart-item__quantity-control ${isSoldOut ? 'cart-item__quantity-control--disabled' : ''}`}>
                 <button
                   className="cart-item__quantity-button"
                   onClick={handleDecrease}
-                  disabled={item.quantity <= 1}
+                  disabled={item.quantity <= 1 || isSoldOut}
                 >
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                     <path d="M4 9H14" stroke="rgba(12, 12, 12, 0.7)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -102,6 +121,7 @@ export function CartItem({
                 <button
                   className="cart-item__quantity-button"
                   onClick={handleIncrease}
+                  disabled={isSoldOut}
                 >
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                     <path d="M9 4V14M4 9H14" stroke="rgba(12, 12, 12, 0.7)" strokeWidth="1.5" strokeLinecap="round"/>

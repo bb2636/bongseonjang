@@ -114,6 +114,15 @@ router.post('/items', authMiddleware, async (req: Request, res: Response) => {
       return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
     }
 
+    if (product.stockQuantity === 0) {
+      return res.status(400).json({ error: '품절된 상품입니다' });
+    }
+
+    const totalRequestedQuantity = items.reduce((sum: number, item: { quantity?: number }) => sum + (item.quantity || 1), 0);
+    if (product.stockQuantity < totalRequestedQuantity) {
+      return res.status(400).json({ error: `재고가 부족합니다 (남은 수량: ${product.stockQuantity}개)` });
+    }
+
     for (const item of items) {
       if (item.productOptionId) {
         const option = await productOptionRepository.findOne({ 
@@ -121,6 +130,13 @@ router.post('/items', authMiddleware, async (req: Request, res: Response) => {
         });
         if (!option) {
           return res.status(400).json({ error: '유효하지 않은 옵션입니다' });
+        }
+        if (option.stockQuantity === 0) {
+          return res.status(400).json({ error: '해당 옵션은 품절되었습니다' });
+        }
+        const requestedQty = item.quantity || 1;
+        if (option.stockQuantity < requestedQty) {
+          return res.status(400).json({ error: `재고가 부족합니다 (남은 수량: ${option.stockQuantity}개)` });
         }
       }
     }
@@ -211,6 +227,8 @@ router.patch('/items/:itemId', authMiddleware, async (req: Request, res: Respons
       return res.status(400).json({ error: '유효한 수량을 입력해주세요' });
     }
 
+    const { Product } = await import('../../../entity/Product');
+    const productRepository = AppDataSource.getRepository(Product);
     const cartRepository = AppDataSource.getRepository(Cart);
     const cartItemRepository = AppDataSource.getRepository(CartItem);
 
@@ -233,6 +251,24 @@ router.patch('/items/:itemId', authMiddleware, async (req: Request, res: Respons
     if (quantity === 0) {
       await cartItemRepository.remove(item);
       return res.status(204).send();
+    }
+
+    const product = await productRepository.findOne({ where: { id: item.productId } });
+    if (product && quantity > product.stockQuantity) {
+      return res.status(400).json({ error: `재고가 부족합니다 (남은 수량: ${product.stockQuantity}개)` });
+    }
+
+    if (item.productOptionId) {
+      const productOptionRepository = AppDataSource.getRepository(ProductOption);
+      const option = await productOptionRepository.findOne({ where: { id: item.productOptionId } });
+      if (option) {
+        if (option.stockQuantity === 0) {
+          return res.status(400).json({ error: '해당 옵션은 품절되었습니다' });
+        }
+        if (quantity > option.stockQuantity) {
+          return res.status(400).json({ error: `재고가 부족합니다 (남은 수량: ${option.stockQuantity}개)` });
+        }
+      }
     }
 
     item.quantity = quantity;
@@ -346,6 +382,8 @@ router.post('/merge', authMiddleware, async (req: Request, res: Response) => {
 
       const product = await productRepository.findOne({ where: { id: item.productId } });
       if (!product) continue;
+
+      if (product.stockQuantity === 0) continue;
 
       if (item.optionId) {
         const option = await productOptionRepository.findOne({

@@ -103,6 +103,26 @@ export function useProductManagement() {
     return `${product.exposureCategories[0]} 외 ${product.exposureCategories.length - 1}`;
   };
 
+  const deleteProduct = async (productId: string): Promise<boolean> => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/admin/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('상품 삭제에 실패했습니다');
+      }
+      await fetchProducts();
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다');
+      return false;
+    }
+  };
+
   return {
     products,
     totalCount,
@@ -118,5 +138,6 @@ export function useProductManagement() {
     onViewProduct: handleViewProduct,
     formatPrice,
     getExposureLabel,
+    deleteProduct,
   };
 }

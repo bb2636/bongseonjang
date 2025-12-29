@@ -19,7 +19,12 @@ export function ProductManagementPage() {
     onViewProduct,
     formatPrice,
     getExposureLabel,
+    deleteProduct,
   } = useProductManagement();
+
+  const handleDeleteProduct = async (product: { id: string }) => {
+    await deleteProduct(product.id);
+  };
 
   return (
     <AdminLayout
@@ -35,6 +40,7 @@ export function ProductManagementPage() {
         onSearchChange={onSearchChange}
         onAddProduct={onAddProduct}
         onViewProduct={onViewProduct}
+        onDeleteProduct={handleDeleteProduct}
         formatPrice={formatPrice}
         getExposureLabel={getExposureLabel}
       />

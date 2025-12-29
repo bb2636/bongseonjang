@@ -189,6 +189,7 @@ export class ProductService {
       images,
       reviewCount: reviewStats.reviewCount,
       averageRating: reviewStats.averageRating,
+      stockQuantity: product.stockQuantity ?? 0,
     };
   }
 }
