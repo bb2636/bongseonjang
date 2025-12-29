@@ -123,7 +123,7 @@ export default function BottomNav({ onHomeClick }: BottomNavProps) {
     }
     const navItem = NAV_ITEMS.find(n => n.id === item);
     if (navItem) {
-      if (activeItem === item) {
+      if (activeItem === item && location.pathname === navItem.path) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         navigate(navItem.path);
