@@ -7,6 +7,7 @@ import MenuList from '../components/MenuList/MenuList';
 import ProfileSkeleton from '../components/ProfileSkeleton';
 import BottomNav from '../../../components/BottomNav/BottomNav';
 import { ConfirmModal } from '../../../components/ConfirmModal';
+import { ChatButton } from '../../../components';
 import './ProfileView.css';
 
 interface ProfileViewProps {
@@ -104,6 +105,7 @@ export default function ProfileView({ state, actions }: ProfileViewProps) {
         />
       </main>
 
+      <ChatButton />
       <BottomNav />
 
       <ConfirmModal
