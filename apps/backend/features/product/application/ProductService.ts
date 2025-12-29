@@ -137,6 +137,8 @@ export class ProductService {
       reviewCount: reviewStats?.reviewCount ?? 0,
       averageRating: reviewStats?.averageRating ?? 0,
       mainOptions: mainOptions.length > 0 ? mainOptions : undefined,
+      categoryId: product.productCategoryId,
+      categoryName: product.productCategory?.name,
     };
   }
 

@@ -11,6 +11,8 @@ export interface ProductDto {
   reviewCount?: number;
   averageRating?: number;
   mainOptions?: MainOptionDto[];
+  categoryId?: string;
+  categoryName?: string;
 }
 
 export interface TimeDealProductDto extends ProductDto {
