@@ -384,7 +384,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
         if (option) {
           optionDisplay = `${option.optionName}: ${option.optionValue}`;
           if (option.price !== null && option.price > 0) {
-            unitPrice = option.price;
+            unitPrice = product.basePrice + option.price;
           }
         }
       }
