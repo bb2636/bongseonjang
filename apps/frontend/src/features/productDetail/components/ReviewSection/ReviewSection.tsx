@@ -315,8 +315,8 @@ export default function ReviewSection({
   const photoUrls = extractPhotoUrls(reviews);
 
   const filteredReviews = ratingFilter === 'all' 
-    ? reviews 
-    : reviews.filter((review) => Math.round(review.rating) === ratingFilter);
+    ? [...reviews].sort((a, b) => b.rating - a.rating)
+    : reviews.filter((review) => Math.round(review.rating) === ratingFilter).sort((a, b) => b.rating - a.rating);
 
   return (
     <div className="review-section">

@@ -91,7 +91,7 @@ export default function WriteInquiryPage() {
   const [selectedType, setSelectedType] = useState<CreateProductInquiryPayload['inquiryType']>('product');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(true);
   const [isTypeOpen, setIsTypeOpen] = useState(false);
 
   const {
