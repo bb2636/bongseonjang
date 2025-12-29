@@ -197,17 +197,110 @@ export class AdminCouponService {
   }
 
   async updateCoupon(id: number, data: Partial<CreateCouponDto>): Promise<AdminCouponDto | null> {
-    const coupon = await this.couponRepo.findOne({ where: { id } });
-    if (!coupon) return null;
+    return await AppDataSource.transaction(async (manager) => {
+      const couponRepo = manager.getRepository(Coupon);
+      const fixedDiscountRepo = manager.getRepository(CouponFixedDiscount);
+      const rateDiscountRepo = manager.getRepository(CouponRateDiscount);
+      const shippingDiscountRepo = manager.getRepository(CouponShippingDiscount);
+      const validityFixedRangeRepo = manager.getRepository(CouponValidityFixedRange);
+      const validityAfterIssueDaysRepo = manager.getRepository(CouponValidityAfterIssueDays);
+      const applyAllProductsRepo = manager.getRepository(CouponApplyAllProducts);
+      const applyCategoryRepo = manager.getRepository(CouponApplyCategory);
+      const issueAllUsersRepo = manager.getRepository(CouponIssueAllUsers);
+      const issueNewUsersRepo = manager.getRepository(CouponIssueNewUsers);
+      const issueGradeRepo = manager.getRepository(CouponIssueGrade);
 
-    if (data.name !== undefined) coupon.name = data.name;
-    if (data.description !== undefined) coupon.description = data.description || null;
-    if (data.minOrderAmount !== undefined) coupon.minOrderAmount = data.minOrderAmount;
-    if (data.isActive !== undefined) coupon.isActive = data.isActive;
+      const coupon = await couponRepo.findOne({ where: { id } });
+      if (!coupon) return null;
 
-    await this.couponRepo.save(coupon);
+      if (data.name !== undefined) coupon.name = data.name;
+      if (data.description !== undefined) coupon.description = data.description || null;
+      if (data.minOrderAmount !== undefined) coupon.minOrderAmount = data.minOrderAmount;
+      if (data.isActive !== undefined) coupon.isActive = data.isActive;
 
-    return this.toCouponDto(coupon);
+      await couponRepo.save(coupon);
+
+      if (data.discountType !== undefined) {
+        await fixedDiscountRepo.delete({ couponId: id });
+        await rateDiscountRepo.delete({ couponId: id });
+        await shippingDiscountRepo.delete({ couponId: id });
+
+        if (data.discountType === 'fixed') {
+          await fixedDiscountRepo.save({
+            couponId: id,
+            discountAmount: data.discountValue || 0,
+          });
+        } else if (data.discountType === 'rate') {
+          await rateDiscountRepo.save({
+            couponId: id,
+            discountRate: data.discountValue || 0,
+            maxDiscountAmount: data.maxDiscountAmount || null,
+          });
+        } else if (data.discountType === 'shipping') {
+          await shippingDiscountRepo.save({
+            couponId: id,
+            isFreeShipping: (data.discountValue || 0) === 0,
+            shippingDiscountAmount: (data.discountValue || 0) > 0 ? data.discountValue : null,
+          });
+        }
+      }
+
+      const shouldUpdateValidity = data.validityType !== undefined || 
+        data.validFrom !== undefined || 
+        data.validTo !== undefined || 
+        data.validDays !== undefined;
+
+      if (shouldUpdateValidity) {
+        await validityFixedRangeRepo.delete({ couponId: id });
+        await validityAfterIssueDaysRepo.delete({ couponId: id });
+
+        const validityType = data.validityType || 'fixed';
+
+        if (validityType === 'fixed' && data.validFrom && data.validTo) {
+          await validityFixedRangeRepo.save({
+            couponId: id,
+            startAt: data.validFrom,
+            endAt: data.validTo,
+          });
+        } else if (validityType === 'afterIssue' && data.validDays) {
+          await validityAfterIssueDaysRepo.save({
+            couponId: id,
+            validDays: data.validDays,
+          });
+        }
+      }
+
+      if (data.targetType !== undefined) {
+        await applyAllProductsRepo.delete({ couponId: id });
+        await applyCategoryRepo.delete({ couponId: id });
+
+        if (data.targetType === 'all') {
+          await applyAllProductsRepo.save({ couponId: id });
+        } else if (data.targetType === 'category' && data.targetCategories) {
+          for (const categoryId of data.targetCategories) {
+            await applyCategoryRepo.save({ couponId: id, categoryId });
+          }
+        }
+      }
+
+      if (data.issueType !== undefined) {
+        await issueAllUsersRepo.delete({ couponId: id });
+        await issueNewUsersRepo.delete({ couponId: id });
+        await issueGradeRepo.delete({ couponId: id });
+
+        if (data.issueType === 'all') {
+          await issueAllUsersRepo.save({ couponId: id });
+        } else if (data.issueType === 'new') {
+          await issueNewUsersRepo.save({ couponId: id });
+        } else if (data.issueType === 'grade' && data.issueGrades) {
+          for (const gradeId of data.issueGrades) {
+            await issueGradeRepo.save({ couponId: id, gradeId });
+          }
+        }
+      }
+
+      return this.toCouponDto(coupon);
+    });
   }
 
   async deleteCoupon(id: number): Promise<boolean> {
