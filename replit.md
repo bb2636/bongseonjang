@@ -138,6 +138,7 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 - **상품 상세**: "상품정보", "후기 N", "문의" 탭 네비게이션. ReviewService 주입을 통한 리뷰 통계 제공.
 - **2단계 상품 옵션**: MainOption(기본 가격)과 SubOption(추가 금액)으로 구성. lowestPrice 자동 계산. OptionBottomSheet로 선택. 레거시 상품 지원.
 - **카테고리 페이지**: 바텀 네비게이션에서 접근. CategoryAppBar, CategoryList를 포함하며, 카테고리 클릭 시 해당 탭으로 이동.
+- **브랜드 상품 페이지**: `/brand/:brandId` 라우트. 4개 브랜드(바담은, 오바다, 포시즌, 봉쿡) 탭 네비게이션. 브랜드 ID를 exposure category 태그명으로 매핑(badameun → "바담은 제품" 등).
 - **프로필/마이페이지**: ProfileAppBar, ProfileHeader, SummaryCard, RecentOrders, MenuList로 구성.
 - **소셜 로그인**: 카카오, 네이버 지원. `users` (기본), `user_social_accounts` (연동) 듀얼 테이블 구조. 이메일 필수 정책.
 - **장바구니/주문**: `carts`, `cart_items`, `orders`, `order_items`, `order_status_history` 테이블로 관리. 주문 시 상품 가격/옵션 스냅샷 저장.
