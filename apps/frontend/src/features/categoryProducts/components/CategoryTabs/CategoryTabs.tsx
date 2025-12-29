@@ -34,7 +34,7 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
         const categories = await apiClient.get<ApiCategory[]>('/products/categories');
         const mapped = categories.map((cat) => ({
           id: cat.id,
-          slug: `category-${cat.id}`,
+          slug: cat.id,
           name: cat.name,
         }));
         setDynamicCategories(mapped);
@@ -46,9 +46,10 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   }, []);
 
   const allTabs = [...STATIC_TABS, ...dynamicCategories];
+  const staticSlugs = ['all', 'best', 'new'];
 
   const handleTabClick = (tab: CategoryTab) => {
-    if (tab.slug.startsWith('category-')) {
+    if (!staticSlugs.includes(tab.slug)) {
       onTabChange(tab.slug, tab.id);
     } else {
       onTabChange(tab.slug);
