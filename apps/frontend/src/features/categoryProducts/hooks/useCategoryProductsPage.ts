@@ -11,12 +11,10 @@ import type { ProductCardData } from '@/components/ProductCard';
 import { useProductListCache } from '../../productDetail/hooks/useProductListCache';
 
 const STALE_TIME = 5 * 60 * 1000;
+const STATIC_SLUGS = ['all', 'best', 'new'];
 
-function extractCategoryId(slug: string): string | null {
-  if (slug.startsWith('category-')) {
-    return slug.replace('category-', '');
-  }
-  return null;
+function isStaticCategory(slug: string): boolean {
+  return STATIC_SLUGS.includes(slug);
 }
 
 export function useCategoryProductsPage() {
@@ -25,8 +23,8 @@ export function useCategoryProductsPage() {
   const activeSlug = slug || 'all';
   const { primeProductDetailCache } = useProductListCache();
   
-  const categoryId = extractCategoryId(activeSlug);
-  const isDbCategory = categoryId !== null;
+  const isDbCategory = !isStaticCategory(activeSlug);
+  const categoryId = isDbCategory ? activeSlug : null;
 
   const { data, isLoading, error } = useQuery<ProductCardData[]>({
     queryKey: ['categoryProducts', activeSlug],
