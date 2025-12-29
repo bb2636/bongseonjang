@@ -209,12 +209,52 @@
 .inquiry-list__table-cell--product {
   flex: 1;
   min-width: 200px;
+  max-width: 250px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+
+.inquiry-list__table-cell--product::-webkit-scrollbar {
+  height: 4px;
+}
+
+.inquiry-list__table-cell--product::-webkit-scrollbar-track {
+  background: rgba(12, 12, 12, 0.05);
+  border-radius: 2px;
+}
+
+.inquiry-list__table-cell--product::-webkit-scrollbar-thumb {
+  background: rgba(12, 12, 12, 0.2);
+  border-radius: 2px;
 }
 
 .inquiry-list__table-cell--question {
   flex: 1;
   min-width: 200px;
+  max-width: 300px;
   font-weight: 500;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+
+.inquiry-list__table-cell--question::-webkit-scrollbar {
+  height: 4px;
+}
+
+.inquiry-list__table-cell--question::-webkit-scrollbar-track {
+  background: rgba(12, 12, 12, 0.05);
+  border-radius: 2px;
+}
+
+.inquiry-list__table-cell--question::-webkit-scrollbar-thumb {
+  background: rgba(12, 12, 12, 0.2);
+  border-radius: 2px;
+}
+
+.inquiry-list__table-cell--question::-webkit-scrollbar-thumb:hover {
+  background: rgba(12, 12, 12, 0.3);
 }
 
 .inquiry-list__table-cell--date {
