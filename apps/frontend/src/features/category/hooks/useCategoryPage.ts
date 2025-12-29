@@ -14,7 +14,7 @@ export function useCategoryPage() {
       .map((cat) => ({
         id: cat.id,
         name: cat.label,
-        slug: cat.id,
+        slug: `category-${cat.id}`,
       }));
 
     return [...STATIC_CATEGORIES, ...dynamicCategories];
