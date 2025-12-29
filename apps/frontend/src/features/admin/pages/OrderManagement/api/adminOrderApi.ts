@@ -1,6 +1,7 @@
 export type OrderStatus =
   | 'ALL'
   | 'PAYMENT_PENDING'
+  | 'PAYMENT_FAILED'
   | 'PAYMENT_COMPLETED'
   | 'PREPARING'
   | 'SHIPPING'
@@ -75,7 +76,7 @@ export interface UpdateShippingInfoParams {
   trackingNumber?: string;
 }
 
-export type BackendOrderStatus = 'pending' | 'paid' | 'confirmed' | 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'refunded';
+export type BackendOrderStatus = 'pending' | 'payment_failed' | 'paid' | 'confirmed' | 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'refunded';
 
 export async function updateOrderStatus(orderId: string, status: BackendOrderStatus): Promise<void> {
   const response = await fetch(`/api/admin/orders/${orderId}/status`, {

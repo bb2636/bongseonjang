@@ -22,6 +22,7 @@ const STATUS_FILTER_MAP: Record<OrderStatusFilter, OrderStatus[]> = {
 
 const ORDER_STATUS_MAP: Record<OrderStatus, UnifiedOrderStatus> = {
   pending: 'pending',
+  payment_failed: 'cancelled',
   paid: 'confirmed',
   preparing: 'confirmed',
   shipping: 'shipping',

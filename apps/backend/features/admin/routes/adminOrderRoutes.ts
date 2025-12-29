@@ -9,6 +9,7 @@ const router = Router();
 
 type FrontendOrderStatus =
   | 'PAYMENT_PENDING'
+  | 'PAYMENT_FAILED'
   | 'PAYMENT_COMPLETED'
   | 'PREPARING'
   | 'SHIPPING'
@@ -36,6 +37,7 @@ interface AdminOrderListItem {
 
 const dbStatusToFrontend: Record<string, FrontendOrderStatus> = {
   pending: 'PAYMENT_PENDING',
+  payment_failed: 'PAYMENT_FAILED',
   paid: 'PAYMENT_COMPLETED',
   preparing: 'PREPARING',
   shipping: 'SHIPPING',
@@ -95,6 +97,7 @@ router.get('/', async (req: Request, res: Response) => {
     if (status && status !== 'ALL') {
       const frontendToDbStatus: Record<string, string[]> = {
         PAYMENT_PENDING: ['pending'],
+        PAYMENT_FAILED: ['payment_failed'],
         PAYMENT_COMPLETED: ['paid'],
         PREPARING: ['preparing'],
         SHIPPING: ['shipping'],
@@ -236,7 +239,7 @@ router.put('/:orderId/status', async (req: Request, res: Response) => {
     const { orderId } = req.params;
     const { status } = req.body;
 
-    const validStatuses = ['pending', 'paid', 'confirmed', 'preparing', 'shipping', 'delivered', 'cancelled', 'refunded'];
+    const validStatuses = ['pending', 'paid', 'preparing', 'shipping', 'delivered', 'cancelled', 'refunded'];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({ error: '유효하지 않은 주문 상태입니다' });
     }

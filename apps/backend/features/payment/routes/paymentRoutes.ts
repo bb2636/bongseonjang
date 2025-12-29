@@ -294,7 +294,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
     } else {
       console.log('[NicePay Callback] Payment approval failed:', result.resultMsg);
       
-      order.status = 'cancelled';
+      order.status = 'payment_failed';
       await orderRepository.save(order);
 
       if (payment) {

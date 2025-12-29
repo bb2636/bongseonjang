@@ -13,6 +13,7 @@ const orderStatusOptions: { code: OrderStatus; label: string }[] = [
   { code: 'DELIVERED', label: '배송완료' },
   { code: 'CANCELLED', label: '주문취소' },
   { code: 'PAYMENT_PENDING', label: '입금 전' },
+  { code: 'PAYMENT_FAILED', label: '결제실패' },
 ];
 
 const paymentMethodOptions: { code: PaymentMethod; label: string }[] = [
@@ -29,6 +30,7 @@ const statusLabelMap: Record<Exclude<OrderStatus, 'ALL'>, string> = {
   DELIVERED: '배송완료',
   CANCELLED: '주문취소',
   PAYMENT_PENDING: '입금 전',
+  PAYMENT_FAILED: '결제실패',
 };
 
 const statusClassMap: Record<Exclude<OrderStatus, 'ALL'>, string> = {
@@ -38,10 +40,12 @@ const statusClassMap: Record<Exclude<OrderStatus, 'ALL'>, string> = {
   DELIVERED: 'order-status--delivered',
   CANCELLED: 'order-status--cancelled',
   PAYMENT_PENDING: 'order-status--pending',
+  PAYMENT_FAILED: 'order-status--failed',
 };
 
 const frontendToBackendStatus: Record<Exclude<OrderStatus, 'ALL'>, BackendOrderStatus> = {
   PAYMENT_PENDING: 'pending',
+  PAYMENT_FAILED: 'payment_failed',
   PAYMENT_COMPLETED: 'paid',
   PREPARING: 'preparing',
   SHIPPING: 'shipping',

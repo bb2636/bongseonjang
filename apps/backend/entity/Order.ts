@@ -4,7 +4,7 @@ import type { OrderItem } from './OrderItem';
 import type { ShippingAddress } from './ShippingAddress';
 import type { GuestOrderDetail } from './GuestOrderDetail';
 
-export type OrderStatus = 'pending' | 'paid' | 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'refund_requested' | 'refunded';
+export type OrderStatus = 'pending' | 'payment_failed' | 'paid' | 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'refund_requested' | 'refunded';
 
 @Entity('orders')
 export class Order {
