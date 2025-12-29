@@ -77,27 +77,110 @@ export function useCart() {
   const updateQuantityMutation = useMutation({
     mutationFn: ({ itemId, quantity }: { itemId: string; quantity: number }) =>
       updateItemQuantity(itemId, quantity),
-    onSuccess: () => {
+    onMutate: async ({ itemId, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: ['cart'] });
+      const previousCart = queryClient.getQueryData<CartDto>(['cart']);
+      
+      if (previousCart) {
+        queryClient.setQueryData<CartDto>(['cart'], {
+          ...previousCart,
+          items: previousCart.items.map(item =>
+            item.id === itemId
+              ? { ...item, quantity, totalPrice: item.unitPrice * quantity }
+              : item
+          ),
+          itemCount: previousCart.items.reduce((sum, item) => 
+            sum + (item.id === itemId ? quantity : item.quantity), 0
+          ),
+          subtotal: previousCart.items.reduce((sum, item) =>
+            sum + (item.id === itemId ? item.unitPrice * quantity : item.totalPrice), 0
+          ),
+        });
+      }
+      
+      return { previousCart };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(['cart'], context.previousCart);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
   });
 
   const removeItemMutation = useMutation({
     mutationFn: removeItem,
-    onSuccess: (_, itemId) => {
+    onMutate: async (itemId) => {
+      await queryClient.cancelQueries({ queryKey: ['cart'] });
+      const previousCart = queryClient.getQueryData<CartDto>(['cart']);
+      
+      if (previousCart) {
+        const removedItem = previousCart.items.find(item => item.id === itemId);
+        queryClient.setQueryData<CartDto>(['cart'], {
+          ...previousCart,
+          items: previousCart.items.filter(item => item.id !== itemId),
+          itemCount: previousCart.itemCount - (removedItem?.quantity ?? 0),
+          subtotal: previousCart.subtotal - (removedItem?.totalPrice ?? 0),
+        });
+      }
+      
       setSelectedItems(prev => {
         const next = new Set(prev);
         next.delete(itemId);
         return next;
       });
+      
+      return { previousCart };
+    },
+    onError: (_err, itemId, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(['cart'], context.previousCart);
+        setSelectedItems(prev => {
+          const next = new Set(prev);
+          next.add(itemId);
+          return next;
+        });
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
   });
 
   const removeSelectedMutation = useMutation({
     mutationFn: removeSelectedItems,
-    onSuccess: () => {
+    onMutate: async (itemIds) => {
+      await queryClient.cancelQueries({ queryKey: ['cart'] });
+      const previousCart = queryClient.getQueryData<CartDto>(['cart']);
+      const previousSelected = new Set(selectedItems);
+      
+      if (previousCart) {
+        const itemIdSet = new Set(itemIds);
+        const removedItems = previousCart.items.filter(item => itemIdSet.has(item.id));
+        const removedQuantity = removedItems.reduce((sum, item) => sum + item.quantity, 0);
+        const removedTotal = removedItems.reduce((sum, item) => sum + item.totalPrice, 0);
+        
+        queryClient.setQueryData<CartDto>(['cart'], {
+          ...previousCart,
+          items: previousCart.items.filter(item => !itemIdSet.has(item.id)),
+          itemCount: previousCart.itemCount - removedQuantity,
+          subtotal: previousCart.subtotal - removedTotal,
+        });
+      }
+      
       setSelectedItems(new Set());
+      
+      return { previousCart, previousSelected };
+    },
+    onError: (_err, _itemIds, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(['cart'], context.previousCart);
+        setSelectedItems(context.previousSelected);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
   });

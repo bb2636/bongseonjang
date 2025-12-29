@@ -1,11 +1,23 @@
+import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { fetchCart } from '../../cart/api/cartApi';
 import './PaymentResultPage.css';
 
 export function PaymentFailPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const message = searchParams.get('message') || '결제 처리 중 오류가 발생했습니다';
   const orderNumber = searchParams.get('orderNumber');
+
+  useEffect(() => {
+    queryClient.prefetchQuery({
+      queryKey: ['cart'],
+      queryFn: fetchCart,
+      staleTime: 1000 * 60,
+    });
+  }, [queryClient]);
 
   return (
     <div className="payment-result-page">
