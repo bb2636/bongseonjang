@@ -89,6 +89,10 @@
   border-radius: 2px;
   overflow: hidden;
   flex-shrink: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .cart-item__image {

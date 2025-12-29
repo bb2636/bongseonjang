@@ -169,7 +169,6 @@ export function AdminSupportPage() {
   };
 
   const handleInquiryView = (id: number) => {
-    console.log('handleInquiryView called with id:', id);
     setSelectedInquiryId(id);
     setIsInquiryPanelOpen(true);
   };

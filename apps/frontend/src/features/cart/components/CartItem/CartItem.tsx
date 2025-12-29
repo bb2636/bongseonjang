@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import type { CartItemDto } from '../../api/cartApi';
 import './CartItem.css';
 
@@ -16,8 +17,16 @@ export function CartItem({
   onQuantityChange,
   onRemove,
 }: CartItemProps) {
+  const navigate = useNavigate();
+
   const formatPrice = (price: number) => {
     return price.toLocaleString('ko-KR') + '원';
+  };
+
+  const handleProductClick = () => {
+    if (item.productId) {
+      navigate(`/product/${item.productId}`);
+    }
   };
 
   const getOptionText = () => {
@@ -61,13 +70,17 @@ export function CartItem({
             )}
           </div>
           <div className="cart-item__product-row">
-            <div className="cart-item__image-wrapper">
+            <button
+              type="button"
+              className="cart-item__image-wrapper"
+              onClick={handleProductClick}
+            >
               <img
                 src={item.productImageUrl}
                 alt={item.productName}
                 className="cart-item__image"
               />
-            </div>
+            </button>
             <div className="cart-item__price-quantity">
               <div className="cart-item__price-row">
                 <span className="cart-item__price">{formatPrice(item.unitPrice)}</span>
