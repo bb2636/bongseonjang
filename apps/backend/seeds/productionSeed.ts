@@ -5,6 +5,7 @@ interface SeedData {
   productCategories: Array<{ id: string; name: string; sortOrder: number; isActive: boolean }>;
   exposureCategories: Array<{ id: number; name: string; sort_order: number }>;
   bannerPositions: Array<{ id: number; code: string; name: string; sort_no: number; is_active: boolean }>;
+  investmentInfoTypes: Array<{ id: number; code: string; name: string; sortNo: number; isActive: boolean }>;
   products: Array<{
     id: string;
     name: string;
@@ -70,6 +71,11 @@ const seedData: SeedData = {
     { id: 3, code: 'HOME_BOTTOM', name: '홈/하단', sort_no: 3, is_active: true },
     { id: 4, code: 'HOME_EVENT', name: '홈/이벤트', sort_no: 4, is_active: true },
     { id: 5, code: 'MYPAGE', name: '마이페이지', sort_no: 5, is_active: true },
+  ],
+  investmentInfoTypes: [
+    { id: 1, code: 'NORMAL', name: '일반', sortNo: 1, isActive: true },
+    { id: 2, code: 'IMPORTANT', name: '중요', sortNo: 2, isActive: true },
+    { id: 3, code: 'EVENT', name: '이벤트', sortNo: 3, isActive: true },
   ],
   products: [
     { id: 'a1111111-1111-1111-1111-111111111111', name: '활 전복 (대) 10미', base_price: 45000, product_category_id: '11111111-1111-1111-1111-111111111111', shipping_policy_id: 2, stock_quantity: 100 },
@@ -186,6 +192,14 @@ export async function runProductionSeed(): Promise<void> {
       );
     }
     console.log('Seeded banner positions');
+
+    for (const iit of seedData.investmentInfoTypes) {
+      await queryRunner.query(
+        `INSERT INTO investment_info_types (id, code, name, "sortNo", "isActive") VALUES ($1, $2, $3, $4, $5) ON CONFLICT (id) DO NOTHING`,
+        [iit.id, iit.code, iit.name, iit.sortNo, iit.isActive]
+      );
+    }
+    console.log('Seeded investment info types');
 
     for (const p of seedData.products) {
       await queryRunner.query(

@@ -1,6 +1,9 @@
 export { NoticeList } from './NoticeList';
 export type { NoticeItem } from './NoticeList';
 export { NoticeDetailPanel } from './NoticeDetailPanel';
+export { InvestmentInfoList } from './InvestmentInfoList';
+export type { InvestmentInfoItem } from './InvestmentInfoList';
+export { InvestmentInfoDetailPanel } from './InvestmentInfoDetailPanel';
 export { ConfirmDialog } from './ConfirmDialog';
 export { Snackbar } from './Snackbar';
 export { FaqList } from './FaqList';

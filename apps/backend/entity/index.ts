@@ -52,6 +52,9 @@ export type { MessageSender } from './SupportMessage';
 export { NoticeType } from './NoticeType';
 export { Notice } from './Notice';
 
+export { InvestmentInfoType } from './InvestmentInfoType';
+export { InvestmentInfo } from './InvestmentInfo';
+
 export { FaqCategory } from './FaqCategory';
 export { Faq } from './Faq';
 

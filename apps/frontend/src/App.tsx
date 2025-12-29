@@ -128,6 +128,12 @@ const NoticeListPage = lazy(() =>
 const NoticeDetailPage = lazy(() =>
   import("./features/notice").then((m) => ({ default: m.NoticeDetailPage }))
 );
+const InvestmentInfoListPage = lazy(() =>
+  import("./features/investmentInfo").then((m) => ({ default: m.InvestmentInfoListPage }))
+);
+const InvestmentInfoDetailPage = lazy(() =>
+  import("./features/investmentInfo").then((m) => ({ default: m.InvestmentInfoDetailPage }))
+);
 const AddressFormPage = lazy(() =>
   import("./features/address").then((m) => ({ default: m.AddressFormPage }))
 );
@@ -334,6 +340,8 @@ export default function App() {
         <Route path="/payment/fail" element={<PaymentFailPage />} />
         <Route path="/notice" element={<NoticeListPage />} />
         <Route path="/notice/:id" element={<NoticeDetailPage />} />
+        <Route path="/investment-info" element={<InvestmentInfoListPage />} />
+        <Route path="/investment-info/:id" element={<InvestmentInfoDetailPage />} />
         <Route
           path="/address/add"
           element={
