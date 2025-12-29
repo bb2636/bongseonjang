@@ -50,18 +50,18 @@ const dbStatusToFrontend: Record<string, FrontendOrderStatus> = {
 const dbPaymentMethodToFrontend: Record<string, FrontendPaymentMethod> = {
   card: 'CARD',
   CARD: 'CARD',
-  bank_transfer: 'ACCOUNT_TRANSFER',
-  ACCOUNT_TRANSFER: 'ACCOUNT_TRANSFER',
-  virtual_account: 'ACCOUNT_TRANSFER',
+  bank_transfer: 'BANK_TRANSFER',
   BANK_TRANSFER: 'BANK_TRANSFER',
+  virtual_account: 'ACCOUNT_TRANSFER',
+  ACCOUNT_TRANSFER: 'ACCOUNT_TRANSFER',
   mobile: 'CARD',
   toss_pay: 'CARD',
 };
 
 const frontendToDbPaymentMethods: Record<string, string[]> = {
   CARD: ['card', 'CARD', 'mobile', 'toss_pay'],
-  ACCOUNT_TRANSFER: ['bank_transfer', 'ACCOUNT_TRANSFER', 'virtual_account'],
-  BANK_TRANSFER: ['BANK_TRANSFER'],
+  ACCOUNT_TRANSFER: ['virtual_account', 'ACCOUNT_TRANSFER'],
+  BANK_TRANSFER: ['bank_transfer', 'BANK_TRANSFER'],
 };
 
 function formatDate(date: Date): string {
