@@ -355,6 +355,12 @@
   cursor: not-allowed;
 }
 
+.quick-cart-sheet__buy-btn--sold-out {
+  width: 100%;
+  background-color: #ccc;
+  color: #666;
+}
+
 .quick-cart-sheet__home-indicator {
   display: flex;
   justify-content: center;

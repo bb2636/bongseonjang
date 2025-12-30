@@ -30,6 +30,12 @@ export default function QuickCartBottomSheet() {
     : product?.mainOptions || [];
   const hasOptions = productOptions.length > 0;
   const optionGroupName = (product?.mainOptions?.[0] as { groupName?: string })?.groupName || '옵션 선택';
+  
+  const isSoldOut = product ? (
+    hasOptions 
+      ? productOptions.every(opt => opt.stockQty === 0)
+      : product.stockQuantity === 0
+  ) : false;
 
   useEffect(() => {
     if (isOpen && product) {
@@ -370,20 +376,31 @@ export default function QuickCartBottomSheet() {
             )}
 
             <div className="quick-cart-sheet__button-wrapper">
-              <button
-                className="quick-cart-sheet__cart-btn"
-                onClick={handleAddToCart}
-                disabled={selectedItems.length === 0 || isAdding}
-              >
-                {isAdding ? '담는 중...' : '장바구니 담기'}
-              </button>
-              <button
-                className="quick-cart-sheet__buy-btn"
-                onClick={handleBuyNow}
-                disabled={selectedItems.length === 0 || isAdding}
-              >
-                구매하기
-              </button>
+              {isSoldOut ? (
+                <button
+                  className="quick-cart-sheet__buy-btn quick-cart-sheet__buy-btn--sold-out"
+                  disabled
+                >
+                  품절
+                </button>
+              ) : (
+                <>
+                  <button
+                    className="quick-cart-sheet__cart-btn"
+                    onClick={handleAddToCart}
+                    disabled={selectedItems.length === 0 || isAdding}
+                  >
+                    {isAdding ? '담는 중...' : '장바구니 담기'}
+                  </button>
+                  <button
+                    className="quick-cart-sheet__buy-btn"
+                    onClick={handleBuyNow}
+                    disabled={selectedItems.length === 0 || isAdding}
+                  >
+                    구매하기
+                  </button>
+                </>
+              )}
             </div>
           </>
         ) : null}
