@@ -168,14 +168,18 @@ export class ProductService {
       freeShippingThreshold: DEFAULT_FREE_SHIPPING_THRESHOLD as number | null,
     };
     
+    let descriptionText: string | undefined = undefined;
+    
     if (product.detailContent) {
       try {
         const parsedContent = JSON.parse(product.detailContent);
+        descriptionText = parsedContent.description || undefined;
         if (parsedContent.shippingInfo) {
           shippingInfo.shippingFee = parsedContent.shippingInfo.shippingFee ?? shippingInfo.shippingFee;
           shippingInfo.freeShippingThreshold = parsedContent.shippingInfo.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD;
         }
       } catch {
+        descriptionText = product.detailContent;
       }
     }
 
@@ -183,7 +187,7 @@ export class ProductService {
       id: product.id,
       name: product.name,
       summary: undefined,
-      description: product.detailContent ?? undefined,
+      description: descriptionText,
       thumbnailUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl),
       basePrice: product.basePrice,
       discountRate: 0,
