@@ -107,9 +107,8 @@ export class ProductService {
     if (product.detailContent) {
       try {
         detailContent = JSON.parse(product.detailContent);
-      } catch (error) {
-        console.warn(`Failed to parse detailContent for product ${product.id}:`, error);
-        detailContent = {};
+      } catch {
+        detailContent = { description: product.detailContent };
       }
     }
     

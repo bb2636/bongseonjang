@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0;
+  padding: 8px 0 16px;
 }
 
 .search-view__title {
@@ -77,6 +77,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
 }
 
 .search-view__recent-item {
