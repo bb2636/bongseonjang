@@ -620,6 +620,7 @@ export function ProductFormDialog({
                   value={formData.shippingInfo.shippingFee ?? ''}
                   onChange={(e) => handleShippingInfoChange('shippingFee', e.target.value ? Number(e.target.value) : null)}
                   min="0"
+                  max="9999999"
                 />
                 <span className="product-form-dialog__shipping-unit">원</span>
               </div>
