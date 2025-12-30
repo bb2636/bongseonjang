@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
 import { useGoBack } from '../../../hooks/useGoBack';
@@ -9,16 +9,6 @@ interface ProductInfo {
   id: string;
   name: string;
   thumbnailUrl?: string;
-}
-
-interface ExistingReview {
-  id: string;
-  productId: string;
-  productName: string;
-  productImageUrl: string | null;
-  rating: number;
-  content: string;
-  imageUrls: string[];
 }
 
 async function fetchProductInfo(productId: string): Promise<ProductInfo> {
@@ -32,17 +22,6 @@ async function fetchProductInfo(productId: string): Promise<ProductInfo> {
     name: product.name,
     thumbnailUrl: product.thumbnailUrl,
   };
-}
-
-async function fetchReviewForEdit(reviewId: string): Promise<ExistingReview> {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`/api/reviews/${reviewId}`, {
-    headers: {
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-  });
-  if (!response.ok) throw new Error('리뷰를 불러올 수 없습니다.');
-  return response.json();
 }
 
 function CloseIcon() {
@@ -99,35 +78,11 @@ async function createReview(data: {
   return response.json();
 }
 
-async function updateReview(reviewId: string, data: {
-  rating: number;
-  content: string;
-  imageUrls?: string[];
-}) {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`/api/reviews/${reviewId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || '리뷰 수정에 실패했습니다.');
-  }
-  return response.json();
-}
-
 const MAX_CONTENT_LENGTH = 1000;
 const MAX_IMAGES = 10;
 
 export default function WriteReviewPage() {
-  const { productId, reviewId } = useParams<{ productId?: string; reviewId?: string }>();
-  const isEditMode = !!reviewId;
-  
-  const navigate = useNavigate();
+  const { productId } = useParams<{ productId: string }>();
   const location = useLocation();
   const queryClient = useQueryClient();
   const goBack = useGoBack();
@@ -135,31 +90,16 @@ export default function WriteReviewPage() {
   const stateProduct: ProductInfo | undefined = location.state?.product;
   const stateOrderItemId: string | undefined = location.state?.orderItemId;
 
-  const { data: existingReview, isLoading: reviewLoading } = useQuery({
-    queryKey: ['reviewForEdit', reviewId],
-    queryFn: () => fetchReviewForEdit(reviewId!),
-    enabled: isEditMode && !!reviewId,
-  });
-
-  const effectiveProductId = isEditMode ? existingReview?.productId : productId;
-
   const { data: fetchedProduct, isLoading: productLoading } = useQuery({
-    queryKey: ['productInfo', effectiveProductId],
-    queryFn: () => fetchProductInfo(effectiveProductId!),
-    enabled: !!effectiveProductId && !stateProduct && !isEditMode,
+    queryKey: ['productInfo', productId],
+    queryFn: () => fetchProductInfo(productId!),
+    enabled: !!productId && !stateProduct,
   });
 
-  const productInfo: ProductInfo | undefined = isEditMode && existingReview
-    ? {
-        id: existingReview.productId,
-        name: existingReview.productName,
-        thumbnailUrl: existingReview.productImageUrl || undefined,
-      }
-    : stateProduct || fetchedProduct;
+  const productInfo: ProductInfo | undefined = stateProduct || fetchedProduct;
 
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState('');
-  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
 
   const {
     images,
@@ -171,32 +111,14 @@ export default function WriteReviewPage() {
     handleFileChange,
     removeImage,
     getUploadedUrls,
-  } = useImageUploader({ purpose: 'review', maxImages: MAX_IMAGES - existingImageUrls.length });
-
-  useEffect(() => {
-    if (isEditMode && existingReview) {
-      setRating(existingReview.rating);
-      setContent(existingReview.content);
-      if (existingReview.imageUrls?.length > 0) {
-        setExistingImageUrls(existingReview.imageUrls);
-      }
-    }
-  }, [isEditMode, existingReview]);
+  } = useImageUploader({ purpose: 'review', maxImages: MAX_IMAGES });
 
   const createReviewMutation = useMutation({
     mutationFn: createReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productReviews', productId] });
-      goBack();
-    },
-  });
-
-  const updateReviewMutation = useMutation({
-    mutationFn: (data: { rating: number; content: string; imageUrls?: string[] }) =>
-      updateReview(reviewId!, data),
-    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingReviewItems'] });
       queryClient.invalidateQueries({ queryKey: ['myReviews'] });
-      queryClient.invalidateQueries({ queryKey: ['reviewForEdit', reviewId] });
       goBack();
     },
   });
@@ -216,47 +138,29 @@ export default function WriteReviewPage() {
     }
   };
 
-  const handleRemoveExistingImage = (index: number) => {
-    setExistingImageUrls((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async () => {
-    if (rating === 0) return;
+    if (rating === 0 || !productId) return;
 
-    const newImageUrls = getUploadedUrls();
-    const allImageUrls = [...existingImageUrls, ...newImageUrls];
+    const imageUrls = getUploadedUrls();
 
-    if (isEditMode) {
-      updateReviewMutation.mutate({
-        rating,
-        content,
-        imageUrls: allImageUrls.length > 0 ? allImageUrls : undefined,
-      });
-    } else {
-      if (!productId) return;
-      createReviewMutation.mutate({
-        productId,
-        rating,
-        content,
-        imageUrls: allImageUrls.length > 0 ? allImageUrls : undefined,
-        orderItemId: stateOrderItemId,
-      });
-    }
+    createReviewMutation.mutate({
+      productId,
+      rating,
+      content,
+      imageUrls: imageUrls.length > 0 ? imageUrls : undefined,
+      orderItemId: stateOrderItemId,
+    });
   };
 
-  const isPending = createReviewMutation.isPending || updateReviewMutation.isPending;
-  const isSubmitDisabled = rating === 0 || isPending || (!isEditMode && !productInfo) || (isEditMode && !existingReview) || hasUploadingImages;
-  const isLoading = isEditMode ? reviewLoading : productLoading;
+  const isPending = createReviewMutation.isPending;
+  const isSubmitDisabled = rating === 0 || isPending || !productInfo || hasUploadingImages;
 
-  const totalImageCount = existingImageUrls.length + images.length;
-  const canAddMoreImages = totalImageCount < MAX_IMAGES;
-
-  if (isLoading) {
+  if (productLoading) {
     return (
       <div className="write-review-page">
         <header className="write-review-page__header">
           <div className="write-review-page__header-spacer" />
-          <h1 className="write-review-page__title">{isEditMode ? '리뷰 수정하기' : '리뷰 작성하기'}</h1>
+          <h1 className="write-review-page__title">리뷰 작성하기</h1>
           <button 
             className="write-review-page__close-btn" 
             onClick={handleClose}
@@ -276,7 +180,7 @@ export default function WriteReviewPage() {
     <div className="write-review-page">
       <header className="write-review-page__header">
         <div className="write-review-page__header-spacer" />
-        <h1 className="write-review-page__title">{isEditMode ? '리뷰 수정하기' : '리뷰 작성하기'}</h1>
+        <h1 className="write-review-page__title">리뷰 작성하기</h1>
         <button 
           className="write-review-page__close-btn" 
           onClick={handleClose}
@@ -330,7 +234,7 @@ export default function WriteReviewPage() {
               type="button" 
               className="write-review-page__photo-add-btn"
               onClick={openFilePicker}
-              disabled={!canAddMoreImages || isUploading}
+              disabled={!canAddMore || isUploading}
             >
               <ImageUploadIcon />
             </button>
@@ -342,18 +246,6 @@ export default function WriteReviewPage() {
               onChange={handleFileChange}
               className="write-review-page__file-input"
             />
-            {existingImageUrls.map((url, index) => (
-              <div key={`existing-${index}`} className="write-review-page__photo-preview">
-                <img src={url} alt={`기존 이미지 ${index + 1}`} />
-                <button
-                  type="button"
-                  className="write-review-page__photo-remove-btn"
-                  onClick={() => handleRemoveExistingImage(index)}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
             {images.map((image, index) => (
               <div key={index} className="write-review-page__photo-preview">
                 <img src={image.previewUrl} alt={`미리보기 ${index + 1}`} />
@@ -402,19 +294,19 @@ export default function WriteReviewPage() {
           onClick={handleSubmit}
           disabled={isSubmitDisabled}
         >
-          {isPending ? (isEditMode ? '수정 중...' : '등록 중...') : (isEditMode ? '수정' : '등록')}
+          {isPending ? '등록 중...' : '등록'}
         </button>
       </div>
 
-      {(createReviewMutation.isError || updateReviewMutation.isError) && (
+      {createReviewMutation.isError && (
         <div className="write-review-page__error">
-          {createReviewMutation.error?.message || updateReviewMutation.error?.message || '리뷰 처리에 실패했습니다.'}
+          {createReviewMutation.error?.message || '리뷰 작성에 실패했습니다.'}
         </div>
       )}
 
-      {(createReviewMutation.isSuccess || updateReviewMutation.isSuccess) && (
+      {createReviewMutation.isSuccess && (
         <div className="write-review-page__success">
-          {isEditMode ? '리뷰가 수정되었습니다.' : '리뷰가 등록되었습니다.'}
+          리뷰가 등록되었습니다.
         </div>
       )}
     </div>

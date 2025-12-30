@@ -126,21 +126,3 @@ export async function fetchMyReviews(): Promise<MyReviewDto[]> {
   return response.json();
 }
 
-export async function deleteReview(reviewId: string): Promise<void> {
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    throw new Error('Authentication required');
-  }
-
-  const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to delete review');
-  }
-}
