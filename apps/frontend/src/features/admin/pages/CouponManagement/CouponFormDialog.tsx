@@ -23,9 +23,9 @@ interface CouponFormData {
   name: string;
   description: string;
   discountType: DiscountType;
-  discountValue: number;
-  maxDiscountAmount: number;
-  minOrderAmount: number;
+  discountValue: string;
+  maxDiscountAmount: string;
+  minOrderAmount: string;
   targetType: TargetType;
   targetCategories: string[];
   issueType: IssueType;
@@ -40,9 +40,9 @@ const INITIAL_FORM_DATA: CouponFormData = {
   name: '',
   description: '',
   discountType: 'fixed',
-  discountValue: 0,
-  maxDiscountAmount: 0,
-  minOrderAmount: 0,
+  discountValue: '',
+  maxDiscountAmount: '',
+  minOrderAmount: '',
   targetType: 'all',
   targetCategories: [],
   issueType: 'all',
@@ -85,9 +85,9 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         name: coupon.name,
         description: coupon.description || '',
         discountType: coupon.discountType,
-        discountValue: coupon.discountValue,
-        maxDiscountAmount: coupon.maxDiscountAmount || 0,
-        minOrderAmount: coupon.minOrderAmount,
+        discountValue: coupon.discountValue ? String(coupon.discountValue) : '',
+        maxDiscountAmount: coupon.maxDiscountAmount ? String(coupon.maxDiscountAmount) : '',
+        minOrderAmount: coupon.minOrderAmount ? String(coupon.minOrderAmount) : '',
         targetType: coupon.targetType,
         targetCategories: coupon.targetCategories || [],
         issueType: coupon.issueType === 'grade' ? 'all' : coupon.issueType,
@@ -134,13 +134,17 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
     }
 
     try {
+      const discountValue = parseInt(formData.discountValue) || 0;
+      const maxDiscountAmount = parseInt(formData.maxDiscountAmount) || 0;
+      const minOrderAmount = parseInt(formData.minOrderAmount) || 0;
+
       const payload = {
         name: formData.name,
         description: formData.description || undefined,
         discountType: formData.discountType,
-        discountValue: formData.discountValue,
-        maxDiscountAmount: formData.discountType === 'rate' ? formData.maxDiscountAmount : undefined,
-        minOrderAmount: formData.minOrderAmount,
+        discountValue,
+        maxDiscountAmount: formData.discountType === 'rate' ? maxDiscountAmount : undefined,
+        minOrderAmount,
         targetType: formData.targetType,
         targetCategories: formData.targetType === 'category' ? formData.targetCategories : undefined,
         issueType: formData.issueType,
@@ -271,12 +275,12 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                   {formData.discountType === 'rate' ? '할인율 (%) *' : '할인금액 (원) *'}
                 </label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   className="coupon-form-dialog__input"
                   value={formData.discountValue}
-                  onChange={(e) => handleChange('discountValue', parseInt(e.target.value) || 0)}
-                  min={0}
-                  max={formData.discountType === 'rate' ? 100 : undefined}
+                  onChange={(e) => handleChange('discountValue', e.target.value.replace(/[^0-9]/g, ''))}
+                  placeholder={formData.discountType === 'rate' ? '예: 10' : '예: 5000'}
                   required
                 />
               </div>
@@ -285,11 +289,12 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                 <div className="coupon-form-dialog__field">
                   <label className="coupon-form-dialog__label">최대 할인금액 (원)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     className="coupon-form-dialog__input"
                     value={formData.maxDiscountAmount}
-                    onChange={(e) => handleChange('maxDiscountAmount', parseInt(e.target.value) || 0)}
-                    min={0}
+                    onChange={(e) => handleChange('maxDiscountAmount', e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="예: 10000"
                   />
                 </div>
               )}
@@ -298,11 +303,11 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
             <div className="coupon-form-dialog__field">
               <label className="coupon-form-dialog__label">최소 주문금액 (원)</label>
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 className="coupon-form-dialog__input"
                 value={formData.minOrderAmount}
-                onChange={(e) => handleChange('minOrderAmount', parseInt(e.target.value) || 0)}
-                min={0}
+                onChange={(e) => handleChange('minOrderAmount', e.target.value.replace(/[^0-9]/g, ''))}
                 placeholder="0원이면 조건 없음"
               />
             </div>

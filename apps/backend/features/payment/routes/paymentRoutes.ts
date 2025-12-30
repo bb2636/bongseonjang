@@ -203,8 +203,14 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
         if (targetCategoryIds.length > 0) {
-          const productCategoryIds = cartItems.map(item => item.product?.productCategoryId).filter(Boolean) as string[];
-          const allProductsMatch = productCategoryIds.every(categoryId => targetCategoryIds.includes(categoryId));
+          const productCategoryIds = cartItems.map(item => item.product?.productCategoryId);
+          const hasProductWithoutCategory = productCategoryIds.some(categoryId => !categoryId);
+          if (hasProductWithoutCategory) {
+            return res.status(400).json({ 
+              error: '카테고리가 지정되지 않은 상품이 포함되어 있어 해당 쿠폰을 사용할 수 없습니다.' 
+            });
+          }
+          const allProductsMatch = productCategoryIds.every(categoryId => categoryId && targetCategoryIds.includes(categoryId));
           if (!allProductsMatch) {
             return res.status(400).json({ 
               error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 대상 카테고리가 아닌 상품이 포함되어 있습니다.' 
@@ -734,6 +740,11 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
         if (targetCategoryIds.length > 0) {
+          if (!product.productCategoryId) {
+            return res.status(400).json({ 
+              error: '카테고리가 지정되지 않은 상품에는 해당 쿠폰을 사용할 수 없습니다' 
+            });
+          }
           if (!targetCategoryIds.includes(product.productCategoryId)) {
             return res.status(400).json({ 
               error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다' 
