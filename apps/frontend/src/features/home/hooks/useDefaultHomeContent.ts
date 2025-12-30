@@ -50,11 +50,11 @@ export function useDefaultHomeContent() {
   }, [navigate]);
 
   const onViewAllBadameun = useCallback(() => {
-    navigate('/badameun');
+    navigate('/brand/badameun');
   }, [navigate]);
 
   const onViewAllBongcook = useCallback(() => {
-    navigate('/bongcook');
+    navigate('/brand/bongcook');
   }, [navigate]);
 
   return {
