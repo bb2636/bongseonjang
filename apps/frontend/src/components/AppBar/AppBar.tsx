@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts';
+import { useGoBack } from '../../hooks/useGoBack';
 import './AppBar.css';
 
 interface AppBarProps {
@@ -25,12 +26,13 @@ export default function AppBar({
 }: AppBarProps) {
   const navigate = useNavigate();
   const { cartCount } = useCart();
+  const goBack = useGoBack();
 
   const handleBackClick = () => {
     if (onBackClick) {
       onBackClick();
     } else {
-      navigate(-1);
+      goBack();
     }
   };
 

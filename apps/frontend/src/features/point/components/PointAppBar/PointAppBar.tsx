@@ -1,18 +1,29 @@
+import { useGoBack } from '../../../../hooks/useGoBack';
 import './PointAppBar.css';
 
 interface PointAppBarProps {
-  onBackClick: () => void;
+  onBackClick?: () => void;
   onCartClick: () => void;
   cartCount?: number;
 }
 
 export default function PointAppBar({ onBackClick, onCartClick, cartCount = 0 }: PointAppBarProps) {
+  const goBack = useGoBack();
+
+  const handleBackClick = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      goBack();
+    }
+  };
+
   return (
     <header className="point-app-bar">
       <button
         type="button"
         className="point-app-bar__back-button"
-        onClick={onBackClick}
+        onClick={handleBackClick}
         aria-label="뒤로가기"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">

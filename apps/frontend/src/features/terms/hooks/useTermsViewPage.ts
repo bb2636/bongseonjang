@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../../../contexts/CartContext';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useTermsContent } from './useTermsContent';
 import type { TermsType, TermsContent } from '../types/terms';
 
@@ -23,6 +24,7 @@ export function useTermsViewPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { cartCount } = useCart();
+  const goBack = useGoBack();
   
   const typeParam = searchParams.get('type');
   const initialType = isValidTermsType(typeParam) ? typeParam : 'SERVICE';
@@ -41,8 +43,8 @@ export function useTermsViewPage() {
   }, []);
 
   const onBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+    goBack();
+  }, [goBack]);
 
   const onCartClick = useCallback(() => {
     navigate('/cart');

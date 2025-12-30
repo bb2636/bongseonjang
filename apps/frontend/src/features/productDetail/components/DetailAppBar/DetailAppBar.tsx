@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../../../contexts/CartContext';
+import { useGoBack } from '../../../../hooks/useGoBack';
 import './DetailAppBar.css';
 
 interface DetailAppBarProps {
@@ -9,9 +10,10 @@ interface DetailAppBarProps {
 export default function DetailAppBar({ productName }: DetailAppBarProps) {
   const navigate = useNavigate();
   const { cartCount } = useCart();
+  const goBack = useGoBack();
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleCartClick = () => {

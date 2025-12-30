@@ -1,18 +1,29 @@
+import { useGoBack } from '../../../../hooks/useGoBack';
 import './WishlistAppBar.css';
 
 interface WishlistAppBarProps {
-  onBackClick: () => void;
+  onBackClick?: () => void;
   onCartClick: () => void;
   cartCount?: number;
 }
 
 export default function WishlistAppBar({ onBackClick, onCartClick, cartCount = 0 }: WishlistAppBarProps) {
+  const goBack = useGoBack();
+
+  const handleBackClick = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      goBack();
+    }
+  };
+
   return (
     <header className="wishlist-app-bar">
       <button
         type="button"
         className="wishlist-app-bar__back-button"
-        onClick={onBackClick}
+        onClick={handleBackClick}
         aria-label="뒤로가기"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">

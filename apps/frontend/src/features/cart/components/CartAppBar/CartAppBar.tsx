@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { useGoBack } from '../../../../hooks/useGoBack';
 import './CartAppBar.css';
 
 export function CartAppBar() {
-  const navigate = useNavigate();
+  const goBack = useGoBack();
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   return (
