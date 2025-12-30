@@ -79,6 +79,7 @@ export class TypeORMProductRepository implements ProductRepository {
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.options', 'options')
       .leftJoinAndSelect('product.images', 'images')
+      .leftJoinAndSelect('product.shippingPolicy', 'shippingPolicy')
       .where('product.id = :id', { id })
       .orderBy('images.sortOrder', 'ASC')
       .getOne();

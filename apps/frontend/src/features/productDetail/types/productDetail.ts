@@ -59,6 +59,7 @@ export interface ProductDetail {
   expirationInfo?: string;
   shippingMethod?: string;
   shippingRegion?: string;
+  shippingFee?: number;
   notice?: string;
   isOptionRequired: boolean;
   saleStartAt?: string;

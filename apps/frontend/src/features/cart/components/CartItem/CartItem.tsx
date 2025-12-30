@@ -141,7 +141,7 @@ export function CartItem({
         </button>
       </div>
       <div className="cart-item__shipping">
-        <span>배송비 선불</span>
+        <span>{item.shippingFee === 0 ? '무료배송' : `${(item.shippingFee ?? 3500).toLocaleString('ko-KR')}원 (배송비 선불)`}</span>
       </div>
     </div>
   );

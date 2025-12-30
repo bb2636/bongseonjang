@@ -108,6 +108,7 @@ export default function ProductDetailView({
               expirationInfo={product.expirationInfo}
               shippingMethod={product.shippingMethod}
               shippingRegion={product.shippingRegion}
+              shippingFee={product.shippingFee}
               notice={product.notice}
             />
 

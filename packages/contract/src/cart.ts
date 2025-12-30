@@ -11,6 +11,7 @@ export interface CartItemDto {
   totalPrice: number;
   isAvailable?: boolean;
   stockQuantity?: number;
+  shippingFee?: number;
 }
 
 export interface CartDto {

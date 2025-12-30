@@ -179,6 +179,7 @@ export class ProductService {
       expirationInfo: undefined,
       shippingMethod: undefined,
       shippingRegion: undefined,
+      shippingFee: product.shippingPolicy?.shippingFee ?? 3500,
       notice: undefined,
       isOptionRequired: options.length > 0,
       saleStartAt: product.saleStartDate ? new Date(product.saleStartDate).toISOString() : undefined,

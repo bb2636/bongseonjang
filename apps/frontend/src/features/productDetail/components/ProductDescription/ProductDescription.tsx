@@ -7,6 +7,7 @@ interface ProductDescriptionProps {
   expirationInfo?: string;
   shippingMethod?: string;
   shippingRegion?: string;
+  shippingFee?: number;
   notice?: string;
 }
 
@@ -17,6 +18,7 @@ export default function ProductDescription({
   expirationInfo,
   shippingMethod,
   shippingRegion,
+  shippingFee = 3500,
   notice,
 }: ProductDescriptionProps) {
   return (
@@ -48,7 +50,9 @@ export default function ProductDescription({
         <div className="product-description__info-list">
           <div className="product-description__info-item">
             <span className="product-description__info-label">배송비</span>
-            <span className="product-description__info-value">배송비 선불</span>
+            <span className="product-description__info-value">
+              {shippingFee === 0 ? '무료배송' : `${shippingFee.toLocaleString('ko-KR')}원 (배송비 선불)`}
+            </span>
           </div>
           {shippingMethod && (
             <div className="product-description__info-item">

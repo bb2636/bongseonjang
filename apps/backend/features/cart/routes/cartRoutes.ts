@@ -30,7 +30,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 
     const items = await cartItemRepository.find({
       where: { cartId: cart.id },
-      relations: ['product', 'productOption'],
+      relations: ['product', 'product.shippingPolicy', 'productOption'],
       order: { createdAt: 'DESC' },
     });
 
@@ -51,6 +51,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       const additionalPrice = item.productOption?.price ?? 0;
       const unitPrice = productBasePrice + additionalPrice;
       const totalPrice = unitPrice * item.quantity;
+      const shippingFee = item.product?.shippingPolicy?.shippingFee ?? 3500;
 
       const optionDisplay = item.productOption 
         ? `${item.productOption.optionName}: ${item.productOption.optionValue}`
@@ -66,6 +67,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         quantity: item.quantity,
         unitPrice,
         totalPrice,
+        shippingFee,
       };
     });
 
