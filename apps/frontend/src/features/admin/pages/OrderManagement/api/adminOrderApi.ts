@@ -10,16 +10,6 @@ export type OrderStatus =
 
 export type PaymentMethod = 'ALL' | 'CARD' | 'ACCOUNT_TRANSFER' | 'BANK_TRANSFER';
 
-export interface AdminOrderItemDto {
-  id: string;
-  productName: string;
-  productImageUrl: string | null;
-  optionName: string | null;
-  unitPrice: number;
-  quantity: number;
-  totalPrice: number;
-}
-
 export interface AdminOrderDto {
   id: string;
   orderNumber: string;
@@ -32,7 +22,6 @@ export interface AdminOrderDto {
   paymentMethod: Exclude<PaymentMethod, 'ALL'> | null;
   shippingCompany: string | null;
   trackingNumber: string | null;
-  items: AdminOrderItemDto[];
 }
 
 export interface AdminOrderListResponse {

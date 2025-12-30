@@ -62,7 +62,7 @@ function getCallbackUrl(): string {
 export async function fetchMyCoupons(): Promise<CouponDto[]> {
   const token = localStorage.getItem('token');
   
-  const response = await fetch('/api/coupon/my', {
+  const response = await fetch('/api/coupons/my', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

@@ -244,7 +244,6 @@ export function OrderManagementPage() {
         {!isError && (
           <div className="order-table">
             <div className="order-table__header">
-              <div className="order-table__header-cell">상품</div>
               <div className="order-table__header-cell">주문자</div>
               <div className="order-table__header-cell">주문일시</div>
               <div className="order-table__header-cell">주문번호</div>
@@ -262,34 +261,6 @@ export function OrderManagementPage() {
             ) : (
               orders.map((order: AdminOrderDto) => (
                 <div key={order.id} className="order-table__row">
-                  <div className="order-table__cell order-table__cell--product">
-                    <div className="order-table__product-images">
-                      {order.items.slice(0, 2).map((item, idx) => (
-                        <div key={item.id} className="order-table__product-image-wrapper">
-                          {item.productImageUrl ? (
-                            <img 
-                              src={item.productImageUrl} 
-                              alt={item.productName}
-                              className="order-table__product-image"
-                            />
-                          ) : (
-                            <div className="order-table__product-image order-table__product-image--placeholder" />
-                          )}
-                        </div>
-                      ))}
-                      {order.items.length > 2 && (
-                        <span className="order-table__product-more">+{order.items.length - 2}</span>
-                      )}
-                    </div>
-                    <div className="order-table__product-info">
-                      <span className="order-table__product-name">
-                        {order.items[0]?.productName || '상품 정보 없음'}
-                      </span>
-                      {order.items.length > 1 && (
-                        <span className="order-table__product-count">외 {order.items.length - 1}건</span>
-                      )}
-                    </div>
-                  </div>
                   <div className="order-table__cell order-table__cell--customer">
                     <div className="order-table__customer-name">{order.customerName}</div>
                     <div className="order-table__customer-detail">
