@@ -240,7 +240,7 @@ router.put('/:orderId/status', async (req: Request, res: Response) => {
     const { orderId } = req.params;
     const { status } = req.body;
 
-    const validStatuses = ['pending', 'paid', 'preparing', 'shipping', 'delivered', 'cancelled', 'refunded'];
+    const validStatuses = ['pending', 'paid', 'preparing', 'shipping', 'delivered', 'cancelled', 'refunded', 'payment_failed'];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({ error: '유효하지 않은 주문 상태입니다' });
     }
