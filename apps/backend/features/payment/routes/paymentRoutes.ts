@@ -107,6 +107,34 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       return res.status(400).json({ error: '선택된 상품을 찾을 수 없습니다' });
     }
 
+    const insufficientStockItems: string[] = [];
+    for (const item of cartItems) {
+      if (item.productOption) {
+        if (item.productOption.stockQuantity < item.quantity) {
+          const optionName = `${item.productOption.optionName}: ${item.productOption.optionValue}`;
+          if (item.productOption.stockQuantity <= 0) {
+            insufficientStockItems.push(`${item.product?.name} - ${optionName} (품절)`);
+          } else {
+            insufficientStockItems.push(`${item.product?.name} - ${optionName} (재고: ${item.productOption.stockQuantity}개)`);
+          }
+        }
+      } else if (item.product) {
+        if (item.product.stockQuantity < item.quantity) {
+          if (item.product.stockQuantity <= 0) {
+            insufficientStockItems.push(`${item.product.name} (품절)`);
+          } else {
+            insufficientStockItems.push(`${item.product.name} (재고: ${item.product.stockQuantity}개)`);
+          }
+        }
+      }
+    }
+
+    if (insufficientStockItems.length > 0) {
+      return res.status(400).json({ 
+        error: `재고가 부족합니다: ${insufficientStockItems.join(', ')}` 
+      });
+    }
+
     const productIds = cartItems.map(item => item.productId);
     const productImageRepository = AppDataSource.getRepository(ProductImage);
     const thumbnails = await productImageRepository.find({
@@ -567,6 +595,37 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
     const product = await productRepository.findOne({ where: { id: productId } });
     if (!product) {
       return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    }
+
+    const insufficientStockItems: string[] = [];
+    for (const item of items as DirectPurchaseItem[]) {
+      if (item.productOptionId) {
+        const option = await productOptionRepository.findOne({ where: { id: item.productOptionId } });
+        if (!option) {
+          return res.status(400).json({ error: '선택한 옵션을 찾을 수 없습니다' });
+        }
+        if (option.stockQuantity < item.quantity) {
+          if (option.stockQuantity <= 0) {
+            insufficientStockItems.push(`${option.optionName}: ${option.optionValue} (품절)`);
+          } else {
+            insufficientStockItems.push(`${option.optionName}: ${option.optionValue} (재고: ${option.stockQuantity}개)`);
+          }
+        }
+      } else {
+        if (product.stockQuantity < item.quantity) {
+          if (product.stockQuantity <= 0) {
+            insufficientStockItems.push(`${product.name} (품절)`);
+          } else {
+            insufficientStockItems.push(`${product.name} (재고: ${product.stockQuantity}개)`);
+          }
+        }
+      }
+    }
+
+    if (insufficientStockItems.length > 0) {
+      return res.status(400).json({ 
+        error: `재고가 부족합니다: ${insufficientStockItems.join(', ')}` 
+      });
     }
 
     const productImageRepository = AppDataSource.getRepository(ProductImage);
