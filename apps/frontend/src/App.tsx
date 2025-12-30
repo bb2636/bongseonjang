@@ -48,26 +48,26 @@ const GuestOrderDetailPage = lazy(() =>
 );
 
 const CategoryPage = lazy(() =>
-  import("./features/category").then((m) => ({ default: m.CategoryPage }))
+  import("./features/category/pages/CategoryPage")
 );
 const CategoryProductsPage = lazy(() =>
-  import("./features/categoryProducts").then((m) => ({ default: m.CategoryProductsPage }))
+  import("./features/categoryProducts/pages/CategoryProductsPage")
 );
 const SearchPage = lazy(() =>
-  import("./features/search").then((m) => ({ default: m.SearchPage }))
+  import("./features/search/pages/SearchPage")
 );
 
 const ProfilePage = lazy(() =>
-  import("./features/profile").then((m) => ({ default: m.ProfilePage }))
+  import("./features/profile/pages/ProfilePage")
 );
 const ProfilePasswordVerifyPage = lazy(() =>
-  import("./features/profile").then((m) => ({ default: m.ProfilePasswordVerifyPage }))
+  import("./features/profile/pages/ProfilePasswordVerifyPage")
 );
 const ProfileEditPage = lazy(() =>
-  import("./features/profile").then((m) => ({ default: m.ProfileEditPage }))
+  import("./features/profile/pages/ProfileEditPage")
 );
 const ProfileWithdrawPage = lazy(() =>
-  import("./features/profile").then((m) => ({ default: m.ProfileWithdrawPage }))
+  import("./features/profile/pages/ProfileWithdrawPage")
 );
 
 const PointPage = lazy(() =>
