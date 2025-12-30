@@ -4,6 +4,8 @@ import { Order } from '../../../entity/Order';
 import { User } from '../../../entity/User';
 import { Payment } from '../../../entity/Payment';
 import { Shipment } from '../../../entity/Shipment';
+import { OrderItem } from '../../../entity/OrderItem';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl';
 
 const router = Router();
 
@@ -21,6 +23,16 @@ type FrontendPaymentMethod =
   | 'ACCOUNT_TRANSFER'
   | 'BANK_TRANSFER';
 
+interface AdminOrderItemDto {
+  id: string;
+  productName: string;
+  productImageUrl: string | null;
+  optionName: string | null;
+  unitPrice: number;
+  quantity: number;
+  totalPrice: number;
+}
+
 interface AdminOrderListItem {
   id: string;
   orderNumber: string;
@@ -33,6 +45,7 @@ interface AdminOrderListItem {
   paymentMethod: FrontendPaymentMethod | null;
   shippingCompany: string | null;
   trackingNumber: string | null;
+  items: AdminOrderItemDto[];
 }
 
 const dbStatusToFrontend: Record<string, FrontendOrderStatus> = {
@@ -137,6 +150,33 @@ router.get('/', async (req: Request, res: Response) => {
     const orders = rawOrders.entities;
     const rawData = rawOrders.raw;
 
+    const orderIds = orders.map(order => order.id);
+    const orderItemRepository = AppDataSource.getRepository(OrderItem);
+    const orderItemsMap = new Map<string, AdminOrderItemDto[]>();
+    
+    if (orderIds.length > 0) {
+      const orderItems = await orderItemRepository
+        .createQueryBuilder('item')
+        .where('item.orderId IN (:...orderIds)', { orderIds })
+        .getMany();
+      
+      for (const item of orderItems) {
+        const orderId = item.orderId;
+        if (!orderItemsMap.has(orderId)) {
+          orderItemsMap.set(orderId, []);
+        }
+        orderItemsMap.get(orderId)!.push({
+          id: item.id,
+          productName: item.productName,
+          productImageUrl: toAbsoluteImageUrl(item.productImageUrl),
+          optionName: item.optionName,
+          unitPrice: item.unitPrice,
+          quantity: item.quantity,
+          totalPrice: item.totalPrice,
+        });
+      }
+    }
+
     const items: AdminOrderListItem[] = orders.map((order, index) => {
       const raw = rawData[index];
       const user = order.user;
@@ -159,6 +199,7 @@ router.get('/', async (req: Request, res: Response) => {
         paymentMethod: frontendPaymentMethod,
         shippingCompany: raw.shipment_carrierName || null,
         trackingNumber: raw.shipment_trackingNumber || null,
+        items: orderItemsMap.get(order.id) || [],
       };
     });
 
