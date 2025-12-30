@@ -20,6 +20,7 @@ export class CouponController {
       }
 
       const result = await this.service.getCouponsForUser(userId);
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
       res.json(result);
     } catch (error) {
       console.error('Get coupons error:', error);
@@ -65,6 +66,7 @@ export class CouponController {
       }
 
       const coupons = await this.service.getMyCoupons(userId);
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
       res.json({ coupons, totalCount: coupons.length });
     } catch (error) {
       console.error('Get my coupons error:', error);
