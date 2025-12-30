@@ -163,6 +163,22 @@ export class ProductService {
 
     const thumbnailImage = product.images?.find((img) => img.isThumbnail);
 
+    let shippingInfo = {
+      shippingFee: product.shippingPolicy?.shippingFee ?? 3500,
+      freeShippingThreshold: null as number | null,
+    };
+    
+    if (product.detailContent) {
+      try {
+        const parsedContent = JSON.parse(product.detailContent);
+        if (parsedContent.shippingInfo) {
+          shippingInfo.shippingFee = parsedContent.shippingInfo.shippingFee ?? shippingInfo.shippingFee;
+          shippingInfo.freeShippingThreshold = parsedContent.shippingInfo.freeShippingThreshold ?? null;
+        }
+      } catch {
+      }
+    }
+
     return {
       id: product.id,
       name: product.name,
@@ -179,7 +195,8 @@ export class ProductService {
       expirationInfo: undefined,
       shippingMethod: undefined,
       shippingRegion: undefined,
-      shippingFee: product.shippingPolicy?.shippingFee ?? 3500,
+      shippingFee: shippingInfo.shippingFee,
+      freeShippingThreshold: shippingInfo.freeShippingThreshold,
       notice: undefined,
       isOptionRequired: options.length > 0,
       saleStartAt: product.saleStartDate ? new Date(product.saleStartDate).toISOString() : undefined,

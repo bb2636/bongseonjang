@@ -51,7 +51,22 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       const additionalPrice = item.productOption?.price ?? 0;
       const unitPrice = productBasePrice + additionalPrice;
       const totalPrice = unitPrice * item.quantity;
-      const shippingFee = item.product?.shippingPolicy?.shippingFee ?? 3500;
+
+      let shippingInfo = {
+        shippingFee: item.product?.shippingPolicy?.shippingFee ?? 3500,
+        freeShippingThreshold: null as number | null,
+      };
+      
+      if (item.product?.detailContent) {
+        try {
+          const detailContent = JSON.parse(item.product.detailContent);
+          if (detailContent.shippingInfo) {
+            shippingInfo.shippingFee = detailContent.shippingInfo.shippingFee ?? shippingInfo.shippingFee;
+            shippingInfo.freeShippingThreshold = detailContent.shippingInfo.freeShippingThreshold ?? null;
+          }
+        } catch {
+        }
+      }
 
       const optionDisplay = item.productOption 
         ? `${item.productOption.optionName}: ${item.productOption.optionValue}`
@@ -67,7 +82,8 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         quantity: item.quantity,
         unitPrice,
         totalPrice,
-        shippingFee,
+        shippingFee: shippingInfo.shippingFee,
+        freeShippingThreshold: shippingInfo.freeShippingThreshold,
       };
     });
 

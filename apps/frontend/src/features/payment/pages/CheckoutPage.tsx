@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
 import { fetchDefaultAddress, fetchAddresses, AddressResponse } from '../../address/api/addressApi';
 import { fetchUserProfile } from '../../profile/api/profileApi';
-import { preparePayment, prepareDirectPayment, DirectPurchaseItem } from '../api/paymentApi';
+import { preparePayment, prepareDirectPayment, DirectPurchaseItem, fetchMyCoupons, CouponDto } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
 import type { ProductDetail } from '../../productDetail/types/productDetail';
 import { useToast } from '../../../contexts/ToastContext';
@@ -55,10 +55,10 @@ const DELIVERY_REQUEST_OPTIONS = [
   '직접 입력',
 ];
 
-const SHIPPING_CONFIG = {
+const DEFAULT_SHIPPING_CONFIG = {
   BASE_FEE: 3500,
   EXTRA_FEE: 3500,
-  FREE_THRESHOLD: 50000,
+  FREE_THRESHOLD: null as number | null,
 };
 
 function isRemoteArea(postalCode: string): boolean {
@@ -100,6 +100,7 @@ export function CheckoutPage() {
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
   const [termsAgreed, setTermsAgreed] = useState(false);
+  const [selectedCouponId, setSelectedCouponId] = useState<number | null>(null);
 
   const { data: cart, isLoading: isCartLoading } = useQuery({
     queryKey: ['cart'],
@@ -136,6 +137,13 @@ export function CheckoutPage() {
     staleTime: 1000 * 60 * 5,
   });
 
+  const { data: myCoupons = [] } = useQuery({
+    queryKey: ['myCoupons'],
+    queryFn: fetchMyCoupons,
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5,
+  });
+
   const isLoading = isDirectMode 
     ? (isDirectProductLoading || isAddressLoading || isAddressesLoading || isProfileLoading)
     : (isCartLoading || isAddressLoading || isAddressesLoading || isProfileLoading);
@@ -148,9 +156,18 @@ export function CheckoutPage() {
 
   const currentAddress = selectedAddress || defaultAddress;
 
-  const displayItems: DisplayItem[] = useMemo(() => {
+  const { displayItems, shippingConfig } = useMemo(() => {
+    let items: DisplayItem[] = [];
+    let config = {
+      shippingFee: DEFAULT_SHIPPING_CONFIG.BASE_FEE,
+      freeShippingThreshold: DEFAULT_SHIPPING_CONFIG.FREE_THRESHOLD,
+    };
+    
     if (isDirectMode && directProduct && directPurchaseData) {
-      return directPurchaseData.items.map((item, index) => {
+      config.shippingFee = directProduct.shippingFee ?? DEFAULT_SHIPPING_CONFIG.BASE_FEE;
+      config.freeShippingThreshold = directProduct.freeShippingThreshold ?? null;
+      
+      items = directPurchaseData.items.map((item, index) => {
         const productOption = item.productOptionId 
           ? directProduct.options.find(opt => opt.id === item.productOptionId) ||
             directProduct.mainOptions.find(opt => opt.id === item.productOptionId)
@@ -170,32 +187,66 @@ export function CheckoutPage() {
           totalPrice: unitPrice * item.quantity,
         };
       });
+    } else {
+      const cartSelectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
+      
+      if (cartSelectedItems.length > 0) {
+        const firstItem = cartSelectedItems[0];
+        config.shippingFee = (firstItem as { shippingFee?: number }).shippingFee ?? DEFAULT_SHIPPING_CONFIG.BASE_FEE;
+        config.freeShippingThreshold = (firstItem as { freeShippingThreshold?: number | null }).freeShippingThreshold ?? null;
+      }
+      
+      items = cartSelectedItems.map(item => ({
+        id: item.id,
+        productName: item.productName,
+        productImageUrl: item.productImageUrl,
+        optionName: item.productOptionName || null,
+        quantity: item.quantity,
+        unitPrice: item.totalPrice / item.quantity,
+        totalPrice: item.totalPrice,
+      }));
     }
     
-    const cartSelectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
-    return cartSelectedItems.map(item => ({
-      id: item.id,
-      productName: item.productName,
-      productImageUrl: item.productImageUrl,
-      optionName: item.productOptionName || null,
-      quantity: item.quantity,
-      unitPrice: item.totalPrice / item.quantity,
-      totalPrice: item.totalPrice,
-    }));
+    return { displayItems: items, shippingConfig: config };
   }, [isDirectMode, directProduct, directPurchaseData, cart, selectedItemIds]);
 
   const productAmount = displayItems.reduce((sum, item) => sum + item.totalPrice, 0);
   const availablePoints = userProfile?.points ?? 0;
-  const couponCount = userProfile?.couponCount ?? 0;
+  const couponCount = myCoupons.length;
+  
+  const usableCoupons = useMemo(() => {
+    return myCoupons.filter(coupon => productAmount >= coupon.minOrderAmount);
+  }, [myCoupons, productAmount]);
+
+  const selectedCoupon = useMemo(() => {
+    return myCoupons.find(c => c.id === selectedCouponId) || null;
+  }, [myCoupons, selectedCouponId]);
+
+  const couponDiscount = useMemo(() => {
+    if (!selectedCoupon) return 0;
+    if (productAmount < selectedCoupon.minOrderAmount) return 0;
+    
+    let discount = 0;
+    if (selectedCoupon.discountType === 'fixed') {
+      discount = selectedCoupon.discountValue;
+    } else if (selectedCoupon.discountType === 'percentage') {
+      discount = Math.floor(productAmount * selectedCoupon.discountValue / 100);
+      if (selectedCoupon.maxDiscountAmount && discount > selectedCoupon.maxDiscountAmount) {
+        discount = selectedCoupon.maxDiscountAmount;
+      }
+    }
+    return Math.min(discount, productAmount);
+  }, [selectedCoupon, productAmount]);
   
   const shippingFee = useMemo(() => {
-    if (productAmount >= SHIPPING_CONFIG.FREE_THRESHOLD) return 0;
-    const baseFee = SHIPPING_CONFIG.BASE_FEE;
-    const extraFee = currentAddress && isRemoteArea(currentAddress.postalCode) ? SHIPPING_CONFIG.EXTRA_FEE : 0;
+    const freeThreshold = shippingConfig.freeShippingThreshold;
+    if (freeThreshold !== null && productAmount >= freeThreshold) return 0;
+    const baseFee = shippingConfig.shippingFee;
+    const extraFee = currentAddress && isRemoteArea(currentAddress.postalCode) ? DEFAULT_SHIPPING_CONFIG.EXTRA_FEE : 0;
     return baseFee + extraFee;
-  }, [productAmount, currentAddress]);
+  }, [productAmount, currentAddress, shippingConfig]);
   
-  const finalAmount = productAmount + shippingFee - usedPoints;
+  const finalAmount = productAmount + shippingFee - usedPoints - couponDiscount;
 
   useEffect(() => {
     if (isDirectMode) {
@@ -273,6 +324,8 @@ export function CheckoutPage() {
           deliveryRequest: finalDeliveryRequest,
           paymentMethod,
           shippingFee,
+          couponId: selectedCouponId ?? undefined,
+          couponDiscount: couponDiscount > 0 ? couponDiscount : undefined,
         });
       } else {
         paymentData = await preparePayment({
@@ -285,6 +338,8 @@ export function CheckoutPage() {
           deliveryRequest: finalDeliveryRequest,
           paymentMethod,
           shippingFee,
+          couponId: selectedCouponId ?? undefined,
+          couponDiscount: couponDiscount > 0 ? couponDiscount : undefined,
         });
       }
 
@@ -528,9 +583,31 @@ export function CheckoutPage() {
             </svg>
           </div>
           <div className="checkout-coupon-section">
-            <select className="checkout-select">
-              <option>적용할 수 있는 쿠폰이 없습니다</option>
+            <select 
+              className="checkout-select"
+              value={selectedCouponId ?? ''}
+              onChange={(e) => setSelectedCouponId(e.target.value ? Number(e.target.value) : null)}
+            >
+              {usableCoupons.length === 0 ? (
+                <option value="">적용할 수 있는 쿠폰이 없습니다</option>
+              ) : (
+                <>
+                  <option value="">쿠폰을 선택해주세요</option>
+                  {usableCoupons.map(coupon => (
+                    <option key={coupon.id} value={coupon.id}>
+                      {coupon.name} ({coupon.discountType === 'fixed' 
+                        ? `${coupon.discountValue.toLocaleString()}원` 
+                        : `${coupon.discountValue}%`} 할인)
+                    </option>
+                  ))}
+                </>
+              )}
             </select>
+            {selectedCoupon && productAmount < selectedCoupon.minOrderAmount && (
+              <p className="checkout-coupon-warning">
+                최소 주문금액 {selectedCoupon.minOrderAmount.toLocaleString()}원 이상부터 사용 가능합니다
+              </p>
+            )}
             <p className="checkout-coupon-available">
               보유쿠폰 <span className="checkout-coupon-value">{couponCount}장</span>
             </p>
@@ -557,15 +634,21 @@ export function CheckoutPage() {
                 {shippingFee === 0 ? '무료' : `+${shippingFee.toLocaleString()}원`}
               </span>
             </div>
-            {productAmount < SHIPPING_CONFIG.FREE_THRESHOLD && (
+            {shippingConfig.freeShippingThreshold !== null && productAmount < shippingConfig.freeShippingThreshold && (
               <p className="checkout-free-shipping-notice">
-                {(SHIPPING_CONFIG.FREE_THRESHOLD - productAmount).toLocaleString()}원 더 담으면 무료배송!
+                {(shippingConfig.freeShippingThreshold - productAmount).toLocaleString()}원 더 담으면 무료배송!
               </p>
             )}
             {usedPoints > 0 && (
               <div className="checkout-summary-row">
                 <span className="checkout-summary-label">포인트 할인</span>
                 <span className="checkout-summary-value checkout-summary-value--discount">-{usedPoints.toLocaleString()}원</span>
+              </div>
+            )}
+            {couponDiscount > 0 && (
+              <div className="checkout-summary-row">
+                <span className="checkout-summary-label">쿠폰 할인</span>
+                <span className="checkout-summary-value checkout-summary-value--discount">-{couponDiscount.toLocaleString()}원</span>
               </div>
             )}
           </div>

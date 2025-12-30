@@ -418,6 +418,13 @@
   font-weight: 500;
 }
 
+.checkout-coupon-warning {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  color: #E74C3C;
+  margin: 8px 0 0 0;
+}
+
 .checkout-summary {
   display: flex;
   flex-direction: column;

@@ -60,6 +60,7 @@ export interface ProductDetail {
   shippingMethod?: string;
   shippingRegion?: string;
   shippingFee?: number;
+  freeShippingThreshold?: number | null;
   notice?: string;
   isOptionRequired: boolean;
   saleStartAt?: string;

@@ -12,6 +12,7 @@ export interface CartItemDto {
   isAvailable?: boolean;
   stockQuantity?: number;
   shippingFee?: number;
+  freeShippingThreshold?: number | null;
 }
 
 export interface CartDto {

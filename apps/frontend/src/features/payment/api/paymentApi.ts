@@ -1,3 +1,17 @@
+export interface CouponDto {
+  id: number;
+  name: string;
+  description: string | null;
+  discountType: 'fixed' | 'percentage';
+  discountValue: number;
+  maxDiscountAmount: number | null;
+  minOrderAmount: number;
+  targetType: string;
+  validFrom: string | null;
+  validTo: string | null;
+  isIssued: boolean;
+}
+
 interface PreparePaymentRequest {
   selectedItemIds: string[];
   recipientName: string;
@@ -8,6 +22,8 @@ interface PreparePaymentRequest {
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
+  couponId?: number;
+  couponDiscount?: number;
 }
 
 export interface DirectPurchaseItem {
@@ -26,6 +42,8 @@ export interface PrepareDirectPaymentRequest {
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
+  couponId?: number;
+  couponDiscount?: number;
 }
 
 interface PreparePaymentResponse {
@@ -39,6 +57,25 @@ interface PreparePaymentResponse {
 
 function getCallbackUrl(): string {
   return `${window.location.origin}/api/payment/callback`;
+}
+
+export async function fetchMyCoupons(): Promise<CouponDto[]> {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('/api/coupon/my', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+  return data.coupons || [];
 }
 
 export async function prepareDirectPayment(data: PrepareDirectPaymentRequest): Promise<PreparePaymentResponse> {
