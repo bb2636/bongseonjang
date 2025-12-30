@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MainLayout } from '../../../layouts';
 import AppBar from '../../../components/AppBar/AppBar';
 import { useGoBack } from '../../../hooks/useGoBack';
-import { fetchPendingReviewItems, fetchMyReviews, ReviewableOrderItemDto, MyReviewDto } from '../api/reviewApi';
+import { fetchPendingReviewItems, fetchMyReviews, deleteReview, ReviewableOrderItemDto, MyReviewDto } from '../api/reviewApi';
 import './ReviewListPage.css';
 
 type TabType = 'pending' | 'my';
@@ -39,7 +39,11 @@ function PendingReviewCard({ item, onClick }: { item: ReviewableOrderItemDto; on
   );
 }
 
-function MyReviewCard({ review }: { review: MyReviewDto }) {
+function MyReviewCard({ review, onEdit, onDelete }: { 
+  review: MyReviewDto; 
+  onEdit: () => void; 
+  onDelete: () => void;
+}) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
@@ -49,8 +53,12 @@ function MyReviewCard({ review }: { review: MyReviewDto }) {
     <div className="my-review-card">
       <div className="my-review-card__header">
         <div className="my-review-card__product-name">{review.productName}</div>
-        <div className="my-review-card__date">{formatDate(review.createdAt)}</div>
+        <div className="my-review-card__actions">
+          <button type="button" className="my-review-card__action-btn" onClick={onEdit}>수정</button>
+          <button type="button" className="my-review-card__action-btn my-review-card__action-btn--delete" onClick={onDelete}>삭제</button>
+        </div>
       </div>
+      <div className="my-review-card__date">{formatDate(review.createdAt)}</div>
       <div className="my-review-card__rating">
         {[1, 2, 3, 4, 5].map((star) => (
           <StarIcon key={star} filled={star <= review.rating} />
@@ -71,7 +79,9 @@ function MyReviewCard({ review }: { review: MyReviewDto }) {
 export default function ReviewListPage() {
   const navigate = useNavigate();
   const goBack = useGoBack();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabType>('pending');
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const { data: pendingItems = [], isLoading: isPendingLoading, isError: isPendingError } = useQuery({
     queryKey: ['pendingReviewItems'],
@@ -82,6 +92,28 @@ export default function ReviewListPage() {
     queryKey: ['myReviews'],
     queryFn: fetchMyReviews,
   });
+
+  const deleteReviewMutation = useMutation({
+    mutationFn: deleteReview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myReviews'] });
+      setDeleteTarget(null);
+    },
+  });
+
+  const handleEdit = (reviewId: string) => {
+    navigate(`/review/edit/${reviewId}`);
+  };
+
+  const handleDelete = (reviewId: string) => {
+    setDeleteTarget(reviewId);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteTarget) {
+      deleteReviewMutation.mutate(deleteTarget);
+    }
+  };
 
   const handleWriteClick = (item: ReviewableOrderItemDto) => {
     if (!item.productId) {
@@ -163,10 +195,27 @@ export default function ReviewListPage() {
 
             <div className="review-list-page__list">
               {myReviews.map((review) => (
-                <MyReviewCard key={review.id} review={review} />
+                <MyReviewCard 
+                  key={review.id} 
+                  review={review} 
+                  onEdit={() => handleEdit(review.id)}
+                  onDelete={() => handleDelete(review.id)}
+                />
               ))}
             </div>
           </>
+        )}
+
+        {deleteTarget && (
+          <div className="delete-confirm-modal">
+            <div className="delete-confirm-modal__content">
+              <p>리뷰를 삭제하시겠습니까?</p>
+              <div className="delete-confirm-modal__buttons">
+                <button type="button" onClick={() => setDeleteTarget(null)}>취소</button>
+                <button type="button" onClick={handleConfirmDelete}>삭제</button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </MainLayout>
