@@ -118,6 +118,7 @@
   font-size: 13px;
   line-height: 1.78;
   color: rgba(12, 12, 12, 0.8);
+  white-space: pre-line;
 }
 
 .terms-view__text:last-child {
