@@ -74,10 +74,10 @@ export class HomeDataService {
       this.bestProductService.getBestProducts(),
       this.getBannersByPosition('HOME_MIDDLE'),
       this.productService.getFreshProducts(10),
-      this.productService.getProductsByTag('md_pick', 10),
-      this.productService.getProductsByTag('badameun', 10),
+      this.productService.getProductsByTag('MD추천!', 10),
+      this.productService.getProductsByTag('바담은 제품', 10),
       this.bongseonjangTvService.getAllImages(),
-      this.productService.getProductsByTag('bongcook', 10),
+      this.productService.getProductsByTag('봉쿡 제품', 10),
       this.getBannersByPosition('HOME_BOTTOM'),
     ]);
 
@@ -117,10 +117,10 @@ export class HomeDataService {
     ] = await Promise.all([
       this.getBannersByPosition('HOME_MIDDLE'),
       this.productService.getFreshProducts(10),
-      this.productService.getProductsByTag('md_pick', 10),
-      this.productService.getProductsByTag('badameun', 10),
+      this.productService.getProductsByTag('MD추천!', 10),
+      this.productService.getProductsByTag('바담은 제품', 10),
       this.bongseonjangTvService.getAllImages(),
-      this.productService.getProductsByTag('bongcook', 10),
+      this.productService.getProductsByTag('봉쿡 제품', 10),
       this.getBannersByPosition('HOME_BOTTOM'),
     ]);
 
