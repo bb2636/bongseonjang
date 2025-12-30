@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { apiClient } from '@/services/apiClient';
 import type { ProductCardData } from '@/components/ProductCard';
 
@@ -30,6 +31,7 @@ async function fetchProductsByBrand(brandId: string): Promise<ProductCardData[]>
 
 export function useBrandProductsPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { brandId } = useParams<{ brandId: string }>();
   const activeBrandId = brandId || 'badameun';
 
@@ -52,8 +54,8 @@ export function useBrandProductsPage() {
   }, [navigate]);
 
   const handleBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+    goBack();
+  }, [goBack]);
 
   return {
     state: {

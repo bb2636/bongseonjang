@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchAddresses, AddressResponse } from '../api/addressApi';
 import { fetchUserProfile } from '../../profile/api/profileApi';
@@ -28,7 +29,7 @@ const initialFormData: AddressFormData = {
 };
 
 export function AddressFormPage() {
-  const navigate = useNavigate();
+  const goBack = useGoBack();
   const { id } = useParams<{ id: string }>();
   const { showToast } = useToast();
   const queryClient = useQueryClient();
@@ -118,7 +119,7 @@ export function AddressFormPage() {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
       queryClient.invalidateQueries({ queryKey: ['defaultAddress'] });
       showToast(isEditMode ? '배송지가 수정되었습니다' : '배송지가 추가되었습니다', 'success');
-      navigate(-1);
+      goBack();
     },
     onError: (error: Error) => {
       showToast(error.message, 'error');
@@ -154,7 +155,7 @@ export function AddressFormPage() {
   };
 
   const handleClose = () => {
-    navigate(-1);
+    goBack();
   };
 
   const pageTitle = isEditMode ? '배송지 수정' : '배송지 추가';

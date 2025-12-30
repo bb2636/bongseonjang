@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useProductDetailPage } from '../hooks/useProductDetailPage';
 import ProductDetailView from '../views/ProductDetailView';
 import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
@@ -14,6 +15,7 @@ type ModalType = 'alert' | 'retry' | null;
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const [modalState, setModalState] = useState<{ type: ModalType; message: string }>({
     type: null,
     message: '',
@@ -55,7 +57,7 @@ export default function ProductDetailPage() {
         </p>
         <button 
           className="product-detail-page__back-button"
-          onClick={() => navigate(-1)}
+          onClick={goBack}
         >
           돌아가기
         </button>

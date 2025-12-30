@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useCart, useToast } from '../../../contexts';
 import { InvestmentInfo } from '../types/investmentInfo';
 import { fetchInvestmentInfos } from '../api/investmentInfoApi';
 
 export function useInvestmentInfoListPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { cartCount } = useCart();
   const { showToast } = useToast();
 
@@ -23,7 +25,7 @@ export function useInvestmentInfoListPage() {
   }, [error, showToast]);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleCartClick = () => {

@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useCart, useToast } from '../../../contexts';
 import { Notice } from '../types/notice';
 import { fetchNotices } from '../api/noticeApi';
 
 export function useNoticeListPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { cartCount } = useCart();
   const { showToast } = useToast();
 
@@ -23,7 +25,7 @@ export function useNoticeListPage() {
   }, [error, showToast]);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleCartClick = () => {

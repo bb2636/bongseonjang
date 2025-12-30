@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PointWallet, PointTransaction, PointHistoryGroup } from '../types/point';
 import { fetchPointWallet, fetchPointTransactions } from '../api/pointApi';
+import { useGoBack } from '../../../hooks/useGoBack';
 
 function groupTransactionsByDate(transactions: PointTransaction[]): PointHistoryGroup[] {
   const groups: Map<string, PointTransaction[]> = new Map();
@@ -26,6 +27,7 @@ function groupTransactionsByDate(transactions: PointTransaction[]): PointHistory
 
 export function usePointPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const [wallet, setWallet] = useState<PointWallet | null>(null);
   const [transactions, setTransactions] = useState<PointTransaction[]>([]);
   const [historyGroups, setHistoryGroups] = useState<PointHistoryGroup[]>([]);
@@ -82,8 +84,8 @@ export function usePointPage() {
   }, [isLoadingMore, hasMore, page, transactions]);
 
   const handleBackClick = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+    goBack();
+  }, [goBack]);
 
   const handleCartClick = useCallback(() => {
     navigate('/cart');

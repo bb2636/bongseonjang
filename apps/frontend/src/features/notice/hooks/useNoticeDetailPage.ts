@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useToast } from '../../../contexts';
 import { fetchNoticeById } from '../api/noticeApi';
 
@@ -14,6 +15,7 @@ function is404Error(error: unknown): boolean {
 export function useNoticeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { showToast } = useToast();
 
   const { data: notice, isLoading, error } = useQuery({
@@ -40,7 +42,7 @@ export function useNoticeDetailPage() {
   }, [error, showToast]);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleCartClick = () => {

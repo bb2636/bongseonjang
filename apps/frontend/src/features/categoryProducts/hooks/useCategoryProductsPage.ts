@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { 
   fetchAllProducts, 
   fetchBestProducts,
@@ -26,6 +27,7 @@ function isFilterableCategory(slug: string): boolean {
 
 export function useCategoryProductsPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { slug } = useParams<{ slug: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeSlug = slug || 'all';
@@ -91,7 +93,7 @@ export function useCategoryProductsPage() {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleLogoClick = () => {

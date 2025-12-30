@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useSignupFormState } from './useSignupFormState';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useSignupEmailStep } from './useSignupEmailStep';
 import { useSignupPasswordStep } from './useSignupPasswordStep';
 import { useSignupProfileStep } from './useSignupProfileStep';
 
 export function useSignupPage() {
-  const navigate = useNavigate();
+  const goBack = useGoBack();
   const { formData, updateFormData } = useSignupFormState();
   
   const emailStep = useSignupEmailStep();
@@ -35,9 +35,9 @@ export function useSignupPage() {
         passwordConfirm: '',
       });
     } else {
-      navigate(-1);
+      goBack();
     }
-  }, [currentStep, updateFormData, navigate]);
+  }, [currentStep, updateFormData, goBack]);
 
   return {
     state: {

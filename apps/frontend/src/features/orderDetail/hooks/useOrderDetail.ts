@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { fetchOrderDetail, OrderDetail } from '../api/orderDetailApi';
 
 interface UseOrderDetailResult {
@@ -12,6 +13,7 @@ interface UseOrderDetailResult {
 
 export function useOrderDetail(orderId: string): UseOrderDetailResult {
   const navigate = useNavigate();
+  const goBack = useGoBack();
 
   const { data: order, isLoading, isError } = useQuery({
     queryKey: ['orderDetail', orderId],
@@ -20,7 +22,7 @@ export function useOrderDetail(orderId: string): UseOrderDetailResult {
   });
 
   const onBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const onCartClick = () => {

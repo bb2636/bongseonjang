@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { LOGIN_ROUTES } from '../constants';
 
 interface PasswordResetConfirmResponse {
@@ -31,6 +32,7 @@ interface FieldError {
 
 export function usePasswordResetConfirm() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') || '';
 
@@ -123,8 +125,8 @@ export function usePasswordResetConfirm() {
   }, [newPassword, confirmPassword, token, mutation, validateNewPassword, validateConfirmPassword]);
 
   const onBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+    goBack();
+  }, [goBack]);
 
   return {
     newPassword,

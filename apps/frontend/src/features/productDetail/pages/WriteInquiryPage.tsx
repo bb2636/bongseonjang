@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
 import { useToast } from '../../../contexts/ToastContext';
@@ -60,7 +61,7 @@ function CloseIcon() {
 
 export default function WriteInquiryPage() {
   const { productId } = useParams<{ productId: string }>();
-  const navigate = useNavigate();
+  const goBack = useGoBack();
   const location = useLocation();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
@@ -123,7 +124,7 @@ export default function WriteInquiryPage() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['productInquiries', productId] });
       showToast('문의가 등록되었습니다.', 'success');
-      navigate(-1);
+      goBack();
     },
     onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : '문의 등록에 실패했습니다.';
@@ -165,7 +166,7 @@ export default function WriteInquiryPage() {
   return (
     <div className="write-inquiry-page">
       <header className="write-inquiry-page__header">
-        <button className="write-inquiry-page__header-button" type="button" onClick={() => navigate(-1)}>
+        <button className="write-inquiry-page__header-button" type="button" onClick={goBack}>
           <CloseIcon />
         </button>
         <h1 className="write-inquiry-page__title">문의하기</h1>

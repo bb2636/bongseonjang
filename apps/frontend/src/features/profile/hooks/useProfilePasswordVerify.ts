@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
 import { profileApi } from '../api/profileApi';
+import { useGoBack } from '../../../hooks/useGoBack';
 
 export function useProfilePasswordVerify() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { user } = useAuth();
   const { showToast } = useToast();
   
@@ -47,7 +49,7 @@ export function useProfilePasswordVerify() {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   return {

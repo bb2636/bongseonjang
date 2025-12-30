@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../../hooks/useGoBack';
 import { fetchGuestOrderDetail, GuestOrderDetail } from '../../../payment/api/paymentApi';
 
 interface UseGuestOrderDetailResult {
@@ -10,7 +10,7 @@ interface UseGuestOrderDetailResult {
 }
 
 export function useGuestOrderDetail(orderId: string): UseGuestOrderDetailResult {
-  const navigate = useNavigate();
+  const goBack = useGoBack();
 
   const { data: order, isLoading, isError } = useQuery({
     queryKey: ['guestOrderDetail', orderId],
@@ -19,7 +19,7 @@ export function useGuestOrderDetail(orderId: string): UseGuestOrderDetailResult 
   });
 
   const onBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   return {

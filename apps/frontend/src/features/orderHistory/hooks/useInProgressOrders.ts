@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { fetchOrderHistory, OrderHistoryEntry } from '../api/orderHistoryApi';
 import { useToast } from '../../../contexts/ToastContext';
 
 export function useInProgressOrders() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { showToast } = useToast();
 
   const { data, isLoading, error } = useQuery({
@@ -21,7 +23,7 @@ export function useInProgressOrders() {
   }, [error, showToast]);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleOrderClick = (orderId: string) => {

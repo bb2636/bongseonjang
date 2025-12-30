@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { fetchOrderHistory, OrderStatusFilter, OrderHistoryEntry } from '../api/orderHistoryApi';
 import { useToast } from '../../../contexts/ToastContext';
 
 export function useOrderHistory() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState<OrderStatusFilter>('all');
 
@@ -22,7 +24,7 @@ export function useOrderHistory() {
   }, [error, showToast]);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleTabChange = (tab: OrderStatusFilter) => {

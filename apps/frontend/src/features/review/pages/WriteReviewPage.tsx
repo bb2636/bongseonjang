@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
+import { useGoBack } from '../../../hooks/useGoBack';
 import './WriteReviewPage.css';
 
 interface ProductInfo {
@@ -85,6 +86,7 @@ export default function WriteReviewPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
+  const goBack = useGoBack();
 
   const stateProduct: ProductInfo | undefined = location.state?.product;
   const stateOrderItemId: string | undefined = location.state?.orderItemId;
@@ -116,12 +118,12 @@ export default function WriteReviewPage() {
     mutationFn: createReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productReviews', productId] });
-      navigate(-1);
+      goBack();
     },
   });
 
   const handleClose = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleStarClick = (starIndex: number) => {

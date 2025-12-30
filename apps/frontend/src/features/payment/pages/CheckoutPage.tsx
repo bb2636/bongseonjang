@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
 import { fetchDefaultAddress, fetchAddresses, AddressResponse } from '../../address/api/addressApi';
@@ -100,6 +101,7 @@ function isRemoteArea(postalCode: string): boolean {
 
 export function CheckoutPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { showToast } = useToast();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -424,7 +426,7 @@ export function CheckoutPage() {
     <div className="checkout-page">
       {isProcessing && <PaymentLoadingOverlay step={paymentStep} />}
       <header className="checkout-header">
-        <button type="button" className="checkout-back-button" onClick={() => navigate(-1)}>
+        <button type="button" className="checkout-back-button" onClick={goBack}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>

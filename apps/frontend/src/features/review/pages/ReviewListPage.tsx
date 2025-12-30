@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { MainLayout } from '../../../layouts';
 import AppBar from '../../../components/AppBar/AppBar';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { fetchPendingReviewItems, fetchMyReviews, ReviewableOrderItemDto, MyReviewDto } from '../api/reviewApi';
 import './ReviewListPage.css';
 
@@ -69,6 +70,7 @@ function MyReviewCard({ review }: { review: MyReviewDto }) {
 
 export default function ReviewListPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const [activeTab, setActiveTab] = useState<TabType>('pending');
 
   const { data: pendingItems = [], isLoading: isPendingLoading, isError: isPendingError } = useQuery({
@@ -107,7 +109,7 @@ export default function ReviewListPage() {
         <AppBar
           variant="subpage"
           title="상품 리뷰"
-          onBackClick={() => navigate(-1)}
+          onBackClick={goBack}
           showCart
           onCartClick={() => navigate('/cart')}
         />

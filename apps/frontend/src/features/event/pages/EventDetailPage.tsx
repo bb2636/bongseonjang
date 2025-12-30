@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { AppBar } from '@/components/AppBar';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
+import { useGoBack } from '../../../hooks/useGoBack';
 import './EventDetailPage.css';
 
 interface EventDetail {
@@ -17,6 +18,7 @@ interface EventDetail {
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function EventDetailPage() {
   }, [id]);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleCartClick = () => {

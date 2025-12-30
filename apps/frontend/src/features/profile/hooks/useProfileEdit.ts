@@ -3,10 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
 import { profileApi } from '../api/profileApi';
+import { useGoBack } from '../../../hooks/useGoBack';
 
 export function useProfileEdit() {
   const navigate = useNavigate();
   const location = useLocation();
+  const goBack = useGoBack();
   const { user } = useAuth();
   const { showToast } = useToast();
   
@@ -120,7 +122,7 @@ export function useProfileEdit() {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleWithdrawClick = () => {

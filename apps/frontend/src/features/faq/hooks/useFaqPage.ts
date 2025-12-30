@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaqCategory, FaqItem } from '../types/faq';
+import { useGoBack } from '../../../hooks/useGoBack';
 
 const FAQ_CATEGORIES: FaqCategory[] = [
   { id: 'orders-payments', name: '주문/결제' },
@@ -65,6 +66,7 @@ const FAQ_ITEMS: FaqItem[] = [
 
 export function useFaqPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('orders-payments');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>('cash-receipt');
@@ -83,7 +85,7 @@ export function useFaqPage() {
   }, [searchQuery, selectedCategoryId]);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleCartClick = () => {

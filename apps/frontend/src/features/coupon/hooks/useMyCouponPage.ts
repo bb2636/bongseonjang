@@ -2,11 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useMemo } from 'react';
 import { couponApi } from '../api/couponApi';
+import { useGoBack } from '../../../hooks/useGoBack';
 
 const REFETCH_INTERVAL_MS = 60000;
 
 export function useMyCouponPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['my-coupons'],
@@ -28,7 +30,7 @@ export function useMyCouponPage() {
   }, [data?.coupons]);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleGoToDownload = () => {

@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
+import { useGoBack } from '../../../hooks/useGoBack';
 
 export function useProfileWithdraw() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { logout } = useAuth();
   const { showToast } = useToast();
   
@@ -13,7 +15,7 @@ export function useProfileWithdraw() {
   const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   const handleBack = () => {
-    navigate(-1);
+    goBack();
   };
 
   const handleAgreedChange = (value: boolean) => {

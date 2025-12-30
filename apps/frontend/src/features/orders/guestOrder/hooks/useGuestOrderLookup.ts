@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGoBack } from '../../../../hooks/useGoBack';
 import { GUEST_ORDER_MESSAGES } from '../constants';
 import { lookupGuestOrders, GuestOrder } from '../../../payment/api/paymentApi';
 import { useToast } from '../../../../contexts/ToastContext';
@@ -21,6 +22,7 @@ interface TouchedFields {
 
 export function useGuestOrderLookup() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const { showToast } = useToast();
   
   const [formData, setFormData] = useState<GuestOrderLookupState>({
@@ -108,8 +110,8 @@ export function useGuestOrderLookup() {
   }, [formData, isValid, showToast]);
 
   const onBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+    goBack();
+  }, [goBack]);
 
   const onOrderClick = useCallback((orderId: string) => {
     navigate(`/orders/guest/${orderId}`);

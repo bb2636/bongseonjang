@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { fetchMyInquiries } from '../api/myInquiriesApi';
 import type { InquiryType, SortOrder, MyInquiry } from '../types/myInquiry';
 
@@ -8,6 +9,7 @@ const ITEMS_PER_PAGE = 20;
 
 export function useMyInquiriesPage() {
   const navigate = useNavigate();
+  const goBack = useGoBack();
   const [selectedType, setSelectedType] = useState<InquiryType>('all');
   const [sortOrder, setSortOrder] = useState<SortOrder>('latest');
   const [page, setPage] = useState(1);
@@ -23,8 +25,8 @@ export function useMyInquiriesPage() {
   const hasMore = inquiries.length < total;
 
   const handleBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+    goBack();
+  }, [goBack]);
 
   const handleCartClick = useCallback(() => {
     navigate('/cart');
