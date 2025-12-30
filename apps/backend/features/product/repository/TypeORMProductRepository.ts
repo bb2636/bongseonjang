@@ -17,9 +17,7 @@ export class TypeORMProductRepository implements ProductRepository {
       .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now });
 
     if (filter?.productCategory) {
-      queryBuilder
-        .innerJoin('product.productCategory', 'productCategory')
-        .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
+      queryBuilder.andWhere('product.productCategoryId = :productCategoryId', { productCategoryId: filter.productCategory });
     }
 
     return queryBuilder
@@ -36,9 +34,7 @@ export class TypeORMProductRepository implements ProductRepository {
       .leftJoinAndSelect('product.options', 'options');
 
     if (filter?.productCategory) {
-      queryBuilder
-        .innerJoin('product.productCategory', 'productCategory')
-        .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
+      queryBuilder.andWhere('product.productCategoryId = :productCategoryId', { productCategoryId: filter.productCategory });
     }
 
     if (filter?.search) {
@@ -140,9 +136,7 @@ export class TypeORMProductRepository implements ProductRepository {
       .andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now });
 
     if (filter?.productCategory) {
-      queryBuilder
-        .innerJoin('product.productCategory', 'productCategory')
-        .andWhere('productCategory.name = :productCategoryName', { productCategoryName: filter.productCategory });
+      queryBuilder.andWhere('product.productCategoryId = :productCategoryId', { productCategoryId: filter.productCategory });
     }
 
     return queryBuilder
