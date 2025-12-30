@@ -185,7 +185,8 @@ export default function QuickCartBottomSheet() {
       closeQuickCart();
     } catch (error) {
       console.error('Failed to add to cart:', error);
-      showToast('장바구니 담기에 실패했습니다', 'error');
+      const errorMessage = error instanceof Error ? error.message : '장바구니 담기에 실패했습니다';
+      showToast(errorMessage, 'error');
     } finally {
       setIsAdding(false);
     }
