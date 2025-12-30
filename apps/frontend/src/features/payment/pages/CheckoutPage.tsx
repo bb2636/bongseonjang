@@ -259,11 +259,13 @@ export function CheckoutPage() {
     let discount = 0;
     if (selectedCoupon.discountType === 'fixed') {
       discount = selectedCoupon.discountValue;
-    } else if (selectedCoupon.discountType === 'percentage') {
+    } else if (selectedCoupon.discountType === 'rate') {
       discount = Math.floor(productAmount * selectedCoupon.discountValue / 100);
       if (selectedCoupon.maxDiscountAmount && discount > selectedCoupon.maxDiscountAmount) {
         discount = selectedCoupon.maxDiscountAmount;
       }
+    } else if (selectedCoupon.discountType === 'shipping') {
+      return 0;
     }
     return Math.min(discount, productAmount);
   }, [selectedCoupon, productAmount]);
@@ -354,8 +356,7 @@ export function CheckoutPage() {
           deliveryRequest: finalDeliveryRequest,
           paymentMethod,
           shippingFee,
-          couponId: selectedCouponId ?? undefined,
-          couponDiscount: couponDiscount > 0 ? couponDiscount : undefined,
+          userCouponId: selectedCouponId ?? undefined,
         });
       } else {
         paymentData = await preparePayment({
@@ -368,8 +369,7 @@ export function CheckoutPage() {
           deliveryRequest: finalDeliveryRequest,
           paymentMethod,
           shippingFee,
-          couponId: selectedCouponId ?? undefined,
-          couponDiscount: couponDiscount > 0 ? couponDiscount : undefined,
+          userCouponId: selectedCouponId ?? undefined,
         });
       }
 
@@ -627,7 +627,9 @@ export function CheckoutPage() {
                     <option key={coupon.id} value={coupon.id}>
                       {coupon.name} ({coupon.discountType === 'fixed' 
                         ? `${coupon.discountValue.toLocaleString()}원` 
-                        : `${coupon.discountValue}%`} 할인)
+                        : coupon.discountType === 'rate'
+                          ? `${coupon.discountValue}%`
+                          : '배송비 무료'} 할인)
                     </option>
                   ))}
                 </>

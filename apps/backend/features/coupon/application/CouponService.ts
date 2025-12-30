@@ -89,7 +89,7 @@ export class CouponService {
       if (validTo && validTo < new Date()) continue;
 
       result.push({
-        id: couponDetails.id,
+        id: userCoupon.id,
         name: couponDetails.name,
         description: couponDetails.description,
         discountType: couponDetails.discountType,

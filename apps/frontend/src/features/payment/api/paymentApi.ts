@@ -2,7 +2,7 @@ export interface CouponDto {
   id: number;
   name: string;
   description: string | null;
-  discountType: 'fixed' | 'percentage';
+  discountType: 'fixed' | 'rate' | 'shipping';
   discountValue: number;
   maxDiscountAmount: number | null;
   minOrderAmount: number;
@@ -22,8 +22,7 @@ interface PreparePaymentRequest {
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
-  couponId?: number;
-  couponDiscount?: number;
+  userCouponId?: number;
 }
 
 export interface DirectPurchaseItem {
@@ -42,8 +41,7 @@ export interface PrepareDirectPaymentRequest {
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
-  couponId?: number;
-  couponDiscount?: number;
+  userCouponId?: number;
 }
 
 interface PreparePaymentResponse {
