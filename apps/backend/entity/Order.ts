@@ -80,6 +80,9 @@ export class Order {
   @Column({ type: 'varchar', length: 500, nullable: true })
   returnUrl!: string | null;
 
+  @Column({ name: 'user_coupon_id', type: 'int', nullable: true })
+  userCouponId!: number | null;
+
   @ManyToOne('User', { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'userId' })
   user!: User | null;

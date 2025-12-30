@@ -11,6 +11,7 @@ import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
 import { Product } from '../../../entity/Product';
 import { ProductImage } from '../../../entity/ProductImage';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+import { CouponRepository } from '../../coupon/repository/CouponRepository';
 
 function hashPhone(phone: string): string {
   return crypto.createHash('sha256').update(phone).digest('hex');
@@ -68,7 +69,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.userId;
-    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod, shippingFee = 0 } = req.body;
+    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod, shippingFee = 0, userCouponId } = req.body;
 
     if (!selectedItemIds || !Array.isArray(selectedItemIds) || selectedItemIds.length === 0) {
       return res.status(400).json({ error: '결제할 상품을 선택해주세요' });
@@ -129,7 +130,63 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
 
     const orderNumber = generateOrderNumber();
     const shippingAmount = Number(shippingFee) || 0;
-    const finalAmount = totalProductPrice + shippingAmount;
+    
+    let couponDiscountAmount = 0;
+    let appliedUserCouponId: number | null = null;
+    const couponRepository = new CouponRepository();
+    
+    if (userCouponId) {
+      const userCoupon = await couponRepository.getUserCouponById(Number(userCouponId));
+      
+      if (!userCoupon) {
+        return res.status(400).json({ error: '쿠폰을 찾을 수 없습니다' });
+      }
+      
+      if (userCoupon.userId !== userId) {
+        return res.status(400).json({ error: '본인의 쿠폰만 사용할 수 있습니다' });
+      }
+      
+      if (userCoupon.status !== 'ISSUED') {
+        return res.status(400).json({ error: '이미 사용되었거나 만료된 쿠폰입니다' });
+      }
+      
+      const now = new Date();
+      
+      if (userCoupon.validFrom && now < userCoupon.validFrom) {
+        return res.status(400).json({ error: '아직 사용할 수 없는 쿠폰입니다' });
+      }
+      
+      if (userCoupon.validTo && now > userCoupon.validTo) {
+        return res.status(400).json({ error: '유효기간이 지난 쿠폰입니다' });
+      }
+      
+      const couponDetails = await couponRepository.findCouponById(userCoupon.couponId);
+      
+      if (!couponDetails || !couponDetails.isActive) {
+        return res.status(400).json({ error: '사용할 수 없는 쿠폰입니다' });
+      }
+      
+      if (couponDetails.minOrderAmount > totalProductPrice) {
+        return res.status(400).json({ 
+          error: `최소 주문 금액 ${couponDetails.minOrderAmount.toLocaleString()}원 이상 구매 시 사용 가능합니다` 
+        });
+      }
+      
+      if (couponDetails.discountType === 'fixed') {
+        couponDiscountAmount = Math.min(couponDetails.discountValue, totalProductPrice);
+      } else if (couponDetails.discountType === 'rate') {
+        couponDiscountAmount = Math.floor(totalProductPrice * (couponDetails.discountValue / 100));
+        if (couponDetails.maxDiscountAmount && couponDiscountAmount > couponDetails.maxDiscountAmount) {
+          couponDiscountAmount = couponDetails.maxDiscountAmount;
+        }
+      } else if (couponDetails.discountType === 'shipping') {
+        couponDiscountAmount = shippingAmount;
+      }
+      
+      appliedUserCouponId = userCoupon.id;
+    }
+    
+    const finalAmount = Math.max(0, totalProductPrice + shippingAmount - couponDiscountAmount);
 
     const cartItemIds = cartItems.map(item => item.id);
 
@@ -147,7 +204,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       totalProductPrice,
       totalDiscountAmount: 0,
       usedPoints: 0,
-      couponDiscountAmount: 0,
+      couponDiscountAmount,
       finalAmount,
       earnedPoints: 0,
       recipientName,
@@ -158,6 +215,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       deliveryRequest: deliveryRequest || null,
       cartItemIdsSnapshot: cartItemIds,
       returnUrl: returnUrlOrigin,
+      userCouponId: appliedUserCouponId,
     });
 
     await orderRepository.save(order);
@@ -423,6 +481,11 @@ async function handlePaymentCallback(req: Request, res: Response) {
         await paymentRepository.save(payment);
       }
 
+      if (order.userCouponId) {
+        const couponRepository = new CouponRepository();
+        await couponRepository.useUserCoupon(order.userCouponId, order.id);
+      }
+
       if (order.cartItemIdsSnapshot && order.cartItemIdsSnapshot.length > 0) {
         const { In } = await import('typeorm');
         await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
@@ -473,7 +536,8 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       deliveryRequest, 
       returnUrl: clientReturnUrl, 
       paymentMethod,
-      shippingFee = 0
+      shippingFee = 0,
+      userCouponId
     } = req.body;
 
     if (!productId) {
@@ -553,7 +617,63 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
 
     const orderNumber = generateOrderNumber();
     const shippingAmount = Number(shippingFee) || 0;
-    const finalAmount = totalProductPrice + shippingAmount;
+    
+    let couponDiscountAmount = 0;
+    let appliedUserCouponId: number | null = null;
+    const couponRepository = new CouponRepository();
+    
+    if (userCouponId) {
+      const userCoupon = await couponRepository.getUserCouponById(Number(userCouponId));
+      
+      if (!userCoupon) {
+        return res.status(400).json({ error: '쿠폰을 찾을 수 없습니다' });
+      }
+      
+      if (userCoupon.userId !== userId) {
+        return res.status(400).json({ error: '본인의 쿠폰만 사용할 수 있습니다' });
+      }
+      
+      if (userCoupon.status !== 'ISSUED') {
+        return res.status(400).json({ error: '이미 사용되었거나 만료된 쿠폰입니다' });
+      }
+      
+      const now = new Date();
+      
+      if (userCoupon.validFrom && now < userCoupon.validFrom) {
+        return res.status(400).json({ error: '아직 사용할 수 없는 쿠폰입니다' });
+      }
+      
+      if (userCoupon.validTo && now > userCoupon.validTo) {
+        return res.status(400).json({ error: '유효기간이 지난 쿠폰입니다' });
+      }
+      
+      const couponDetails = await couponRepository.findCouponById(userCoupon.couponId);
+      
+      if (!couponDetails || !couponDetails.isActive) {
+        return res.status(400).json({ error: '사용할 수 없는 쿠폰입니다' });
+      }
+      
+      if (couponDetails.minOrderAmount > totalProductPrice) {
+        return res.status(400).json({ 
+          error: `최소 주문 금액 ${couponDetails.minOrderAmount.toLocaleString()}원 이상 구매 시 사용 가능합니다` 
+        });
+      }
+      
+      if (couponDetails.discountType === 'fixed') {
+        couponDiscountAmount = Math.min(couponDetails.discountValue, totalProductPrice);
+      } else if (couponDetails.discountType === 'rate') {
+        couponDiscountAmount = Math.floor(totalProductPrice * (couponDetails.discountValue / 100));
+        if (couponDetails.maxDiscountAmount && couponDiscountAmount > couponDetails.maxDiscountAmount) {
+          couponDiscountAmount = couponDetails.maxDiscountAmount;
+        }
+      } else if (couponDetails.discountType === 'shipping') {
+        couponDiscountAmount = shippingAmount;
+      }
+      
+      appliedUserCouponId = userCoupon.id;
+    }
+    
+    const finalAmount = Math.max(0, totalProductPrice + shippingAmount - couponDiscountAmount);
 
     let returnUrlOrigin: string;
     try {
@@ -569,7 +689,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       totalProductPrice,
       totalDiscountAmount: 0,
       usedPoints: 0,
-      couponDiscountAmount: 0,
+      couponDiscountAmount,
       finalAmount,
       earnedPoints: 0,
       recipientName,
@@ -580,6 +700,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       deliveryRequest: deliveryRequest || null,
       cartItemIdsSnapshot: [],
       returnUrl: returnUrlOrigin,
+      userCouponId: appliedUserCouponId,
     });
 
     await orderRepository.save(order);
