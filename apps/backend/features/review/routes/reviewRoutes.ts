@@ -19,6 +19,7 @@ router.get('/product/:productId/stats', (req, res) => reviewController.getReview
 router.get('/check/:productId', authMiddleware, (req, res) => reviewController.checkUserReview(req, res));
 router.get('/pending', authMiddleware, (req, res) => reviewController.getPendingReviewItems(req as any, res));
 router.get('/my', authMiddleware, (req, res) => reviewController.getMyReviews(req as any, res));
+router.get('/:id', authMiddleware, (req, res) => reviewController.getReviewById(req as any, res));
 router.post('/', authMiddleware, (req, res) => reviewController.createReview(req, res));
 router.put('/:id', authMiddleware, (req, res) => reviewController.updateReview(req, res));
 router.delete('/:id', authMiddleware, (req, res) => reviewController.deleteReview(req, res));

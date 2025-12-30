@@ -133,6 +133,23 @@ export class ReviewService implements ReviewStatsProvider {
     return reviews.map((review) => this.toMyReviewDto(review, imagesByReviewId.get(review.id) || []));
   }
 
+  async getReviewById(id: string, userId: string): Promise<MyReviewDto | null> {
+    const review = await this.reviewRepository.findById(id);
+    
+    if (!review) {
+      return null;
+    }
+    
+    if (review.userId !== userId) {
+      throw new Error('Unauthorized to view this review');
+    }
+
+    const images = await this.reviewImageRepository.findByReviewIds([id]);
+    const imageUrls = images.map(img => img.imageUrl);
+    
+    return this.toMyReviewDto(review, imageUrls);
+  }
+
   private toDto(review: Review, imageUrls: string[] = []): ReviewDto {
     return {
       id: review.id,

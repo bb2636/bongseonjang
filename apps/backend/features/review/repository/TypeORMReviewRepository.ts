@@ -31,10 +31,14 @@ export class TypeORMReviewRepository implements ReviewRepository {
   async findById(id: string): Promise<Review | null> {
     const reviewRepository = AppDataSource.getRepository(Review);
     
-    return reviewRepository.findOne({
-      where: { id },
-      relations: ['user'],
-    });
+    return reviewRepository
+      .createQueryBuilder('review')
+      .leftJoinAndSelect('review.user', 'user')
+      .leftJoinAndSelect('review.product', 'product')
+      .leftJoin('product.images', 'productImages', 'productImages.isThumbnail = :isThumbnail', { isThumbnail: true })
+      .addSelect(['productImages.imageUrl'])
+      .where('review.id = :id', { id })
+      .getOne();
   }
 
   async getStatsByProductId(productId: string): Promise<ReviewStats> {

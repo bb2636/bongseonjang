@@ -198,4 +198,32 @@ export class ReviewController {
       res.status(500).json({ error: 'Failed to fetch my reviews' });
     }
   }
+
+  async getReviewById(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Authentication required' });
+        return;
+      }
+
+      const { id } = req.params;
+      const review = await this.reviewService.getReviewById(id, userId);
+      
+      if (!review) {
+        res.status(404).json({ error: 'Review not found' });
+        return;
+      }
+      
+      res.json(review);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'Unauthorized to view this review') {
+        res.status(403).json({ error: error.message });
+        return;
+      }
+      console.error('Error fetching review:', error);
+      res.status(500).json({ error: 'Failed to fetch review' });
+    }
+  }
 }

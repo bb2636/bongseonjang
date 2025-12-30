@@ -367,6 +367,14 @@ export default function App() {
           }
         />
         <Route
+          path="/review/edit/:reviewId"
+          element={
+            <ProtectedRoute>
+              <WriteReviewPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/review"
           element={
             <ProtectedRoute>
