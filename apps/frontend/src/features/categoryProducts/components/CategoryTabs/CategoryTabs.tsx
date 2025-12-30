@@ -32,11 +32,14 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
     const fetchCategories = async () => {
       try {
         const categories = await apiClient.get<ApiCategory[]>('/products/categories');
-        const mapped = categories.map((cat) => ({
-          id: cat.id,
-          slug: cat.id,
-          name: cat.name,
-        }));
+        const brandCategoryNames = ['바담은', '봉쿡', '포시즌', '오바다'];
+        const mapped = categories
+          .filter((cat) => !brandCategoryNames.includes(cat.name))
+          .map((cat) => ({
+            id: cat.id,
+            slug: cat.id,
+            name: cat.name,
+          }));
         setDynamicCategories(mapped);
       } catch (error) {
         console.error('Failed to fetch categories:', error);
