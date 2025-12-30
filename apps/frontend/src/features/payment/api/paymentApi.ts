@@ -7,6 +7,7 @@ interface PreparePaymentRequest {
   addressDetail?: string;
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
+  shippingFee: number;
 }
 
 export interface DirectPurchaseItem {
@@ -24,6 +25,7 @@ export interface PrepareDirectPaymentRequest {
   addressDetail?: string;
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
+  shippingFee: number;
 }
 
 interface PreparePaymentResponse {

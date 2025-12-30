@@ -449,6 +449,19 @@
   color: #3B9BD5;
 }
 
+.checkout-summary-label-sub {
+  font-size: 12px;
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.checkout-free-shipping-notice {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  color: #3B9BD5;
+  text-align: right;
+  margin-top: 4px;
+}
+
 .checkout-final-amount {
   display: flex;
   justify-content: flex-end;

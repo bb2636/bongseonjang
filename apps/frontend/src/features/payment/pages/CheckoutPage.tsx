@@ -55,6 +55,19 @@ const DELIVERY_REQUEST_OPTIONS = [
   '직접 입력',
 ];
 
+const SHIPPING_CONFIG = {
+  BASE_FEE: 3500,
+  EXTRA_FEE: 3500,
+  FREE_THRESHOLD: 50000,
+};
+
+function isRemoteArea(postalCode: string): boolean {
+  if (!postalCode) return false;
+  const code = postalCode.replace(/-/g, '');
+  if (code.startsWith('63')) return true;
+  return false;
+}
+
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -174,7 +187,15 @@ export function CheckoutPage() {
   const productAmount = displayItems.reduce((sum, item) => sum + item.totalPrice, 0);
   const availablePoints = userProfile?.points ?? 0;
   const couponCount = userProfile?.couponCount ?? 0;
-  const finalAmount = productAmount - usedPoints;
+  
+  const shippingFee = useMemo(() => {
+    if (productAmount >= SHIPPING_CONFIG.FREE_THRESHOLD) return 0;
+    const baseFee = SHIPPING_CONFIG.BASE_FEE;
+    const extraFee = currentAddress && isRemoteArea(currentAddress.postalCode) ? SHIPPING_CONFIG.EXTRA_FEE : 0;
+    return baseFee + extraFee;
+  }, [productAmount, currentAddress]);
+  
+  const finalAmount = productAmount + shippingFee - usedPoints;
 
   useEffect(() => {
     if (isDirectMode) {
@@ -251,6 +272,7 @@ export function CheckoutPage() {
           addressDetail: currentAddress.addressDetail,
           deliveryRequest: finalDeliveryRequest,
           paymentMethod,
+          shippingFee,
         });
       } else {
         paymentData = await preparePayment({
@@ -262,6 +284,7 @@ export function CheckoutPage() {
           addressDetail: currentAddress.addressDetail,
           deliveryRequest: finalDeliveryRequest,
           paymentMethod,
+          shippingFee,
         });
       }
 
@@ -523,6 +546,22 @@ export function CheckoutPage() {
               <span className="checkout-summary-label">총 상품금액</span>
               <span className="checkout-summary-value">{productAmount.toLocaleString()}원</span>
             </div>
+            <div className="checkout-summary-row">
+              <span className="checkout-summary-label">
+                배송비
+                {currentAddress && isRemoteArea(currentAddress.postalCode) && (
+                  <span className="checkout-summary-label-sub"> (제주/도서산간)</span>
+                )}
+              </span>
+              <span className="checkout-summary-value">
+                {shippingFee === 0 ? '무료' : `+${shippingFee.toLocaleString()}원`}
+              </span>
+            </div>
+            {productAmount < SHIPPING_CONFIG.FREE_THRESHOLD && (
+              <p className="checkout-free-shipping-notice">
+                {(SHIPPING_CONFIG.FREE_THRESHOLD - productAmount).toLocaleString()}원 더 담으면 무료배송!
+              </p>
+            )}
             {usedPoints > 0 && (
               <div className="checkout-summary-row">
                 <span className="checkout-summary-label">포인트 할인</span>

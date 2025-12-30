@@ -67,7 +67,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.userId;
-    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod } = req.body;
+    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod, shippingFee = 0 } = req.body;
 
     if (!selectedItemIds || !Array.isArray(selectedItemIds) || selectedItemIds.length === 0) {
       return res.status(400).json({ error: '결제할 상품을 선택해주세요' });
@@ -117,7 +117,8 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     }
 
     const orderNumber = generateOrderNumber();
-    const finalAmount = totalProductPrice;
+    const shippingAmount = Number(shippingFee) || 0;
+    const finalAmount = totalProductPrice + shippingAmount;
 
     const cartItemIds = cartItems.map(item => item.id);
 
@@ -459,7 +460,8 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       addressDetail, 
       deliveryRequest, 
       returnUrl: clientReturnUrl, 
-      paymentMethod 
+      paymentMethod,
+      shippingFee = 0
     } = req.body;
 
     if (!productId) {
@@ -530,7 +532,8 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
     }
 
     const orderNumber = generateOrderNumber();
-    const finalAmount = totalProductPrice;
+    const shippingAmount = Number(shippingFee) || 0;
+    const finalAmount = totalProductPrice + shippingAmount;
 
     let returnUrlOrigin: string;
     try {
@@ -654,7 +657,8 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
       addressDetail, 
       deliveryRequest, 
       returnUrl: clientReturnUrl, 
-      paymentMethod 
+      paymentMethod,
+      shippingFee = 0
     } = req.body;
 
     if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
@@ -687,7 +691,8 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
     }
 
     const orderNumber = generateOrderNumber();
-    const finalAmount = totalProductPrice;
+    const shippingAmount = Number(shippingFee) || 0;
+    const finalAmount = totalProductPrice + shippingAmount;
 
     let returnUrlOrigin: string;
     try {
