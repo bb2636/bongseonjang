@@ -61,11 +61,44 @@ const DEFAULT_SHIPPING_CONFIG = {
   FREE_THRESHOLD: null as number | null,
 };
 
+const REMOTE_AREA_PREFIXES = [
+  '63',     // 제주도 전체 (제주시, 서귀포시)
+  '40200',  // 울릉도
+  '40210',  // 울릉도
+  '22386',  // 백령도
+  '23100',  // 연평도
+  '23101',  // 연평도
+  '23102',  // 연평도
+  '23103',  // 연평도
+  '23104',  // 연평도
+  '23114',  // 대청도
+  '23115',  // 소청도
+  '23004',  // 덕적도
+  '23005',  // 덕적도
+  '23008',  // 자월도
+  '23009',  // 자월도
+  '52570',  // 거문도
+  '52571',  // 거문도
+  '53031',  // 흑산도
+  '53033',  // 홍도
+  '59102',  // 진도군 조도면
+  '59103',  // 진도군 조도면
+  '59104',  // 진도군 조도면
+  '59781',  // 완도군 청산면
+  '59782',  // 완도군 청산면
+  '59783',  // 완도군 청산면
+  '59784',  // 완도군 청산면
+  '59785',  // 완도군 청산면
+  '59790',  // 완도군 보길면
+  '59791',  // 완도군 보길면
+  '59792',  // 완도군 보길면
+  '59793',  // 완도군 보길면
+];
+
 function isRemoteArea(postalCode: string): boolean {
   if (!postalCode) return false;
   const code = postalCode.replace(/-/g, '');
-  if (code.startsWith('63')) return true;
-  return false;
+  return REMOTE_AREA_PREFIXES.some(prefix => code.startsWith(prefix));
 }
 
 export function CheckoutPage() {
