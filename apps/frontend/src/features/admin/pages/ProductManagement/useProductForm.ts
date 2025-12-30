@@ -30,7 +30,7 @@ export interface ImageFile {
 export interface ProductFormData {
   name: string;
   categoryId: string;
-  exposureCategoryId: string;
+  exposureCategoryIds: string[];
   basePrice: number;
   discountEnabled: boolean;
   discountRate: number;
@@ -89,7 +89,7 @@ function createInitialFormData(): ProductFormData {
   return {
     name: '',
     categoryId: '',
-    exposureCategoryId: '',
+    exposureCategoryIds: [],
     basePrice: 0,
     discountEnabled: false,
     discountRate: 0,
@@ -126,7 +126,7 @@ export interface ExposureCategory {
 export interface FieldErrors {
   name?: string;
   categoryId?: string;
-  exposureCategoryId?: string;
+  exposureCategoryIds?: string;
   basePrice?: string;
   description?: string;
   startDate?: string;
@@ -168,8 +168,8 @@ export function useProductForm() {
     setFormData(prev => ({ ...prev, categoryId }));
   }, []);
 
-  const handleExposureCategoryChange = useCallback((exposureCategoryId: string) => {
-    setFormData(prev => ({ ...prev, exposureCategoryId }));
+  const handleExposureCategoryChange = useCallback((exposureCategoryIds: string[]) => {
+    setFormData(prev => ({ ...prev, exposureCategoryIds }));
   }, []);
 
   const fetchExposureCategories = useCallback(async () => {
@@ -423,10 +423,14 @@ export function useProductForm() {
       const hasOptions = data.options && data.options.length > 0;
       const optionGroupName = hasOptions && data.options[0]?.optionName ? data.options[0].optionName : '';
 
+      const exposureCategoryIds = Array.isArray(data.exposureCategoryIds)
+        ? data.exposureCategoryIds.map((id: number) => String(id))
+        : [];
+
       setFormData({
         name: data.name || '',
         categoryId: data.categoryId || '',
-        exposureCategoryId: data.exposureCategoryId ? String(data.exposureCategoryId) : '',
+        exposureCategoryIds,
         basePrice: data.basePrice || 0,
         discountEnabled: false,
         discountRate: 0,
@@ -467,8 +471,8 @@ export function useProductForm() {
     if (!formData.categoryId) {
       errors.categoryId = '카테고리를 선택해주세요';
     }
-    if (!formData.exposureCategoryId) {
-      errors.exposureCategoryId = '노출 카테고리를 선택해주세요';
+    if (formData.exposureCategoryIds.length === 0) {
+      errors.exposureCategoryIds = '노출 카테고리를 최소 1개 선택해주세요';
     }
     if (formData.basePrice <= 0) {
       errors.basePrice = '기본 판매가를 입력해주세요';
@@ -493,7 +497,7 @@ export function useProductForm() {
     setTouched({
       name: true,
       categoryId: true,
-      exposureCategoryId: true,
+      exposureCategoryIds: true,
       basePrice: true,
       description: true,
       startDate: true,
@@ -577,7 +581,7 @@ export function useProductForm() {
       const productData = {
         name: formData.name,
         categoryId: formData.categoryId,
-        exposureCategoryId: formData.exposureCategoryId,
+        exposureCategoryIds: formData.exposureCategoryIds,
         basePrice: formData.discountEnabled ? formData.discountedPrice : formData.basePrice,
         originalPrice: formData.basePrice,
         discountRate: formData.discountEnabled ? formData.discountRate : 0,

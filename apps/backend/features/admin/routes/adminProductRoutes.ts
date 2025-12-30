@@ -228,10 +228,7 @@ router.get('/:productId', async (req: Request, res: Response) => {
       where: { productId: product.id },
     });
 
-    let exposureCategoryId: number | null = null;
-    if (productExposureCategories.length > 0) {
-      exposureCategoryId = productExposureCategories[0].exposureCategoryId;
-    }
+    const exposureCategoryIds = productExposureCategories.map(pec => pec.exposureCategoryId);
 
     let detailContent: {
       description?: string;
@@ -257,7 +254,7 @@ router.get('/:productId', async (req: Request, res: Response) => {
       name: product.name,
       categoryId: product.productCategoryId,
       categoryName: category?.name || '미분류',
-      exposureCategoryId,
+      exposureCategoryIds,
       basePrice: product.basePrice,
       stockQuantity: product.stockQuantity,
       saleStartDate: product.saleStartDate,
@@ -304,7 +301,7 @@ router.put('/:productId', async (req: Request, res: Response) => {
     const {
       name,
       categoryId,
-      exposureCategoryId,
+      exposureCategoryIds,
       basePrice,
       startDate,
       endDate,
@@ -322,8 +319,8 @@ router.put('/:productId', async (req: Request, res: Response) => {
       return res.status(400).json({ error: '필수 필드를 입력해주세요' });
     }
 
-    if (!exposureCategoryId) {
-      return res.status(400).json({ error: '노출 카테고리를 선택해주세요' });
+    if (!exposureCategoryIds || !Array.isArray(exposureCategoryIds) || exposureCategoryIds.length === 0) {
+      return res.status(400).json({ error: '노출 카테고리를 최소 1개 선택해주세요' });
     }
 
     const productRepository = AppDataSource.getRepository(Product);
@@ -425,11 +422,13 @@ router.put('/:productId', async (req: Request, res: Response) => {
     }
 
     await productExposureCategoryRepository.delete({ productId });
-    const productExposureCategory = productExposureCategoryRepository.create({
-      productId,
-      exposureCategoryId: Number(exposureCategoryId),
-    });
-    await productExposureCategoryRepository.save(productExposureCategory);
+    for (const categoryId of exposureCategoryIds) {
+      const productExposureCategory = productExposureCategoryRepository.create({
+        productId,
+        exposureCategoryId: Number(categoryId),
+      });
+      await productExposureCategoryRepository.save(productExposureCategory);
+    }
 
     return res.json({ success: true, productId });
   } catch (error) {
@@ -443,7 +442,7 @@ router.post('/', async (req: Request, res: Response) => {
     const {
       name,
       categoryId,
-      exposureCategoryId,
+      exposureCategoryIds,
       basePrice,
       startDate,
       endDate,
@@ -461,8 +460,8 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(400).json({ error: '필수 필드를 입력해주세요' });
     }
 
-    if (!exposureCategoryId) {
-      return res.status(400).json({ error: '노출 카테고리를 선택해주세요' });
+    if (!exposureCategoryIds || !Array.isArray(exposureCategoryIds) || exposureCategoryIds.length === 0) {
+      return res.status(400).json({ error: '노출 카테고리를 최소 1개 선택해주세요' });
     }
 
     const productRepository = AppDataSource.getRepository(Product);
@@ -531,11 +530,13 @@ router.post('/', async (req: Request, res: Response) => {
       await productRepository.update(savedProduct.id, { stockQuantity: totalStock });
     }
 
-    const productExposureCategory = productExposureCategoryRepository.create({
-      productId: savedProduct.id,
-      exposureCategoryId: Number(exposureCategoryId),
-    });
-    await productExposureCategoryRepository.save(productExposureCategory);
+    for (const catId of exposureCategoryIds) {
+      const productExposureCategory = productExposureCategoryRepository.create({
+        productId: savedProduct.id,
+        exposureCategoryId: Number(catId),
+      });
+      await productExposureCategoryRepository.save(productExposureCategory);
+    }
 
     return res.json({ success: true, productId: savedProduct.id });
   } catch (error) {

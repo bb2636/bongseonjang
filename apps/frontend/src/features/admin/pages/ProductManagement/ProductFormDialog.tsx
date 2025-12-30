@@ -1,6 +1,6 @@
 import { useRef, useEffect, ChangeEvent, useState } from 'react';
 import { useProductForm, ProductOption, ProductInfo } from './useProductForm';
-import { ConfirmModal, Select, DateRangePicker } from '../../../../components';
+import { ConfirmModal, Select, MultiSelect, DateRangePicker } from '../../../../components';
 import { Snackbar } from '../../components/Snackbar';
 import './ProductFormDialog.css';
 
@@ -307,19 +307,19 @@ export function ProductFormDialog({
                 <label className="product-form-dialog__label">
                   노출 카테고리 <span className="product-form-dialog__required">*</span>
                 </label>
-                <Select
+                <MultiSelect
                   options={exposureCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
-                  value={formData.exposureCategoryId}
-                  onChange={(val) => {
-                    handleExposureCategoryChange(val);
-                    clearFieldError('exposureCategoryId');
+                  values={formData.exposureCategoryIds}
+                  onChange={(vals) => {
+                    handleExposureCategoryChange(vals);
+                    clearFieldError('exposureCategoryIds');
                   }}
-                  placeholder="선택"
-                  width={200}
-                  hasError={!!hasError('exposureCategoryId')}
+                  placeholder="선택 (복수 선택 가능)"
+                  width={250}
+                  hasError={!!hasError('exposureCategoryIds')}
                 />
-                {hasError('exposureCategoryId') && (
-                  <span className="product-form-dialog__error-message">{getErrorMessage('exposureCategoryId')}</span>
+                {hasError('exposureCategoryIds') && (
+                  <span className="product-form-dialog__error-message">{getErrorMessage('exposureCategoryIds')}</span>
                 )}
               </div>
             </div>
