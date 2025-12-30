@@ -200,6 +200,19 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
         });
       }
       
+      if (couponDetails.targetType === 'category') {
+        const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
+        if (targetCategoryIds.length > 0) {
+          const productCategoryIds = cartItems.map(item => item.product?.productCategoryId).filter(Boolean) as string[];
+          const allProductsMatch = productCategoryIds.every(categoryId => targetCategoryIds.includes(categoryId));
+          if (!allProductsMatch) {
+            return res.status(400).json({ 
+              error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 대상 카테고리가 아닌 상품이 포함되어 있습니다.' 
+            });
+          }
+        }
+      }
+      
       if (couponDetails.discountType === 'fixed') {
         couponDiscountAmount = Math.min(couponDetails.discountValue, totalProductPrice);
       } else if (couponDetails.discountType === 'rate') {
@@ -716,6 +729,17 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
         return res.status(400).json({ 
           error: `최소 주문 금액 ${couponDetails.minOrderAmount.toLocaleString()}원 이상 구매 시 사용 가능합니다` 
         });
+      }
+      
+      if (couponDetails.targetType === 'category') {
+        const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
+        if (targetCategoryIds.length > 0) {
+          if (!targetCategoryIds.includes(product.productCategoryId)) {
+            return res.status(400).json({ 
+              error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다' 
+            });
+          }
+        }
       }
       
       if (couponDetails.discountType === 'fixed') {

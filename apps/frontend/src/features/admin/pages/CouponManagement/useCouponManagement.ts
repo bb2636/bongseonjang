@@ -12,7 +12,7 @@ export interface AdminCoupon {
   maxDiscountAmount: number | null;
   minOrderAmount: number;
   targetType: 'all' | 'category';
-  targetCategories: number[];
+  targetCategories: string[];
   issueType: 'all' | 'new' | 'grade';
   issueGrades: number[];
   validityType: 'fixed' | 'afterIssue' | 'unlimited';

@@ -6,8 +6,8 @@ export class CouponApplyCategory {
   @PrimaryColumn({ name: 'coupon_id', type: 'int' })
   couponId!: number;
 
-  @PrimaryColumn({ name: 'category_id', type: 'int' })
-  categoryId!: number;
+  @PrimaryColumn({ name: 'category_id', type: 'uuid' })
+  categoryId!: string;
 
   @ManyToOne('Coupon', 'applyCategories', { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'coupon_id' })

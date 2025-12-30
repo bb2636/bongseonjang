@@ -22,7 +22,7 @@ export interface AdminCouponDto {
   maxDiscountAmount: number | null;
   minOrderAmount: number;
   targetType: 'all' | 'category';
-  targetCategories: number[];
+  targetCategories: string[];
   issueType: 'all' | 'new' | 'grade';
   issueGrades: number[];
   validityType: 'fixed' | 'afterIssue' | 'unlimited';
@@ -43,7 +43,7 @@ export interface CreateCouponDto {
   maxDiscountAmount?: number;
   minOrderAmount?: number;
   targetType: 'all' | 'category';
-  targetCategories?: number[];
+  targetCategories?: string[];
   issueType: 'all' | 'new' | 'grade';
   issueGrades?: number[];
   validityType: 'fixed' | 'afterIssue' | 'unlimited';
@@ -358,7 +358,7 @@ export class AdminCouponService {
     }
 
     let targetType: 'all' | 'category' = 'all';
-    let targetCategories: number[] = [];
+    let targetCategories: string[] = [];
     const applyAllProducts = await this.applyAllProductsRepo.findOne({ where: { couponId: coupon.id } });
     if (!applyAllProducts) {
       const applyCategories = await this.applyCategoryRepo.find({ where: { couponId: coupon.id } });

@@ -14,6 +14,11 @@ type ValidityType = 'fixed' | 'afterIssue';
 type TargetType = 'all' | 'category';
 type IssueType = 'all' | 'new';
 
+interface Category {
+  id: string;
+  name: string;
+}
+
 interface CouponFormData {
   name: string;
   description: string;
@@ -22,6 +27,7 @@ interface CouponFormData {
   maxDiscountAmount: number;
   minOrderAmount: number;
   targetType: TargetType;
+  targetCategories: string[];
   issueType: IssueType;
   validityType: ValidityType;
   validFrom: string;
@@ -38,6 +44,7 @@ const INITIAL_FORM_DATA: CouponFormData = {
   maxDiscountAmount: 0,
   minOrderAmount: 0,
   targetType: 'all',
+  targetCategories: [],
   issueType: 'all',
   validityType: 'fixed',
   validFrom: '',
@@ -50,8 +57,27 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
   const [formData, setFormData] = useState<CouponFormData>(INITIAL_FORM_DATA);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
 
   const isEditing = !!coupon;
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsCategoriesLoading(true);
+      fetch('/api/products/categories')
+        .then((res) => res.json())
+        .then((data) => {
+          setCategories(data);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch categories:', err);
+        })
+        .finally(() => {
+          setIsCategoriesLoading(false);
+        });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (coupon) {
@@ -63,6 +89,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         maxDiscountAmount: coupon.maxDiscountAmount || 0,
         minOrderAmount: coupon.minOrderAmount,
         targetType: coupon.targetType,
+        targetCategories: coupon.targetCategories || [],
         issueType: coupon.issueType === 'grade' ? 'all' : coupon.issueType,
         validityType: coupon.validityType === 'unlimited' ? 'fixed' : coupon.validityType,
         validFrom: coupon.validFrom ? coupon.validFrom.split('T')[0] : '',
@@ -76,8 +103,17 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
     setError(null);
   }, [coupon, isOpen]);
 
-  const handleChange = (field: keyof CouponFormData, value: string | number | boolean) => {
+  const handleChange = (field: keyof CouponFormData, value: string | number | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleCategoryToggle = (categoryId: string) => {
+    setFormData(prev => {
+      const newCategories = prev.targetCategories.includes(categoryId)
+        ? prev.targetCategories.filter(id => id !== categoryId)
+        : [...prev.targetCategories, categoryId];
+      return { ...prev, targetCategories: newCategories };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,6 +127,12 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
       return;
     }
 
+    if (formData.targetType === 'category' && formData.targetCategories.length === 0) {
+      setError('특정 카테고리를 선택해주세요.');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const payload = {
         name: formData.name,
@@ -100,6 +142,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         maxDiscountAmount: formData.discountType === 'rate' ? formData.maxDiscountAmount : undefined,
         minOrderAmount: formData.minOrderAmount,
         targetType: formData.targetType,
+        targetCategories: formData.targetType === 'category' ? formData.targetCategories : undefined,
         issueType: formData.issueType,
         validityType: formData.validityType,
         validFrom: formData.validityType === 'fixed' && formData.validFrom ? new Date(formData.validFrom) : undefined,
@@ -295,6 +338,31 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                 </label>
               </div>
             </div>
+
+            {formData.targetType === 'category' && (
+              <div className="coupon-form-dialog__field">
+                <label className="coupon-form-dialog__label">카테고리 선택 *</label>
+                {isCategoriesLoading ? (
+                  <div className="coupon-form-dialog__category-loading">카테고리 로딩 중...</div>
+                ) : categories.length === 0 ? (
+                  <div className="coupon-form-dialog__category-empty">등록된 카테고리가 없습니다</div>
+                ) : (
+                  <div className="coupon-form-dialog__category-list">
+                    {categories.map((category) => (
+                      <label key={category.id} className="coupon-form-dialog__category-item">
+                        <input
+                          type="checkbox"
+                          checked={formData.targetCategories.includes(category.id)}
+                          onChange={() => handleCategoryToggle(category.id)}
+                        />
+                        <span className="coupon-form-dialog__category-checkbox"></span>
+                        <span className="coupon-form-dialog__category-name">{category.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="coupon-form-dialog__section">

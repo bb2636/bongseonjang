@@ -221,4 +221,11 @@ export class CouponRepository {
       relations: ['coupon'],
     });
   }
+
+  async getCouponTargetCategories(couponId: number): Promise<string[]> {
+    const applyCategories = await this.applyCategoryRepo.find({
+      where: { couponId },
+    });
+    return applyCategories.map(ac => ac.categoryId);
+  }
 }

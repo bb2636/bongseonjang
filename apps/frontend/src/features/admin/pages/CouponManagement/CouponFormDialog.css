@@ -269,3 +269,76 @@
 .coupon-form-dialog__button--submit:hover:not(:disabled) {
   background: #1A8CE6;
 }
+
+.coupon-form-dialog__category-loading,
+.coupon-form-dialog__category-empty {
+  padding: 16px;
+  text-align: center;
+  color: rgba(12, 12, 12, 0.5);
+  font-size: 14px;
+  background: rgba(12, 12, 12, 0.02);
+  border-radius: 8px;
+}
+
+.coupon-form-dialog__category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 12px;
+  background: rgba(12, 12, 12, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.coupon-form-dialog__category-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #FFFFFF;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.coupon-form-dialog__category-item:hover {
+  background: rgba(35, 157, 255, 0.05);
+}
+
+.coupon-form-dialog__category-item input[type="checkbox"] {
+  display: none;
+}
+
+.coupon-form-dialog__category-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(12, 12, 12, 0.2);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.coupon-form-dialog__category-item input[type="checkbox"]:checked + .coupon-form-dialog__category-checkbox {
+  background: #239DFF;
+  border-color: #239DFF;
+}
+
+.coupon-form-dialog__category-item input[type="checkbox"]:checked + .coupon-form-dialog__category-checkbox::after {
+  content: '';
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.coupon-form-dialog__category-name {
+  font-size: 14px;
+  color: #0C0C0C;
+  font-weight: 500;
+}
