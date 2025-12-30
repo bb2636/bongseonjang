@@ -52,9 +52,10 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       const unitPrice = productBasePrice + additionalPrice;
       const totalPrice = unitPrice * item.quantity;
 
+      const DEFAULT_FREE_SHIPPING_THRESHOLD = 30000;
       let shippingInfo = {
         shippingFee: item.product?.shippingPolicy?.shippingFee ?? 3500,
-        freeShippingThreshold: null as number | null,
+        freeShippingThreshold: DEFAULT_FREE_SHIPPING_THRESHOLD as number | null,
       };
       
       if (item.product?.detailContent) {
@@ -62,7 +63,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
           const detailContent = JSON.parse(item.product.detailContent);
           if (detailContent.shippingInfo) {
             shippingInfo.shippingFee = detailContent.shippingInfo.shippingFee ?? shippingInfo.shippingFee;
-            shippingInfo.freeShippingThreshold = detailContent.shippingInfo.freeShippingThreshold ?? null;
+            shippingInfo.freeShippingThreshold = detailContent.shippingInfo.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD;
           }
         } catch {
         }

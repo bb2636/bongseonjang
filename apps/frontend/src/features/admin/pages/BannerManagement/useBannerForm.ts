@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { BannerPosition } from './useBannerManagement';
+import { BannerPosition, Banner } from './useBannerManagement';
 
 export interface BannerFormData {
   title: string;
@@ -19,7 +19,11 @@ function createInitialFormData(defaultPositionCode: string): BannerFormData {
   };
 }
 
-export function useBannerForm(positions: BannerPosition[], defaultPositionCode: string = 'HOME_HERO') {
+export function useBannerForm(
+  positions: BannerPosition[], 
+  defaultPositionCode: string = 'HOME_HERO',
+  editingBanner: Banner | null = null
+) {
   const [formData, setFormData] = useState<BannerFormData>(() => createInitialFormData(defaultPositionCode));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,8 +31,22 @@ export function useBannerForm(positions: BannerPosition[], defaultPositionCode: 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    setFormData(prev => ({ ...prev, positionCode: defaultPositionCode }));
-  }, [defaultPositionCode]);
+    if (editingBanner) {
+      const position = positions.find(p => p.id === editingBanner.bannerPositionId);
+      setFormData({
+        title: editingBanner.title || '',
+        positionCode: position?.code || defaultPositionCode,
+        imageUrl: editingBanner.imageUrl,
+        linkUrl: editingBanner.linkUrl || '',
+        isActive: editingBanner.isActive,
+      });
+      setPreviewUrl(editingBanner.imageUrl);
+    } else {
+      setFormData(createInitialFormData(defaultPositionCode));
+      setPreviewUrl(null);
+    }
+    setSelectedFile(null);
+  }, [editingBanner, positions, defaultPositionCode]);
 
   const handleTitleChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, title: value }));
@@ -111,8 +129,14 @@ export function useBannerForm(positions: BannerPosition[], defaultPositionCode: 
         imageUrl = uploadResult.objectPath;
       }
 
-      const response = await fetch('/api/admin/banners', {
-        method: 'POST',
+      const isEditing = !!editingBanner;
+      const url = isEditing 
+        ? `/api/admin/banners/${editingBanner.id}` 
+        : '/api/admin/banners';
+      const method = isEditing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -127,7 +151,7 @@ export function useBannerForm(positions: BannerPosition[], defaultPositionCode: 
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || '배너 등록에 실패했습니다');
+        throw new Error(errorData.message || (isEditing ? '배너 수정에 실패했습니다' : '배너 등록에 실패했습니다'));
       }
 
       resetForm();
@@ -138,7 +162,7 @@ export function useBannerForm(positions: BannerPosition[], defaultPositionCode: 
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, selectedFile, positions, validateForm, resetForm]);
+  }, [formData, selectedFile, positions, validateForm, resetForm, editingBanner]);
 
   return {
     formData,

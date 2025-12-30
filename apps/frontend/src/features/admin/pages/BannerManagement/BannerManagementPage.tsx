@@ -14,6 +14,7 @@ export function BannerManagementPage() {
     error,
     reorderError,
     isFormDialogOpen,
+    editingBanner,
     handleTabChange,
     handleAddBanner,
     handleEditBanner,
@@ -48,6 +49,7 @@ export function BannerManagementPage() {
         isOpen={isFormDialogOpen}
         positions={positions}
         defaultPositionCode={activeTab}
+        editingBanner={editingBanner}
         onClose={handleCloseFormDialog}
         onSuccess={handleFormSuccess}
       />

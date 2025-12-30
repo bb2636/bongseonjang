@@ -1,5 +1,5 @@
 import { useRef, useState, ChangeEvent } from 'react';
-import { BannerPosition } from './useBannerManagement';
+import { BannerPosition, Banner } from './useBannerManagement';
 import { useBannerForm } from './useBannerForm';
 import { ConfirmModal } from '../../../../components';
 import { Snackbar } from '../../components/Snackbar';
@@ -9,6 +9,7 @@ interface BannerFormDialogProps {
   isOpen: boolean;
   positions: BannerPosition[];
   defaultPositionCode: string;
+  editingBanner: Banner | null;
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -18,12 +19,14 @@ export function BannerFormDialog({
   isOpen,
   positions,
   defaultPositionCode,
+  editingBanner,
   onClose,
   onSuccess,
 }: BannerFormDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const isEditing = !!editingBanner;
   const {
     formData,
     isSubmitting,
@@ -35,7 +38,7 @@ export function BannerFormDialog({
     handleFileSelect,
     resetForm,
     submitForm,
-  } = useBannerForm(positions, defaultPositionCode);
+  } = useBannerForm(positions, defaultPositionCode, editingBanner);
 
   if (!isOpen) return null;
 
@@ -81,7 +84,7 @@ export function BannerFormDialog({
       <div className="banner-form-dialog">
         <header className="banner-form-dialog__header">
           <div className="banner-form-dialog__header-spacer" />
-          <h2 className="banner-form-dialog__title">배너 등록</h2>
+          <h2 className="banner-form-dialog__title">{isEditing ? '배너 수정' : '배너 등록'}</h2>
           <button 
             className="banner-form-dialog__close-button" 
             onClick={onClose}
@@ -194,7 +197,7 @@ export function BannerFormDialog({
 
       <ConfirmModal
         isOpen={showConfirmModal}
-        title="배너를 등록하시겠습니까?"
+        title={isEditing ? "배너를 수정하시겠습니까?" : "배너를 등록하시겠습니까?"}
         onCancel={() => setShowConfirmModal(false)}
         onConfirm={handleConfirmSubmit}
         cancelText="취소"
@@ -203,7 +206,7 @@ export function BannerFormDialog({
 
       <Snackbar
         isOpen={showSnackbar}
-        title="배너가 등록되었습니다"
+        title={isEditing ? "배너가 수정되었습니다" : "배너가 등록되었습니다"}
         onClose={handleSnackbarClose}
       />
     </div>

@@ -163,9 +163,10 @@ export class ProductService {
 
     const thumbnailImage = product.images?.find((img) => img.isThumbnail);
 
+    const DEFAULT_FREE_SHIPPING_THRESHOLD = 30000;
     let shippingInfo = {
       shippingFee: product.shippingPolicy?.shippingFee ?? 3500,
-      freeShippingThreshold: null as number | null,
+      freeShippingThreshold: DEFAULT_FREE_SHIPPING_THRESHOLD as number | null,
     };
     
     if (product.detailContent) {
@@ -173,7 +174,7 @@ export class ProductService {
         const parsedContent = JSON.parse(product.detailContent);
         if (parsedContent.shippingInfo) {
           shippingInfo.shippingFee = parsedContent.shippingInfo.shippingFee ?? shippingInfo.shippingFee;
-          shippingInfo.freeShippingThreshold = parsedContent.shippingInfo.freeShippingThreshold ?? null;
+          shippingInfo.freeShippingThreshold = parsedContent.shippingInfo.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD;
         }
       } catch {
       }

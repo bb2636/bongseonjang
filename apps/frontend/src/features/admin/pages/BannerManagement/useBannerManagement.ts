@@ -47,6 +47,7 @@ export function useBannerManagement() {
   const [error, setError] = useState<string | null>(null);
   const [reorderError, setReorderError] = useState<string | null>(null);
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
 
   const fetchPositions = useCallback(async () => {
     try {
@@ -93,20 +94,27 @@ export function useBannerManagement() {
   }, []);
 
   const handleAddBanner = useCallback(() => {
+    setEditingBanner(null);
     setIsFormDialogOpen(true);
   }, []);
 
   const handleCloseFormDialog = useCallback(() => {
     setIsFormDialogOpen(false);
+    setEditingBanner(null);
   }, []);
 
   const handleFormSuccess = useCallback(() => {
     fetchBanners(activeTab);
+    setEditingBanner(null);
   }, [activeTab, fetchBanners]);
 
   const handleEditBanner = useCallback((bannerId: number) => {
-    console.log('Edit banner:', bannerId);
-  }, []);
+    const banner = banners.find(b => b.id === bannerId);
+    if (banner) {
+      setEditingBanner(banner);
+      setIsFormDialogOpen(true);
+    }
+  }, [banners]);
 
   const handleReorderBanners = useCallback(async (activeId: number, overId: number) => {
     const oldIndex = banners.findIndex(b => b.id === activeId);
@@ -176,6 +184,7 @@ export function useBannerManagement() {
     error,
     reorderError,
     isFormDialogOpen,
+    editingBanner,
     handleTabChange,
     handleAddBanner,
     handleEditBanner,
