@@ -24,10 +24,13 @@ export function useProductCategories() {
       try {
         setIsLoading(true);
         const apiCategories = await apiClient.get<ApiCategory[]>('/products/categories');
-        const mappedCategories = apiCategories.map((cat) => ({
-          id: cat.id,
-          label: cat.name,
-        }));
+        const brandCategoryNames = ['바담은', '봉쿡', '포시즌', '오바다'];
+        const mappedCategories = apiCategories
+          .filter((cat) => !brandCategoryNames.includes(cat.name))
+          .map((cat) => ({
+            id: cat.id,
+            label: cat.name,
+          }));
         setCategories([ALL_CATEGORY, ...mappedCategories]);
         setError(null);
       } catch (err) {
