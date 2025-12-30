@@ -8,7 +8,8 @@ export function useMyCouponPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['my-coupons'],
     queryFn: () => couponApi.getMyCoupons(),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const handleBack = () => {

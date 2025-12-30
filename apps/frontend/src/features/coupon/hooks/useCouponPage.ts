@@ -11,7 +11,8 @@ export function useCouponPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['coupons'],
     queryFn: () => couponApi.getCoupons(),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const issueMutation = useMutation({
