@@ -53,6 +53,10 @@ const seedData: SeedData = {
     { id: '33333333-3333-3333-3333-333333333333', name: '손질수산', sortOrder: 3, isActive: true },
     { id: '44444444-4444-4444-4444-444444444444', name: '반건조/건조', sortOrder: 4, isActive: true },
     { id: '55555555-5555-5555-5555-555555555555', name: '젓갈/액젓', sortOrder: 5, isActive: true },
+    { id: '66666666-6666-6666-6666-666666666666', name: '바담은', sortOrder: 6, isActive: true },
+    { id: '77777777-7777-7777-7777-777777777777', name: '오바다', sortOrder: 7, isActive: true },
+    { id: '88888888-8888-8888-8888-888888888888', name: '포시즌', sortOrder: 8, isActive: true },
+    { id: '99999999-9999-9999-9999-999999999999', name: '봉쿡', sortOrder: 9, isActive: true },
   ],
   exposureCategories: [
     { id: 1, name: '베스트', sort_order: 1 },

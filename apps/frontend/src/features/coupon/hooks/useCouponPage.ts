@@ -1,7 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import { couponApi } from '../api/couponApi';
 import { useToast } from '../../../contexts';
+
+const REFETCH_INTERVAL_MS = 60000;
 
 export function useCouponPage() {
   const navigate = useNavigate();
@@ -13,7 +16,19 @@ export function useCouponPage() {
     queryFn: () => couponApi.getCoupons(),
     staleTime: 0,
     refetchOnMount: 'always',
+    refetchInterval: REFETCH_INTERVAL_MS,
   });
+
+  const validCoupons = useMemo(() => {
+    if (!data?.coupons) return [];
+    const now = new Date();
+    return data.coupons.filter(coupon => {
+      if (coupon.validTo && new Date(coupon.validTo) < now) {
+        return false;
+      }
+      return true;
+    });
+  }, [data?.coupons]);
 
   const issueMutation = useMutation({
     mutationFn: (couponId: string) => couponApi.issueCoupon(couponId),
@@ -46,8 +61,8 @@ export function useCouponPage() {
 
   return {
     state: {
-      coupons: data?.coupons ?? [],
-      totalCount: data?.totalCount ?? 0,
+      coupons: validCoupons,
+      totalCount: validCoupons.length,
       isLoading,
       error: error as Error | null,
       isIssuing: issueMutation.isPending,

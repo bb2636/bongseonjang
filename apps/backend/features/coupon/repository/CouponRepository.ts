@@ -121,11 +121,14 @@ export class CouponRepository {
   }
 
   async findUserCoupons(userId: string): Promise<UserCoupon[]> {
-    return this.userCouponRepo.find({
-      where: { userId, status: 'ISSUED' },
-      relations: ['coupon'],
-      order: { createdAt: 'DESC' },
-    });
+    return this.userCouponRepo
+      .createQueryBuilder('uc')
+      .leftJoinAndSelect('uc.coupon', 'coupon')
+      .where('uc.userId = :userId', { userId })
+      .andWhere('uc.status = :status', { status: 'ISSUED' })
+      .andWhere('(uc.validTo IS NULL OR uc.validTo >= :now)', { now: new Date() })
+      .orderBy('uc.createdAt', 'DESC')
+      .getMany();
   }
 
   async findUserCoupon(couponId: number, userId: string): Promise<UserCoupon | null> {
