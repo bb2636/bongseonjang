@@ -105,6 +105,24 @@ export class TypeORMReviewRepository implements ReviewRepository {
     return reviewRepository.save(review);
   }
 
+  async update(id: string, data: Partial<Review>): Promise<Review> {
+    const reviewRepository = AppDataSource.getRepository(Review);
+    const review = await this.findById(id);
+    
+    if (!review) {
+      throw new Error('Review not found');
+    }
+
+    if (data.rating !== undefined) {
+      review.rating = data.rating;
+    }
+    if (data.content !== undefined) {
+      review.content = data.content;
+    }
+
+    return reviewRepository.save(review);
+  }
+
   async delete(id: string): Promise<void> {
     const reviewRepository = AppDataSource.getRepository(Review);
     await reviewRepository.delete(id);

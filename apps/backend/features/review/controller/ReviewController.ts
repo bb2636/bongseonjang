@@ -93,6 +93,53 @@ export class ReviewController {
     }
   }
 
+  async updateReview(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      
+      if (!userId) {
+        res.status(401).json({ error: 'Authentication required' });
+        return;
+      }
+
+      const { id } = req.params;
+      const { rating, content, imageUrls } = req.body;
+
+      if (!rating || !content) {
+        res.status(400).json({ error: 'rating and content are required' });
+        return;
+      }
+
+      if (rating < 1 || rating > 5) {
+        res.status(400).json({ error: 'Rating must be between 1 and 5' });
+        return;
+      }
+
+      const review = await this.reviewService.updateReview(id, userId, {
+        rating,
+        content,
+        imageUrls: imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0
+          ? imageUrls
+          : undefined,
+      });
+
+      res.json(review);
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'Review not found') {
+          res.status(404).json({ error: error.message });
+          return;
+        }
+        if (error.message === 'Unauthorized to update this review') {
+          res.status(403).json({ error: error.message });
+          return;
+        }
+      }
+      console.error('Error updating review:', error);
+      res.status(500).json({ error: 'Failed to update review' });
+    }
+  }
+
   async checkUserReview(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const userId = req.userId;

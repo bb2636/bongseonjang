@@ -48,3 +48,9 @@ export interface MyReviewDto {
   imageUrls: string[];
   createdAt: string;
 }
+
+export interface UpdateReviewRequest {
+  rating: number;
+  content: string;
+  imageUrls?: string[];
+}

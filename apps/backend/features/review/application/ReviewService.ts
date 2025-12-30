@@ -1,5 +1,5 @@
 import type { Review } from '../../../entity/Review';
-import type { ReviewDto, ReviewStatsDto, CreateReviewRequest, ReviewableOrderItemDto, MyReviewDto } from '../domain/Review';
+import type { ReviewDto, ReviewStatsDto, CreateReviewRequest, UpdateReviewRequest, ReviewableOrderItemDto, MyReviewDto } from '../domain/Review';
 import type { ReviewRepository } from '../repository/ReviewRepository';
 import type { ReviewImageRepository } from '../repository/ReviewImageRepository';
 import type { ReviewableOrderItemRepository } from '../repository/ReviewableOrderItemRepository';
@@ -76,6 +76,38 @@ export class ReviewService implements ReviewStatsProvider {
     }
 
     await this.reviewRepository.delete(id);
+  }
+
+  async updateReview(id: string, userId: string, request: UpdateReviewRequest): Promise<ReviewDto> {
+    const review = await this.reviewRepository.findById(id);
+    
+    if (!review) {
+      throw new Error('Review not found');
+    }
+    
+    if (review.userId !== userId) {
+      throw new Error('Unauthorized to update this review');
+    }
+
+    await this.reviewImageRepository.deleteByReviewId(id);
+
+    const imageUrls: string[] = [];
+    if (request.imageUrls && request.imageUrls.length > 0) {
+      const reviewImages = request.imageUrls.map((url, index) => ({
+        reviewId: id,
+        imageUrl: url,
+        sortOrder: index,
+      }));
+      await this.reviewImageRepository.saveMany(reviewImages);
+      imageUrls.push(...request.imageUrls);
+    }
+
+    const updatedReview = await this.reviewRepository.update(id, {
+      rating: request.rating,
+      content: request.content,
+    });
+
+    return this.toDto(updatedReview, imageUrls);
   }
 
   async hasUserReviewedProduct(userId: string, productId: string): Promise<boolean> {
