@@ -9,8 +9,9 @@ export function useCategoryPage() {
 
   const categories = useMemo(() => {
     const safeDbCategories = dbCategories ?? [];
+    const brandCategoryNames = ['바담은', '봉쿡', '포시즌', '오바다'];
     const dynamicCategories: Category[] = safeDbCategories
-      .filter((cat) => cat.id !== 'all')
+      .filter((cat) => cat.id !== 'all' && !brandCategoryNames.includes(cat.label))
       .map((cat) => ({
         id: cat.id,
         name: cat.label,
