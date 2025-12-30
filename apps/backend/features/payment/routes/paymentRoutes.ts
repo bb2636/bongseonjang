@@ -9,6 +9,7 @@ import { CartItem } from '../../../entity/CartItem';
 import { ProductOption } from '../../../entity/ProductOption';
 import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
 import { Product } from '../../../entity/Product';
+import { ProductImage } from '../../../entity/ProductImage';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 
 function hashPhone(phone: string): string {
@@ -105,6 +106,16 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       return res.status(400).json({ error: '선택된 상품을 찾을 수 없습니다' });
     }
 
+    const productIds = cartItems.map(item => item.productId);
+    const productImageRepository = AppDataSource.getRepository(ProductImage);
+    const thumbnails = await productImageRepository.find({
+      where: { productId: In(productIds), isThumbnail: true },
+    });
+    const thumbnailMap = new Map<string, string>();
+    for (const img of thumbnails) {
+      thumbnailMap.set(img.productId, img.imageUrl);
+    }
+
     let totalProductPrice = 0;
     const goodsNames: string[] = [];
 
@@ -164,6 +175,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
         orderId: order.id,
         productId: item.productId,
         productName: item.product?.name ?? '',
+        productImageUrl: thumbnailMap.get(item.productId) || null,
         optionName: optionDisplay,
         productOptionId: item.productOptionId || null,
         quantity: item.quantity,
@@ -493,10 +505,17 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
     }
 
+    const productImageRepository = AppDataSource.getRepository(ProductImage);
+    const thumbnail = await productImageRepository.findOne({
+      where: { productId, isThumbnail: true },
+    });
+    const productImageUrl = thumbnail?.imageUrl || null;
+
     let totalProductPrice = 0;
     const orderItemsData: Array<{
       productId: string;
       productName: string;
+      productImageUrl: string | null;
       optionName: string | null;
       productOptionId: number | null;
       quantity: number;
@@ -523,6 +542,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       orderItemsData.push({
         productId,
         productName: product.name,
+        productImageUrl,
         optionName: optionDisplay,
         productOptionId: item.productOptionId || null,
         quantity: item.quantity,
@@ -728,6 +748,7 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
         orderId: order.id,
         productId: item.productId,
         productName: item.productName,
+        productImageUrl: item.thumbnailUrl || null,
         optionName: item.optionName,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
