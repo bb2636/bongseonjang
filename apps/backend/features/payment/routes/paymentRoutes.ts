@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { In } from 'typeorm';
 import * as crypto from 'crypto';
 import { AppDataSource } from '../../../config/database';
 import { Order } from '../../../entity/Order';
@@ -10,8 +11,54 @@ import { ProductOption } from '../../../entity/ProductOption';
 import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
 import { Product } from '../../../entity/Product';
 import { ProductImage } from '../../../entity/ProductImage';
+import { ProductExposureCategory } from '../../../entity/ProductExposureCategory';
+import { ExposureCategory } from '../../../entity/ExposureCategory';
+import { ProductCategory } from '../../../entity/ProductCategory';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
+
+async function checkProductMatchesTargetCategories(
+  productId: string,
+  productCategoryId: string | null,
+  targetCategoryIds: string[]
+): Promise<boolean> {
+  if (productCategoryId && targetCategoryIds.includes(productCategoryId)) {
+    return true;
+  }
+  
+  const productCategoryRepo = AppDataSource.getRepository(ProductCategory);
+  const targetCategories = await productCategoryRepo.find({
+    where: { id: In(targetCategoryIds) },
+    select: ['id', 'name'],
+  });
+  
+  const brandCategoryNames = ['바담은', '오바다', '포시즌', '봉쿡'];
+  const targetBrandNames = targetCategories
+    .filter(cat => brandCategoryNames.includes(cat.name))
+    .map(cat => cat.name);
+  
+  if (targetBrandNames.length === 0) {
+    return false;
+  }
+  
+  const pecRepo = AppDataSource.getRepository(ProductExposureCategory);
+  const productExposureCategories = await pecRepo.find({
+    where: { productId },
+    relations: ['exposureCategory'],
+  });
+  
+  for (const pec of productExposureCategories) {
+    if (pec.exposureCategory) {
+      for (const brandName of targetBrandNames) {
+        if (pec.exposureCategory.name.includes(brandName)) {
+          return true;
+        }
+      }
+    }
+  }
+  
+  return false;
+}
 
 function hashPhone(phone: string): string {
   return crypto.createHash('sha256').update(phone).digest('hex');
@@ -97,7 +144,6 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       return res.status(404).json({ error: '장바구니를 찾을 수 없습니다' });
     }
 
-    const { In } = await import('typeorm');
     const cartItems = await cartItemRepository.find({
       where: { id: In(selectedItemIds), cartId: cart.id },
       relations: ['product', 'productOption'],
@@ -203,18 +249,18 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
         if (targetCategoryIds.length > 0) {
-          const productCategoryIds = cartItems.map(item => item.product?.productCategoryId);
-          const hasProductWithoutCategory = productCategoryIds.some(categoryId => !categoryId);
-          if (hasProductWithoutCategory) {
-            return res.status(400).json({ 
-              error: '카테고리가 지정되지 않은 상품이 포함되어 있어 해당 쿠폰을 사용할 수 없습니다.' 
-            });
-          }
-          const allProductsMatch = productCategoryIds.every(categoryId => categoryId && targetCategoryIds.includes(categoryId));
-          if (!allProductsMatch) {
-            return res.status(400).json({ 
-              error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 대상 카테고리가 아닌 상품이 포함되어 있습니다.' 
-            });
+          for (const item of cartItems) {
+            if (!item.product) continue;
+            const matches = await checkProductMatchesTargetCategories(
+              item.product.id,
+              item.product.productCategoryId,
+              targetCategoryIds
+            );
+            if (!matches) {
+              return res.status(400).json({ 
+                error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 대상 카테고리가 아닌 상품이 포함되어 있습니다.' 
+              });
+            }
           }
         }
       }
@@ -534,8 +580,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
       }
 
       if (order.cartItemIdsSnapshot && order.cartItemIdsSnapshot.length > 0) {
-        const { In } = await import('typeorm');
-        await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
+            await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
       }
 
       console.log('[NicePay Callback] Redirecting to success:', `${frontendUrl}/payment/complete/${order.id}`);
@@ -740,12 +785,12 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
         if (targetCategoryIds.length > 0) {
-          if (!product.productCategoryId) {
-            return res.status(400).json({ 
-              error: '카테고리가 지정되지 않은 상품에는 해당 쿠폰을 사용할 수 없습니다' 
-            });
-          }
-          if (!targetCategoryIds.includes(product.productCategoryId)) {
+          const matches = await checkProductMatchesTargetCategories(
+            product.id,
+            product.productCategoryId,
+            targetCategoryIds
+          );
+          if (!matches) {
             return res.status(400).json({ 
               error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다' 
             });
@@ -1043,7 +1088,6 @@ router.post('/guest/lookup', async (req: Request, res: Response) => {
     }
 
     const orderIds = guestDetails.map(g => g.orderId);
-    const { In } = await import('typeorm');
     
     const orders = await orderRepository.find({
       where: { id: In(orderIds) },
