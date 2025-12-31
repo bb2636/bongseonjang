@@ -792,22 +792,37 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
         });
       }
       
+      console.log('[DEBUG COUPON] targetType:', couponDetails.targetType);
+      console.log('[DEBUG COUPON] couponDetails.id:', couponDetails.id);
+      
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
+        console.log('[DEBUG COUPON] targetCategoryIds:', targetCategoryIds);
+        console.log('[DEBUG COUPON] product.id:', product.id);
+        console.log('[DEBUG COUPON] product.productCategoryId:', product.productCategoryId);
+        
         if (targetCategoryIds.length > 0) {
           const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
+          console.log('[DEBUG COUPON] targetBrandExposureNames:', targetBrandExposureNames);
+          
           const matches = await checkProductMatchesTargetCategories(
             product.id,
             product.productCategoryId,
             targetCategoryIds,
             targetBrandExposureNames
           );
+          console.log('[DEBUG COUPON] matches:', matches);
+          
           if (!matches) {
             return res.status(400).json({ 
               error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다' 
             });
           }
+        } else {
+          console.log('[DEBUG COUPON] No target categories found - coupon passes all products!');
         }
+      } else {
+        console.log('[DEBUG COUPON] targetType is not category, skipping validation');
       }
       
       if (couponDetails.discountType === 'fixed') {
