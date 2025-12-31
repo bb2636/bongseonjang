@@ -48,13 +48,13 @@ export class SocialAuthService {
   async getKakaoUserInfo(code: string): Promise<SocialUserInfo> {
     console.log('=== getKakaoUserInfo START ===');
     
-    const clientId = process.env.KAKAO_REST_API_KEY;
+    const clientId = process.env.VITE_KAKAO_JS_KEY;
     const clientSecret = process.env.KAKAO_CLIENT_SECRET;
     const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL;
     const redirectUri = `${baseUrl}/oauth/kakao/callback`;
 
     console.log('Environment check:');
-    console.log('- KAKAO_REST_API_KEY:', clientId ? `${clientId.substring(0, 8)}...` : 'NOT SET');
+    console.log('- VITE_KAKAO_JS_KEY:', clientId ? `${clientId.substring(0, 8)}...` : 'NOT SET');
     console.log('- KAKAO_CLIENT_SECRET:', clientSecret ? 'SET' : 'NOT SET');
     console.log('- SOCIAL_REDIRECT_BASE_URL:', baseUrl);
     console.log('- Full redirect_uri:', redirectUri);
