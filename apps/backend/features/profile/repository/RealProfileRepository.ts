@@ -50,9 +50,15 @@ export class RealProfileRepository implements ProfileRepository {
         return `NOT EXISTS ${subQuery}`;
       });
 
+    const now = new Date();
     const [pointWallet, couponCount, favoriteCount, pendingReviewResult] = await Promise.all([
       pointWalletRepository.findOne({ where: { userId } }),
-      userCouponRepository.count({ where: { userId, status: 'ISSUED' } }),
+      userCouponRepository
+        .createQueryBuilder('uc')
+        .where('uc.userId = :userId', { userId })
+        .andWhere('uc.status = :status', { status: 'ISSUED' })
+        .andWhere('(uc.validTo IS NULL OR uc.validTo > :now)', { now })
+        .getCount(),
       wishlistItemRepository
         .createQueryBuilder('item')
         .innerJoin('item.wishlist', 'wishlist')
