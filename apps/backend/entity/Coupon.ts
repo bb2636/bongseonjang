@@ -28,6 +28,15 @@ export class Coupon {
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive!: boolean;
 
+  @Column({ name: 'usage_limit_enabled', type: 'boolean', default: false })
+  usageLimitEnabled!: boolean;
+
+  @Column({ name: 'max_usage_per_user', type: 'int', nullable: true })
+  maxUsagePerUser!: number | null;
+
+  @Column({ name: 'allow_multiple_use', type: 'boolean', default: false })
+  allowMultipleUse!: boolean;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
 

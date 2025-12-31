@@ -24,11 +24,14 @@ export interface AdminCouponDto {
   targetType: 'all' | 'category';
   targetCategories: string[];
   issueType: 'all' | 'new' | 'grade';
-  issueGrades: number[];
+  issueGrades: string[];
   validityType: 'fixed' | 'afterIssue' | 'unlimited';
   validFrom: Date | null;
   validTo: Date | null;
   validDays: number | null;
+  usageLimitEnabled: boolean;
+  maxUsagePerUser: number | null;
+  allowMultipleUse: boolean;
   isActive: boolean;
   issuedCount: number;
   usedCount: number;
@@ -45,11 +48,14 @@ export interface CreateCouponDto {
   targetType: 'all' | 'category';
   targetCategories?: string[];
   issueType: 'all' | 'new' | 'grade';
-  issueGrades?: number[];
+  issueGrades?: string[];
   validityType: 'fixed' | 'afterIssue' | 'unlimited';
   validFrom?: Date;
   validTo?: Date;
   validDays?: number;
+  usageLimitEnabled?: boolean;
+  maxUsagePerUser?: number;
+  allowMultipleUse?: boolean;
   isActive?: boolean;
 }
 
@@ -126,6 +132,9 @@ export class AdminCouponService {
       name: data.name,
       description: data.description || null,
       minOrderAmount: data.minOrderAmount || 0,
+      usageLimitEnabled: data.usageLimitEnabled ?? false,
+      maxUsagePerUser: data.usageLimitEnabled ? (data.maxUsagePerUser ?? null) : null,
+      allowMultipleUse: data.allowMultipleUse ?? false,
       isActive: data.isActive ?? true,
     });
 
@@ -185,10 +194,10 @@ export class AdminCouponService {
         couponId: savedCoupon.id,
       });
     } else if (data.issueType === 'grade' && data.issueGrades) {
-      for (const gradeId of data.issueGrades) {
+      for (const grade of data.issueGrades) {
         await this.issueGradeRepo.save({
           couponId: savedCoupon.id,
-          gradeId,
+          grade,
         });
       }
     }
@@ -216,6 +225,11 @@ export class AdminCouponService {
       if (data.name !== undefined) coupon.name = data.name;
       if (data.description !== undefined) coupon.description = data.description || null;
       if (data.minOrderAmount !== undefined) coupon.minOrderAmount = data.minOrderAmount;
+      if (data.usageLimitEnabled !== undefined) {
+        coupon.usageLimitEnabled = data.usageLimitEnabled;
+        coupon.maxUsagePerUser = data.usageLimitEnabled ? (data.maxUsagePerUser ?? null) : null;
+      }
+      if (data.allowMultipleUse !== undefined) coupon.allowMultipleUse = data.allowMultipleUse;
       if (data.isActive !== undefined) coupon.isActive = data.isActive;
 
       await couponRepo.save(coupon);
@@ -293,8 +307,8 @@ export class AdminCouponService {
         } else if (data.issueType === 'new') {
           await issueNewUsersRepo.save({ couponId: id });
         } else if (data.issueType === 'grade' && data.issueGrades) {
-          for (const gradeId of data.issueGrades) {
-            await issueGradeRepo.save({ couponId: id, gradeId });
+          for (const grade of data.issueGrades) {
+            await issueGradeRepo.save({ couponId: id, grade });
           }
         }
       }
@@ -369,7 +383,7 @@ export class AdminCouponService {
     }
 
     let issueType: 'all' | 'new' | 'grade' = 'all';
-    let issueGrades: number[] = [];
+    let issueGrades: string[] = [];
     const issueAllUsers = await this.issueAllUsersRepo.findOne({ where: { couponId: coupon.id } });
     if (!issueAllUsers) {
       const issueNewUsers = await this.issueNewUsersRepo.findOne({ where: { couponId: coupon.id } });
@@ -379,7 +393,7 @@ export class AdminCouponService {
         const gradeRecords = await this.issueGradeRepo.find({ where: { couponId: coupon.id } });
         if (gradeRecords.length > 0) {
           issueType = 'grade';
-          issueGrades = gradeRecords.map(g => g.gradeId);
+          issueGrades = gradeRecords.map(g => g.grade);
         }
       }
     }
@@ -421,6 +435,9 @@ export class AdminCouponService {
       validFrom,
       validTo,
       validDays,
+      usageLimitEnabled: coupon.usageLimitEnabled ?? false,
+      maxUsagePerUser: coupon.maxUsagePerUser ?? null,
+      allowMultipleUse: coupon.allowMultipleUse ?? false,
       isActive: coupon.isActive,
       issuedCount,
       usedCount,

@@ -6,8 +6,8 @@ export class CouponIssueGrade {
   @PrimaryColumn({ name: 'coupon_id', type: 'int' })
   couponId!: number;
 
-  @PrimaryColumn({ name: 'grade_id', type: 'int' })
-  gradeId!: number;
+  @PrimaryColumn({ name: 'grade', type: 'varchar', length: 20 })
+  grade!: string;
 
   @ManyToOne('Coupon', 'issueGrades', { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'coupon_id' })
