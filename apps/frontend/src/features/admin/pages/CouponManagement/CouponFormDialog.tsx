@@ -12,12 +12,24 @@ interface CouponFormDialogProps {
 
 type ValidityType = 'fixed' | 'afterIssue';
 type TargetType = 'all' | 'category';
-type IssueType = 'all' | 'new';
+type IssueType = 'all' | 'new' | 'grade';
 
 interface Category {
   id: string;
   name: string;
 }
+
+interface GradeOption {
+  value: string;
+  label: string;
+}
+
+const GRADE_OPTIONS: GradeOption[] = [
+  { value: 'bronze', label: '브론즈' },
+  { value: 'silver', label: '실버' },
+  { value: 'gold', label: '골드' },
+  { value: 'vip', label: 'VIP' },
+];
 
 interface CouponFormData {
   name: string;
@@ -29,10 +41,14 @@ interface CouponFormData {
   targetType: TargetType;
   targetCategories: string[];
   issueType: IssueType;
+  issueGrades: string[];
   validityType: ValidityType;
   validFrom: string;
   validTo: string;
   validDays: number | string;
+  usageLimitEnabled: boolean;
+  maxUsagePerUser: number | string;
+  allowMultipleUse: boolean;
   isActive: boolean;
 }
 
@@ -46,10 +62,14 @@ const INITIAL_FORM_DATA: CouponFormData = {
   targetType: 'all',
   targetCategories: [],
   issueType: 'all',
+  issueGrades: [],
   validityType: 'fixed',
   validFrom: '',
   validTo: '',
   validDays: 30,
+  usageLimitEnabled: false,
+  maxUsagePerUser: '',
+  allowMultipleUse: false,
   isActive: true,
 };
 
@@ -90,11 +110,15 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         minOrderAmount: coupon.minOrderAmount ? String(coupon.minOrderAmount) : '',
         targetType: coupon.targetType,
         targetCategories: coupon.targetCategories || [],
-        issueType: coupon.issueType === 'grade' ? 'all' : coupon.issueType,
+        issueType: coupon.issueType,
+        issueGrades: coupon.issueGrades || [],
         validityType: coupon.validityType === 'unlimited' ? 'fixed' : coupon.validityType,
         validFrom: coupon.validFrom ? coupon.validFrom.split('T')[0] : '',
         validTo: coupon.validTo ? coupon.validTo.split('T')[0] : '',
         validDays: coupon.validDays || 30,
+        usageLimitEnabled: coupon.usageLimitEnabled || false,
+        maxUsagePerUser: coupon.maxUsagePerUser ? String(coupon.maxUsagePerUser) : '',
+        allowMultipleUse: coupon.allowMultipleUse || false,
         isActive: coupon.isActive,
       });
     } else {
@@ -116,6 +140,10 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
     });
   };
 
+  const handleGradeChange = (grade: string) => {
+    setFormData(prev => ({ ...prev, issueGrades: [grade] }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -129,6 +157,18 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
 
     if (formData.targetType === 'category' && formData.targetCategories.length === 0) {
       setError('특정 카테고리를 선택해주세요.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (formData.issueType === 'grade' && formData.issueGrades.length === 0) {
+      setError('등급을 선택해주세요.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (formData.usageLimitEnabled && (!formData.maxUsagePerUser || Number(formData.maxUsagePerUser) < 1)) {
+      setError('1인당 최대 사용 횟수를 1 이상으로 입력해주세요.');
       setIsSubmitting(false);
       return;
     }
@@ -148,10 +188,14 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         targetType: formData.targetType,
         targetCategories: formData.targetType === 'category' ? formData.targetCategories : undefined,
         issueType: formData.issueType,
+        issueGrades: formData.issueType === 'grade' ? formData.issueGrades : undefined,
         validityType: formData.validityType,
         validFrom: formData.validityType === 'fixed' && formData.validFrom ? new Date(formData.validFrom) : undefined,
         validTo: formData.validityType === 'fixed' && formData.validTo ? new Date(formData.validTo) : undefined,
         validDays: formData.validityType === 'afterIssue' ? (Number(formData.validDays) || 30) : undefined,
+        usageLimitEnabled: formData.usageLimitEnabled,
+        maxUsagePerUser: formData.usageLimitEnabled ? Number(formData.maxUsagePerUser) : undefined,
+        allowMultipleUse: formData.allowMultipleUse,
         isActive: formData.isActive,
       };
 
@@ -373,32 +417,104 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
           <div className="coupon-form-dialog__section">
             <h3 className="coupon-form-dialog__section-title">발급 대상</h3>
             
-            <div className="coupon-form-dialog__field">
-              <label className="coupon-form-dialog__label">발급 대상 *</label>
-              <div className="coupon-form-dialog__radio-group">
-                <label className="coupon-form-dialog__radio">
-                  <input
-                    type="radio"
-                    name="issueType"
-                    value="all"
-                    checked={formData.issueType === 'all'}
-                    onChange={() => handleChange('issueType', 'all')}
-                  />
-                  <span className="coupon-form-dialog__radio-custom"></span>
-                  <span className="coupon-form-dialog__radio-label">전체 회원</span>
-                </label>
-                <label className="coupon-form-dialog__radio">
-                  <input
-                    type="radio"
-                    name="issueType"
-                    value="new"
-                    checked={formData.issueType === 'new'}
-                    onChange={() => handleChange('issueType', 'new')}
-                  />
-                  <span className="coupon-form-dialog__radio-custom"></span>
-                  <span className="coupon-form-dialog__radio-label">신규 회원</span>
-                </label>
+            <div className="coupon-form-dialog__field-row coupon-form-dialog__field-row--align-start">
+              <div className="coupon-form-dialog__field">
+                <label className="coupon-form-dialog__label">발급 대상 *</label>
+                <div className="coupon-form-dialog__radio-group">
+                  <label className="coupon-form-dialog__radio">
+                    <input
+                      type="radio"
+                      name="issueType"
+                      value="all"
+                      checked={formData.issueType === 'all'}
+                      onChange={() => handleChange('issueType', 'all')}
+                    />
+                    <span className="coupon-form-dialog__radio-custom"></span>
+                    <span className="coupon-form-dialog__radio-label">전체 회원</span>
+                  </label>
+                  <label className="coupon-form-dialog__radio">
+                    <input
+                      type="radio"
+                      name="issueType"
+                      value="new"
+                      checked={formData.issueType === 'new'}
+                      onChange={() => handleChange('issueType', 'new')}
+                    />
+                    <span className="coupon-form-dialog__radio-custom"></span>
+                    <span className="coupon-form-dialog__radio-label">신규 가입 회원</span>
+                  </label>
+                  <label className="coupon-form-dialog__radio">
+                    <input
+                      type="radio"
+                      name="issueType"
+                      value="grade"
+                      checked={formData.issueType === 'grade'}
+                      onChange={() => handleChange('issueType', 'grade')}
+                    />
+                    <span className="coupon-form-dialog__radio-custom"></span>
+                    <span className="coupon-form-dialog__radio-label">특정 등급</span>
+                  </label>
+                </div>
               </div>
+
+              {formData.issueType === 'grade' && (
+                <div className="coupon-form-dialog__field">
+                  <label className="coupon-form-dialog__label">등급 *</label>
+                  <select
+                    className="coupon-form-dialog__select"
+                    value={formData.issueGrades[0] || ''}
+                    onChange={(e) => handleGradeChange(e.target.value)}
+                  >
+                    <option value="">등급 선택</option>
+                    {GRADE_OPTIONS.map((grade) => (
+                      <option key={grade.value} value={grade.value}>
+                        {grade.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="coupon-form-dialog__section">
+            <h3 className="coupon-form-dialog__section-title">사용 조건</h3>
+            
+            <div className="coupon-form-dialog__field-row coupon-form-dialog__field-row--align-start">
+              <div className="coupon-form-dialog__field">
+                <div className="coupon-form-dialog__checkbox-group">
+                  <label className="coupon-form-dialog__checkbox">
+                    <input
+                      type="checkbox"
+                      checked={formData.usageLimitEnabled}
+                      onChange={(e) => handleChange('usageLimitEnabled', e.target.checked)}
+                    />
+                    <span>사용 횟수 제한</span>
+                  </label>
+                  <label className="coupon-form-dialog__checkbox">
+                    <input
+                      type="checkbox"
+                      checked={formData.allowMultipleUse}
+                      onChange={(e) => handleChange('allowMultipleUse', e.target.checked)}
+                    />
+                    <span>중복 사용 허용</span>
+                  </label>
+                </div>
+              </div>
+
+              {formData.usageLimitEnabled && (
+                <div className="coupon-form-dialog__field">
+                  <label className="coupon-form-dialog__label">1인당 최대 사용 횟수</label>
+                  <input
+                    type="number"
+                    className="coupon-form-dialog__input coupon-form-dialog__input--small"
+                    value={formData.maxUsagePerUser}
+                    onChange={(e) => handleChange('maxUsagePerUser', e.target.value)}
+                    min={1}
+                    placeholder="3"
+                  />
+                </div>
+              )}
             </div>
           </div>
 

@@ -14,11 +14,14 @@ export interface AdminCoupon {
   targetType: 'all' | 'category';
   targetCategories: string[];
   issueType: 'all' | 'new' | 'grade';
-  issueGrades: number[];
+  issueGrades: string[];
   validityType: 'fixed' | 'afterIssue' | 'unlimited';
   validFrom: string | null;
   validTo: string | null;
   validDays: number | null;
+  usageLimitEnabled: boolean;
+  maxUsagePerUser: number | null;
+  allowMultipleUse: boolean;
   isActive: boolean;
   issuedCount: number;
   usedCount: number;
