@@ -11,17 +11,59 @@ import { ProductOption } from '../../../entity/ProductOption';
 import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
 import { Product } from '../../../entity/Product';
 import { ProductImage } from '../../../entity/ProductImage';
+import { ProductExposureCategory } from '../../../entity/ProductExposureCategory';
+import { ProductCategory } from '../../../entity/ProductCategory';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
 
-function checkProductMatchesTargetCategories(
-  productCategoryId: string | null,
+const BRAND_CATEGORY_MAPPING: Record<string, string> = {
+  '바담은': '바담은 제품',
+  '오바다': '오바다 제품',
+  '포시즌': '포시즌 제품',
+  '봉쿡': '봉쿡 제품',
+};
+
+async function getBrandExposureNamesForTargetCategories(
   targetCategoryIds: string[]
-): boolean {
-  if (!productCategoryId) {
+): Promise<string[]> {
+  const productCategoryRepo = AppDataSource.getRepository(ProductCategory);
+  const targetCategories = await productCategoryRepo.find({
+    where: { id: In(targetCategoryIds) },
+    select: ['id', 'name'],
+  });
+  
+  return targetCategories
+    .filter(cat => BRAND_CATEGORY_MAPPING[cat.name])
+    .map(cat => BRAND_CATEGORY_MAPPING[cat.name]);
+}
+
+async function checkProductMatchesTargetCategories(
+  productId: string,
+  productCategoryId: string | null,
+  targetCategoryIds: string[],
+  targetBrandExposureNames: string[]
+): Promise<boolean> {
+  if (productCategoryId && targetCategoryIds.includes(productCategoryId)) {
+    return true;
+  }
+  
+  if (targetBrandExposureNames.length === 0) {
     return false;
   }
-  return targetCategoryIds.includes(productCategoryId);
+  
+  const pecRepo = AppDataSource.getRepository(ProductExposureCategory);
+  const productExposureCategories = await pecRepo.find({
+    where: { productId },
+    relations: ['exposureCategory'],
+  });
+  
+  for (const pec of productExposureCategories) {
+    if (pec.exposureCategory && targetBrandExposureNames.includes(pec.exposureCategory.name)) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 function hashPhone(phone: string): string {
@@ -213,11 +255,14 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
         if (targetCategoryIds.length > 0) {
+          const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
           for (const item of cartItems) {
             if (!item.product) continue;
-            const matches = checkProductMatchesTargetCategories(
+            const matches = await checkProductMatchesTargetCategories(
+              item.product.id,
               item.product.productCategoryId,
-              targetCategoryIds
+              targetCategoryIds,
+              targetBrandExposureNames
             );
             if (!matches) {
               return res.status(400).json({ 
@@ -750,9 +795,12 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
         if (targetCategoryIds.length > 0) {
-          const matches = checkProductMatchesTargetCategories(
+          const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
+          const matches = await checkProductMatchesTargetCategories(
+            product.id,
             product.productCategoryId,
-            targetCategoryIds
+            targetCategoryIds,
+            targetBrandExposureNames
           );
           if (!matches) {
             return res.status(400).json({ 
