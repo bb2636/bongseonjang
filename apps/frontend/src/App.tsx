@@ -1,9 +1,8 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import { ProtectedRoute } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
-import { PageTransition } from "./components/PageTransition";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
@@ -221,12 +220,9 @@ function PageLoader() {
 }
 
 export default function App() {
-  const location = useLocation();
-  
   return (
     <Suspense fallback={<PageLoader />}>
-      <PageTransition>
-        <Routes location={location} key={location.pathname}>
+      <Routes>
         <Route path="/" element={
           <Suspense fallback={<HomePageSkeleton />}>
             <HomePage />
@@ -424,8 +420,7 @@ export default function App() {
             </MainLayout>
           }
         />
-        </Routes>
-      </PageTransition>
+      </Routes>
     </Suspense>
   );
 }
