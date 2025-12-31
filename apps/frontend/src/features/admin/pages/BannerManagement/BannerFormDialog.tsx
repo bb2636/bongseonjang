@@ -1,6 +1,6 @@
 import { useRef, useState, ChangeEvent } from 'react';
 import { BannerPosition, Banner } from './useBannerManagement';
-import { useBannerForm } from './useBannerForm';
+import { useBannerForm, LinkType } from './useBannerForm';
 import { ConfirmModal } from '../../../../components';
 import { Snackbar } from '../../components/Snackbar';
 import './BannerFormDialog.css';
@@ -35,6 +35,8 @@ export function BannerFormDialog({
     previewUrl,
     handleTitleChange,
     handlePositionChange,
+    handleLinkTypeChange,
+    handleLinkUrlChange,
     handleFileSelect,
     resetForm,
     submitForm,
@@ -165,6 +167,69 @@ export function BannerFormDialog({
                   </div>
                 )}
               </div>
+            </div>
+          </section>
+
+          <div className="banner-form-dialog__divider" />
+
+          <section className="banner-form-dialog__section">
+            <h3 className="banner-form-dialog__section-title">링크 설정</h3>
+            <div className="banner-form-dialog__link-section">
+              <div className="banner-form-dialog__form-field">
+                <label className="banner-form-dialog__label">발급 대상</label>
+                <div className="banner-form-dialog__radio-group">
+                <label className="banner-form-dialog__radio-label">
+                  <input
+                    type="radio"
+                    name="linkType"
+                    className="banner-form-dialog__radio"
+                    checked={formData.linkType === 'internal'}
+                    onChange={() => handleLinkTypeChange('internal')}
+                  />
+                  <span className="banner-form-dialog__radio-custom" />
+                  <span className="banner-form-dialog__radio-text">내부 딥링크</span>
+                </label>
+                <label className="banner-form-dialog__radio-label">
+                  <input
+                    type="radio"
+                    name="linkType"
+                    className="banner-form-dialog__radio"
+                    checked={formData.linkType === 'external'}
+                    onChange={() => handleLinkTypeChange('external')}
+                  />
+                  <span className="banner-form-dialog__radio-custom" />
+                  <span className="banner-form-dialog__radio-text">외부 링크</span>
+                </label>
+                <label className="banner-form-dialog__radio-label">
+                  <input
+                    type="radio"
+                    name="linkType"
+                    className="banner-form-dialog__radio"
+                    checked={formData.linkType === 'none'}
+                    onChange={() => handleLinkTypeChange('none')}
+                  />
+                  <span className="banner-form-dialog__radio-custom" />
+                  <span className="banner-form-dialog__radio-text">링크 없음</span>
+                </label>
+              </div>
+            </div>
+            {formData.linkType !== 'none' && (
+              <div className="banner-form-dialog__form-field">
+                <label className="banner-form-dialog__label">링크 경로 / URL</label>
+                <input
+                  type="text"
+                  className="banner-form-dialog__input"
+                  placeholder={formData.linkType === 'internal' ? '/event/..., /product/...' : 'https://...'}
+                  value={formData.linkUrl}
+                  onChange={(e) => handleLinkUrlChange(e.target.value)}
+                />
+                <p className="banner-form-dialog__hint">
+                  {formData.linkType === 'internal' 
+                    ? "내부 링크는 '/event/...', '/product/...' 형식으로 입력합니다"
+                    : "외부 링크는 'https://...' 형식으로 입력합니다"}
+                </p>
+              </div>
+            )}
             </div>
           </section>
         </div>

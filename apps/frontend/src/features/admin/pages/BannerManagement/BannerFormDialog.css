@@ -180,6 +180,65 @@
   color: #0C0C0C;
 }
 
+.banner-form-dialog__radio-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  padding: 6px 0;
+}
+
+.banner-form-dialog__radio-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.banner-form-dialog__radio {
+  display: none;
+}
+
+.banner-form-dialog__radio-custom {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid rgba(12, 12, 12, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.banner-form-dialog__radio:checked + .banner-form-dialog__radio-custom {
+  border-color: #239DFF;
+}
+
+.banner-form-dialog__radio:checked + .banner-form-dialog__radio-custom::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: #239DFF;
+  border-radius: 50%;
+}
+
+.banner-form-dialog__radio-text {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: #0C0C0C;
+}
+
+.banner-form-dialog__link-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px;
+}
+
 .banner-form-dialog__divider {
   width: 100%;
   height: 6px;

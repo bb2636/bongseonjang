@@ -1,12 +1,21 @@
 import { useState, useCallback, useEffect } from 'react';
 import { BannerPosition, Banner } from './useBannerManagement';
 
+export type LinkType = 'internal' | 'external' | 'none';
+
 export interface BannerFormData {
   title: string;
   positionCode: string;
   imageUrl: string;
+  linkType: LinkType;
   linkUrl: string;
   isActive: boolean;
+}
+
+function determineLinkType(linkUrl: string | null): LinkType {
+  if (!linkUrl) return 'none';
+  if (linkUrl.startsWith('http://') || linkUrl.startsWith('https://')) return 'external';
+  return 'internal';
 }
 
 function createInitialFormData(defaultPositionCode: string): BannerFormData {
@@ -14,6 +23,7 @@ function createInitialFormData(defaultPositionCode: string): BannerFormData {
     title: '',
     positionCode: defaultPositionCode,
     imageUrl: '',
+    linkType: 'internal',
     linkUrl: '',
     isActive: true,
   };
@@ -37,6 +47,7 @@ export function useBannerForm(
         title: editingBanner.title || '',
         positionCode: position?.code || defaultPositionCode,
         imageUrl: editingBanner.imageUrl,
+        linkType: determineLinkType(editingBanner.linkUrl),
         linkUrl: editingBanner.linkUrl || '',
         isActive: editingBanner.isActive,
       });
@@ -54,6 +65,14 @@ export function useBannerForm(
 
   const handlePositionChange = useCallback((positionCode: string) => {
     setFormData(prev => ({ ...prev, positionCode }));
+  }, []);
+
+  const handleLinkTypeChange = useCallback((linkType: LinkType) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      linkType,
+      linkUrl: linkType === 'none' ? '' : prev.linkUrl 
+    }));
   }, []);
 
   const handleLinkUrlChange = useCallback((value: string) => {
@@ -172,6 +191,7 @@ export function useBannerForm(
     previewUrl,
     handleTitleChange,
     handlePositionChange,
+    handleLinkTypeChange,
     handleLinkUrlChange,
     handleFileSelect,
     resetForm,
