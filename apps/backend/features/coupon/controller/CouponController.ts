@@ -20,7 +20,6 @@ export class CouponController {
       }
 
       const result = await this.service.getCouponsForUser(userId);
-      console.log('[DEBUG getCoupons] Returning coupons:', JSON.stringify(result.coupons.map(c => ({ id: c.id, name: c.name, description: c.description })), null, 2));
       res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
       res.json(result);
     } catch (error) {

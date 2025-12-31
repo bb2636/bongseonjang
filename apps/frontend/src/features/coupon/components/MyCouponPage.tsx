@@ -27,13 +27,21 @@ function formatDiscount(coupon: Coupon): string {
 }
 
 function formatCondition(coupon: Coupon): string {
+  const conditions: string[] = [];
+  
   if (coupon.minOrderAmount > 0) {
-    return `${coupon.minOrderAmount.toLocaleString()}원 이상 주문 시`;
+    conditions.push(`${coupon.minOrderAmount.toLocaleString()}원 이상 주문 시`);
   }
+  
   if (coupon.description) {
-    return coupon.description;
+    conditions.push(coupon.description);
   }
-  return '전 상품 적용 가능';
+  
+  if (conditions.length === 0) {
+    return '전 상품 적용 가능';
+  }
+  
+  return conditions.join(' · ');
 }
 
 export default function MyCouponPage({
