@@ -116,7 +116,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.userId;
-    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod, shippingFee = 0, userCouponId } = req.body;
+    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod, shippingFee = 0, userCouponId, usedPoints = 0 } = req.body;
 
     if (!selectedItemIds || !Array.isArray(selectedItemIds) || selectedItemIds.length === 0) {
       return res.status(400).json({ error: '결제할 상품을 선택해주세요' });
@@ -279,7 +279,8 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       appliedUserCouponId = userCoupon.id;
     }
     
-    const finalAmount = Math.max(0, totalProductPrice + shippingAmount - couponDiscountAmount);
+    const validatedUsedPoints = Math.max(0, Math.min(usedPoints, totalProductPrice + shippingAmount - couponDiscountAmount));
+    const finalAmount = Math.max(0, totalProductPrice + shippingAmount - couponDiscountAmount - validatedUsedPoints);
 
     const cartItemIds = cartItems.map(item => item.id);
 
@@ -296,7 +297,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       status: 'pending',
       totalProductPrice,
       totalDiscountAmount: 0,
-      usedPoints: 0,
+      usedPoints: validatedUsedPoints,
       couponDiscountAmount,
       finalAmount,
       earnedPoints: 0,
@@ -629,7 +630,8 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       returnUrl: clientReturnUrl, 
       paymentMethod,
       shippingFee = 0,
-      userCouponId
+      userCouponId,
+      usedPoints = 0
     } = req.body;
 
     if (!productId) {
@@ -812,7 +814,8 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       appliedUserCouponId = userCoupon.id;
     }
     
-    const finalAmount = Math.max(0, totalProductPrice + shippingAmount - couponDiscountAmount);
+    const validatedUsedPoints = Math.max(0, Math.min(usedPoints, totalProductPrice + shippingAmount - couponDiscountAmount));
+    const finalAmount = Math.max(0, totalProductPrice + shippingAmount - couponDiscountAmount - validatedUsedPoints);
 
     let returnUrlOrigin: string;
     try {
@@ -827,7 +830,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       status: 'pending',
       totalProductPrice,
       totalDiscountAmount: 0,
-      usedPoints: 0,
+      usedPoints: validatedUsedPoints,
       couponDiscountAmount,
       finalAmount,
       earnedPoints: 0,

@@ -359,6 +359,7 @@ export function CheckoutPage() {
           paymentMethod,
           shippingFee,
           userCouponId: selectedCouponId ?? undefined,
+          usedPoints: usedPoints > 0 ? usedPoints : undefined,
         });
       } else {
         paymentData = await preparePayment({
@@ -372,6 +373,7 @@ export function CheckoutPage() {
           paymentMethod,
           shippingFee,
           userCouponId: selectedCouponId ?? undefined,
+          usedPoints: usedPoints > 0 ? usedPoints : undefined,
         });
       }
 

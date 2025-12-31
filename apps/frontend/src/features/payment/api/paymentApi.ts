@@ -23,6 +23,7 @@ interface PreparePaymentRequest {
   paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
   userCouponId?: number;
+  usedPoints?: number;
 }
 
 export interface DirectPurchaseItem {
@@ -42,6 +43,7 @@ export interface PrepareDirectPaymentRequest {
   paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
   userCouponId?: number;
+  usedPoints?: number;
 }
 
 interface PreparePaymentResponse {
