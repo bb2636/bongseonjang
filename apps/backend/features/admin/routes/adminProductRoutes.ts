@@ -260,6 +260,8 @@ router.get('/:productId', async (req: Request, res: Response) => {
       saleStartDate: product.saleStartDate,
       saleEndDate: product.saleEndDate,
       countdownDays: product.countdownDays,
+      storageMethod: product.storageMethod || '',
+      expirationInfo: product.expirationInfo || '',
       description: detailContent.description || '',
       caution: detailContent.caution || '',
       productInfos: detailContent.productInfos || [],
@@ -306,6 +308,8 @@ router.put('/:productId', async (req: Request, res: Response) => {
       startDate,
       endDate,
       countdownDays,
+      storageMethod,
+      expirationInfo,
       description,
       caution,
       options,
@@ -339,6 +343,8 @@ router.put('/:productId', async (req: Request, res: Response) => {
     product.saleStartDate = startDate ? new Date(startDate) : null;
     product.saleEndDate = endDate ? new Date(endDate) : null;
     product.countdownDays = countdownDays ?? null;
+    product.storageMethod = storageMethod || null;
+    product.expirationInfo = expirationInfo || null;
     product.detailContent = JSON.stringify({
       description,
       caution,
@@ -447,6 +453,8 @@ router.post('/', async (req: Request, res: Response) => {
       startDate,
       endDate,
       countdownDays,
+      storageMethod,
+      expirationInfo,
       description,
       caution,
       options,
@@ -477,6 +485,8 @@ router.post('/', async (req: Request, res: Response) => {
       saleStartDate: startDate ? new Date(startDate) : null,
       saleEndDate: endDate ? new Date(endDate) : null,
       countdownDays: countdownDays ?? null,
+      storageMethod: storageMethod || null,
+      expirationInfo: expirationInfo || null,
       detailContent: JSON.stringify({
         description,
         caution,

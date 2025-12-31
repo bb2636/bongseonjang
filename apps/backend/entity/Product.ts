@@ -38,6 +38,12 @@ export class Product {
   @Column({ type: 'int', nullable: true, name: 'countdown_days' })
   countdownDays!: number | null;
 
+  @Column({ type: 'varchar', length: 100, nullable: true, name: 'storage_method' })
+  storageMethod!: string | null;
+
+  @Column({ type: 'varchar', length: 200, nullable: true, name: 'expiration_info' })
+  expirationInfo!: string | null;
+
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date;
 

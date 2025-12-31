@@ -38,6 +38,8 @@ export interface ProductFormData {
   startDate: string;
   endDate: string;
   countdownDays: number | null;
+  storageMethod: string;
+  expirationInfo: string;
   description: string;
   caution: string;
   useOptions: boolean;
@@ -97,6 +99,8 @@ function createInitialFormData(): ProductFormData {
     startDate: '',
     endDate: '',
     countdownDays: null,
+    storageMethod: '',
+    expirationInfo: '',
     description: '',
     caution: '',
     useOptions: false,
@@ -231,6 +235,14 @@ export function useProductForm() {
 
   const handleCautionChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, caution: value }));
+  }, []);
+
+  const handleStorageMethodChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, storageMethod: value }));
+  }, []);
+
+  const handleExpirationInfoChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, expirationInfo: value }));
   }, []);
 
   const handleUseOptionsChange = useCallback((useOptions: boolean) => {
@@ -438,6 +450,8 @@ export function useProductForm() {
         startDate: formatDate(data.saleStartDate),
         endDate: formatDate(data.saleEndDate),
         countdownDays: data.countdownDays ?? null,
+        storageMethod: data.storageMethod || '',
+        expirationInfo: data.expirationInfo || '',
         description: data.description || '',
         caution: data.caution || '',
         useOptions: hasOptions,
@@ -588,6 +602,8 @@ export function useProductForm() {
         startDate: formData.startDate || null,
         endDate: formData.endDate || null,
         countdownDays: formData.countdownDays,
+        storageMethod: formData.storageMethod,
+        expirationInfo: formData.expirationInfo,
         description: formData.description,
         caution: formData.caution,
         optionGroupName: formData.useOptions ? formData.optionGroupName : null,
@@ -663,6 +679,8 @@ export function useProductForm() {
     handleCountdownDaysChange,
     handleDescriptionChange,
     handleCautionChange,
+    handleStorageMethodChange,
+    handleExpirationInfoChange,
     handleUseOptionsChange,
     handleOptionGroupNameChange,
     handleOptionChange,

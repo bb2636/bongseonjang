@@ -65,6 +65,8 @@ export function ProductFormDialog({
     handleCountdownDaysChange,
     handleDescriptionChange,
     handleCautionChange,
+    handleStorageMethodChange,
+    handleExpirationInfoChange,
     handleUseOptionsChange,
     handleOptionGroupNameChange,
     handleOptionChange,
@@ -470,6 +472,31 @@ export function ProductFormDialog({
               />
               <div className="product-form-dialog__textarea-count">
                 {formData.caution.length}/2000
+              </div>
+            </div>
+
+            <div className="product-form-dialog__form-row" style={{ marginTop: 16 }}>
+              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
+                <label className="product-form-dialog__label">보관방법</label>
+                <input
+                  type="text"
+                  className="product-form-dialog__input"
+                  placeholder="예: 냉동보관, 냉장보관, 상온보관"
+                  value={formData.storageMethod}
+                  onChange={(e) => handleStorageMethodChange(e.target.value)}
+                  maxLength={100}
+                />
+              </div>
+              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
+                <label className="product-form-dialog__label">유통기한</label>
+                <input
+                  type="text"
+                  className="product-form-dialog__input"
+                  placeholder="예: 제조일로부터 12개월, 상세페이지 참조"
+                  value={formData.expirationInfo}
+                  onChange={(e) => handleExpirationInfoChange(e.target.value)}
+                  maxLength={200}
+                />
               </div>
             </div>
           </section>
