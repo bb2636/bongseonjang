@@ -32,7 +32,7 @@ interface CouponFormData {
   validityType: ValidityType;
   validFrom: string;
   validTo: string;
-  validDays: number;
+  validDays: number | string;
   isActive: boolean;
 }
 
@@ -151,7 +151,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         validityType: formData.validityType,
         validFrom: formData.validityType === 'fixed' && formData.validFrom ? new Date(formData.validFrom) : undefined,
         validTo: formData.validityType === 'fixed' && formData.validTo ? new Date(formData.validTo) : undefined,
-        validDays: formData.validityType === 'afterIssue' ? formData.validDays : undefined,
+        validDays: formData.validityType === 'afterIssue' ? (Number(formData.validDays) || 30) : undefined,
         isActive: formData.isActive,
       };
 
@@ -449,7 +449,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                   type="number"
                   className="coupon-form-dialog__input"
                   value={formData.validDays}
-                  onChange={(e) => handleChange('validDays', parseInt(e.target.value) || 30)}
+                  onChange={(e) => handleChange('validDays', e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
                   min={1}
                   required={formData.validityType === 'afterIssue'}
                 />
