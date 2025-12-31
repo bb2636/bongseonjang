@@ -137,6 +137,12 @@ export class CouponRepository {
     });
   }
 
+  async findUserCouponById(userCouponId: number): Promise<UserCoupon | null> {
+    return this.userCouponRepo.findOne({
+      where: { id: userCouponId, status: 'ISSUED' },
+    });
+  }
+
   async createUserCoupon(couponId: number, userId: string, validFrom: Date | null, validTo: Date | null): Promise<UserCoupon> {
     const userCoupon = this.userCouponRepo.create({
       couponId,

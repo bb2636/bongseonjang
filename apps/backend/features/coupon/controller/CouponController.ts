@@ -73,4 +73,27 @@ export class CouponController {
       res.status(500).json({ error: '보유 쿠폰 목록을 불러오는데 실패했습니다' });
     }
   }
+
+  async getAvailableCoupons(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        res.status(401).json({ error: '인증이 필요합니다' });
+        return;
+      }
+
+      const { productIds } = req.body;
+      if (!productIds || !Array.isArray(productIds)) {
+        res.status(400).json({ error: '상품 정보가 필요합니다' });
+        return;
+      }
+
+      const coupons = await this.service.getAvailableCouponsForProducts(userId, productIds);
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.json({ coupons, totalCount: coupons.length });
+    } catch (error) {
+      console.error('Get available coupons error:', error);
+      res.status(500).json({ error: '적용 가능한 쿠폰 목록을 불러오는데 실패했습니다' });
+    }
+  }
 }

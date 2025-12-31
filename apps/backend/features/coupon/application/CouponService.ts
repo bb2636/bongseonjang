@@ -1,4 +1,21 @@
 import { CouponRepository, CouponWithDetails } from '../repository/CouponRepository';
+import { AppDataSource } from '../../../config/database.js';
+import { ProductCategory } from '../../../entity/ProductCategory.js';
+import { ProductExposureCategory } from '../../../entity/ProductExposureCategory.js';
+import { Product } from '../../../entity/Product.js';
+import { In } from 'typeorm';
+
+const BRAND_CATEGORY_MAPPING: Record<string, string> = {
+  '바담은': '바담은 제품',
+  '오바다': '오바다 제품',
+  '포시즌': '포시즌 제품',
+  '봉쿡': '봉쿡 제품',
+};
+
+interface ProductInfo {
+  productId: string;
+  productCategoryId: string | null;
+}
 
 interface CouponDto {
   id: number;
@@ -120,5 +137,116 @@ export class CouponService {
       validTo: coupon.validTo,
       isIssued,
     };
+  }
+
+  async getAvailableCouponsForProducts(userId: string, productIds: string[]): Promise<CouponDto[]> {
+    const allMyCoupons = await this.getMyCoupons(userId);
+    
+    if (productIds.length === 0) {
+      return allMyCoupons;
+    }
+
+    const availableCoupons: CouponDto[] = [];
+
+    const productRepo = AppDataSource.getRepository(Product);
+    const products = await productRepo.find({
+      where: { id: In(productIds) },
+      select: ['id', 'productCategoryId'],
+    });
+
+    if (products.length === 0) {
+      console.warn('[CouponService] No products found for IDs:', productIds);
+      return allMyCoupons;
+    }
+
+    const productInfos: ProductInfo[] = products.map(p => ({
+      productId: p.id,
+      productCategoryId: p.productCategoryId,
+    }));
+
+    for (const coupon of allMyCoupons) {
+      if (coupon.targetType === 'all') {
+        availableCoupons.push(coupon);
+        continue;
+      }
+
+      if (coupon.targetType === 'category') {
+        const userCoupon = await this.repository.findUserCouponById(coupon.id);
+        if (!userCoupon) {
+          console.warn('[CouponService] UserCoupon not found for coupon.id:', coupon.id);
+          continue;
+        }
+
+        const targetCategoryIds = await this.repository.getCouponTargetCategories(userCoupon.couponId);
+        
+        if (targetCategoryIds.length === 0) {
+          availableCoupons.push(coupon);
+          continue;
+        }
+
+        const targetBrandExposureNames = await this.getBrandExposureNamesForTargetCategories(targetCategoryIds);
+        
+        let anyProductMatches = false;
+        for (const productInfo of productInfos) {
+          const matches = await this.checkProductMatchesTargetCategories(
+            productInfo.productId,
+            productInfo.productCategoryId,
+            targetCategoryIds,
+            targetBrandExposureNames
+          );
+          if (matches) {
+            anyProductMatches = true;
+            break;
+          }
+        }
+
+        if (anyProductMatches) {
+          availableCoupons.push(coupon);
+        }
+      }
+    }
+
+    return availableCoupons;
+  }
+
+  private async getBrandExposureNamesForTargetCategories(targetCategoryIds: string[]): Promise<string[]> {
+    const productCategoryRepo = AppDataSource.getRepository(ProductCategory);
+    const targetCategories = await productCategoryRepo.find({
+      where: { id: In(targetCategoryIds) },
+      select: ['id', 'name'],
+    });
+    
+    return targetCategories
+      .filter(cat => BRAND_CATEGORY_MAPPING[cat.name])
+      .map(cat => BRAND_CATEGORY_MAPPING[cat.name]);
+  }
+
+  private async checkProductMatchesTargetCategories(
+    productId: string,
+    productCategoryId: string | null,
+    targetCategoryIds: string[],
+    targetBrandExposureNames: string[]
+  ): Promise<boolean> {
+    if (productCategoryId && targetCategoryIds.includes(productCategoryId)) {
+      return true;
+    }
+    
+    if (targetBrandExposureNames.length === 0) {
+      return false;
+    }
+    
+    const pecRepo = AppDataSource.getRepository(ProductExposureCategory);
+    const productExposureCategories = await pecRepo.find({
+      where: { productId },
+      relations: ['exposureCategory'],
+    });
+    
+    for (const pec of productExposureCategories) {
+      if (pec.exposureCategory && targetBrandExposureNames.includes(pec.exposureCategory.name)) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 }

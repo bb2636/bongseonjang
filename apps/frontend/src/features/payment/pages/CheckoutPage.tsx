@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
 import { fetchDefaultAddress, fetchAddresses, AddressResponse } from '../../address/api/addressApi';
 import { fetchUserProfile } from '../../profile/api/profileApi';
-import { preparePayment, prepareDirectPayment, DirectPurchaseItem, fetchMyCoupons, CouponDto } from '../api/paymentApi';
+import { preparePayment, prepareDirectPayment, DirectPurchaseItem, fetchMyCoupons, fetchAvailableCoupons, CouponDto } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
 import type { ProductDetail } from '../../productDetail/types/productDetail';
 import { useToast } from '../../../contexts/ToastContext';
@@ -169,10 +169,18 @@ export function CheckoutPage() {
     staleTime: 1000 * 60 * 5,
   });
 
+  const productIds = useMemo(() => {
+    if (isDirectMode && directPurchaseData) {
+      return [directPurchaseData.productId];
+    }
+    const cartSelectedItems = cart?.items.filter(item => selectedItemIds.includes(item.id)) || [];
+    return [...new Set(cartSelectedItems.map(item => item.productId))];
+  }, [isDirectMode, directPurchaseData, cart, selectedItemIds]);
+
   const { data: myCoupons = [] } = useQuery({
-    queryKey: ['myCoupons'],
-    queryFn: fetchMyCoupons,
-    enabled: !!user,
+    queryKey: ['availableCoupons', productIds],
+    queryFn: () => fetchAvailableCoupons(productIds),
+    enabled: !!user && productIds.length > 0,
     staleTime: 1000 * 60 * 5,
   });
 

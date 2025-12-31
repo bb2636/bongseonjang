@@ -78,6 +78,26 @@ export async function fetchMyCoupons(): Promise<CouponDto[]> {
   return data.coupons || [];
 }
 
+export async function fetchAvailableCoupons(productIds: string[]): Promise<CouponDto[]> {
+  const token = localStorage.getItem('token');
+  
+  const response = await fetch('/api/coupons/available', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ productIds }),
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+  return data.coupons || [];
+}
+
 export async function prepareDirectPayment(data: PrepareDirectPaymentRequest): Promise<PreparePaymentResponse> {
   const token = localStorage.getItem('token');
   const returnUrl = getCallbackUrl();
