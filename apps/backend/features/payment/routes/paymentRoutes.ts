@@ -11,53 +11,17 @@ import { ProductOption } from '../../../entity/ProductOption';
 import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
 import { Product } from '../../../entity/Product';
 import { ProductImage } from '../../../entity/ProductImage';
-import { ProductExposureCategory } from '../../../entity/ProductExposureCategory';
-import { ExposureCategory } from '../../../entity/ExposureCategory';
-import { ProductCategory } from '../../../entity/ProductCategory';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
 
-async function checkProductMatchesTargetCategories(
-  productId: string,
+function checkProductMatchesTargetCategories(
   productCategoryId: string | null,
   targetCategoryIds: string[]
-): Promise<boolean> {
-  if (productCategoryId && targetCategoryIds.includes(productCategoryId)) {
-    return true;
-  }
-  
-  const productCategoryRepo = AppDataSource.getRepository(ProductCategory);
-  const targetCategories = await productCategoryRepo.find({
-    where: { id: In(targetCategoryIds) },
-    select: ['id', 'name'],
-  });
-  
-  const brandCategoryNames = ['바담은', '오바다', '포시즌', '봉쿡'];
-  const targetBrandNames = targetCategories
-    .filter(cat => brandCategoryNames.includes(cat.name))
-    .map(cat => cat.name);
-  
-  if (targetBrandNames.length === 0) {
+): boolean {
+  if (!productCategoryId) {
     return false;
   }
-  
-  const pecRepo = AppDataSource.getRepository(ProductExposureCategory);
-  const productExposureCategories = await pecRepo.find({
-    where: { productId },
-    relations: ['exposureCategory'],
-  });
-  
-  for (const pec of productExposureCategories) {
-    if (pec.exposureCategory) {
-      for (const brandName of targetBrandNames) {
-        if (pec.exposureCategory.name.includes(brandName)) {
-          return true;
-        }
-      }
-    }
-  }
-  
-  return false;
+  return targetCategoryIds.includes(productCategoryId);
 }
 
 function hashPhone(phone: string): string {
@@ -251,8 +215,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
         if (targetCategoryIds.length > 0) {
           for (const item of cartItems) {
             if (!item.product) continue;
-            const matches = await checkProductMatchesTargetCategories(
-              item.product.id,
+            const matches = checkProductMatchesTargetCategories(
               item.product.productCategoryId,
               targetCategoryIds
             );
@@ -787,8 +750,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
         if (targetCategoryIds.length > 0) {
-          const matches = await checkProductMatchesTargetCategories(
-            product.id,
+          const matches = checkProductMatchesTargetCategories(
             product.productCategoryId,
             targetCategoryIds
           );
