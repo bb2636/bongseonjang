@@ -27,6 +27,9 @@ export default function ProductDescription({
         <div className="product-description__header">
           <h3 className="product-description__title">상품정보</h3>
         </div>
+        {description && (
+          <p className="product-description__text">{description}</p>
+        )}
         <div className="product-description__info-list">
           {origin && (
             <div className="product-description__info-item">
@@ -67,9 +70,6 @@ export default function ProductDescription({
             </div>
           )}
         </div>
-        {description && (
-          <p className="product-description__text">{description}</p>
-        )}
       </div>
 
       {notice && (
