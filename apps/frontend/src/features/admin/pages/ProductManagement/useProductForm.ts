@@ -49,6 +49,9 @@ export interface ProductFormData {
   shippingInfo: ShippingInfo;
   thumbnailImages: ImageFile[];
   detailImages: ImageFile[];
+  weight: string;
+  origin: string;
+  shippingMethod: string;
 }
 
 const SHIPPING_LABELS = {
@@ -114,6 +117,9 @@ function createInitialFormData(): ProductFormData {
     },
     thumbnailImages: [],
     detailImages: [],
+    weight: '',
+    origin: '',
+    shippingMethod: '',
   };
 }
 
@@ -243,6 +249,18 @@ export function useProductForm() {
 
   const handleExpirationInfoChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, expirationInfo: value }));
+  }, []);
+
+  const handleWeightChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, weight: value }));
+  }, []);
+
+  const handleOriginChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, origin: value }));
+  }, []);
+
+  const handleShippingMethodChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, shippingMethod: value }));
   }, []);
 
   const handleUseOptionsChange = useCallback((useOptions: boolean) => {
@@ -465,6 +483,9 @@ export function useProductForm() {
         },
         thumbnailImages,
         detailImages,
+        weight: data.weight || '',
+        origin: data.origin || '',
+        shippingMethod: data.shippingMethod || '',
       });
 
       return true;
@@ -625,6 +646,9 @@ export function useProductForm() {
         shippingInfo: formData.shippingInfo,
         thumbnailUrls,
         detailUrls,
+        weight: formData.weight,
+        origin: formData.origin,
+        shippingMethod: formData.shippingMethod,
       };
 
       const url = isUpdate
@@ -681,6 +705,9 @@ export function useProductForm() {
     handleCautionChange,
     handleStorageMethodChange,
     handleExpirationInfoChange,
+    handleWeightChange,
+    handleOriginChange,
+    handleShippingMethodChange,
     handleUseOptionsChange,
     handleOptionGroupNameChange,
     handleOptionChange,

@@ -44,6 +44,15 @@ export class Product {
   @Column({ type: 'varchar', length: 200, nullable: true, name: 'expiration_info' })
   expirationInfo!: string | null;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  weight!: string | null;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  origin!: string | null;
+
+  @Column({ type: 'varchar', length: 200, nullable: true, name: 'shipping_method' })
+  shippingMethod!: string | null;
+
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date;
 

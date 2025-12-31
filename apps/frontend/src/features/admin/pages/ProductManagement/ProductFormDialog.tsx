@@ -67,6 +67,9 @@ export function ProductFormDialog({
     handleCautionChange,
     handleStorageMethodChange,
     handleExpirationInfoChange,
+    handleWeightChange,
+    handleOriginChange,
+    handleShippingMethodChange,
     handleUseOptionsChange,
     handleOptionGroupNameChange,
     handleOptionChange,
@@ -475,30 +478,6 @@ export function ProductFormDialog({
               </div>
             </div>
 
-            <div className="product-form-dialog__form-row" style={{ marginTop: 16 }}>
-              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
-                <label className="product-form-dialog__label">보관방법</label>
-                <input
-                  type="text"
-                  className="product-form-dialog__input"
-                  placeholder="예: 냉동보관, 냉장보관, 상온보관"
-                  value={formData.storageMethod}
-                  onChange={(e) => handleStorageMethodChange(e.target.value)}
-                  maxLength={100}
-                />
-              </div>
-              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
-                <label className="product-form-dialog__label">유통기한</label>
-                <input
-                  type="text"
-                  className="product-form-dialog__input"
-                  placeholder="예: 제조일로부터 12개월, 상세페이지 참조"
-                  value={formData.expirationInfo}
-                  onChange={(e) => handleExpirationInfoChange(e.target.value)}
-                  maxLength={200}
-                />
-              </div>
-            </div>
           </section>
 
           <div className="product-form-dialog__divider" />
@@ -594,83 +573,135 @@ export function ProductFormDialog({
           <div className="product-form-dialog__divider" />
 
           <section className="product-form-dialog__section">
-            <h3 className="product-form-dialog__section-title">상품 정보</h3>
-            <div className="product-form-dialog__option-list">
-              {formData.productInfos.map((info: ProductInfo) => (
-                <div key={info.id} className="product-form-dialog__info-row">
-                  <input
-                    type="text"
-                    className="product-form-dialog__input product-form-dialog__info-label-input"
-                    placeholder="항목명 (예: 원산지)"
-                    value={info.label}
-                    onChange={(e) => handleProductInfoChange(info.id, 'label', e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    className="product-form-dialog__input product-form-dialog__info-value-input"
-                    placeholder="내용 입력"
-                    value={info.value}
-                    onChange={(e) => handleProductInfoChange(info.id, 'value', e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    className="product-form-dialog__add-button"
-                    onClick={() => handleRemoveProductInfo(info.id)}
-                    style={{ borderColor: '#FF3B30', color: '#FF3B30' }}
-                  >
-                    삭제
-                  </button>
-                </div>
-              ))}
+            <h3 className="product-form-dialog__section-title">상품정보 작성</h3>
+            <div className="product-form-dialog__grid-row">
+              <div className="product-form-dialog__form-field">
+                <label className="product-form-dialog__label">중량</label>
+                <input
+                  type="text"
+                  className="product-form-dialog__input"
+                  placeholder="예: 1kg, 500g"
+                  value={formData.weight}
+                  onChange={(e) => handleWeightChange(e.target.value)}
+                  maxLength={50}
+                />
+              </div>
+              <div className="product-form-dialog__form-field">
+                <label className="product-form-dialog__label">보관방법</label>
+                <input
+                  type="text"
+                  className="product-form-dialog__input"
+                  placeholder="예: 냉동보관, 냉장보관, 상온보관"
+                  value={formData.storageMethod}
+                  onChange={(e) => handleStorageMethodChange(e.target.value)}
+                  maxLength={100}
+                />
+              </div>
             </div>
-            <button
-              type="button"
-              className="product-form-dialog__add-button"
-              onClick={handleAddProductInfo}
-              style={{ marginTop: 12 }}
-            >
-              <PlusIcon /> 추가
-            </button>
+            <div className="product-form-dialog__grid-row">
+              <div className="product-form-dialog__form-field">
+                <label className="product-form-dialog__label">원산지</label>
+                <input
+                  type="text"
+                  className="product-form-dialog__input"
+                  placeholder="예: 국내산, 러시아산"
+                  value={formData.origin}
+                  onChange={(e) => handleOriginChange(e.target.value)}
+                  maxLength={100}
+                />
+              </div>
+              <div className="product-form-dialog__form-field">
+                <label className="product-form-dialog__label">유통기한</label>
+                <input
+                  type="text"
+                  className="product-form-dialog__input"
+                  placeholder="예: 제조일로부터 12개월, 상세페이지 참조"
+                  value={formData.expirationInfo}
+                  onChange={(e) => handleExpirationInfoChange(e.target.value)}
+                  maxLength={200}
+                />
+              </div>
+            </div>
+            <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
+              <label className="product-form-dialog__label">보관 방법 상세</label>
+              <div className="product-form-dialog__option-list">
+                {formData.productInfos.map((info: ProductInfo) => (
+                  <div key={info.id} className="product-form-dialog__info-row">
+                    <input
+                      type="text"
+                      className="product-form-dialog__input product-form-dialog__info-label-input"
+                      placeholder="항목명"
+                      value={info.label}
+                      onChange={(e) => handleProductInfoChange(info.id, 'label', e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      className="product-form-dialog__input product-form-dialog__info-value-input"
+                      placeholder="내용 입력"
+                      value={info.value}
+                      onChange={(e) => handleProductInfoChange(info.id, 'value', e.target.value)}
+                    />
+                    {formData.productInfos.length > 1 && (
+                      <button
+                        type="button"
+                        className="product-form-dialog__remove-button"
+                        onClick={() => handleRemoveProductInfo(info.id)}
+                      >
+                        삭제
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="product-form-dialog__add-button"
+                onClick={handleAddProductInfo}
+                style={{ marginTop: 12 }}
+              >
+                <PlusIcon /> 추가
+              </button>
+            </div>
           </section>
 
           <div className="product-form-dialog__divider" />
 
           <section className="product-form-dialog__section">
-            <h3 className="product-form-dialog__section-title">배송 정보</h3>
-            <div className="product-form-dialog__shipping-row">
-              <span className="product-form-dialog__shipping-label">{shippingLabels.shippingFee}</span>
-              <div className="product-form-dialog__shipping-input-wrapper">
+            <h3 className="product-form-dialog__section-title">배송정보 작성</h3>
+            <div className="product-form-dialog__grid-row">
+              <div className="product-form-dialog__form-field">
+                <label className="product-form-dialog__label">배송비</label>
+                <div className="product-form-dialog__inline-row">
+                  <input
+                    type="number"
+                    className="product-form-dialog__input"
+                    placeholder="3500"
+                    value={formData.shippingInfo.shippingFee ?? ''}
+                    onChange={(e) => handleShippingInfoChange('shippingFee', e.target.value ? Number(e.target.value) : null)}
+                    min="0"
+                    max="9999999"
+                    style={{ flex: 1 }}
+                  />
+                  <span className="product-form-dialog__unit">원</span>
+                </div>
+              </div>
+              <div className="product-form-dialog__form-field">
+                <label className="product-form-dialog__label">배송방법</label>
                 <input
-                  type="number"
-                  className="product-form-dialog__input product-form-dialog__shipping-number-input"
-                  placeholder="3500"
-                  value={formData.shippingInfo.shippingFee ?? ''}
-                  onChange={(e) => handleShippingInfoChange('shippingFee', e.target.value ? Number(e.target.value) : null)}
-                  min="0"
-                  max="9999999"
+                  type="text"
+                  className="product-form-dialog__input"
+                  placeholder="예: 택배, 직배송"
+                  value={formData.shippingMethod}
+                  onChange={(e) => handleShippingMethodChange(e.target.value)}
+                  maxLength={100}
                 />
-                <span className="product-form-dialog__shipping-unit">원</span>
               </div>
             </div>
-            <div className="product-form-dialog__shipping-row">
-              <span className="product-form-dialog__shipping-label">{shippingLabels.freeShippingThreshold}</span>
-              <div className="product-form-dialog__shipping-input-wrapper">
-                <input
-                  type="number"
-                  className="product-form-dialog__input product-form-dialog__shipping-number-input"
-                  placeholder="30000"
-                  value={formData.shippingInfo.freeShippingThreshold ?? ''}
-                  onChange={(e) => handleShippingInfoChange('freeShippingThreshold', e.target.value ? Number(e.target.value) : null)}
-                  min="0"
-                />
-                <span className="product-form-dialog__shipping-unit">원 이상 구매 시 무료</span>
-              </div>
-            </div>
-            <div className="product-form-dialog__shipping-row">
-              <span className="product-form-dialog__shipping-label">{shippingLabels.shippingDescription}</span>
+            <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
+              <label className="product-form-dialog__label">배송가능지역</label>
               <input
                 type="text"
-                className="product-form-dialog__input product-form-dialog__shipping-value"
+                className="product-form-dialog__input"
                 placeholder="예: 제주 도서산간 제외 전국 배송"
                 value={formData.shippingInfo.shippingDescription}
                 onChange={(e) => handleShippingInfoChange('shippingDescription', e.target.value)}

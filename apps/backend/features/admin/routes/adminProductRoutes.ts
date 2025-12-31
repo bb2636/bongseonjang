@@ -262,6 +262,9 @@ router.get('/:productId', async (req: Request, res: Response) => {
       countdownDays: product.countdownDays,
       storageMethod: product.storageMethod || '',
       expirationInfo: product.expirationInfo || '',
+      weight: product.weight || '',
+      origin: product.origin || '',
+      shippingMethod: product.shippingMethod || '',
       description: detailContent.description || '',
       caution: detailContent.caution || '',
       productInfos: detailContent.productInfos || [],
@@ -310,6 +313,9 @@ router.put('/:productId', async (req: Request, res: Response) => {
       countdownDays,
       storageMethod,
       expirationInfo,
+      weight,
+      origin,
+      shippingMethod,
       description,
       caution,
       options,
@@ -345,6 +351,9 @@ router.put('/:productId', async (req: Request, res: Response) => {
     product.countdownDays = countdownDays ?? null;
     product.storageMethod = storageMethod || null;
     product.expirationInfo = expirationInfo || null;
+    product.weight = weight || null;
+    product.origin = origin || null;
+    product.shippingMethod = shippingMethod || null;
     product.detailContent = JSON.stringify({
       description,
       caution,
@@ -455,6 +464,9 @@ router.post('/', async (req: Request, res: Response) => {
       countdownDays,
       storageMethod,
       expirationInfo,
+      weight,
+      origin,
+      shippingMethod,
       description,
       caution,
       options,
@@ -487,6 +499,9 @@ router.post('/', async (req: Request, res: Response) => {
       countdownDays: countdownDays ?? null,
       storageMethod: storageMethod || null,
       expirationInfo: expirationInfo || null,
+      weight: weight || null,
+      origin: origin || null,
+      shippingMethod: shippingMethod || null,
       detailContent: JSON.stringify({
         description,
         caution,

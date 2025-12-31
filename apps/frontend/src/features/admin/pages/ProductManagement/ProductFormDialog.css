@@ -93,6 +93,17 @@
   margin-bottom: 0;
 }
 
+.product-form-dialog__grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.product-form-dialog__grid-row:last-child {
+  margin-bottom: 0;
+}
+
 .product-form-dialog__form-field {
   flex: 1;
   display: flex;
