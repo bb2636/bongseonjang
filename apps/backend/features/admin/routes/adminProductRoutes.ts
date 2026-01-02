@@ -234,6 +234,7 @@ router.get('/:productId', async (req: Request, res: Response) => {
       description?: string;
       caution?: string;
       productInfos?: Array<{ label: string; value: string }>;
+      shippingDetails?: Array<{ label: string; value: string }>;
       shippingInfo?: {
         shippingFee: number | null;
         freeShippingThreshold: number | null;
@@ -268,6 +269,7 @@ router.get('/:productId', async (req: Request, res: Response) => {
       description: detailContent.description || '',
       caution: detailContent.caution || '',
       productInfos: detailContent.productInfos || [],
+      shippingDetails: detailContent.shippingDetails || [],
       shippingInfo: detailContent.shippingInfo || {
         shippingFee: null,
         freeShippingThreshold: null,
@@ -320,6 +322,7 @@ router.put('/:productId', async (req: Request, res: Response) => {
       caution,
       options,
       productInfos,
+      shippingDetails,
       shippingInfo,
       thumbnailUrls,
       detailUrls,
@@ -358,6 +361,7 @@ router.put('/:productId', async (req: Request, res: Response) => {
       description,
       caution,
       productInfos,
+      shippingDetails,
       shippingInfo,
     });
 
@@ -471,6 +475,7 @@ router.post('/', async (req: Request, res: Response) => {
       caution,
       options,
       productInfos,
+      shippingDetails,
       shippingInfo,
       thumbnailUrls,
       detailUrls,
@@ -506,6 +511,7 @@ router.post('/', async (req: Request, res: Response) => {
         description,
         caution,
         productInfos,
+        shippingDetails,
         shippingInfo,
       }),
     });

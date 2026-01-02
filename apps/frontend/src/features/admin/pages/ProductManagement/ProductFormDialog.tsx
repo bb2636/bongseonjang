@@ -1,5 +1,5 @@
 import { useRef, useEffect, ChangeEvent, useState } from 'react';
-import { useProductForm, ProductOption, ProductInfo } from './useProductForm';
+import { useProductForm, ProductOption, ProductInfo, ShippingDetail } from './useProductForm';
 import { ConfirmModal, Select, MultiSelect, DateRangePicker } from '../../../../components';
 import { Snackbar } from '../../components/Snackbar';
 import './ProductFormDialog.css';
@@ -78,6 +78,9 @@ export function ProductFormDialog({
     handleProductInfoChange,
     handleAddProductInfo,
     handleRemoveProductInfo,
+    handleShippingDetailChange,
+    handleAddShippingDetail,
+    handleRemoveShippingDetail,
     handleShippingInfoChange,
     handleThumbnailImageAdd,
     handleThumbnailImageRemove,
@@ -706,6 +709,45 @@ export function ProductFormDialog({
                 value={formData.shippingInfo.shippingDescription}
                 onChange={(e) => handleShippingInfoChange('shippingDescription', e.target.value)}
               />
+            </div>
+            <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
+              <div className="product-form-dialog__product-infos">
+                {formData.shippingDetails.map((detail: ShippingDetail) => (
+                  <div key={detail.id} className="product-form-dialog__product-info-row">
+                    <input
+                      type="text"
+                      className="product-form-dialog__input product-form-dialog__input--label"
+                      placeholder="라벨 (예: 추가배송비)"
+                      value={detail.label}
+                      onChange={(e) => handleShippingDetailChange(detail.id, 'label', e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      className="product-form-dialog__input"
+                      placeholder="내용 (예: 제주/도서산간 3,000원)"
+                      value={detail.value}
+                      onChange={(e) => handleShippingDetailChange(detail.id, 'value', e.target.value)}
+                    />
+                    {formData.shippingDetails.length > 1 && (
+                      <button
+                        type="button"
+                        className="product-form-dialog__remove-button"
+                        onClick={() => handleRemoveShippingDetail(detail.id)}
+                      >
+                        삭제
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="product-form-dialog__add-button"
+                onClick={handleAddShippingDetail}
+                style={{ marginTop: 12 }}
+              >
+                <PlusIcon /> 추가
+              </button>
             </div>
           </section>
           </>

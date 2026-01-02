@@ -10,7 +10,7 @@ interface CouponFormDialogProps {
   onSuccess: () => void;
 }
 
-type ValidityType = 'fixed' | 'afterIssue';
+type ValidityType = 'fixed' | 'afterIssue' | 'unlimited';
 type TargetType = 'all' | 'category';
 type IssueType = 'all' | 'new' | 'grade';
 
@@ -112,7 +112,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         targetCategories: coupon.targetCategories || [],
         issueType: coupon.issueType,
         issueGrades: coupon.issueGrades || [],
-        validityType: coupon.validityType === 'unlimited' ? 'fixed' : coupon.validityType,
+        validityType: coupon.validityType as ValidityType,
         validFrom: coupon.validFrom ? coupon.validFrom.split('T')[0] : '',
         validTo: coupon.validTo ? coupon.validTo.split('T')[0] : '',
         validDays: coupon.validDays || 30,
@@ -155,6 +155,12 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
       return;
     }
 
+    if (formData.validityType === 'afterIssue' && (!formData.validDays || Number(formData.validDays) < 1)) {
+      setError('유효 일수를 1 이상으로 입력해주세요.');
+      setIsSubmitting(false);
+      return;
+    }
+
     if (formData.targetType === 'category' && formData.targetCategories.length === 0) {
       setError('특정 카테고리를 선택해주세요.');
       setIsSubmitting(false);
@@ -190,8 +196,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         issueType: formData.issueType,
         issueGrades: formData.issueType === 'grade' ? formData.issueGrades : undefined,
         validityType: formData.validityType,
-        validFrom: formData.validityType === 'fixed' && formData.validFrom ? new Date(formData.validFrom) : undefined,
-        validTo: formData.validityType === 'fixed' && formData.validTo ? new Date(formData.validTo) : undefined,
+        validFrom: formData.validityType === 'fixed' && formData.validFrom ? new Date(formData.validFrom) : null,
+        validTo: formData.validityType === 'fixed' && formData.validTo ? new Date(formData.validTo) : null,
         validDays: formData.validityType === 'afterIssue' ? (Number(formData.validDays) || 30) : undefined,
         usageLimitEnabled: formData.usageLimitEnabled,
         maxUsagePerUser: formData.usageLimitEnabled ? Number(formData.maxUsagePerUser) : undefined,
@@ -545,6 +551,17 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
                   />
                   <span className="coupon-form-dialog__radio-custom"></span>
                   <span className="coupon-form-dialog__radio-label">발급 후 N일</span>
+                </label>
+                <label className="coupon-form-dialog__radio">
+                  <input
+                    type="radio"
+                    name="validityType"
+                    value="unlimited"
+                    checked={formData.validityType === 'unlimited'}
+                    onChange={() => handleChange('validityType', 'unlimited')}
+                  />
+                  <span className="coupon-form-dialog__radio-custom"></span>
+                  <span className="coupon-form-dialog__radio-label">상시</span>
                 </label>
               </div>
             </div>

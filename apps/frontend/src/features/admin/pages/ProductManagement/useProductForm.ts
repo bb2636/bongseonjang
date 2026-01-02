@@ -20,6 +20,12 @@ export interface ShippingInfo {
   shippingDescription: string;
 }
 
+export interface ShippingDetail {
+  id: string;
+  label: string;
+  value: string;
+}
+
 export interface ImageFile {
   id: string;
   file: File | null;
@@ -47,6 +53,7 @@ export interface ProductFormData {
   options: ProductOption[];
   productInfos: ProductInfo[];
   shippingInfo: ShippingInfo;
+  shippingDetails: ShippingDetail[];
   thumbnailImages: ImageFile[];
   detailImages: ImageFile[];
   weight: string;
@@ -75,6 +82,14 @@ function createEmptyOption(): ProductOption {
 }
 
 function createEmptyProductInfo(): ProductInfo {
+  return {
+    id: generateId(),
+    label: '',
+    value: '',
+  };
+}
+
+function createEmptyShippingDetail(): ShippingDetail {
   return {
     id: generateId(),
     label: '',
@@ -115,6 +130,7 @@ function createInitialFormData(): ProductFormData {
       freeShippingThreshold: null,
       shippingDescription: '전국',
     },
+    shippingDetails: [createEmptyShippingDetail()],
     thumbnailImages: [],
     detailImages: [],
     weight: '',
@@ -317,6 +333,29 @@ export function useProductForm() {
     }));
   }, []);
 
+  const handleShippingDetailChange = useCallback((id: string, field: 'label' | 'value', value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      shippingDetails: prev.shippingDetails.map(detail =>
+        detail.id === id ? { ...detail, [field]: value } : detail
+      ),
+    }));
+  }, []);
+
+  const handleAddShippingDetail = useCallback(() => {
+    setFormData(prev => ({
+      ...prev,
+      shippingDetails: [...prev.shippingDetails, createEmptyShippingDetail()],
+    }));
+  }, []);
+
+  const handleRemoveShippingDetail = useCallback((id: string) => {
+    setFormData(prev => ({
+      ...prev,
+      shippingDetails: prev.shippingDetails.filter(detail => detail.id !== id),
+    }));
+  }, []);
+
   const handleShippingInfoChange = useCallback((field: keyof ShippingInfo, value: string | number | null) => {
     setFormData(prev => ({
       ...prev,
@@ -450,6 +489,14 @@ export function useProductForm() {
           }))
         : [createEmptyProductInfo()];
 
+      const shippingDetails: ShippingDetail[] = (data.shippingDetails || []).length > 0
+        ? data.shippingDetails.map((detail: { label: string; value: string }) => ({
+            id: generateId(),
+            label: detail.label || '',
+            value: detail.value || '',
+          }))
+        : [createEmptyShippingDetail()];
+
       const hasOptions = data.options && data.options.length > 0;
       const optionGroupName = hasOptions && data.options[0]?.optionName ? data.options[0].optionName : '';
 
@@ -481,6 +528,7 @@ export function useProductForm() {
           freeShippingThreshold: null,
           shippingDescription: '전국',
         },
+        shippingDetails,
         thumbnailImages,
         detailImages,
         weight: data.weight || '',
@@ -643,6 +691,12 @@ export function useProductForm() {
             label: info.label,
             value: info.value,
           })),
+        shippingDetails: formData.shippingDetails
+          .filter(detail => detail.label.trim() && detail.value.trim())
+          .map(detail => ({
+            label: detail.label,
+            value: detail.value,
+          })),
         shippingInfo: formData.shippingInfo,
         thumbnailUrls,
         detailUrls,
@@ -716,6 +770,9 @@ export function useProductForm() {
     handleProductInfoChange,
     handleAddProductInfo,
     handleRemoveProductInfo,
+    handleShippingDetailChange,
+    handleAddShippingDetail,
+    handleRemoveShippingDetail,
     handleShippingInfoChange,
     handleThumbnailImageAdd,
     handleThumbnailImageRemove,
