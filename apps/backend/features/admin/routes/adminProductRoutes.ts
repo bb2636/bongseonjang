@@ -174,6 +174,7 @@ router.get('/categories', async (_req: Request, res: Response) => {
   try {
     const categoryRepository = AppDataSource.getRepository(ProductCategory);
     const categories = await categoryRepository.find({
+      where: { isActive: true },
       order: { name: 'ASC' },
     });
 
