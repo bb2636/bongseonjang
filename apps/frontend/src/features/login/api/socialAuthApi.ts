@@ -14,6 +14,7 @@ interface SocialLoginResponse {
   };
   token: string;
   isNewUser: boolean;
+  hasPassword: boolean;
 }
 
 interface SocialLoginRequiresEmailResponse {
