@@ -296,4 +296,42 @@ export class AuthController {
       res.status(500).json({ success: false, message: '인증번호 확인에 실패했습니다' });
     }
   }
+
+  async setInitialPassword(req: Request, res: Response): Promise<void> {
+    try {
+      const authReq = req as AuthenticatedRequest;
+      if (!authReq.userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+
+      const { password } = req.body;
+
+      if (!password || password.length < 8) {
+        res.status(400).json({ message: '비밀번호는 8자 이상이어야 합니다' });
+        return;
+      }
+
+      await userService.setInitialPassword(authReq.userId, password);
+      res.json({ success: true });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to set password';
+      res.status(400).json({ message });
+    }
+  }
+
+  async checkHasPassword(req: Request, res: Response): Promise<void> {
+    try {
+      const authReq = req as AuthenticatedRequest;
+      if (!authReq.userId) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+
+      const hasPassword = await userService.checkHasPassword(authReq.userId);
+      res.json({ hasPassword });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to check password status' });
+    }
+  }
 }

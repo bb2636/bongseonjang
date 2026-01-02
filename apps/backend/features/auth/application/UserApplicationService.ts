@@ -36,6 +36,7 @@ interface SocialLoginResult {
   user: UserResponse;
   token: string;
   isNewUser: boolean;
+  hasPassword: boolean;
 }
 
 interface UserResponse {
@@ -164,6 +165,7 @@ export class UserApplicationService {
         user: toUserResponse(existingSocialAccount.user),
         token,
         isNewUser: false,
+        hasPassword: !!existingSocialAccount.user.password,
       };
     }
 
@@ -186,6 +188,7 @@ export class UserApplicationService {
         user: toUserResponse(existingUser),
         token,
         isNewUser: false,
+        hasPassword: !!existingUser.password,
       };
     }
 
@@ -211,6 +214,7 @@ export class UserApplicationService {
       user: toUserResponse(newUser),
       token,
       isNewUser: true,
+      hasPassword: false,
     };
   }
 
@@ -290,5 +294,28 @@ export class UserApplicationService {
         });
       }
     }
+  }
+
+  async setInitialPassword(userId: string, password: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (user.password) {
+      throw new Error('Password is already set. Use change password instead.');
+    }
+
+    const hashedPassword = await this.authService.hashPassword(password);
+    await this.userRepository.update(userId, { password: hashedPassword });
+  }
+
+  async checkHasPassword(userId: string): Promise<boolean> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return !!user.password;
   }
 }
