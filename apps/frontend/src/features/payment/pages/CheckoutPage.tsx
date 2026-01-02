@@ -262,6 +262,14 @@ export function CheckoutPage() {
     return myCoupons.find(c => c.id === selectedCouponId) || null;
   }, [myCoupons, selectedCouponId]);
 
+  const baseShippingFee = useMemo(() => {
+    const freeThreshold = shippingConfig.freeShippingThreshold;
+    if (freeThreshold !== null && productAmount >= freeThreshold) return 0;
+    const baseFee = shippingConfig.shippingFee;
+    const extraFee = currentAddress && isRemoteArea(currentAddress.postalCode) ? DEFAULT_SHIPPING_CONFIG.EXTRA_FEE : 0;
+    return baseFee + extraFee;
+  }, [productAmount, currentAddress, shippingConfig]);
+
   const couponDiscount = useMemo(() => {
     if (!selectedCoupon) return 0;
     if (productAmount < selectedCoupon.minOrderAmount) return 0;
@@ -279,14 +287,20 @@ export function CheckoutPage() {
     }
     return Math.min(discount, productAmount);
   }, [selectedCoupon, productAmount]);
+
+  const shippingCouponDiscount = useMemo(() => {
+    if (!selectedCoupon) return 0;
+    if (selectedCoupon.discountType !== 'shipping') return 0;
+    if (productAmount < selectedCoupon.minOrderAmount) return 0;
+    if (baseShippingFee === 0) return 0;
+    
+    if (selectedCoupon.discountValue === 0) {
+      return baseShippingFee;
+    }
+    return Math.min(selectedCoupon.discountValue, baseShippingFee);
+  }, [selectedCoupon, productAmount, baseShippingFee]);
   
-  const shippingFee = useMemo(() => {
-    const freeThreshold = shippingConfig.freeShippingThreshold;
-    if (freeThreshold !== null && productAmount >= freeThreshold) return 0;
-    const baseFee = shippingConfig.shippingFee;
-    const extraFee = currentAddress && isRemoteArea(currentAddress.postalCode) ? DEFAULT_SHIPPING_CONFIG.EXTRA_FEE : 0;
-    return baseFee + extraFee;
-  }, [productAmount, currentAddress, shippingConfig]);
+  const shippingFee = baseShippingFee - shippingCouponDiscount;
   
   const finalAmount = productAmount + shippingFee - usedPoints - couponDiscount;
 
@@ -676,7 +690,7 @@ export function CheckoutPage() {
                 )}
               </span>
               <span className="checkout-summary-value">
-                {shippingFee === 0 ? '무료' : `+${shippingFee.toLocaleString()}원`}
+                {baseShippingFee === 0 ? '무료' : `+${baseShippingFee.toLocaleString()}원`}
               </span>
             </div>
             {shippingConfig.freeShippingThreshold !== null && productAmount < shippingConfig.freeShippingThreshold && (
@@ -694,6 +708,12 @@ export function CheckoutPage() {
               <div className="checkout-summary-row">
                 <span className="checkout-summary-label">쿠폰 할인</span>
                 <span className="checkout-summary-value checkout-summary-value--discount">-{couponDiscount.toLocaleString()}원</span>
+              </div>
+            )}
+            {shippingCouponDiscount > 0 && (
+              <div className="checkout-summary-row">
+                <span className="checkout-summary-label">배송비 쿠폰 할인</span>
+                <span className="checkout-summary-value checkout-summary-value--discount">-{shippingCouponDiscount.toLocaleString()}원</span>
               </div>
             )}
           </div>
