@@ -9,10 +9,13 @@ interface ProductManagementViewProps {
   isLoading: boolean;
   error: string | null;
   searchQuery: string;
+  page: number;
+  totalPages: number;
   onSearchChange: (query: string) => void;
   onAddProduct: () => void;
   onViewProduct: (product: AdminProduct) => void;
   onDeleteProduct: (product: AdminProduct) => void;
+  onGoToPage: (page: number) => void;
   formatPrice: (price: number) => string;
   getExposureLabel: (product: AdminProduct) => string;
 }
@@ -31,10 +34,13 @@ export function ProductManagementView({
   isLoading,
   error,
   searchQuery,
+  page,
+  totalPages,
   onSearchChange,
   onAddProduct,
   onViewProduct,
   onDeleteProduct,
+  onGoToPage,
   formatPrice,
   getExposureLabel,
 }: ProductManagementViewProps) {
@@ -170,6 +176,40 @@ export function ProductManagementView({
         </div>
       )}
 
+      {totalPages > 1 && (
+        <div className="product-pagination">
+          <button
+            className="product-pagination__button product-pagination__button--prev"
+            onClick={() => onGoToPage(page - 1)}
+            disabled={page === 1}
+          >
+            이전
+          </button>
+          <div className="product-pagination__pages">
+            {generatePageNumbers(page, totalPages).map((pageNum, index) => (
+              pageNum === '...' ? (
+                <span key={`ellipsis-${index}`} className="product-pagination__ellipsis">...</span>
+              ) : (
+                <button
+                  key={pageNum}
+                  className={`product-pagination__page ${page === pageNum ? 'product-pagination__page--active' : ''}`}
+                  onClick={() => onGoToPage(pageNum as number)}
+                >
+                  {pageNum}
+                </button>
+              )
+            ))}
+          </div>
+          <button
+            className="product-pagination__button product-pagination__button--next"
+            onClick={() => onGoToPage(page + 1)}
+            disabled={page === totalPages}
+          >
+            다음
+          </button>
+        </div>
+      )}
+
       <ConfirmModal
         isOpen={deleteConfirmProduct !== null}
         title={`'${deleteConfirmProduct?.name}' 상품을 삭제하시겠습니까?`}
@@ -181,4 +221,45 @@ export function ProductManagementView({
       />
     </div>
   );
+}
+
+function generatePageNumbers(currentPage: number, totalPages: number): (number | string)[] {
+  const pages: (number | string)[] = [];
+  const maxVisiblePages = 5;
+  
+  if (totalPages <= maxVisiblePages + 2) {
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+  
+  pages.push(1);
+  
+  let startPage = Math.max(2, currentPage - 1);
+  let endPage = Math.min(totalPages - 1, currentPage + 1);
+  
+  if (currentPage <= 3) {
+    startPage = 2;
+    endPage = Math.min(totalPages - 1, maxVisiblePages);
+  } else if (currentPage >= totalPages - 2) {
+    startPage = Math.max(2, totalPages - maxVisiblePages + 1);
+    endPage = totalPages - 1;
+  }
+  
+  if (startPage > 2) {
+    pages.push('...');
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+  
+  if (endPage < totalPages - 1) {
+    pages.push('...');
+  }
+  
+  pages.push(totalPages);
+  
+  return pages;
 }

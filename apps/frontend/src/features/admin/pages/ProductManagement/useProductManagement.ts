@@ -54,6 +54,11 @@ export function useProductManagement() {
       const data: ProductListResponse = await response.json();
       setProducts(data.items);
       setTotalCount(data.totalCount);
+      
+      const newTotalPages = Math.ceil(data.totalCount / limit);
+      if (page > newTotalPages && newTotalPages > 0) {
+        setPage(newTotalPages);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다');
     } finally {
@@ -123,6 +128,14 @@ export function useProductManagement() {
     }
   };
 
+  const totalPages = Math.ceil(totalCount / limit);
+
+  const handleGoToPage = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
   return {
     products,
     totalCount,
@@ -131,11 +144,14 @@ export function useProductManagement() {
     searchQuery,
     isFormDialogOpen,
     selectedProduct,
+    page,
+    totalPages,
     onSearchChange: handleSearchChange,
     onAddProduct: handleAddProduct,
     onCloseFormDialog: handleCloseFormDialog,
     onFormSuccess: handleFormSuccess,
     onViewProduct: handleViewProduct,
+    onGoToPage: handleGoToPage,
     formatPrice,
     getExposureLabel,
     deleteProduct,

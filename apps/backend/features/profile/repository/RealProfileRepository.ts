@@ -138,7 +138,17 @@ export class RealProfileRepository implements ProfileRepository {
     return `${year}.${month}.${day} ${hours}:${minutes}`;
   }
 
-  private formatBirthDate(date: Date): string {
+  private formatBirthDate(date: Date | string): string {
+    if (typeof date === 'string') {
+      const parsed = new Date(date);
+      if (!isNaN(parsed.getTime())) {
+        const year = String(parsed.getFullYear());
+        const month = String(parsed.getMonth() + 1).padStart(2, '0');
+        const day = String(parsed.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      return date;
+    }
     const year = String(date.getFullYear());
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');

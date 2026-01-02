@@ -12,11 +12,14 @@ export function ProductManagementPage() {
     searchQuery,
     isFormDialogOpen,
     selectedProduct,
+    page,
+    totalPages,
     onSearchChange,
     onAddProduct,
     onCloseFormDialog,
     onFormSuccess,
     onViewProduct,
+    onGoToPage,
     formatPrice,
     getExposureLabel,
     deleteProduct,
@@ -37,10 +40,13 @@ export function ProductManagementPage() {
         isLoading={isLoading}
         error={error}
         searchQuery={searchQuery}
+        page={page}
+        totalPages={totalPages}
         onSearchChange={onSearchChange}
         onAddProduct={onAddProduct}
         onViewProduct={onViewProduct}
         onDeleteProduct={handleDeleteProduct}
+        onGoToPage={onGoToPage}
         formatPrice={formatPrice}
         getExposureLabel={getExposureLabel}
       />
