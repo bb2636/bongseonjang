@@ -26,11 +26,7 @@ router.get('/', async (req, res) => {
     const categoryId = req.query.categoryId ? Number(req.query.categoryId) : undefined;
     const keyword = req.query.keyword as string | undefined;
     
-    const faqs = await faqRepository.findAll({
-      categoryId,
-      keyword,
-      isVisible: true,
-    });
+    const faqs = await faqRepository.findAll(keyword, categoryId);
     
     res.json({
       faqs: faqs.map(faq => ({
