@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
 import { profileApi } from '../api/profileApi';
@@ -7,20 +7,21 @@ import { useGoBack } from '../../../hooks/useGoBack';
 
 export function useProfileEdit() {
   const navigate = useNavigate();
-  const location = useLocation();
   const goBack = useGoBack();
   const { user } = useAuth();
   const { showToast } = useToast();
   
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
+  const [birthYear, setBirthYear] = useState('');
+  const [birthMonth, setBirthMonth] = useState('');
+  const [birthDay, setBirthDay] = useState('');
+  const [gender, setGender] = useState<string | null>(null);
+  const [isMarketingEmail, setIsMarketingEmail] = useState(false);
+  const [isMarketingSms, setIsMarketingSms] = useState(false);
   
   const [nameError, setNameError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordConfirmError, setPasswordConfirmError] = useState<string | null>(null);
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,17 +30,23 @@ export function useProfileEdit() {
   const email = user?.email || '';
 
   useEffect(() => {
-    const verified = location.state?.verified;
-    if (!verified) {
-      navigate('/profile/verify', { replace: true });
-      return;
-    }
-
     async function loadProfile() {
       try {
         const profile = await profileApi.fetchUserProfile();
         setName(profile.name || '');
         setPhone(profile.phone || '');
+        
+        if (profile.birthDate) {
+          const [year, month, day] = profile.birthDate.split('-');
+          setBirthYear(year || '');
+          setBirthMonth(month || '');
+          setBirthDay(day || '');
+        }
+        
+        setGender(profile.gender || null);
+        setIsMarketingEmail(profile.isMarketingEmail ?? false);
+        setIsMarketingSms(profile.isMarketingSms ?? false);
+        
         setIsLoading(false);
       } catch {
         showToast('프로필 정보를 불러오는데 실패했습니다', 'error');
@@ -47,7 +54,7 @@ export function useProfileEdit() {
       }
     }
     loadProfile();
-  }, [location.state, navigate, showToast]);
+  }, [showToast]);
 
   const handleNameChange = (value: string) => {
     setName(value);
@@ -60,14 +67,31 @@ export function useProfileEdit() {
     if (phoneError) setPhoneError(null);
   };
 
-  const handleNewPasswordChange = (value: string) => {
-    setNewPassword(value);
-    if (passwordError) setPasswordError(null);
+  const handleBirthYearChange = (value: string) => {
+    const formatted = value.replace(/[^0-9]/g, '').slice(0, 4);
+    setBirthYear(formatted);
   };
 
-  const handleNewPasswordConfirmChange = (value: string) => {
-    setNewPasswordConfirm(value);
-    if (passwordConfirmError) setPasswordConfirmError(null);
+  const handleBirthMonthChange = (value: string) => {
+    const formatted = value.replace(/[^0-9]/g, '').slice(0, 2);
+    setBirthMonth(formatted);
+  };
+
+  const handleBirthDayChange = (value: string) => {
+    const formatted = value.replace(/[^0-9]/g, '').slice(0, 2);
+    setBirthDay(formatted);
+  };
+
+  const handleGenderChange = (value: string | null) => {
+    setGender(value);
+  };
+
+  const handleMarketingEmailChange = (value: boolean) => {
+    setIsMarketingEmail(value);
+  };
+
+  const handleMarketingSmsChange = (value: boolean) => {
+    setIsMarketingSms(value);
   };
 
   const validateForm = (): boolean => {
@@ -76,17 +100,6 @@ export function useProfileEdit() {
     if (!name.trim()) {
       setNameError('성함을 입력해주세요');
       isValid = false;
-    }
-
-    if (newPassword) {
-      if (newPassword.length < 8) {
-        setPasswordError('비밀번호는 8자 이상이어야 합니다');
-        isValid = false;
-      }
-      if (newPassword !== newPasswordConfirm) {
-        setPasswordConfirmError('비밀번호가 일치하지 않습니다');
-        isValid = false;
-      }
     }
 
     return isValid;
@@ -98,14 +111,19 @@ export function useProfileEdit() {
     setIsSubmitting(true);
 
     try {
-      const updateData: {
-        name: string;
-        phone?: string;
-        newPassword?: string;
-      } = { name };
+      let birthDate: string | null = null;
+      if (birthYear && birthMonth && birthDay) {
+        birthDate = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
+      }
 
-      if (phone) updateData.phone = phone;
-      if (newPassword) updateData.newPassword = newPassword;
+      const updateData = {
+        name,
+        phone: phone || undefined,
+        birthDate,
+        gender,
+        isMarketingEmail,
+        isMarketingSms,
+      };
 
       const result = await profileApi.updateProfile(updateData);
 
@@ -138,19 +156,25 @@ export function useProfileEdit() {
     email,
     name,
     phone,
-    newPassword,
-    newPasswordConfirm,
+    birthYear,
+    birthMonth,
+    birthDay,
+    gender,
+    isMarketingEmail,
+    isMarketingSms,
     nameError,
     phoneError,
-    passwordError,
-    passwordConfirmError,
     isSubmitting,
     isLoading,
     showSuccessModal,
     handleNameChange,
     handlePhoneChange,
-    handleNewPasswordChange,
-    handleNewPasswordConfirmChange,
+    handleBirthYearChange,
+    handleBirthMonthChange,
+    handleBirthDayChange,
+    handleGenderChange,
+    handleMarketingEmailChange,
+    handleMarketingSmsChange,
     handleSubmit,
     handleBack,
     handleModalConfirm,

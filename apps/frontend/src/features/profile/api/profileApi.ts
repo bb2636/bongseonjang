@@ -58,6 +58,10 @@ export async function verifyPassword(password: string): Promise<VerifyPasswordRe
 interface UpdateProfileData {
   name: string;
   phone?: string;
+  birthDate?: string | null;
+  gender?: string | null;
+  isMarketingEmail?: boolean;
+  isMarketingSms?: boolean;
   newPassword?: string;
 }
 
