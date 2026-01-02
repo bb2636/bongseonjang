@@ -35,6 +35,12 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   gender!: string | null;
 
+  @Column({ type: 'boolean', default: false })
+  isMarketingEmail!: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  isMarketingSms!: boolean;
+
   @Column({ type: 'varchar', nullable: true })
   referralId!: string | null;
 
