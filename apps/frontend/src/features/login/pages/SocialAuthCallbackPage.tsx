@@ -99,18 +99,6 @@ export default function SocialAuthCallbackPage() {
             user: result.user,
           }));
           navigate('/signup/email', { replace: true });
-        } else if (!result.hasPassword) {
-          navigate('/login/set-password', {
-            replace: true,
-            state: {
-              token: result.token,
-              user: {
-                id: result.user.id,
-                email: result.user.email,
-                name: result.user.name,
-              },
-            },
-          });
         } else {
           loginWithToken(result.token, {
             id: result.user.id,

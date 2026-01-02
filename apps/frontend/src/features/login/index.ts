@@ -3,7 +3,6 @@ export { default as EmailLoginPage } from './pages/EmailLoginPage';
 export { default as SocialAuthCallbackPage } from './pages/SocialAuthCallbackPage';
 export { default as PasswordResetRequestPage } from './pages/PasswordResetRequestPage';
 export { default as PasswordResetConfirmPage } from './pages/PasswordResetConfirmPage';
-export { default as PasswordSetupPage } from './pages/PasswordSetupPage';
 export { useLogin } from './hooks/useLogin';
 export { useEmailLogin } from './hooks/useEmailLogin';
 export { usePasswordResetRequest } from './hooks/usePasswordResetRequest';

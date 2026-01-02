@@ -20,7 +20,4 @@ router.delete('/social/:provider', authMiddleware, (req, res) => authController.
 router.post('/phone/send-code', (req, res) => authController.sendPhoneVerificationCode(req, res));
 router.post('/phone/verify-code', (req, res) => authController.verifyPhoneCode(req, res));
 
-router.post('/set-password', authMiddleware, (req, res) => authController.setInitialPassword(req, res));
-router.get('/has-password', authMiddleware, (req, res) => authController.checkHasPassword(req, res));
-
 export default router;
