@@ -147,6 +147,10 @@ export function useProfileEdit() {
     navigate('/profile/withdraw');
   };
 
+  const handlePhoneVerifyClick = () => {
+    showToast('휴대폰 번호 변경 기능은 준비 중입니다', 'info');
+  };
+
   const handleModalConfirm = () => {
     setShowSuccessModal(false);
     navigate('/profile', { replace: true });
@@ -179,5 +183,6 @@ export function useProfileEdit() {
     handleBack,
     handleModalConfirm,
     handleWithdrawClick,
+    handlePhoneVerifyClick,
   };
 }

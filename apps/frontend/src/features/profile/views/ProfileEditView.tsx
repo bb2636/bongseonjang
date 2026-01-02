@@ -1,49 +1,63 @@
 import { BottomNav } from '../../../components/BottomNav';
-import { Input, PasswordInput, AlertModal } from '../../../components';
+import { Input, AlertModal } from '../../../components';
 import './ProfileEditView.css';
 
 interface ProfileEditViewProps {
   email: string;
   name: string;
   phone: string;
-  newPassword: string;
-  newPasswordConfirm: string;
+  birthYear: string;
+  birthMonth: string;
+  birthDay: string;
+  gender: string | null;
+  isMarketingEmail: boolean;
+  isMarketingSms: boolean;
   nameError: string | null;
   phoneError: string | null;
-  passwordError: string | null;
-  passwordConfirmError: string | null;
   isSubmitting: boolean;
   showSuccessModal: boolean;
   onNameChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
-  onNewPasswordChange: (value: string) => void;
-  onNewPasswordConfirmChange: (value: string) => void;
+  onBirthYearChange: (value: string) => void;
+  onBirthMonthChange: (value: string) => void;
+  onBirthDayChange: (value: string) => void;
+  onGenderChange: (value: string | null) => void;
+  onMarketingEmailChange: (value: boolean) => void;
+  onMarketingSmsChange: (value: boolean) => void;
   onSubmit: () => void;
   onBack: () => void;
   onModalConfirm: () => void;
   onWithdrawClick: () => void;
+  onPhoneVerifyClick?: () => void;
 }
 
 export default function ProfileEditView({
   email,
   name,
   phone,
-  newPassword,
-  newPasswordConfirm,
+  birthYear,
+  birthMonth,
+  birthDay,
+  gender,
+  isMarketingEmail,
+  isMarketingSms,
   nameError,
   phoneError,
-  passwordError,
-  passwordConfirmError,
   isSubmitting,
   showSuccessModal,
   onNameChange,
   onPhoneChange,
-  onNewPasswordChange,
-  onNewPasswordConfirmChange,
+  onBirthYearChange,
+  onBirthMonthChange,
+  onBirthDayChange,
+  onGenderChange,
+  onMarketingEmailChange,
+  onMarketingSmsChange,
   onSubmit,
   onBack,
   onModalConfirm,
   onWithdrawClick,
+  onPhoneVerifyClick,
 }: ProfileEditViewProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,41 +101,134 @@ export default function ProfileEditView({
           />
 
           <Input
-            label="성함"
+            label="이름"
             type="text"
-            placeholder="성함을 입력해주세요"
+            placeholder="이름을 입력해주세요"
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
             error={nameError}
           />
 
-          <Input
-            label="휴대폰 번호"
-            type="tel"
-            placeholder="휴대폰 번호를 입력해주세요"
-            value={phone}
-            onChange={(e) => onPhoneChange(e.target.value)}
-            error={phoneError}
-            maxLength={11}
-          />
+          <div className="profile-edit__phone-field">
+            <Input
+              label="휴대폰"
+              type="tel"
+              placeholder="휴대폰 번호를 입력해주세요"
+              value={phone}
+              onChange={(e) => onPhoneChange(e.target.value)}
+              error={phoneError}
+              maxLength={11}
+            />
+            <button
+              type="button"
+              className="profile-edit__phone-verify-button"
+              onClick={onPhoneVerifyClick}
+            >
+              다른 번호 인증
+            </button>
+          </div>
 
-          <div className="profile-edit__password-section">
-            <span className="profile-edit__section-title">비밀번호 변경</span>
-            <div className="profile-edit__password-fields">
-              <PasswordInput
-                label="새 비밀번호"
-                placeholder="새 비밀번호를 입력해주세요"
-                value={newPassword}
-                onChange={(e) => onNewPasswordChange(e.target.value)}
-                error={passwordError}
+          <div className="profile-edit__birth-section">
+            <label className="profile-edit__section-label">생년월일</label>
+            <div className="profile-edit__birth-inputs">
+              <input
+                type="text"
+                className="profile-edit__birth-input profile-edit__birth-input--year"
+                placeholder="00"
+                value={birthYear}
+                onChange={(e) => onBirthYearChange(e.target.value)}
+                maxLength={4}
               />
-              <PasswordInput
-                label="새 비밀번호 확인"
-                placeholder="새 비밀번호를 다시 입력해주세요"
-                value={newPasswordConfirm}
-                onChange={(e) => onNewPasswordConfirmChange(e.target.value)}
-                error={passwordConfirmError}
+              <span className="profile-edit__birth-separator">/</span>
+              <input
+                type="text"
+                className="profile-edit__birth-input"
+                placeholder="00"
+                value={birthMonth}
+                onChange={(e) => onBirthMonthChange(e.target.value)}
+                maxLength={2}
               />
+              <span className="profile-edit__birth-separator">/</span>
+              <input
+                type="text"
+                className="profile-edit__birth-input"
+                placeholder="00"
+                value={birthDay}
+                onChange={(e) => onBirthDayChange(e.target.value)}
+                maxLength={2}
+              />
+            </div>
+          </div>
+
+          <div className="profile-edit__gender-section">
+            <label className="profile-edit__section-label">성별</label>
+            <div className="profile-edit__gender-options">
+              <label className="profile-edit__radio-option">
+                <input
+                  type="radio"
+                  name="gender"
+                  checked={gender === 'male'}
+                  onChange={() => onGenderChange('male')}
+                />
+                <span className="profile-edit__radio-custom" />
+                <span className="profile-edit__radio-label">남자</span>
+              </label>
+              <label className="profile-edit__radio-option">
+                <input
+                  type="radio"
+                  name="gender"
+                  checked={gender === 'female'}
+                  onChange={() => onGenderChange('female')}
+                />
+                <span className="profile-edit__radio-custom" />
+                <span className="profile-edit__radio-label">여자</span>
+              </label>
+              <label className="profile-edit__radio-option">
+                <input
+                  type="radio"
+                  name="gender"
+                  checked={gender === null || gender === 'none'}
+                  onChange={() => onGenderChange(null)}
+                />
+                <span className="profile-edit__radio-custom" />
+                <span className="profile-edit__radio-label">선택안함</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="profile-edit__marketing-section">
+            <label className="profile-edit__section-label">약관 및 마케팅 수신 동의</label>
+            <div className="profile-edit__marketing-options">
+              <label className="profile-edit__checkbox-option">
+                <input
+                  type="checkbox"
+                  checked={isMarketingEmail}
+                  onChange={(e) => onMarketingEmailChange(e.target.checked)}
+                />
+                <span className="profile-edit__checkbox-custom">
+                  {isMarketingEmail && (
+                    <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+                      <path d="M1 5L4.5 8.5L11 1" stroke="#3B9BD5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </span>
+                <span className="profile-edit__checkbox-label">마케팅 이메일 수신 <span className="profile-edit__checkbox-optional">선택</span></span>
+              </label>
+              <label className="profile-edit__checkbox-option">
+                <input
+                  type="checkbox"
+                  checked={isMarketingSms}
+                  onChange={(e) => onMarketingSmsChange(e.target.checked)}
+                />
+                <span className="profile-edit__checkbox-custom">
+                  {isMarketingSms && (
+                    <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+                      <path d="M1 5L4.5 8.5L11 1" stroke="#3B9BD5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </span>
+                <span className="profile-edit__checkbox-label">마케팅 SMS 수신 <span className="profile-edit__checkbox-optional">선택</span></span>
+              </label>
             </div>
           </div>
 

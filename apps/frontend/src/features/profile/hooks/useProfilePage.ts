@@ -84,7 +84,7 @@ export function useProfilePage() {
   }, [isLoading, profile]);
 
   const handleEditProfileClick = useCallback(() => {
-    navigate('/profile/verify');
+    navigate('/profile/edit');
   }, [navigate]);
 
   const handlePointsClick = useCallback(() => {

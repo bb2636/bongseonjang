@@ -225,3 +225,203 @@
 .profile-edit__withdraw-button:hover .profile-edit__withdraw-text {
   text-decoration: underline;
 }
+
+.profile-edit__phone-field {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+.profile-edit__phone-field > div {
+  flex: 1;
+}
+
+.profile-edit__phone-verify-button {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  background: #3B9BD5;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  color: #FFFFFF;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-bottom: 2px;
+}
+
+.profile-edit__phone-verify-button:hover {
+  background: #2d8bc5;
+}
+
+.profile-edit__section-label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.6);
+  margin-bottom: 8px;
+}
+
+.profile-edit__birth-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.profile-edit__birth-inputs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-edit__birth-input {
+  width: 50px;
+  padding: 12px;
+  background: rgba(12, 12, 12, 0.04);
+  border: none;
+  border-radius: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 128%;
+  color: #0C0C0C;
+  text-align: center;
+  outline: none;
+}
+
+.profile-edit__birth-input--year {
+  width: 70px;
+}
+
+.profile-edit__birth-input::placeholder {
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.profile-edit__birth-input:focus {
+  background: rgba(12, 12, 12, 0.08);
+}
+
+.profile-edit__birth-separator {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 15px;
+  color: rgba(12, 12, 12, 0.4);
+}
+
+.profile-edit__gender-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.profile-edit__gender-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-edit__radio-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.profile-edit__radio-option input[type="radio"] {
+  display: none;
+}
+
+.profile-edit__radio-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(12, 12, 12, 0.3);
+  border-radius: 50%;
+  position: relative;
+  transition: border-color 0.2s ease;
+}
+
+.profile-edit__radio-option input[type="radio"]:checked + .profile-edit__radio-custom {
+  border-color: #3B9BD5;
+}
+
+.profile-edit__radio-option input[type="radio"]:checked + .profile-edit__radio-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #3B9BD5;
+  border-radius: 50%;
+}
+
+.profile-edit__radio-label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 128%;
+  color: #0C0C0C;
+}
+
+.profile-edit__marketing-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 16px;
+  border-top: 1px solid rgba(12, 12, 12, 0.06);
+}
+
+.profile-edit__marketing-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-edit__checkbox-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.profile-edit__checkbox-option input[type="checkbox"] {
+  display: none;
+}
+
+.profile-edit__checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(12, 12, 12, 0.3);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.profile-edit__checkbox-option input[type="checkbox"]:checked + .profile-edit__checkbox-custom {
+  border-color: #3B9BD5;
+  background-color: transparent;
+}
+
+.profile-edit__checkbox-label {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 128%;
+  color: #0C0C0C;
+}
+
+.profile-edit__checkbox-optional {
+  color: rgba(12, 12, 12, 0.4);
+  margin-left: 4px;
+}

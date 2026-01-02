@@ -6,23 +6,30 @@ export default function ProfileEditPage() {
     email,
     name,
     phone,
-    newPassword,
-    newPasswordConfirm,
+    birthYear,
+    birthMonth,
+    birthDay,
+    gender,
+    isMarketingEmail,
+    isMarketingSms,
     nameError,
     phoneError,
-    passwordError,
-    passwordConfirmError,
     isSubmitting,
     isLoading,
     showSuccessModal,
     handleNameChange,
     handlePhoneChange,
-    handleNewPasswordChange,
-    handleNewPasswordConfirmChange,
+    handleBirthYearChange,
+    handleBirthMonthChange,
+    handleBirthDayChange,
+    handleGenderChange,
+    handleMarketingEmailChange,
+    handleMarketingSmsChange,
     handleSubmit,
     handleBack,
     handleModalConfirm,
     handleWithdrawClick,
+    handlePhoneVerifyClick,
   } = useProfileEdit();
 
   if (isLoading) {
@@ -51,22 +58,29 @@ export default function ProfileEditPage() {
       email={email}
       name={name}
       phone={phone}
-      newPassword={newPassword}
-      newPasswordConfirm={newPasswordConfirm}
+      birthYear={birthYear}
+      birthMonth={birthMonth}
+      birthDay={birthDay}
+      gender={gender}
+      isMarketingEmail={isMarketingEmail}
+      isMarketingSms={isMarketingSms}
       nameError={nameError}
       phoneError={phoneError}
-      passwordError={passwordError}
-      passwordConfirmError={passwordConfirmError}
       isSubmitting={isSubmitting}
       showSuccessModal={showSuccessModal}
       onNameChange={handleNameChange}
       onPhoneChange={handlePhoneChange}
-      onNewPasswordChange={handleNewPasswordChange}
-      onNewPasswordConfirmChange={handleNewPasswordConfirmChange}
+      onBirthYearChange={handleBirthYearChange}
+      onBirthMonthChange={handleBirthMonthChange}
+      onBirthDayChange={handleBirthDayChange}
+      onGenderChange={handleGenderChange}
+      onMarketingEmailChange={handleMarketingEmailChange}
+      onMarketingSmsChange={handleMarketingSmsChange}
       onSubmit={handleSubmit}
       onBack={handleBack}
       onModalConfirm={handleModalConfirm}
       onWithdrawClick={handleWithdrawClick}
+      onPhoneVerifyClick={handlePhoneVerifyClick}
     />
   );
 }
