@@ -33,9 +33,6 @@ export default function ProductDescription({
         <div className="product-description__header">
           <h3 className="product-description__title">상품정보</h3>
         </div>
-        {description && (
-          <p className="product-description__text">{description}</p>
-        )}
         <div className="product-description__info-list">
           {weight && (
             <div className="product-description__info-item">
@@ -95,6 +92,15 @@ export default function ProductDescription({
           ))}
         </div>
       </div>
+
+      {description && (
+        <div className="product-description__section">
+          <div className="product-description__header">
+            <h3 className="product-description__title">상품설명</h3>
+          </div>
+          <p className="product-description__text">{description}</p>
+        </div>
+      )}
 
       {notice && (
         <div className="product-description__section">
