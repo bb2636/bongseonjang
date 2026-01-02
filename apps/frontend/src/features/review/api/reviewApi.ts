@@ -1,14 +1,15 @@
 import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
 export interface CheckReviewResponse {
-  hasReviewed: boolean;
+  canReview: boolean;
+  reason?: 'not_purchased' | 'already_reviewed';
 }
 
 export async function checkUserReview(productId: string): Promise<CheckReviewResponse> {
   const token = localStorage.getItem('token');
   
   if (!token) {
-    return { hasReviewed: false };
+    return { canReview: false, reason: 'not_purchased' };
   }
   
   const response = await fetch(`${API_BASE_URL}/reviews/check/${productId}`, {

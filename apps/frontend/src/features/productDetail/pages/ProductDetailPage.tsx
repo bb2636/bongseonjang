@@ -6,7 +6,6 @@ import ProductDetailView from '../views/ProductDetailView';
 import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
 import { AlertModal } from '../../../components/AlertModal';
 import { ConfirmModal } from '../../../components/ConfirmModal';
-import { checkPurchase } from '../../orderHistory/api/orderHistoryApi';
 import { checkUserReview } from '../../review/api/reviewApi';
 import './ProductDetailPage.css';
 
@@ -80,27 +79,24 @@ export default function ProductDetailPage() {
     setIsCheckingReviewPermission(true);
 
     try {
-      const [purchaseResult, reviewResult] = await Promise.all([
-        checkPurchase(id || ''),
-        checkUserReview(id || ''),
-      ]);
+      const reviewResult = await checkUserReview(id || '');
 
-      // TODO: 테스트 후 조건 복원 필요
-      // if (!purchaseResult.hasPurchased) {
-      //   setModalState({
-      //     type: 'alert',
-      //     message: '상품 구매 후 리뷰를 작성할 수 있습니다',
-      //   });
-      //   return;
-      // }
-
-      // if (reviewResult.hasReviewed) {
-      //   setModalState({
-      //     type: 'alert',
-      //     message: '이미 리뷰를 작성하셨습니다',
-      //   });
-      //   return;
-      // }
+      if (!reviewResult.canReview) {
+        if (reviewResult.reason === 'not_purchased') {
+          setModalState({
+            type: 'alert',
+            message: '상품 구매 후 리뷰를 작성할 수 있습니다',
+          });
+          return;
+        }
+        if (reviewResult.reason === 'already_reviewed') {
+          setModalState({
+            type: 'alert',
+            message: '이미 리뷰를 작성하셨습니다',
+          });
+          return;
+        }
+      }
 
       navigate(`/review/write/${id}`, {
         state: {

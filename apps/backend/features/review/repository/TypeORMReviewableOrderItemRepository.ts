@@ -53,6 +53,20 @@ export class TypeORMReviewableOrderItemRepository implements ReviewableOrderItem
     }));
   }
 
+  async hasUserPurchasedProduct(userId: string, productId: string): Promise<boolean> {
+    const orderItemRepository = AppDataSource.getRepository(OrderItem);
+
+    const count = await orderItemRepository
+      .createQueryBuilder('orderItem')
+      .innerJoin('orderItem.order', 'order')
+      .where('order.userId = :userId', { userId })
+      .andWhere('order.status = :status', { status: 'delivered' })
+      .andWhere('orderItem.productId = :productId', { productId })
+      .getCount();
+
+    return count > 0;
+  }
+
   private formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

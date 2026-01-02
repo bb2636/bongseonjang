@@ -60,6 +60,13 @@ export class ReviewController {
 
       res.status(201).json(review);
     } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === '상품을 구매한 후에만 리뷰를 작성할 수 있습니다.' ||
+            error.message === '이미 리뷰를 작성하셨습니다.') {
+          res.status(403).json({ error: error.message });
+          return;
+        }
+      }
       console.error('Error creating review:', error);
       res.status(500).json({ error: 'Failed to create review' });
     }
@@ -156,9 +163,9 @@ export class ReviewController {
         return;
       }
 
-      const hasReviewed = await this.reviewService.hasUserReviewedProduct(userId, productId);
+      const result = await this.reviewService.canUserReviewProduct(userId, productId);
       
-      res.json({ hasReviewed });
+      res.json(result);
     } catch (error) {
       console.error('Error checking user review:', error);
       res.status(500).json({ error: 'Failed to check user review' });

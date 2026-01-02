@@ -37,6 +37,16 @@ export class ReviewService implements ReviewStatsProvider {
   }
 
   async createReview(userId: string, request: CreateReviewRequest): Promise<ReviewDto> {
+    const hasPurchased = await this.reviewableOrderItemRepository.hasUserPurchasedProduct(userId, request.productId);
+    if (!hasPurchased) {
+      throw new Error('상품을 구매한 후에만 리뷰를 작성할 수 있습니다.');
+    }
+
+    const hasReviewed = await this.reviewRepository.hasUserReviewedProduct(userId, request.productId);
+    if (hasReviewed) {
+      throw new Error('이미 리뷰를 작성하셨습니다.');
+    }
+
     const review = await this.reviewRepository.save({
       productId: request.productId,
       userId,
@@ -112,6 +122,20 @@ export class ReviewService implements ReviewStatsProvider {
 
   async hasUserReviewedProduct(userId: string, productId: string): Promise<boolean> {
     return this.reviewRepository.hasUserReviewedProduct(userId, productId);
+  }
+
+  async canUserReviewProduct(userId: string, productId: string): Promise<{ canReview: boolean; reason?: string }> {
+    const hasPurchased = await this.reviewableOrderItemRepository.hasUserPurchasedProduct(userId, productId);
+    if (!hasPurchased) {
+      return { canReview: false, reason: 'not_purchased' };
+    }
+
+    const hasReviewed = await this.reviewRepository.hasUserReviewedProduct(userId, productId);
+    if (hasReviewed) {
+      return { canReview: false, reason: 'already_reviewed' };
+    }
+
+    return { canReview: true };
   }
 
   async getPendingReviewItems(userId: string): Promise<ReviewableOrderItemDto[]> {
