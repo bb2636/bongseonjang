@@ -7,10 +7,13 @@ interface CountdownTimerProps {
 }
 
 interface TimeLeft {
+  days: number;
   hours: number;
   minutes: number;
   seconds: number;
 }
+
+const DAYS_THRESHOLD = 7;
 
 function calculateTimeLeft(endDate: Date): TimeLeft | null {
   const now = new Date();
@@ -21,11 +24,12 @@ function calculateTimeLeft(endDate: Date): TimeLeft | null {
   }
 
   const totalSeconds = Math.floor(difference / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
-  return { hours, minutes, seconds };
+  return { days, hours, minutes, seconds };
 }
 
 function formatTime(value: number): string {
@@ -91,10 +95,15 @@ export default function CountdownTimer({ saleStartAt, saleEndAt }: CountdownTime
     return null;
   }
 
+  const showDaysOnly = timeLeft.days >= DAYS_THRESHOLD;
+  const totalHours = timeLeft.days * 24 + timeLeft.hours;
+
   return (
     <div className="countdown-timer">
       <span className="countdown-timer__time">
-        {formatTime(timeLeft.hours)}:{formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
+        {showDaysOnly
+          ? `${timeLeft.days}일`
+          : `${formatTime(totalHours)}:${formatTime(timeLeft.minutes)}:${formatTime(timeLeft.seconds)}`}
       </span>
       <span className="countdown-timer__label">남음</span>
     </div>
