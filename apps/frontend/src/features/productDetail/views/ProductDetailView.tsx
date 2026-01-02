@@ -103,6 +103,7 @@ export default function ProductDetailView({
 
             <ProductDescription
               description={product.description}
+              weight={product.weight}
               origin={product.origin}
               storageMethod={product.storageMethod}
               expirationInfo={product.expirationInfo}
@@ -110,6 +111,8 @@ export default function ProductDetailView({
               shippingRegion={product.shippingRegion}
               shippingFee={product.shippingFee}
               notice={product.notice}
+              productInfos={product.productInfos}
+              shippingDetails={product.shippingDetails}
             />
 
             <ProductDetailContent images={detailImages} />

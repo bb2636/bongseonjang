@@ -54,6 +54,7 @@ export interface ProductDetail {
   isDiscounted: boolean;
   discountedPrice: number;
   lowestPrice: number;
+  weight?: string;
   origin?: string;
   storageMethod?: string;
   expirationInfo?: string;
@@ -62,6 +63,8 @@ export interface ProductDetail {
   shippingFee?: number;
   freeShippingThreshold?: number | null;
   notice?: string;
+  productInfos?: Array<{ label: string; value: string }>;
+  shippingDetails?: Array<{ label: string; value: string }>;
   isOptionRequired: boolean;
   saleStartAt?: string;
   saleEndAt?: string;

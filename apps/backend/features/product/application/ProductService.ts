@@ -169,11 +169,17 @@ export class ProductService {
     };
     
     let descriptionText: string | undefined = undefined;
+    let noticeText: string | undefined = undefined;
+    let productInfos: Array<{ label: string; value: string }> = [];
+    let shippingDetails: Array<{ label: string; value: string }> = [];
     
     if (product.detailContent) {
       try {
         const parsedContent = JSON.parse(product.detailContent);
         descriptionText = parsedContent.description || undefined;
+        noticeText = parsedContent.caution || undefined;
+        productInfos = parsedContent.productInfos || [];
+        shippingDetails = parsedContent.shippingDetails || [];
         if (parsedContent.shippingInfo) {
           shippingInfo.shippingFee = parsedContent.shippingInfo.shippingFee ?? shippingInfo.shippingFee;
           shippingInfo.freeShippingThreshold = parsedContent.shippingInfo.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD;
@@ -194,14 +200,17 @@ export class ProductService {
       isDiscounted: false,
       discountedPrice: product.basePrice,
       lowestPrice,
-      origin: undefined,
+      weight: product.weight ?? undefined,
+      origin: product.origin ?? undefined,
       storageMethod: product.storageMethod ?? undefined,
       expirationInfo: product.expirationInfo ?? undefined,
-      shippingMethod: undefined,
+      shippingMethod: product.shippingMethod ?? undefined,
       shippingRegion: undefined,
       shippingFee: shippingInfo.shippingFee,
       freeShippingThreshold: shippingInfo.freeShippingThreshold,
-      notice: undefined,
+      notice: noticeText,
+      productInfos,
+      shippingDetails,
       isOptionRequired: options.length > 0,
       saleStartAt: product.saleStartDate ? new Date(product.saleStartDate).toISOString() : undefined,
       saleEndAt: product.saleEndDate ? new Date(product.saleEndDate).toISOString() : undefined,

@@ -2,6 +2,7 @@ import './ProductDescription.css';
 
 interface ProductDescriptionProps {
   description?: string;
+  weight?: string;
   origin?: string;
   storageMethod?: string;
   expirationInfo?: string;
@@ -9,10 +10,13 @@ interface ProductDescriptionProps {
   shippingRegion?: string;
   shippingFee?: number;
   notice?: string;
+  productInfos?: Array<{ label: string; value: string }>;
+  shippingDetails?: Array<{ label: string; value: string }>;
 }
 
 export default function ProductDescription({
   description,
+  weight,
   origin,
   storageMethod,
   expirationInfo,
@@ -20,6 +24,8 @@ export default function ProductDescription({
   shippingRegion,
   shippingFee = 3500,
   notice,
+  productInfos = [],
+  shippingDetails = [],
 }: ProductDescriptionProps) {
   return (
     <div className="product-description">
@@ -31,6 +37,12 @@ export default function ProductDescription({
           <p className="product-description__text">{description}</p>
         )}
         <div className="product-description__info-list">
+          {weight && (
+            <div className="product-description__info-item">
+              <span className="product-description__info-label">중량</span>
+              <span className="product-description__info-value">{weight}</span>
+            </div>
+          )}
           {origin && (
             <div className="product-description__info-item">
               <span className="product-description__info-label">원산지</span>
@@ -43,6 +55,12 @@ export default function ProductDescription({
               <span className="product-description__info-value">{storageMethod}</span>
             </div>
           )}
+          {productInfos.map((info, index) => (
+            <div key={index} className="product-description__info-item">
+              <span className="product-description__info-label">{info.label}</span>
+              <span className="product-description__info-value">{info.value}</span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -69,6 +87,12 @@ export default function ProductDescription({
               <span className="product-description__info-value">{expirationInfo}</span>
             </div>
           )}
+          {shippingDetails.map((detail, index) => (
+            <div key={index} className="product-description__info-item">
+              <span className="product-description__info-label">{detail.label}</span>
+              <span className="product-description__info-value">{detail.value}</span>
+            </div>
+          ))}
         </div>
       </div>
 
