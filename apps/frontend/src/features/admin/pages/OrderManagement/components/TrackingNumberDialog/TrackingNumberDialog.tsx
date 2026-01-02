@@ -70,10 +70,11 @@ export function TrackingNumberDialog({
             <div className="tracking-dialog__input-wrapper">
               <input
                 type="text"
+                inputMode="numeric"
                 className="tracking-dialog__input"
                 placeholder="송장번호를 입력해주세요"
                 value={trackingNumber}
-                onChange={(e) => setTrackingNumber(e.target.value)}
+                onChange={(e) => setTrackingNumber(e.target.value.replace(/\D/g, ''))}
                 onKeyDown={handleKeyDown}
                 autoFocus
               />
