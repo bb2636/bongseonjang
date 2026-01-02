@@ -37,13 +37,13 @@ export function PaymentFailPage() {
         <div className="payment-result-buttons">
           <button
             className="payment-result-button payment-result-button--primary"
-            onClick={() => navigate('/cart')}
+            onClick={() => navigate('/cart', { replace: true })}
           >
             장바구니로 돌아가기
           </button>
           <button
             className="payment-result-button payment-result-button--secondary"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/', { replace: true })}
           >
             홈으로 가기
           </button>
