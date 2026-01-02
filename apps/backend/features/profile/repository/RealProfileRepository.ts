@@ -74,6 +74,10 @@ export class RealProfileRepository implements ProfileRepository {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      birthDate: user.birthDate ? this.formatBirthDate(user.birthDate) : null,
+      gender: user.gender,
+      isMarketingEmail: user.isMarketingEmail ?? false,
+      isMarketingSms: user.isMarketingSms ?? false,
       grade: GRADE_DISPLAY_MAP[user.membershipGrade] || '브론즈',
       points: pointWallet?.balance || 0,
       couponCount,
@@ -134,6 +138,13 @@ export class RealProfileRepository implements ProfileRepository {
     return `${year}.${month}.${day} ${hours}:${minutes}`;
   }
 
+  private formatBirthDate(date: Date): string {
+    const year = String(date.getFullYear());
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   async getUserPasswordHash(userId: string): Promise<string | null> {
     const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOne({ 
@@ -152,6 +163,18 @@ export class RealProfileRepository implements ProfileRepository {
 
     if (data.phone !== undefined) {
       updateData.phone = data.phone;
+    }
+    if (data.birthDate !== undefined) {
+      updateData.birthDate = data.birthDate ? new Date(data.birthDate) : null;
+    }
+    if (data.gender !== undefined) {
+      updateData.gender = data.gender;
+    }
+    if (data.isMarketingEmail !== undefined) {
+      updateData.isMarketingEmail = data.isMarketingEmail;
+    }
+    if (data.isMarketingSms !== undefined) {
+      updateData.isMarketingSms = data.isMarketingSms;
     }
     if (data.password !== undefined) {
       updateData.password = data.password;

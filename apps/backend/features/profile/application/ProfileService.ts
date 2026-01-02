@@ -26,6 +26,10 @@ export class ProfileService {
   async updateProfile(userId: string, data: {
     name: string;
     phone?: string;
+    birthDate?: string | null;
+    gender?: string | null;
+    isMarketingEmail?: boolean;
+    isMarketingSms?: boolean;
     address?: string;
     addressDetail?: string;
     newPassword?: string;
@@ -39,6 +43,10 @@ export class ProfileService {
     await this.profileRepository.updateProfile(userId, {
       name: data.name,
       phone: data.phone,
+      birthDate: data.birthDate,
+      gender: data.gender,
+      isMarketingEmail: data.isMarketingEmail,
+      isMarketingSms: data.isMarketingSms,
       address: data.address,
       addressDetail: data.addressDetail,
       password: hashedPassword,

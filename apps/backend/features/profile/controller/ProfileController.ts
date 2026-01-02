@@ -80,7 +80,17 @@ export class ProfileController {
   async updateProfile(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const userId = req.userId;
-      const { name, phone, address, addressDetail, newPassword } = req.body;
+      const { 
+        name, 
+        phone, 
+        birthDate, 
+        gender, 
+        isMarketingEmail, 
+        isMarketingSms,
+        address, 
+        addressDetail, 
+        newPassword 
+      } = req.body;
       
       if (!userId) {
         res.status(401).json({ error: 'Unauthorized' });
@@ -95,6 +105,10 @@ export class ProfileController {
       await this.profileService.updateProfile(userId, {
         name: name.trim(),
         phone,
+        birthDate,
+        gender,
+        isMarketingEmail,
+        isMarketingSms,
         address,
         addressDetail,
         newPassword,

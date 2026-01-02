@@ -3,6 +3,10 @@ import { UserProfile, Order } from '../domain/Profile';
 export interface UpdateProfileData {
   name: string;
   phone?: string;
+  birthDate?: string | null;
+  gender?: string | null;
+  isMarketingEmail?: boolean;
+  isMarketingSms?: boolean;
   password?: string;
   address?: string;
   addressDetail?: string;
