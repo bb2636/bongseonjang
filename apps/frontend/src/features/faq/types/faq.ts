@@ -1,11 +1,12 @@
 export interface FaqCategory {
-  id: string;
+  id: number;
   name: string;
+  sortOrder: number;
 }
 
 export interface FaqItem {
-  id: string;
-  categoryId: string;
-  question: string;
-  answer: string;
+  id: number;
+  categoryId: number;
+  title: string;
+  content: string;
 }

@@ -109,7 +109,7 @@ export default function FaqPageView({ state, actions }: FaqPageViewProps) {
                   onClick={() => handleToggle(faq.id)}
                   aria-expanded={isExpanded}
                 >
-                  <span className="faq-item__question">{faq.question}</span>
+                  <span className="faq-item__question">{faq.title}</span>
                   <span className={`faq-item__icon ${isExpanded ? 'is-open' : ''}`} aria-hidden>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                       <path
@@ -124,7 +124,7 @@ export default function FaqPageView({ state, actions }: FaqPageViewProps) {
                 </button>
                 {isExpanded && (
                   <div className="faq-item__body">
-                    <p className="faq-item__answer">{faq.answer}</p>
+                    <p className="faq-item__answer">{faq.content}</p>
                   </div>
                 )}
               </article>
