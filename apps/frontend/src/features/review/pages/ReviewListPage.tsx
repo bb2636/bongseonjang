@@ -17,10 +17,16 @@ function StarIcon({ filled }: { filled: boolean }) {
   );
 }
 
-function PendingReviewCard({ item, onClick }: { item: ReviewableOrderItemDto; onClick: () => void }) {
+function PendingReviewCard({ item, onClick, onImageClick }: { item: ReviewableOrderItemDto; onClick: () => void; onImageClick: () => void }) {
   return (
     <div className="review-card">
-      <div className="review-card__thumbnail">
+      <div 
+        className="review-card__thumbnail review-card__thumbnail--clickable" 
+        onClick={onImageClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onImageClick(); }}
+      >
         {item.productImageUrl ? (
           <img src={item.productImageUrl} alt={item.productName} />
         ) : (
@@ -144,7 +150,12 @@ export default function ReviewListPage() {
 
             <div className="review-list-page__list">
               {pendingItems.map((item) => (
-                <PendingReviewCard key={item.orderItemId} item={item} onClick={() => handleWriteClick(item)} />
+                <PendingReviewCard 
+                  key={item.orderItemId} 
+                  item={item} 
+                  onClick={() => handleWriteClick(item)} 
+                  onImageClick={() => item.productId && navigate(`/products/${item.productId}`)}
+                />
               ))}
             </div>
           </>
