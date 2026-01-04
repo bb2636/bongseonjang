@@ -51,10 +51,11 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
           order: { sortOrder: 'ASC' },
         });
 
-        const optionPrices = options.filter(o => o.price !== null).map(o => o.price as number);
-        const lowestPrice = optionPrices.length > 0 
-          ? Math.min(...optionPrices)
-          : product.basePrice;
+        const additionalPrices = options.map(o => o.price ?? 0);
+        const lowestAdditionalPrice = additionalPrices.length > 0 
+          ? Math.min(...additionalPrices)
+          : 0;
+        const lowestPrice = product.basePrice + lowestAdditionalPrice;
 
         return {
           id: item.id,
@@ -62,6 +63,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
           name: product.name,
           originalPrice: product.basePrice,
           discountedPrice: lowestPrice,
+          discountRate: 0,
           thumbnailUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl) || '',
           addedAt: item.createdAt,
         };
