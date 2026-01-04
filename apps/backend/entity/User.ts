@@ -53,6 +53,9 @@ export class User {
   @Column({ type: 'boolean', default: false })
   isEmailVerified!: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  isAdmin!: boolean;
+
   @Column({ type: 'timestamp', nullable: true })
   lastLoginAt!: Date | null;
 

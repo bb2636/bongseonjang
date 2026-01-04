@@ -1,3 +1,4 @@
+export { AdminLoginPage } from './AdminLoginPage';
 export { AdminPlaceholderPage } from './AdminPlaceholderPage';
 export { AdminSupportPage } from './AdminSupportPage';
 export { OrderManagementPage } from './OrderManagement/OrderManagementPage';

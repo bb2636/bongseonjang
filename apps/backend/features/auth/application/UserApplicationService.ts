@@ -151,6 +151,34 @@ export class UserApplicationService {
     return { user: toUserResponse(user), token };
   }
 
+  async adminLogin(input: LoginInput): Promise<AuthResult> {
+    const user = await this.userRepository.findByEmail(input.email);
+    
+    if (!user) {
+      throw new Error('이메일 또는 비밀번호가 올바르지 않습니다');
+    }
+
+    if (!user.password) {
+      throw new Error('이메일 또는 비밀번호가 올바르지 않습니다');
+    }
+
+    const isValidPassword = await this.authService.comparePassword(input.password, user.password);
+    
+    if (!isValidPassword) {
+      throw new Error('이메일 또는 비밀번호가 올바르지 않습니다');
+    }
+
+    if (!user.isAdmin) {
+      throw new Error('관리자 권한이 없습니다');
+    }
+
+    await this.userRepository.update(user.id, { lastLoginAt: new Date() });
+
+    const token = this.authService.generateToken(user.id);
+    
+    return { user: toUserResponse(user), token };
+  }
+
   async socialLogin(input: SocialLoginInput): Promise<SocialLoginResult> {
     const existingSocialAccount = await this.socialAccountRepository.findByProviderAndProviderId(
       input.provider,

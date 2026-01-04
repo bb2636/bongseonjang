@@ -72,6 +72,23 @@ export class AuthController {
     }
   }
 
+  async adminLogin(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        res.status(400).json({ error: '이메일과 비밀번호를 입력해주세요' });
+        return;
+      }
+
+      const result = await userService.adminLogin({ email, password });
+      res.json(result);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '로그인에 실패했습니다';
+      res.status(401).json({ error: message });
+    }
+  }
+
   async socialLogin(req: Request, res: Response): Promise<void> {
     console.log('=== socialLogin called ===');
     console.log('Provider:', req.params.provider);

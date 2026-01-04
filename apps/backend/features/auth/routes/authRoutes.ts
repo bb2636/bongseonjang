@@ -8,6 +8,7 @@ const authController = new AuthController();
 router.post('/register', (req, res) => authController.register(req, res));
 router.post('/check-email', (req, res) => authController.checkEmail(req, res));
 router.post('/login', (req, res) => authController.login(req, res));
+router.post('/admin/login', (req, res) => authController.adminLogin(req, res));
 router.get('/me', authMiddleware, (req, res) => authController.me(req, res));
 
 router.post('/social/:provider', (req, res) => authController.socialLogin(req, res));
