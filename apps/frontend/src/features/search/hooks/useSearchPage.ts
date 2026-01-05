@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { ProductCardData } from '@/components/ProductCard';
 import type { SortBy } from '../types/SortTypes';
 
@@ -41,14 +41,20 @@ async function recordSearchToServer(term: string) {
 
 export function useSearchPage() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const urlQuery = searchParams.get('q') || '';
+  const urlSort = (searchParams.get('sortBy') as SortBy) || 'default';
+  
+  const [searchQuery, setSearchQuery] = useState(urlQuery);
   const [recentSearches, setRecentSearches] = useState<string[]>(loadRecentSearches);
   const [popularSearches, setPopularSearches] = useState<PopularSearchTerm[]>([]);
   const [searchResults, setSearchResults] = useState<ProductCardData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [sortBy, setSortBy] = useState<SortBy>('default');
-  const [currentSearchTerm, setCurrentSearchTerm] = useState('');
+  const [hasSearched, setHasSearched] = useState(!!urlQuery);
+  const [sortBy, setSortBy] = useState<SortBy>(urlSort);
+  const [currentSearchTerm, setCurrentSearchTerm] = useState(urlQuery);
+  const initialSearchDone = useRef(false);
 
   useEffect(() => {
     saveRecentSearches(recentSearches);
@@ -69,22 +75,10 @@ export function useSearchPage() {
     fetchPopularSearches();
   }, []);
 
-  const performSearch = useCallback(async (term: string, sort: SortBy = sortBy, isNewSearch: boolean = true) => {
+  const executeSearch = useCallback(async (term: string, sort: SortBy) => {
     if (!term.trim()) return;
 
-    setSearchQuery(term);
-    setCurrentSearchTerm(term);
     setIsSearching(true);
-    setHasSearched(true);
-
-    if (isNewSearch) {
-      const updatedRecent = [
-        term,
-        ...recentSearches.filter(s => s !== term)
-      ].slice(0, 10);
-      setRecentSearches(updatedRecent);
-      recordSearchToServer(term);
-    }
 
     try {
       const params = new URLSearchParams();
@@ -109,7 +103,41 @@ export function useSearchPage() {
     } finally {
       setIsSearching(false);
     }
-  }, [recentSearches, sortBy]);
+  }, []);
+
+  useEffect(() => {
+    if (urlQuery && !initialSearchDone.current) {
+      initialSearchDone.current = true;
+      executeSearch(urlQuery, urlSort);
+    }
+  }, [urlQuery, urlSort, executeSearch]);
+
+  const performSearch = useCallback(async (term: string, sort: SortBy = sortBy, isNewSearch: boolean = true) => {
+    if (!term.trim()) return;
+
+    setSearchQuery(term);
+    setCurrentSearchTerm(term);
+    setHasSearched(true);
+    setSortBy(sort);
+
+    const newParams = new URLSearchParams();
+    newParams.set('q', term);
+    if (sort !== 'default') {
+      newParams.set('sortBy', sort);
+    }
+    setSearchParams(newParams, { replace: true });
+
+    if (isNewSearch) {
+      const updatedRecent = [
+        term,
+        ...recentSearches.filter(s => s !== term)
+      ].slice(0, 10);
+      setRecentSearches(updatedRecent);
+      recordSearchToServer(term);
+    }
+
+    await executeSearch(term, sort);
+  }, [recentSearches, sortBy, setSearchParams, executeSearch]);
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
@@ -119,7 +147,9 @@ export function useSearchPage() {
     setSearchQuery('');
     setHasSearched(false);
     setSearchResults([]);
-  }, []);
+    setCurrentSearchTerm('');
+    setSearchParams({}, { replace: true });
+  }, [setSearchParams]);
 
   const handleSearch = useCallback(async () => {
     await performSearch(searchQuery);
