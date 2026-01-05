@@ -112,38 +112,41 @@ export function AdminLoginPage() {
       <div className="admin-login__background">
         <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
           <defs>
-            <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
-              <stop offset="100%" stopColor="rgba(200,225,240,0.4)" />
+            <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+              <stop offset="100%" stopColor="rgba(200,220,235,0.5)" />
             </linearGradient>
-            <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(180,210,230,0.5)" />
-              <stop offset="100%" stopColor="rgba(160,200,225,0.3)" />
+            <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgba(180,205,225,0.6)" />
+              <stop offset="100%" stopColor="rgba(160,190,215,0.4)" />
             </linearGradient>
-            <linearGradient id="wave3" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(220,235,245,0.5)" />
-              <stop offset="100%" stopColor="rgba(200,225,240,0.3)" />
+            <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgba(200,220,240,0.55)" />
+              <stop offset="100%" stopColor="rgba(180,205,230,0.35)" />
             </linearGradient>
           </defs>
-          <path d="M-200,-50 Q100,150 400,50 T900,200 T1400,80 T1900,250 L2100,-100 Z" fill="url(#wave1)" />
-          <path d="M-200,100 Q150,350 500,200 T1000,400 T1500,250 T2000,450 L2100,0 Z" fill="url(#wave2)" />
-          <path d="M-200,350 Q200,550 550,400 T1100,600 T1600,450 T2100,650 L2100,200 Z" fill="url(#wave3)" />
-          <path d="M-200,550 Q250,800 600,600 T1150,850 T1650,700 T2100,900 L2100,400 Z" fill="url(#wave1)" />
-          <path d="M-200,750 Q300,1000 650,800 T1200,1050 T1700,880 T2100,1100 L2100,600 Z" fill="url(#wave2)" />
-          <path d="M2100,150 Q1800,400 1400,200 T800,450 T300,250 T-200,500 L-200,0 L2100,-50 Z" fill="url(#wave3)" />
-          <path d="M2100,400 Q1750,650 1350,450 T750,700 T250,500 T-200,750 L-200,250 L2100,200 Z" fill="url(#wave1)" />
-          <path d="M2100,650 Q1700,900 1300,700 T700,950 T200,750 T-200,1000 L-200,500 L2100,450 Z" fill="url(#wave2)" />
-          <path d="M2100,900 Q1650,1150 1250,950 T650,1200 T150,1000 T-200,1200 L-200,750 L2100,700 Z" fill="url(#wave3)" />
+          <path d="M-100,-100 Q300,300 700,100 T1500,350 T2100,150 L2100,-100 Z" fill="url(#waveGrad1)" />
+          <path d="M-100,50 Q400,400 900,200 T1700,500 T2200,300 L2100,-50 Z" fill="url(#waveGrad2)" />
+          <path d="M-100,250 Q500,550 1000,350 T1800,650 T2200,450 L2100,100 Z" fill="url(#waveGrad3)" />
+          <path d="M-100,450 Q550,750 1100,500 T1850,800 T2200,600 L2100,250 Z" fill="url(#waveGrad1)" />
+          <path d="M-100,650 Q600,950 1200,700 T1900,1000 T2200,800 L2100,400 Z" fill="url(#waveGrad2)" />
+          <path d="M-100,850 Q650,1150 1300,900 T1950,1150 T2200,950 L2100,600 Z" fill="url(#waveGrad3)" />
+          <path d="M2200,0 Q1800,350 1300,150 T600,450 T-100,250 L-100,-100 L2200,-100 Z" fill="url(#waveGrad2)" />
+          <path d="M2200,200 Q1700,550 1200,350 T500,650 T-100,450 L-100,50 L2200,0 Z" fill="url(#waveGrad3)" />
+          <path d="M2200,400 Q1600,750 1100,550 T400,850 T-100,650 L-100,250 L2200,200 Z" fill="url(#waveGrad1)" />
+          <path d="M2200,600 Q1500,950 1000,750 T300,1050 T-100,850 L-100,450 L2200,400 Z" fill="url(#waveGrad2)" />
+          <path d="M2200,800 Q1400,1150 900,950 T200,1200 T-100,1050 L-100,650 L2200,600 Z" fill="url(#waveGrad3)" />
         </svg>
       </div>
 
       <div className="admin-login__container">
         <div className="admin-login__logo-section">
-          <img 
-            src="/logo.svg" 
-            alt="봉선장" 
-            className="admin-login__logo" 
-          />
+          <div className="admin-login__logo-box">
+            <img 
+              src="/logo.svg" 
+              alt="봉선장" 
+            />
+          </div>
           <h1 className="admin-login__title">봉선장</h1>
         </div>
 

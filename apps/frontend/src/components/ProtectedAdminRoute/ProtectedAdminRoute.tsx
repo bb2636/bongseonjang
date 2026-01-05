@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 interface ProtectedAdminRouteProps {
   children: React.ReactNode;
@@ -7,19 +7,17 @@ interface ProtectedAdminRouteProps {
 
 export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
   const location = useLocation();
-  const [isChecking, setIsChecking] = useState(true);
+  const token = useMemo(() => localStorage.getItem('token'), []);
+  const [isChecking, setIsChecking] = useState(!!token);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      
-      if (!token) {
-        setIsAdmin(false);
-        setIsChecking(false);
-        return;
-      }
+    if (!token) {
+      setIsChecking(false);
+      return;
+    }
 
+    const checkAuth = async () => {
       try {
         const response = await fetch('/api/auth/me', {
           headers: {
@@ -32,6 +30,7 @@ export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
           if (data.user?.isAdmin) {
             setIsAdmin(true);
           } else {
+            localStorage.removeItem('token');
             setIsAdmin(false);
           }
         } else {
@@ -39,6 +38,7 @@ export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
           setIsAdmin(false);
         }
       } catch {
+        localStorage.removeItem('token');
         setIsAdmin(false);
       } finally {
         setIsChecking(false);
@@ -46,7 +46,11 @@ export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
     };
 
     checkAuth();
-  }, []);
+  }, [token]);
+
+  if (!token) {
+    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+  }
 
   if (isChecking) {
     return (
