@@ -176,7 +176,12 @@ export function useProductForm() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/products/categories');
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch('/api/admin/products/categories', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setCategories(data.categories || []);
@@ -200,7 +205,12 @@ export function useProductForm() {
 
   const fetchExposureCategories = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/products/exposure-categories');
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch('/api/admin/products/exposure-categories', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setExposureCategories((data.categories || []).map((cat: { id: number; name: string }) => ({
@@ -444,7 +454,12 @@ export function useProductForm() {
     setEditingProductId(productId);
 
     try {
-      const response = await fetch(`/api/admin/products/${productId}`);
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/admin/products/${productId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!response.ok) {
         throw new Error('상품 정보를 불러오는데 실패했습니다');
       }
@@ -617,8 +632,12 @@ export function useProductForm() {
     formDataUpload.append('image', file);
     formDataUpload.append('purpose', purpose);
 
+    const token = localStorage.getItem('accessToken');
     const response = await fetch('/api/upload', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
       body: formDataUpload,
     });
 
@@ -709,10 +728,12 @@ export function useProductForm() {
         ? `/api/admin/products/${editingProductId}`
         : '/api/admin/products';
       
+      const token = localStorage.getItem('accessToken');
       const response = await fetch(url, {
         method: isUpdate ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(productData),
       });
