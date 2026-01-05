@@ -133,6 +133,13 @@ feat: 간단한 제목
 ### UI/UX Patterns
 CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통 Input/PasswordInput 컴포넌트, 반응형 디자인, 스켈레톤 로딩 등을 통해 사용자 경험을 개선합니다. 완료 화면은 `CompletionScreen` 공용 컴포넌트를 사용합니다.
 
+### Authentication System (Separated Sessions)
+관리자와 사용자 인증 세션이 완전히 분리되어 있습니다:
+- **사용자 인증**: `user_token` localStorage 키 사용 (`AuthContext`)
+- **관리자 인증**: `admin_token` localStorage 키 사용 (`AdminAuthContext`)
+- 관리자 로그인 시 사용자 세션에 영향 없음
+- 사용자 로그인 시 관리자 세션에 영향 없음
+
 ### Core Features
 - **홈 화면**: Feature-first 레이아웃, 자체 AppBar/BottomNav, Swiper.js 기반 HeroBanner.
 - **상품 상세**: "상품정보", "후기 N", "문의" 탭 네비게이션. ReviewService 주입을 통한 리뷰 통계 제공.
