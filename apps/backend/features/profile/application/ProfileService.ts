@@ -1,9 +1,13 @@
 import bcrypt from 'bcrypt';
-import { ProfileRepository } from '../repository/ProfileRepository';
-import { UserProfile, Order } from '../domain/Profile';
+import { ProfileRepository } from '../repository/ProfileRepository.js';
+import { UserProfile, Order } from '../domain/Profile.js';
+import { UserDeletionService } from './UserDeletionService.js';
 
 export class ProfileService {
-  constructor(private readonly profileRepository: ProfileRepository) {}
+  constructor(
+    private readonly profileRepository: ProfileRepository,
+    private readonly userDeletionService?: UserDeletionService
+  ) {}
 
   async getUserProfile(userId: string): Promise<UserProfile | null> {
     return this.profileRepository.getUserProfile(userId);
@@ -54,6 +58,10 @@ export class ProfileService {
   }
 
   async withdrawAccount(userId: string): Promise<void> {
-    await this.profileRepository.deleteUser(userId);
+    if (this.userDeletionService) {
+      await this.userDeletionService.deleteAllUserData(userId);
+    } else {
+      await this.profileRepository.deleteUser(userId);
+    }
   }
 }

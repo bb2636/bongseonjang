@@ -64,13 +64,13 @@ function mapNoticeListItems(notices: NoticeListItemDto[]): Notice[] {
 }
 
 export async function fetchNotices(): Promise<Notice[]> {
-  const response = await apiClient.get<NoticeListResponse>('/admin/notices');
+  const response = await apiClient.get<NoticeListResponse>('/notices');
 
   return mapNoticeListItems(response.notices);
 }
 
 export async function fetchNoticeById(id: string): Promise<NoticeDetail> {
-  const response = await apiClient.get<NoticeDetailDto>(`/admin/notices/${id}`);
+  const response = await apiClient.get<NoticeDetailDto>(`/notices/${id}`);
 
   return {
     id: response.id.toString(),
