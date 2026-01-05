@@ -52,7 +52,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
   const fetchFaq = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/faqs/${faqId}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -99,7 +99,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
     setShowSaveConfirm(false);
     setIsSaving(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/faqs/${faqId}`, {
         method: 'PUT',
         headers: {
@@ -136,7 +136,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
   const handleDeleteConfirm = async () => {
     setShowDeleteConfirm(false);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/faqs/${faqId}`, {
         method: 'DELETE',
         headers: {

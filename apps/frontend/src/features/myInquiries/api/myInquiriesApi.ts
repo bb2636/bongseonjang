@@ -20,7 +20,7 @@ export async function fetchMyInquiries(params: FetchMyInquiriesParams = {}): Pro
     queryParams.set('type', type);
   }
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   const response = await fetch(`/api/users/me/inquiries?${queryParams.toString()}`, {
     headers: {
       'Content-Type': 'application/json',

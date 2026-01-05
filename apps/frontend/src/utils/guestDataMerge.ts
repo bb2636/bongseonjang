@@ -6,7 +6,7 @@ export interface MergeWishlistItem {
 }
 
 async function mergeGuestWishlist(items: MergeWishlistItem[]): Promise<{ mergedCount: number }> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch('/api/wishlist/merge', {
     method: 'POST',

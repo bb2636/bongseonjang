@@ -208,7 +208,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
       const url = isEditing ? `/api/admin/coupons/${coupon.id}` : '/api/admin/coupons';
       const method = isEditing ? 'PUT' : 'POST';
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(url, {
         method,
         headers: {

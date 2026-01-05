@@ -60,7 +60,7 @@ export function useCouponManagement() {
       if (searchQuery) params.append('search', searchQuery);
       if (discountFilter !== 'all') params.append('discountType', discountFilter);
       
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/coupons?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -125,7 +125,7 @@ export function useCouponManagement() {
 
   const handleToggleStatus = useCallback(async (couponId: number) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/coupons/${couponId}/toggle-status`, {
         method: 'PATCH',
         headers: {
@@ -154,7 +154,7 @@ export function useCouponManagement() {
   const handleConfirmDelete = useCallback(async () => {
     if (!deletingCouponId) return;
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/coupons/${deletingCouponId}`, {
         method: 'DELETE',
         headers: {

@@ -36,7 +36,7 @@ export function useProfileWithdraw() {
     setShowConfirmModal(false);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('user_token');
       const response = await fetch('/api/profile/withdraw', {
         method: 'POST',
         headers: {

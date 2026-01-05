@@ -61,7 +61,7 @@ export async function fetchAdminOrders(params: FetchAdminOrdersParams = {}): Pro
 
   const url = `/api/admin/orders${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('admin_token');
   const response = await fetch(url, {
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -84,7 +84,7 @@ export interface UpdateShippingInfoParams {
 export type BackendOrderStatus = 'pending' | 'payment_failed' | 'paid' | 'confirmed' | 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'refunded';
 
 export async function updateOrderStatus(orderId: string, status: BackendOrderStatus): Promise<void> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('admin_token');
   const response = await fetch(`/api/admin/orders/${orderId}/status`, {
     method: 'PUT',
     headers: {
@@ -101,7 +101,7 @@ export async function updateOrderStatus(orderId: string, status: BackendOrderSta
 }
 
 export async function updateShippingInfo(orderId: string, params: UpdateShippingInfoParams): Promise<void> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('admin_token');
   const response = await fetch(`/api/admin/orders/${orderId}/shipping`, {
     method: 'PUT',
     headers: {

@@ -3,7 +3,7 @@ import { CartDto, CartItemDto } from '@bongkru/contract';
 export type { CartDto, CartItemDto };
 
 export async function fetchCart(): Promise<CartDto> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch('/api/cart', {
     headers: {
@@ -19,7 +19,7 @@ export async function fetchCart(): Promise<CartDto> {
 }
 
 export async function updateItemQuantity(itemId: string, quantity: number): Promise<void> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch(`/api/cart/items/${itemId}`, {
     method: 'PATCH',
@@ -36,7 +36,7 @@ export async function updateItemQuantity(itemId: string, quantity: number): Prom
 }
 
 export async function removeItem(itemId: string): Promise<void> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch(`/api/cart/items/${itemId}`, {
     method: 'DELETE',
@@ -51,7 +51,7 @@ export async function removeItem(itemId: string): Promise<void> {
 }
 
 export async function removeSelectedItems(itemIds: string[]): Promise<{ removedCount: number }> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch('/api/cart/items/remove-selected', {
     method: 'POST',
@@ -76,7 +76,7 @@ export interface MergeCartItem {
 }
 
 export async function mergeGuestCart(items: MergeCartItem[]): Promise<{ mergedCount: number }> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch('/api/cart/merge', {
     method: 'POST',

@@ -91,7 +91,7 @@ export function AdminLoginPage() {
         throw new Error(data.error || '로그인에 실패했습니다');
       }
 
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('admin_token', data.token);
       navigate('/admin');
     } catch (err) {
       setError(err instanceof Error ? err.message : '로그인에 실패했습니다');
@@ -101,7 +101,7 @@ export function AdminLoginPage() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('admin_token');
     if (token) {
       navigate('/admin');
     }

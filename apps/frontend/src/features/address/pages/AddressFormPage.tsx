@@ -95,7 +95,7 @@ export function AddressFormPage() {
 
   const saveAddressMutation = useMutation({
     mutationFn: async (data: AddressFormData) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('user_token');
       const url = isEditMode ? `/api/address/${id}` : '/api/address';
       const method = isEditMode ? 'PUT' : 'POST';
 

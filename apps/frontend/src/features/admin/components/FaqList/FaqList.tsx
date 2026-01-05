@@ -36,7 +36,7 @@ export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: F
 
   const fetchCategories = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch('/api/admin/faqs/categories', {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -61,7 +61,7 @@ export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: F
       if (categoryId) {
         params.append('categoryId', categoryId.toString());
       }
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/faqs?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

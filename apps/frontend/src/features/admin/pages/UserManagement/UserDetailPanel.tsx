@@ -71,7 +71,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   const fetchUserDetail = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/users/${userId}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -91,7 +91,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   const fetchOrders = async () => {
     setOrdersLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/users/${userId}/orders`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -111,7 +111,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   const fetchInquiries = async () => {
     setInquiriesLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/users/${userId}/inquiries`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -185,7 +185,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   const handleConfirmSuspend = async () => {
     setIsSuspending(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const newSuspendedStatus = !user?.isSuspended;
       const response = await fetch(`/api/admin/users/${userId}/suspend`, {
         method: 'PUT',

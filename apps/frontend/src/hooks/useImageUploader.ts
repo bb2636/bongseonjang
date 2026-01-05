@@ -35,7 +35,7 @@ function getExtensionFromFile(file: File): string {
 }
 
 async function uploadImageToServer(file: File, purpose: UploadPurpose): Promise<string> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   const formData = new FormData();
   formData.append('image', file);
   formData.append('purpose', purpose);

@@ -60,7 +60,7 @@ async function createReview(data: {
   imageUrls?: string[];
   orderItemId?: string;
 }) {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   const response = await fetch('/api/reviews', {
     method: 'POST',
     headers: {

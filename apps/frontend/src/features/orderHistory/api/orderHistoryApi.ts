@@ -41,7 +41,7 @@ export interface OrderHistoryResponse {
 }
 
 export async function fetchOrderHistory(statusFilter: OrderStatusFilter): Promise<OrderHistoryResponse> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch(`/api/orders?status=${statusFilter}`, {
     headers: {
@@ -61,7 +61,7 @@ export interface CheckPurchaseResponse {
 }
 
 export async function checkPurchase(productId: string): Promise<CheckPurchaseResponse> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   if (!token) {
     return { hasPurchased: false };

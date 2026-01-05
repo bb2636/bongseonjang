@@ -4,7 +4,7 @@ import { API_BASE_URL } from '../../../shared/config/apiConfig';
 export async function fetchPointWallet(): Promise<PointWallet> {
   const response = await fetch(`${API_BASE_URL}/points/wallet`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+      'Authorization': `Bearer ${localStorage.getItem('user_token') || ''}`,
     },
   });
 
@@ -23,7 +23,7 @@ export async function fetchPointTransactions(
     `${API_BASE_URL}/points/transactions?page=${page}&limit=${limit}`,
     {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+        'Authorization': `Bearer ${localStorage.getItem('user_token') || ''}`,
       },
     }
   );

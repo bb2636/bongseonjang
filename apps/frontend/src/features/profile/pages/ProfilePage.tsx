@@ -8,7 +8,7 @@ function AuthenticatedProfilePage() {
 }
 
 export default function ProfilePage() {
-  const isLoggedIn = !!localStorage.getItem('token');
+  const isLoggedIn = !!localStorage.getItem('user_token');
   
   if (!isLoggedIn) {
     return <GuestProfileView />;

@@ -146,7 +146,7 @@ export default function QuickCartBottomSheet() {
 
     try {
       if (isAuthenticated) {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('user_token');
         const items = selectedItems.map(item => ({
           productOptionId: item.option?.id || null,
           quantity: item.quantity,

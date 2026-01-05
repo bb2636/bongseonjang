@@ -23,7 +23,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
   const fetchCartCount = useCallback(async () => {
     if (isAuthenticated) {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('user_token');
       if (!token) {
         setCartCountState(0);
         return;

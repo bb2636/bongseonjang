@@ -60,7 +60,7 @@ function getCallbackUrl(): string {
 }
 
 export async function fetchMyCoupons(): Promise<CouponDto[]> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch('/api/coupons/my', {
     method: 'GET',
@@ -79,7 +79,7 @@ export async function fetchMyCoupons(): Promise<CouponDto[]> {
 }
 
 export async function fetchAvailableCoupons(productIds: string[]): Promise<CouponDto[]> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch('/api/coupons/available', {
     method: 'POST',
@@ -99,7 +99,7 @@ export async function fetchAvailableCoupons(productIds: string[]): Promise<Coupo
 }
 
 export async function prepareDirectPayment(data: PrepareDirectPaymentRequest): Promise<PreparePaymentResponse> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   const returnUrl = getCallbackUrl();
   
   const response = await fetch('/api/payment/prepare-direct', {
@@ -120,7 +120,7 @@ export async function prepareDirectPayment(data: PrepareDirectPaymentRequest): P
 }
 
 export async function preparePayment(data: PreparePaymentRequest): Promise<PreparePaymentResponse> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   const returnUrl = getCallbackUrl();
   
   const response = await fetch('/api/payment/prepare', {
@@ -141,7 +141,7 @@ export async function preparePayment(data: PreparePaymentRequest): Promise<Prepa
 }
 
 export async function getPaymentResult(orderId: string): Promise<{ success: boolean; order?: { orderNumber: string; status: string } }> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch(`/api/payment/order/${orderId}`, {
     method: 'GET',

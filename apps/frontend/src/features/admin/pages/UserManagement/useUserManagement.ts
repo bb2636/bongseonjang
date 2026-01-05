@@ -44,7 +44,7 @@ export function useUserManagement() {
         params.append('search', searchQuery.trim());
       }
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/users?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

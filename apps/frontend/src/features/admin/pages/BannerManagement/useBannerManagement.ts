@@ -51,7 +51,7 @@ export function useBannerManagement() {
 
   const fetchPositions = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch('/api/admin/banner-positions', {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -71,7 +71,7 @@ export function useBannerManagement() {
     setIsLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/banners?position=${positionCode}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -145,7 +145,7 @@ export function useBannerManagement() {
     const bannerIds = reorderedBanners.map(b => b.id);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch('/api/admin/banners/reorder', {
         method: 'POST',
         headers: {
@@ -161,7 +161,7 @@ export function useBannerManagement() {
     } catch (err) {
       console.error('Failed to reorder banners:', err);
       try {
-        const refetchToken = localStorage.getItem('token');
+        const refetchToken = localStorage.getItem('admin_token');
         const response = await fetch(`/api/admin/banners?position=${activeTab}`, {
           headers: {
             ...(refetchToken ? { Authorization: `Bearer ${refetchToken}` } : {}),

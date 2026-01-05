@@ -6,7 +6,7 @@ export interface CheckReviewResponse {
 }
 
 export async function checkUserReview(productId: string): Promise<CheckReviewResponse> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   if (!token) {
     return { canReview: false, reason: 'not_purchased' };
@@ -54,7 +54,7 @@ export interface ReviewableOrderItemDto {
 }
 
 export async function createReview(request: CreateReviewRequest): Promise<ReviewDto> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   if (!token) {
     throw new Error('Authentication required');
@@ -77,7 +77,7 @@ export async function createReview(request: CreateReviewRequest): Promise<Review
 }
 
 export async function fetchPendingReviewItems(): Promise<ReviewableOrderItemDto[]> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
 
   if (!token) {
     return [];
@@ -108,7 +108,7 @@ export interface MyReviewDto {
 }
 
 export async function fetchMyReviews(): Promise<MyReviewDto[]> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
 
   if (!token) {
     return [];

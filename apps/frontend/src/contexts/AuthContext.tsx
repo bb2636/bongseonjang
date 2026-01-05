@@ -29,7 +29,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('user_token');
       if (!token) {
         setIsLoading(false);
         return;
@@ -46,10 +46,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const data = await response.json();
           setUser(data.user);
         } else {
-          localStorage.removeItem('token');
+          localStorage.removeItem('user_token');
         }
       } catch {
-        localStorage.removeItem('token');
+        localStorage.removeItem('user_token');
       } finally {
         setIsLoading(false);
       }
@@ -73,7 +73,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       const data = await response.json();
       setUser(data.user);
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('user_token', data.token);
       
       mergeGuestDataToServer().catch(console.error);
     } finally {
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const loginWithToken = useCallback((token: string, userData: User) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem('user_token', token);
     setUser(userData);
     
     mergeGuestDataToServer().catch(console.error);
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = useCallback(() => {
     setUser(null);
-    localStorage.removeItem('token');
+    localStorage.removeItem('user_token');
   }, []);
 
   const register = useCallback(async (email: string, password: string, name: string) => {
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       const data = await response.json();
       setUser(data.user);
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('user_token', data.token);
       
       mergeGuestDataToServer().catch(console.error);
     } finally {

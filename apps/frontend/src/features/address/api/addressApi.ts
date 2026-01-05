@@ -16,7 +16,7 @@ export interface AddressResponse {
 export type DefaultAddressResponse = AddressResponse;
 
 export async function fetchAddresses(): Promise<AddressResponse[]> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   if (!token) {
     return [];
@@ -36,7 +36,7 @@ export async function fetchAddresses(): Promise<AddressResponse[]> {
 }
 
 export async function fetchDefaultAddress(): Promise<DefaultAddressResponse | null> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   if (!token) {
     return null;

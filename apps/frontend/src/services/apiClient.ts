@@ -19,7 +19,7 @@ export class ApiError extends Error {
 }
 
 function handleAccountSuspended(): void {
-  localStorage.removeItem('token');
+  localStorage.removeItem('user_token');
   alert('활동이 정지된 계정입니다.');
   window.location.href = '/login';
 }
@@ -32,7 +32,7 @@ class ApiClient {
   }
 
   private getAuthToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem('user_token');
   }
 
   private getHeaders(customHeaders?: Record<string, string>): Headers {

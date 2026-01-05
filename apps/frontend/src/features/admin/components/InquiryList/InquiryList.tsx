@@ -69,7 +69,7 @@ export function InquiryList({ onView, refreshTrigger }: InquiryListProps) {
       if (selectedStatus !== 'all') {
         params.append('status', selectedStatus);
       }
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/inquiries?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

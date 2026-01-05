@@ -3,7 +3,7 @@ import { CouponListResponse } from '../types/coupon';
 const API_BASE = '/api/coupons';
 
 function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   return {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),

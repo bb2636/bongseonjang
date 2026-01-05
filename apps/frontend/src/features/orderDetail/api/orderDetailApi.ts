@@ -54,7 +54,7 @@ export interface OrderDetail {
 }
 
 export async function fetchOrderDetail(orderId: string): Promise<OrderDetail> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   
   const response = await fetch(`/api/orders/${orderId}`, {
     headers: {

@@ -139,7 +139,7 @@ export function useProfilePage() {
   }, []);
 
   const handleLogoutConfirm = useCallback(() => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('user_token');
     setIsLogoutModalOpen(false);
     navigate('/login');
   }, [navigate]);

@@ -65,7 +65,7 @@ export default function ProductDetailPage() {
   }
 
   const handleWriteReviewClick = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('user_token');
     
     if (!token) {
       navigate('/login', { state: { from: `/product/${id}` } });

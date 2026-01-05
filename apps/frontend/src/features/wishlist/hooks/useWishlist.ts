@@ -19,7 +19,7 @@ export function useWishlist() {
   const fetchWishlistData = useCallback(async () => {
     try {
       if (isAuthenticated) {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('user_token');
         if (!token) {
           setItems([]);
           setCount(0);

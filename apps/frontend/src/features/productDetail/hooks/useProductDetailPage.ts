@@ -29,7 +29,7 @@ export function useProductDetailPage(productId: string) {
       if (!productId) return;
       
       if (isAuthenticated) {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('user_token');
         if (!token) return;
         
         try {
@@ -64,7 +64,7 @@ export function useProductDetailPage(productId: string) {
 
     try {
       if (isAuthenticated) {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('user_token');
         if (!token) {
           setIsWishlistLoading(false);
           return;
@@ -163,7 +163,7 @@ export function useProductDetailPage(productId: string) {
   };
 
   const handleWriteInquiryClick = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('user_token');
     if (!token) {
       navigate('/login', { state: { from: `/product/${productId}` } });
       return;

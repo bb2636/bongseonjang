@@ -45,7 +45,7 @@ export interface ProductInquiryResponse {
 }
 
 export async function fetchProductInquiries(productId: string): Promise<ProductInquiryResponse[]> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   const response = await fetch(`${API_BASE_URL}/products/${productId}/inquiries`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
@@ -70,7 +70,7 @@ export async function createProductInquiry(
   productId: string,
   payload: CreateProductInquiryPayload
 ): Promise<void> {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user_token');
   const response = await fetch(`${API_BASE_URL}/products/${productId}/inquiries`, {
     method: 'POST',
     headers: {

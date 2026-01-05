@@ -7,7 +7,7 @@ interface ProtectedAdminRouteProps {
 
 export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
   const location = useLocation();
-  const token = useMemo(() => localStorage.getItem('token'), []);
+  const token = useMemo(() => localStorage.getItem('admin_token'), []);
   const [isChecking, setIsChecking] = useState(!!token);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -30,15 +30,15 @@ export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
           if (data.user?.isAdmin) {
             setIsAdmin(true);
           } else {
-            localStorage.removeItem('token');
+            localStorage.removeItem('admin_token');
             setIsAdmin(false);
           }
         } else {
-          localStorage.removeItem('token');
+          localStorage.removeItem('admin_token');
           setIsAdmin(false);
         }
       } catch {
-        localStorage.removeItem('token');
+        localStorage.removeItem('admin_token');
         setIsAdmin(false);
       } finally {
         setIsChecking(false);
