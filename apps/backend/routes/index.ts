@@ -28,8 +28,11 @@ import { adminOrderRoutes } from '../features/admin/routes/adminOrderRoutes';
 import { userRoutes } from '../features/user';
 import { termsRoutes, adminTermsRoutes } from '../features/terms';
 import homeDataRoutes from '../features/home/routes/homeDataRoutes';
+import { adminAuthMiddleware } from '../common/middleware/adminAuthMiddleware';
 
 const router = Router();
+const adminRouter = Router();
+adminRouter.use(adminAuthMiddleware);
 
 router.use('/auth', authRoutes);
 router.use('/auth/password-reset', passwordResetRoutes);
@@ -57,15 +60,17 @@ router.use('/address', addressRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/terms', termsRoutes);
 router.use('/faqs', publicFaqRoutes);
-router.use('/admin/notices', noticeRoutes);
-router.use('/admin/investment-infos', investmentInfoRoutes);
-router.use('/admin/faqs', faqRoutes);
-router.use('/admin/inquiries', inquiryRoutes);
-router.use('/admin', adminBannerRoutes);
-router.use('/admin', adminCouponRoutes);
-router.use('/admin/products', adminProductRoutes);
-router.use('/admin/users', adminUserRoutes);
-router.use('/admin/orders', adminOrderRoutes);
-router.use('/admin/terms', adminTermsRoutes);
+adminRouter.use('/notices', noticeRoutes);
+adminRouter.use('/investment-infos', investmentInfoRoutes);
+adminRouter.use('/faqs', faqRoutes);
+adminRouter.use('/inquiries', inquiryRoutes);
+adminRouter.use('/', adminBannerRoutes);
+adminRouter.use('/', adminCouponRoutes);
+adminRouter.use('/products', adminProductRoutes);
+adminRouter.use('/users', adminUserRoutes);
+adminRouter.use('/orders', adminOrderRoutes);
+adminRouter.use('/terms', adminTermsRoutes);
+
+router.use('/admin', adminRouter);
 
 export default router;

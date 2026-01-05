@@ -49,6 +49,7 @@ interface UserResponse {
   referralId: string | null;
   membershipGrade: MembershipGrade;
   isEmailVerified: boolean;
+  isAdmin: boolean;
   lastLoginAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -71,6 +72,7 @@ function toUserResponse(user: User): UserResponse {
     referralId: user.referralId,
     membershipGrade: user.membershipGrade,
     isEmailVerified: user.isEmailVerified,
+    isAdmin: user.isAdmin ?? false,
     lastLoginAt: user.lastLoginAt,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,

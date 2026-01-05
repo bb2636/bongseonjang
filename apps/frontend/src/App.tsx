@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./layouts";
-import { ProtectedRoute } from "./components";
+import { ProtectedRoute, ProtectedAdminRoute } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
@@ -392,27 +392,27 @@ export default function App() {
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/admin" element={<Navigate to="/admin/users" replace />} />
-        <Route path="/admin/products" element={<ProductManagementPage />} />
-        <Route path="/admin/products/*" element={<ProductManagementPage />} />
-        <Route path="/admin/orders" element={<OrderManagementPage />} />
-        <Route path="/admin/orders/*" element={<OrderManagementPage />} />
-        <Route path="/admin/users" element={<UserManagementPage />} />
-        <Route path="/admin/users/*" element={<UserManagementPage />} />
-        <Route path="/admin/reviews" element={<AdminPlaceholderPage />} />
-        <Route path="/admin/reviews/*" element={<AdminPlaceholderPage />} />
-        <Route path="/admin/coupons" element={<CouponManagementPage />} />
-        <Route path="/admin/coupons/*" element={<CouponManagementPage />} />
-        <Route path="/admin/banners" element={<BannerManagementPage />} />
-        <Route path="/admin/banners/*" element={<BannerManagementPage />} />
-        <Route path="/admin/categories" element={<AdminPlaceholderPage />} />
-        <Route path="/admin/categories/*" element={<AdminPlaceholderPage />} />
-        <Route path="/admin/settings" element={<AdminPlaceholderPage />} />
-        <Route path="/admin/settings/*" element={<AdminPlaceholderPage />} />
-        <Route path="/admin/support" element={<AdminSupportPage />} />
-        <Route path="/admin/support/*" element={<AdminSupportPage />} />
-        <Route path="/admin/terms" element={<TermsManagementPage />} />
-        <Route path="/admin/terms/*" element={<TermsManagementPage />} />
+        <Route path="/admin" element={<ProtectedAdminRoute><Navigate to="/admin/users" replace /></ProtectedAdminRoute>} />
+        <Route path="/admin/products" element={<ProtectedAdminRoute><ProductManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/products/*" element={<ProtectedAdminRoute><ProductManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/orders" element={<ProtectedAdminRoute><OrderManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/orders/*" element={<ProtectedAdminRoute><OrderManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/users" element={<ProtectedAdminRoute><UserManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/users/*" element={<ProtectedAdminRoute><UserManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/reviews" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/reviews/*" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/coupons" element={<ProtectedAdminRoute><CouponManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/coupons/*" element={<ProtectedAdminRoute><CouponManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/banners" element={<ProtectedAdminRoute><BannerManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/banners/*" element={<ProtectedAdminRoute><BannerManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/categories" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/categories/*" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/settings" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/settings/*" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/support" element={<ProtectedAdminRoute><AdminSupportPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/support/*" element={<ProtectedAdminRoute><AdminSupportPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/terms" element={<ProtectedAdminRoute><TermsManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/terms/*" element={<ProtectedAdminRoute><TermsManagementPage /></ProtectedAdminRoute>} />
 
         <Route
           path="*"
