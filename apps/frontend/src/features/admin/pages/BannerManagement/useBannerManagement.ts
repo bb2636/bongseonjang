@@ -51,7 +51,12 @@ export function useBannerManagement() {
 
   const fetchPositions = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/banner-positions');
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/admin/banner-positions', {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (!response.ok) {
         throw new Error('배너 위치 목록을 불러오는데 실패했습니다');
       }
@@ -66,7 +71,12 @@ export function useBannerManagement() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/admin/banners?position=${positionCode}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/banners?position=${positionCode}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (!response.ok) {
         throw new Error('배너 목록을 불러오는데 실패했습니다');
       }
@@ -135,10 +145,12 @@ export function useBannerManagement() {
     const bannerIds = reorderedBanners.map(b => b.id);
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch('/api/admin/banners/reorder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ bannerIds }),
       });
@@ -149,7 +161,12 @@ export function useBannerManagement() {
     } catch (err) {
       console.error('Failed to reorder banners:', err);
       try {
-        const response = await fetch(`/api/admin/banners?position=${activeTab}`);
+        const refetchToken = localStorage.getItem('token');
+        const response = await fetch(`/api/admin/banners?position=${activeTab}`, {
+          headers: {
+            ...(refetchToken ? { Authorization: `Bearer ${refetchToken}` } : {}),
+          },
+        });
         if (response.ok) {
           const data = await response.json();
           setBanners(data);

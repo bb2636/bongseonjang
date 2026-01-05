@@ -48,7 +48,12 @@ export function InvestmentInfoDetailPanel({ investmentInfoId, investmentInfoType
   const fetchInvestmentInfo = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/admin/investment-infos/${investmentInfoId}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/investment-infos/${investmentInfoId}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setInvestmentInfo(data);
@@ -86,9 +91,13 @@ export function InvestmentInfoDetailPanel({ investmentInfoId, investmentInfoType
 
     setIsSaving(true);
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`/api/admin/investment-infos/${investmentInfoId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           title: editTitle,
           content: editContent,
@@ -116,8 +125,12 @@ export function InvestmentInfoDetailPanel({ investmentInfoId, investmentInfoType
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`/api/admin/investment-infos/${investmentInfoId}`, {
         method: 'DELETE',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       if (response.ok) {
         onClose();

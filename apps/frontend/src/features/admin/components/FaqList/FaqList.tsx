@@ -36,7 +36,12 @@ export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: F
 
   const fetchCategories = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/faqs/categories');
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/admin/faqs/categories', {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -56,7 +61,12 @@ export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: F
       if (categoryId) {
         params.append('categoryId', categoryId.toString());
       }
-      const response = await fetch(`/api/admin/faqs?${params.toString()}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/faqs?${params.toString()}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setFaqs(data.faqs);

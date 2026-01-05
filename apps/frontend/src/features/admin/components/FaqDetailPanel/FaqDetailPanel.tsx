@@ -52,7 +52,12 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
   const fetchFaq = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/admin/faqs/${faqId}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/faqs/${faqId}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setFaq(data);
@@ -94,9 +99,13 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
     setShowSaveConfirm(false);
     setIsSaving(true);
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`/api/admin/faqs/${faqId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           title: editTitle,
           content: editContent,
@@ -127,8 +136,12 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
   const handleDeleteConfirm = async () => {
     setShowDeleteConfirm(false);
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`/api/admin/faqs/${faqId}`, {
         method: 'DELETE',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       if (response.ok) {
         onSaved();

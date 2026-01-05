@@ -60,7 +60,12 @@ export function useCouponManagement() {
       if (searchQuery) params.append('search', searchQuery);
       if (discountFilter !== 'all') params.append('discountType', discountFilter);
       
-      const response = await fetch(`/api/admin/coupons?${params.toString()}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/coupons?${params.toString()}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (!response.ok) {
         throw new Error('쿠폰 목록을 불러오는데 실패했습니다');
       }
@@ -120,8 +125,12 @@ export function useCouponManagement() {
 
   const handleToggleStatus = useCallback(async (couponId: number) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`/api/admin/coupons/${couponId}/toggle-status`, {
         method: 'PATCH',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       if (!response.ok) {
         throw new Error('상태 변경에 실패했습니다');
@@ -145,8 +154,12 @@ export function useCouponManagement() {
   const handleConfirmDelete = useCallback(async () => {
     if (!deletingCouponId) return;
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`/api/admin/coupons/${deletingCouponId}`, {
         method: 'DELETE',
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       if (!response.ok) {
         throw new Error('쿠폰 삭제에 실패했습니다');

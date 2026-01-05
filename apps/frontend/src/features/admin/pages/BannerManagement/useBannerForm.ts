@@ -154,10 +154,12 @@ export function useBannerForm(
         : '/api/admin/banners';
       const method = isEditing ? 'PUT' : 'POST';
 
+      const token = localStorage.getItem('token');
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           title: formData.title,

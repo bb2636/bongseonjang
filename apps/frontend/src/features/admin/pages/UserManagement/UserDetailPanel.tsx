@@ -67,7 +67,12 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   const fetchUserDetail = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/admin/users/${userId}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setUser(data);
@@ -82,7 +87,12 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   const fetchOrders = async () => {
     setOrdersLoading(true);
     try {
-      const response = await fetch(`/api/admin/users/${userId}/orders`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/users/${userId}/orders`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setOrders(data.items);
@@ -97,7 +107,12 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   const fetchInquiries = async () => {
     setInquiriesLoading(true);
     try {
-      const response = await fetch(`/api/admin/users/${userId}/inquiries`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/users/${userId}/inquiries`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setInquiries(data.items);

@@ -44,7 +44,12 @@ export function useUserManagement() {
         params.append('search', searchQuery.trim());
       }
 
-      const response = await fetch(`/api/admin/users?${params.toString()}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/users?${params.toString()}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (!response.ok) {
         throw new Error('사용자 목록을 불러오는데 실패했습니다');
       }

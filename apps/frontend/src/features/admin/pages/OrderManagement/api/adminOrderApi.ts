@@ -61,7 +61,12 @@ export async function fetchAdminOrders(params: FetchAdminOrdersParams = {}): Pro
 
   const url = `/api/admin/orders${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   
-  const response = await fetch(url);
+  const token = localStorage.getItem('token');
+  const response = await fetch(url, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
   
   if (!response.ok) {
     throw new Error('주문 목록을 불러오는데 실패했습니다');
@@ -79,10 +84,12 @@ export interface UpdateShippingInfoParams {
 export type BackendOrderStatus = 'pending' | 'payment_failed' | 'paid' | 'confirmed' | 'preparing' | 'shipping' | 'delivered' | 'cancelled' | 'refunded';
 
 export async function updateOrderStatus(orderId: string, status: BackendOrderStatus): Promise<void> {
+  const token = localStorage.getItem('token');
   const response = await fetch(`/api/admin/orders/${orderId}/status`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify({ status }),
   });
@@ -94,10 +101,12 @@ export async function updateOrderStatus(orderId: string, status: BackendOrderSta
 }
 
 export async function updateShippingInfo(orderId: string, params: UpdateShippingInfoParams): Promise<void> {
+  const token = localStorage.getItem('token');
   const response = await fetch(`/api/admin/orders/${orderId}/shipping`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(params),
   });

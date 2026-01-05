@@ -58,7 +58,12 @@ export function AdminSupportPage() {
 
   const fetchNoticeTypes = async () => {
     try {
-      const response = await fetch('/api/admin/notices/types');
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/admin/notices/types', {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setNoticeTypes(data);
@@ -75,7 +80,12 @@ export function AdminSupportPage() {
       if (keyword) {
         params.append('keyword', keyword);
       }
-      const response = await fetch(`/api/admin/notices?${params.toString()}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/notices?${params.toString()}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setNotices(data.notices);
@@ -445,9 +455,13 @@ function NoticeAddForm({ noticeTypes, onClose, onSuccess }: NoticeAddFormProps) 
     setShowConfirmDialog(false);
     setIsSaving(true);
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch('/api/admin/notices', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ title, content, typeId, isVisible }),
       });
 
@@ -692,9 +706,13 @@ function FaqAddForm({ faqCategories, onClose, onSuccess }: FaqAddFormProps) {
     setShowConfirmDialog(false);
     setIsSaving(true);
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch('/api/admin/faqs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ title, content, categoryId, isVisible }),
       });
 
