@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UserApplicationService, AuthError } from '../application/UserApplicationService.js';
+import { UserApplicationService } from '../application/UserApplicationService.js';
 import { SocialAuthService } from '../domain/SocialAuthService.js';
 import { getPhoneVerificationService } from '../application/phoneVerificationFactory.js';
 import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
@@ -67,10 +67,6 @@ export class AuthController {
       const result = await userService.login({ email, password });
       res.json(result);
     } catch (error) {
-      if (error instanceof AuthError) {
-        res.status(403).json({ code: error.code, message: error.message });
-        return;
-      }
       const message = error instanceof Error ? error.message : 'Login failed';
       res.status(401).json({ message });
     }
@@ -88,10 +84,6 @@ export class AuthController {
       const result = await userService.adminLogin({ email, password });
       res.json(result);
     } catch (error) {
-      if (error instanceof AuthError) {
-        res.status(403).json({ code: error.code, message: error.message });
-        return;
-      }
       const message = error instanceof Error ? error.message : '로그인에 실패했습니다';
       res.status(401).json({ error: message });
     }
@@ -162,10 +154,6 @@ export class AuthController {
     } catch (error) {
       console.error('=== socialLogin ERROR ===');
       console.error('Error:', error);
-      if (error instanceof AuthError) {
-        res.status(403).json({ code: error.code, message: error.message });
-        return;
-      }
       const message = error instanceof Error ? error.message : 'Social login failed';
       res.status(400).json({ message });
     }
@@ -195,10 +183,6 @@ export class AuthController {
 
       res.json(result);
     } catch (error) {
-      if (error instanceof AuthError) {
-        res.status(403).json({ code: error.code, message: error.message });
-        return;
-      }
       const message = error instanceof Error ? error.message : 'Social login failed';
       res.status(400).json({ message });
     }

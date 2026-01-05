@@ -24,9 +24,6 @@ export const loginService = {
       if (data.code === 'ACCOUNT_SUSPENDED') {
         throw new AccountSuspendedError(data.message || '활동이 정지된 계정입니다.');
       }
-      if (data.code === 'ADMIN_LOGIN_REQUIRED') {
-        throw new Error('관리자 계정은 관리자 페이지에서 로그인해주세요.');
-      }
       throw new Error(data.message || '로그인에 실패했습니다');
     }
 

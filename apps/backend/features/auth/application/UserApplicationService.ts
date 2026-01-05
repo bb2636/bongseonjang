@@ -5,15 +5,6 @@ import { User, MembershipGrade } from '../../../entity/User';
 import { SocialProvider } from '../../../entity/UserSocialAccount';
 import { RealShippingAddressRepository } from '../../address/repository/RealShippingAddressRepository';
 
-export class AuthError extends Error {
-  code: string;
-  constructor(code: string, message: string) {
-    super(message);
-    this.code = code;
-    this.name = 'AuthError';
-  }
-}
-
 interface RegisterInput {
   email: string;
   password: string;
@@ -158,11 +149,7 @@ export class UserApplicationService {
     }
 
     if (user.isSuspended) {
-      throw new AuthError('ACCOUNT_SUSPENDED', '활동이 정지된 계정입니다.');
-    }
-
-    if (user.isAdmin) {
-      throw new AuthError('ADMIN_LOGIN_REQUIRED', '관리자 계정은 관리자 페이지에서 로그인해주세요.');
+      throw new Error('ACCOUNT_SUSPENDED');
     }
 
     await this.userRepository.update(user.id, { lastLoginAt: new Date() });
@@ -190,7 +177,7 @@ export class UserApplicationService {
     }
 
     if (user.isSuspended) {
-      throw new AuthError('ACCOUNT_SUSPENDED', '활동이 정지된 계정입니다.');
+      throw new Error('ACCOUNT_SUSPENDED');
     }
 
     if (!user.isAdmin) {
@@ -212,7 +199,7 @@ export class UserApplicationService {
 
     if (existingSocialAccount) {
       if (existingSocialAccount.user.isSuspended) {
-        throw new AuthError('ACCOUNT_SUSPENDED', '활동이 정지된 계정입니다.');
+        throw new Error('ACCOUNT_SUSPENDED');
       }
       await this.userRepository.update(existingSocialAccount.userId, { lastLoginAt: new Date() });
       const token = this.authService.generateToken(existingSocialAccount.userId);
@@ -227,7 +214,7 @@ export class UserApplicationService {
 
     if (existingUser) {
       if (existingUser.isSuspended) {
-        throw new AuthError('ACCOUNT_SUSPENDED', '활동이 정지된 계정입니다.');
+        throw new Error('ACCOUNT_SUSPENDED');
       }
       await this.socialAccountRepository.create({
         userId: existingUser.id,
