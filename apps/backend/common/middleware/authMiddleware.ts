@@ -36,6 +36,11 @@ export async function authMiddleware(
     return;
   }
 
+  if (user.isSuspended) {
+    res.status(403).json({ code: 'ACCOUNT_SUSPENDED', message: '활동이 정지된 계정입니다.' });
+    return;
+  }
+
   req.userId = user.id;
   next();
 }

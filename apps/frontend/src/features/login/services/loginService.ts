@@ -1,6 +1,15 @@
 import { LoginResponse } from '@bongkru/contract';
 import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
+export class AccountSuspendedError extends Error {
+  code: string;
+  constructor(message: string) {
+    super(message);
+    this.name = 'AccountSuspendedError';
+    this.code = 'ACCOUNT_SUSPENDED';
+  }
+}
+
 export const loginService = {
   async loginWithEmail(email: string, password: string): Promise<LoginResponse> {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -12,6 +21,9 @@ export const loginService = {
     const data = await response.json();
 
     if (!response.ok) {
+      if (data.code === 'ACCOUNT_SUSPENDED') {
+        throw new AccountSuspendedError(data.message || '활동이 정지된 계정입니다.');
+      }
       throw new Error(data.message || '로그인에 실패했습니다');
     }
 

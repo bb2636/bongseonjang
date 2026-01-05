@@ -35,7 +35,7 @@ export class ProductController {
         filter.search = search;
       }
       if (sortBy && typeof sortBy === 'string') {
-        const validSortOptions: SortBy[] = ['default', 'newest', 'priceAsc', 'priceDesc', 'discountDesc'];
+        const validSortOptions: SortBy[] = ['default', 'bestSelling', 'priceAsc', 'priceDesc', 'ratingDesc', 'reviewDesc', 'newest'];
         if (validSortOptions.includes(sortBy as SortBy)) {
           filter.sortBy = sortBy as SortBy;
         }

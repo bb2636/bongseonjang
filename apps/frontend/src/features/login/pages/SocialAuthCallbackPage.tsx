@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../contexts/AuthContext';
-import { socialLogin, isRequiresEmailResponse } from '../api/socialAuthApi';
+import { socialLogin, isRequiresEmailResponse, AccountSuspendedError } from '../api/socialAuthApi';
 import { fetchHomeData } from '../../home/api/homeDataApi';
 import './SocialAuthCallbackPage.css';
 
@@ -112,6 +112,11 @@ export default function SocialAuthCallbackPage() {
           navigate('/', { replace: true });
         }
       } catch (err) {
+        if (err instanceof AccountSuspendedError) {
+          alert('활동이 정지된 계정입니다.');
+          navigate('/login', { replace: true });
+          return;
+        }
         const message = err instanceof Error ? err.message : '로그인에 실패했습니다.';
         setError(message);
         setIsLoading(false);

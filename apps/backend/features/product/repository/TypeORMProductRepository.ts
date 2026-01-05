@@ -42,9 +42,18 @@ export class TypeORMProductRepository implements ProductRepository {
     }
 
     switch (filter?.sortBy) {
-      case 'newest':
+      case 'bestSelling':
         queryBuilder
-          .orderBy('product.createdAt', 'DESC')
+          .leftJoin(
+            subQuery => subQuery
+              .select('oi.productId', 'productId')
+              .addSelect('SUM(oi.quantity)', 'totalSales')
+              .from('order_items', 'oi')
+              .groupBy('oi.productId'),
+            'sales',
+            'sales.productId = product.id'
+          )
+          .orderBy('COALESCE(sales.totalSales, 0)', 'DESC')
           .addOrderBy('product.id', 'ASC');
         break;
       case 'priceAsc':
@@ -57,9 +66,37 @@ export class TypeORMProductRepository implements ProductRepository {
           .orderBy('product.basePrice', 'DESC')
           .addOrderBy('product.id', 'ASC');
         break;
-      case 'discountDesc':
+      case 'ratingDesc':
         queryBuilder
-          .orderBy('product.basePrice', 'DESC')
+          .leftJoin(
+            subQuery => subQuery
+              .select('r.productId', 'productId')
+              .addSelect('AVG(r.rating)', 'avgRating')
+              .from('reviews', 'r')
+              .groupBy('r.productId'),
+            'reviewStats',
+            'reviewStats.productId = product.id'
+          )
+          .orderBy('COALESCE(reviewStats.avgRating, 0)', 'DESC')
+          .addOrderBy('product.id', 'ASC');
+        break;
+      case 'reviewDesc':
+        queryBuilder
+          .leftJoin(
+            subQuery => subQuery
+              .select('r.productId', 'productId')
+              .addSelect('COUNT(*)', 'reviewCount')
+              .from('reviews', 'r')
+              .groupBy('r.productId'),
+            'reviewCounts',
+            'reviewCounts.productId = product.id'
+          )
+          .orderBy('COALESCE(reviewCounts.reviewCount, 0)', 'DESC')
+          .addOrderBy('product.id', 'ASC');
+        break;
+      case 'newest':
+        queryBuilder
+          .orderBy('product.createdAt', 'DESC')
           .addOrderBy('product.id', 'ASC');
         break;
       default:

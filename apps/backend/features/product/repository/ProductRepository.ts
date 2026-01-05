@@ -1,6 +1,6 @@
 import type { Product } from '../../../entity/Product';
 
-export type SortBy = 'default' | 'newest' | 'priceAsc' | 'priceDesc' | 'discountDesc';
+export type SortBy = 'default' | 'bestSelling' | 'priceAsc' | 'priceDesc' | 'ratingDesc' | 'reviewDesc' | 'newest';
 
 export interface ProductFilter {
   productCategory?: string;

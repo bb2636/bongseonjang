@@ -136,6 +136,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
       gender: user.gender,
       membershipGrade: user.membershipGrade,
       isEmailVerified: user.isEmailVerified,
+      isSuspended: user.isSuspended ?? false,
       lastLoginAt: user.lastLoginAt,
       createdAt: user.createdAt,
       orderCount,
@@ -204,6 +205,36 @@ router.get('/:userId/orders', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Failed to get user orders:', error);
     return res.status(500).json({ error: '주문 내역을 불러오는데 실패했습니다' });
+  }
+});
+
+router.put('/:id/suspend', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { isSuspended } = req.body;
+
+    if (typeof isSuspended !== 'boolean') {
+      return res.status(400).json({ error: 'isSuspended must be a boolean' });
+    }
+
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      return res.status(404).json({ error: '사용자를 찾을 수 없습니다' });
+    }
+
+    user.isSuspended = isSuspended;
+    await userRepository.save(user);
+
+    return res.json({
+      id: user.id,
+      isSuspended: user.isSuspended,
+      message: isSuspended ? '계정이 정지되었습니다' : '계정 정지가 해제되었습니다',
+    });
+  } catch (error) {
+    console.error('Failed to update user suspension status:', error);
+    return res.status(500).json({ error: '계정 정지 상태 변경에 실패했습니다' });
   }
 });
 

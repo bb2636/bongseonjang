@@ -50,6 +50,7 @@ interface UserResponse {
   membershipGrade: MembershipGrade;
   isEmailVerified: boolean;
   isAdmin: boolean;
+  isSuspended: boolean;
   lastLoginAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -73,6 +74,7 @@ function toUserResponse(user: User): UserResponse {
     membershipGrade: user.membershipGrade,
     isEmailVerified: user.isEmailVerified,
     isAdmin: user.isAdmin ?? false,
+    isSuspended: user.isSuspended ?? false,
     lastLoginAt: user.lastLoginAt,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
@@ -146,6 +148,10 @@ export class UserApplicationService {
       throw new Error('Invalid email or password');
     }
 
+    if (user.isSuspended) {
+      throw new Error('ACCOUNT_SUSPENDED');
+    }
+
     await this.userRepository.update(user.id, { lastLoginAt: new Date() });
 
     const token = this.authService.generateToken(user.id);
@@ -170,6 +176,10 @@ export class UserApplicationService {
       throw new Error('이메일 또는 비밀번호가 올바르지 않습니다');
     }
 
+    if (user.isSuspended) {
+      throw new Error('ACCOUNT_SUSPENDED');
+    }
+
     if (!user.isAdmin) {
       throw new Error('관리자 권한이 없습니다');
     }
@@ -188,6 +198,9 @@ export class UserApplicationService {
     );
 
     if (existingSocialAccount) {
+      if (existingSocialAccount.user.isSuspended) {
+        throw new Error('ACCOUNT_SUSPENDED');
+      }
       await this.userRepository.update(existingSocialAccount.userId, { lastLoginAt: new Date() });
       const token = this.authService.generateToken(existingSocialAccount.userId);
       return {
@@ -200,6 +213,9 @@ export class UserApplicationService {
     const existingUser = await this.userRepository.findByEmail(input.email);
 
     if (existingUser) {
+      if (existingUser.isSuspended) {
+        throw new Error('ACCOUNT_SUSPENDED');
+      }
       await this.socialAccountRepository.create({
         userId: existingUser.id,
         provider: input.provider,

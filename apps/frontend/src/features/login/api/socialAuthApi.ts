@@ -1,5 +1,14 @@
 import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
+export class AccountSuspendedError extends Error {
+  code: string;
+  constructor(message: string) {
+    super(message);
+    this.name = 'AccountSuspendedError';
+    this.code = 'ACCOUNT_SUSPENDED';
+  }
+}
+
 interface SocialLoginResponse {
   user: {
     id: string;
@@ -45,6 +54,9 @@ export async function socialLogin(
   const data = await response.json();
 
   if (!response.ok) {
+    if (data.code === 'ACCOUNT_SUSPENDED') {
+      throw new AccountSuspendedError(data.message || '활동이 정지된 계정입니다.');
+    }
     throw new Error(data.message || 'Social login failed');
   }
 

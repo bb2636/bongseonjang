@@ -8,12 +8,20 @@ interface RequestOptions {
 
 export class ApiError extends Error {
   status: number;
+  code?: string;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, code?: string) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.code = code;
   }
+}
+
+function handleAccountSuspended(): void {
+  localStorage.removeItem('token');
+  alert('활동이 정지된 계정입니다.');
+  window.location.href = '/login';
 }
 
 class ApiClient {
@@ -60,9 +68,20 @@ class ApiClient {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      
+      if (response.status === 403 && errorData.code === 'ACCOUNT_SUSPENDED') {
+        handleAccountSuspended();
+        throw new ApiError(
+          errorData.message || '활동이 정지된 계정입니다.',
+          response.status,
+          errorData.code
+        );
+      }
+      
       throw new ApiError(
         errorData.message || `Request failed with status ${response.status}`,
-        response.status
+        response.status,
+        errorData.code
       );
     }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import './UserDetailPanel.css';
 
 interface UserDetail {
@@ -11,6 +12,7 @@ interface UserDetail {
   gender: string | null;
   membershipGrade: string;
   isEmailVerified: boolean;
+  isSuspended: boolean;
   lastLoginAt: string | null;
   createdAt: string;
   orderCount: number;
@@ -54,6 +56,8 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [inquiriesLoading, setInquiriesLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('basic');
+  const [showSuspendDialog, setShowSuspendDialog] = useState(false);
+  const [isSuspending, setIsSuspending] = useState(false);
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -175,7 +179,35 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
   };
 
   const handleSuspendAccount = () => {
-    console.log('Suspend account:', userId);
+    setShowSuspendDialog(true);
+  };
+
+  const handleConfirmSuspend = async () => {
+    setIsSuspending(true);
+    try {
+      const token = localStorage.getItem('token');
+      const newSuspendedStatus = !user?.isSuspended;
+      const response = await fetch(`/api/admin/users/${userId}/suspend`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ isSuspended: newSuspendedStatus }),
+      });
+      if (response.ok) {
+        await fetchUserDetail();
+      }
+    } catch (error) {
+      console.error('Failed to suspend/unsuspend user:', error);
+    } finally {
+      setIsSuspending(false);
+      setShowSuspendDialog(false);
+    }
+  };
+
+  const handleCancelSuspend = () => {
+    setShowSuspendDialog(false);
   };
 
   if (!isOpen) return null;
@@ -357,11 +389,26 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
         )}
 
         <div className="user-detail-footer">
-          <button className="user-detail-suspend-button" onClick={handleSuspendAccount}>
-            계정 정지
+          <button 
+            className={`user-detail-suspend-button ${user?.isSuspended ? 'user-detail-suspend-button--unsuspend' : ''}`}
+            onClick={handleSuspendAccount}
+            disabled={isSuspending}
+          >
+            {isSuspending ? '처리 중...' : (user?.isSuspended ? '정지 해제' : '계정 정지')}
           </button>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={showSuspendDialog}
+        title={user?.isSuspended ? '계정 정지를 해제하시겠습니까?' : '계정을 정지하시겠습니까?'}
+        subtitle={user?.isSuspended 
+          ? '해당 사용자가 다시 서비스를 이용할 수 있게 됩니다.' 
+          : '해당 사용자는 로그인이 차단되며 서비스를 이용할 수 없게 됩니다.'}
+        cancelText="취소"
+        confirmText={user?.isSuspended ? '정지 해제' : '계정 정지'}
+        onCancel={handleCancelSuspend}
+        onConfirm={handleConfirmSuspend}
+      />
     </>
   );
 }

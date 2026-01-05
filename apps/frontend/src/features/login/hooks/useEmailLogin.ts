@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { LOGIN_ROUTES } from '../constants';
-import { loginService } from '../services/loginService';
+import { loginService, AccountSuspendedError } from '../services/loginService';
 import { useAuth } from '../../../contexts/AuthContext';
 
 interface FieldError {
@@ -31,6 +31,10 @@ export function useEmailLogin() {
       navigate('/');
     },
     onError: (error: Error) => {
+      if (error instanceof AccountSuspendedError) {
+        alert('활동이 정지된 계정입니다.');
+        return;
+      }
       setErrors(prev => ({ ...prev, password: error.message || '로그인에 실패했습니다' }));
     },
   });
