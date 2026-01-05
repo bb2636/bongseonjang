@@ -109,36 +109,6 @@ export function AdminLoginPage() {
 
   return (
     <div className="admin-login">
-      <div className="admin-login__background">
-        <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
-              <stop offset="100%" stopColor="rgba(200,220,235,0.5)" />
-            </linearGradient>
-            <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(180,205,225,0.6)" />
-              <stop offset="100%" stopColor="rgba(160,190,215,0.4)" />
-            </linearGradient>
-            <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(200,220,240,0.55)" />
-              <stop offset="100%" stopColor="rgba(180,205,230,0.35)" />
-            </linearGradient>
-          </defs>
-          <path d="M-100,-100 Q300,300 700,100 T1500,350 T2100,150 L2100,-100 Z" fill="url(#waveGrad1)" />
-          <path d="M-100,50 Q400,400 900,200 T1700,500 T2200,300 L2100,-50 Z" fill="url(#waveGrad2)" />
-          <path d="M-100,250 Q500,550 1000,350 T1800,650 T2200,450 L2100,100 Z" fill="url(#waveGrad3)" />
-          <path d="M-100,450 Q550,750 1100,500 T1850,800 T2200,600 L2100,250 Z" fill="url(#waveGrad1)" />
-          <path d="M-100,650 Q600,950 1200,700 T1900,1000 T2200,800 L2100,400 Z" fill="url(#waveGrad2)" />
-          <path d="M-100,850 Q650,1150 1300,900 T1950,1150 T2200,950 L2100,600 Z" fill="url(#waveGrad3)" />
-          <path d="M2200,0 Q1800,350 1300,150 T600,450 T-100,250 L-100,-100 L2200,-100 Z" fill="url(#waveGrad2)" />
-          <path d="M2200,200 Q1700,550 1200,350 T500,650 T-100,450 L-100,50 L2200,0 Z" fill="url(#waveGrad3)" />
-          <path d="M2200,400 Q1600,750 1100,550 T400,850 T-100,650 L-100,250 L2200,200 Z" fill="url(#waveGrad1)" />
-          <path d="M2200,600 Q1500,950 1000,750 T300,1050 T-100,850 L-100,450 L2200,400 Z" fill="url(#waveGrad2)" />
-          <path d="M2200,800 Q1400,1150 900,950 T200,1200 T-100,1050 L-100,650 L2200,600 Z" fill="url(#waveGrad3)" />
-        </svg>
-      </div>
-
       <div className="admin-login__container">
         <div className="admin-login__logo-section">
           <div className="admin-login__logo-box">
