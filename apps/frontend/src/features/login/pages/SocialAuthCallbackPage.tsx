@@ -113,8 +113,8 @@ export default function SocialAuthCallbackPage() {
         }
       } catch (err) {
         if (err instanceof AccountSuspendedError) {
-          alert('활동이 정지된 계정입니다.');
-          navigate('/login', { replace: true });
+          const { triggerGlobalAlert } = await import('../../../contexts/AlertModalContext');
+          triggerGlobalAlert('활동이 제한된 계정입니다', '/login');
           return;
         }
         const message = err instanceof Error ? err.message : '로그인에 실패했습니다.';

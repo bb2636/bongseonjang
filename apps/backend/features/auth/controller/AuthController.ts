@@ -68,6 +68,10 @@ export class AuthController {
       res.json(result);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
+      if (message === 'ACCOUNT_SUSPENDED') {
+        res.status(403).json({ code: 'ACCOUNT_SUSPENDED', message: '활동이 제한된 계정입니다' });
+        return;
+      }
       res.status(401).json({ message });
     }
   }
@@ -155,6 +159,10 @@ export class AuthController {
       console.error('=== socialLogin ERROR ===');
       console.error('Error:', error);
       const message = error instanceof Error ? error.message : 'Social login failed';
+      if (message === 'ACCOUNT_SUSPENDED') {
+        res.status(403).json({ code: 'ACCOUNT_SUSPENDED', message: '활동이 제한된 계정입니다' });
+        return;
+      }
       res.status(400).json({ message });
     }
   }
@@ -184,6 +192,10 @@ export class AuthController {
       res.json(result);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Social login failed';
+      if (message === 'ACCOUNT_SUSPENDED') {
+        res.status(403).json({ code: 'ACCOUNT_SUSPENDED', message: '활동이 제한된 계정입니다' });
+        return;
+      }
       res.status(400).json({ message });
     }
   }

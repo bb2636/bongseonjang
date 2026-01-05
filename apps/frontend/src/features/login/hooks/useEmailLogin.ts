@@ -30,9 +30,10 @@ export function useEmailLogin() {
       }
       navigate('/');
     },
-    onError: (error: Error) => {
+    onError: async (error: Error) => {
       if (error instanceof AccountSuspendedError) {
-        alert('활동이 정지된 계정입니다.');
+        const { triggerGlobalAlert } = await import('../../../contexts/AlertModalContext');
+        triggerGlobalAlert('활동이 제한된 계정입니다', '/login');
         return;
       }
       setErrors(prev => ({ ...prev, password: error.message || '로그인에 실패했습니다' }));

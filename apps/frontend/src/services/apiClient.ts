@@ -1,3 +1,5 @@
+import { triggerGlobalAlert } from '../contexts/AlertModalContext';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 interface RequestOptions {
@@ -20,8 +22,7 @@ export class ApiError extends Error {
 
 function handleAccountSuspended(): void {
   localStorage.removeItem('user_token');
-  alert('활동이 정지된 계정입니다.');
-  window.location.href = '/login';
+  triggerGlobalAlert('활동이 제한된 계정입니다', '/login');
 }
 
 class ApiClient {
