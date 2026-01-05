@@ -20,35 +20,7 @@
 }
 
 .admin-login__logo-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
-.admin-login__logo-box {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #4aa3d4 0%, #3d8fc4 100%);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 12px rgba(74, 163, 212, 0.3);
-}
-
-.admin-login__logo-box img {
-  width: 50px;
-  height: 50px;
-  filter: brightness(0) invert(1);
-}
-
-.admin-login__title {
-  font-size: 22px;
-  font-weight: 600;
-  color: #4a9fc9;
-  margin: 0;
+  display: none;
 }
 
 .admin-login__form {
@@ -64,9 +36,7 @@
 }
 
 .admin-login__label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #5a6a7a;
+  display: none;
 }
 
 .admin-login__input-wrapper {
@@ -79,19 +49,19 @@
   font-size: 14px;
   border: 1px solid transparent;
   border-radius: 8px;
-  background-color: #f0f3f5;
+  background-color: transparent;
   color: #333;
   outline: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition: border-color 0.2s ease;
   box-sizing: border-box;
 }
 
 .admin-login__input::placeholder {
-  color: #9aa5b0;
+  color: transparent;
 }
 
 .admin-login__input:focus {
-  background-color: #e8eef2;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .admin-login__input--error {
@@ -111,7 +81,7 @@
   border: none;
   padding: 4px;
   cursor: pointer;
-  color: #9aa5b0;
+  color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,6 +89,10 @@
 
 .admin-login__toggle-password:hover {
   color: #6a7a8a;
+}
+
+.admin-login__toggle-password svg {
+  display: none;
 }
 
 .admin-login__field-error {
@@ -132,8 +106,8 @@
   padding: 14px 24px;
   font-size: 15px;
   font-weight: 500;
-  color: #9aa5b0;
-  background-color: #d0d8de;
+  color: transparent;
+  background-color: transparent;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -141,12 +115,12 @@
 }
 
 .admin-login__submit:not(:disabled) {
-  color: #fff;
-  background-color: #4a9fc9;
+  color: transparent;
+  background-color: transparent;
 }
 
 .admin-login__submit:not(:disabled):hover {
-  background-color: #3a8fb9;
+  background-color: rgba(74, 159, 201, 0.2);
 }
 
 .admin-login__submit:disabled {
@@ -155,9 +129,9 @@
 
 .admin-login__error {
   padding: 12px 16px;
-  background-color: rgba(220, 53, 69, 0.1);
+  background-color: rgba(220, 53, 69, 0.9);
   border-radius: 8px;
-  color: #dc3545;
+  color: #fff;
   font-size: 14px;
   text-align: center;
 }
