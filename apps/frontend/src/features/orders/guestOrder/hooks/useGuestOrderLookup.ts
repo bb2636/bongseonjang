@@ -6,16 +6,19 @@ import { lookupGuestOrder, GuestOrder } from '../../../payment/api/paymentApi';
 import { useToast } from '../../../../contexts/ToastContext';
 
 interface GuestOrderLookupState {
+  ordererName: string;
   orderNumber: string;
   orderPassword: string;
 }
 
 interface GuestOrderLookupErrors {
+  ordererName: string | null;
   orderNumber: string | null;
   orderPassword: string | null;
 }
 
 interface TouchedFields {
+  ordererName: boolean;
   orderNumber: boolean;
   orderPassword: boolean;
 }
@@ -26,11 +29,13 @@ export function useGuestOrderLookup() {
   const { showToast } = useToast();
   
   const [formData, setFormData] = useState<GuestOrderLookupState>({
+    ordererName: '',
     orderNumber: '',
     orderPassword: '',
   });
   
   const [touched, setTouched] = useState<TouchedFields>({
+    ordererName: false,
     orderNumber: false,
     orderPassword: false,
   });
@@ -39,7 +44,7 @@ export function useGuestOrderLookup() {
   const [order, setOrder] = useState<GuestOrder | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const validateOrderNumber = useCallback((value: string): string | null => {
+  const validateRequired = useCallback((value: string): string | null => {
     if (!value.trim()) {
       return GUEST_ORDER_MESSAGES.REQUIRED;
     }
@@ -60,12 +65,18 @@ export function useGuestOrderLookup() {
   }, []);
 
   const errors: GuestOrderLookupErrors = {
-    orderNumber: touched.orderNumber ? validateOrderNumber(formData.orderNumber) : null,
+    ordererName: touched.ordererName ? validateRequired(formData.ordererName) : null,
+    orderNumber: touched.orderNumber ? validateRequired(formData.orderNumber) : null,
     orderPassword: touched.orderPassword ? validatePassword(formData.orderPassword) : null,
   };
 
-  const isValid = !validateOrderNumber(formData.orderNumber) && 
+  const isValid = !validateRequired(formData.ordererName) &&
+                  !validateRequired(formData.orderNumber) && 
                   !validatePassword(formData.orderPassword);
+
+  const onOrdererNameChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, ordererName: value }));
+  }, []);
 
   const onOrderNumberChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, orderNumber: value }));
@@ -74,6 +85,10 @@ export function useGuestOrderLookup() {
   const onOrderPasswordChange = useCallback((value: string) => {
     const cleaned = value.replace(/[^0-9]/g, '');
     setFormData(prev => ({ ...prev, orderPassword: cleaned }));
+  }, []);
+
+  const onOrdererNameBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, ordererName: true }));
   }, []);
 
   const onOrderNumberBlur = useCallback(() => {
@@ -85,7 +100,7 @@ export function useGuestOrderLookup() {
   }, []);
 
   const onSubmit = useCallback(async () => {
-    setTouched({ orderNumber: true, orderPassword: true });
+    setTouched({ ordererName: true, orderNumber: true, orderPassword: true });
 
     if (!isValid) {
       return;
@@ -95,6 +110,7 @@ export function useGuestOrderLookup() {
     setHasSearched(true);
     try {
       const result = await lookupGuestOrder({
+        ordererName: formData.ordererName,
         orderNumber: formData.orderNumber,
         orderPassword: formData.orderPassword,
       });
@@ -119,6 +135,7 @@ export function useGuestOrderLookup() {
 
   return {
     guestOrderLookup: {
+      ordererName: formData.ordererName,
       orderNumber: formData.orderNumber,
       orderPassword: formData.orderPassword,
       isLoading,
@@ -126,8 +143,10 @@ export function useGuestOrderLookup() {
       errors,
       order,
       hasSearched,
+      onOrdererNameChange,
       onOrderNumberChange,
       onOrderPasswordChange,
+      onOrdererNameBlur,
       onOrderNumberBlur,
       onOrderPasswordBlur,
       onSubmit,

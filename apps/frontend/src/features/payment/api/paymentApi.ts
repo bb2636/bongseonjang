@@ -205,6 +205,7 @@ export async function prepareGuestPayment(data: PrepareGuestPaymentRequest): Pro
 }
 
 export interface GuestOrderLookupRequest {
+  ordererName: string;
   orderNumber: string;
   orderPassword: string;
 }

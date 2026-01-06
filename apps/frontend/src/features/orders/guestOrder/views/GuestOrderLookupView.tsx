@@ -5,18 +5,22 @@ import './GuestOrderLookupView.css';
 
 interface GuestOrderLookupViewProps {
   guestOrderLookup: {
+    ordererName: string;
     orderNumber: string;
     orderPassword: string;
     isLoading: boolean;
     isValid: boolean;
     errors: {
+      ordererName: string | null;
       orderNumber: string | null;
       orderPassword: string | null;
     };
     order: GuestOrder | null;
     hasSearched: boolean;
+    onOrdererNameChange: (value: string) => void;
     onOrderNumberChange: (value: string) => void;
     onOrderPasswordChange: (value: string) => void;
+    onOrdererNameBlur: () => void;
     onOrderNumberBlur: () => void;
     onOrderPasswordBlur: () => void;
     onSubmit: () => void;
@@ -60,9 +64,19 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
         <div className="guest-order-form">
           <div className="guest-order-input-group">
             <Input
+              label="주문자명"
+              type="text"
+              placeholder="주문자명"
+              value={guestOrderLookup.ordererName}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrdererNameChange(e.target.value)}
+              onBlur={guestOrderLookup.onOrdererNameBlur}
+              error={guestOrderLookup.errors.ordererName}
+            />
+
+            <Input
               label="주문번호"
               type="text"
-              placeholder="주문번호를 입력해주세요"
+              placeholder="주문번호"
               value={guestOrderLookup.orderNumber}
               onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderNumberChange(e.target.value)}
               onBlur={guestOrderLookup.onOrderNumberBlur}
@@ -71,7 +85,7 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
 
             <PasswordInput
               label="주문 비밀번호"
-              placeholder="4~6자리 숫자"
+              placeholder="주문비밀번호"
               value={guestOrderLookup.orderPassword}
               onChange={(e: ChangeEvent<HTMLInputElement>) => guestOrderLookup.onOrderPasswordChange(e.target.value)}
               onBlur={guestOrderLookup.onOrderPasswordBlur}

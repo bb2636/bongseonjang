@@ -1101,10 +1101,10 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
 
 router.post('/guest/lookup', async (req: Request, res: Response) => {
   try {
-    const { orderNumber, orderPassword } = req.body;
+    const { ordererName, orderNumber, orderPassword } = req.body;
 
-    if (!orderNumber || !orderPassword) {
-      return res.status(400).json({ error: '주문번호와 주문 비밀번호를 입력해주세요' });
+    if (!ordererName || !orderNumber || !orderPassword) {
+      return res.status(400).json({ error: '주문자명, 주문번호, 주문 비밀번호를 모두 입력해주세요' });
     }
 
     const orderRepository = AppDataSource.getRepository(Order);
@@ -1125,6 +1125,10 @@ router.post('/guest/lookup', async (req: Request, res: Response) => {
 
     if (!guestDetail) {
       return res.status(404).json({ error: '비회원 주문 정보를 찾을 수 없습니다' });
+    }
+
+    if (guestDetail.guestName !== ordererName.trim()) {
+      return res.status(401).json({ error: '주문자 정보가 일치하지 않습니다' });
     }
 
     if (!guestDetail.orderPasswordHash) {
