@@ -250,7 +250,7 @@
 
 .order-table__cell--tracking {
   padding: 6px 12px;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .order-table__tracking-button {
@@ -267,6 +267,9 @@
   cursor: pointer;
   text-align: left;
   transition: background-color 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .order-table__tracking-button:hover:not(:disabled) {
