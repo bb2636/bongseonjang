@@ -258,6 +258,8 @@ router.get('/:productId', async (req: Request, res: Response) => {
       categoryName: category?.name || '미분류',
       exposureCategoryIds,
       basePrice: product.basePrice,
+      discountRate: product.discountRate || 0,
+      discountedPrice: product.discountedPrice,
       stockQuantity: product.stockQuantity,
       saleStartDate: product.saleStartDate,
       saleEndDate: product.saleEndDate,
@@ -311,6 +313,7 @@ router.put('/:productId', async (req: Request, res: Response) => {
       categoryId,
       exposureCategoryIds,
       basePrice,
+      discountRate,
       startDate,
       endDate,
       countdownDays,
@@ -350,6 +353,10 @@ router.put('/:productId', async (req: Request, res: Response) => {
     product.name = name;
     product.productCategoryId = categoryId;
     product.basePrice = basePrice;
+    product.discountRate = discountRate || 0;
+    product.discountedPrice = discountRate > 0 
+      ? Math.round(basePrice * (1 - discountRate / 100))
+      : basePrice;
     product.saleStartDate = startDate ? new Date(startDate) : null;
     product.saleEndDate = endDate ? new Date(endDate) : null;
     product.countdownDays = countdownDays ?? null;
@@ -464,6 +471,7 @@ router.post('/', async (req: Request, res: Response) => {
       categoryId,
       exposureCategoryIds,
       basePrice,
+      discountRate,
       startDate,
       endDate,
       countdownDays,
@@ -499,6 +507,10 @@ router.post('/', async (req: Request, res: Response) => {
       name,
       productCategoryId: categoryId,
       basePrice,
+      discountRate: discountRate || 0,
+      discountedPrice: discountRate > 0 
+        ? Math.round(basePrice * (1 - discountRate / 100))
+        : basePrice,
       stockQuantity: 0,
       saleStartDate: startDate ? new Date(startDate) : null,
       saleEndDate: endDate ? new Date(endDate) : null,

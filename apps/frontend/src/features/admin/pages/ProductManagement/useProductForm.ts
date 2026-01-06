@@ -519,14 +519,20 @@ export function useProductForm() {
         ? data.exposureCategoryIds.map((id: number) => String(id))
         : [];
 
+      const loadedDiscountRate = data.discountRate || 0;
+      const loadedDiscountEnabled = loadedDiscountRate > 0;
+      const loadedDiscountedPrice = loadedDiscountEnabled
+        ? (data.discountedPrice ?? Math.round((data.basePrice || 0) * (1 - loadedDiscountRate / 100)))
+        : (data.basePrice || 0);
+
       setFormData({
         name: data.name || '',
         categoryId: data.categoryId || '',
         exposureCategoryIds,
         basePrice: data.basePrice || 0,
-        discountEnabled: false,
-        discountRate: 0,
-        discountedPrice: data.basePrice || 0,
+        discountEnabled: loadedDiscountEnabled,
+        discountRate: loadedDiscountRate,
+        discountedPrice: loadedDiscountedPrice,
         startDate: formatDate(data.saleStartDate),
         endDate: formatDate(data.saleEndDate),
         countdownDays: data.countdownDays ?? null,
@@ -684,8 +690,7 @@ export function useProductForm() {
         name: formData.name,
         categoryId: formData.categoryId,
         exposureCategoryIds: formData.exposureCategoryIds,
-        basePrice: formData.discountEnabled ? formData.discountedPrice : formData.basePrice,
-        originalPrice: formData.basePrice,
+        basePrice: formData.basePrice,
         discountRate: formData.discountEnabled ? formData.discountRate : 0,
         startDate: formData.startDate || null,
         endDate: formData.endDate || null,

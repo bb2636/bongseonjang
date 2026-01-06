@@ -124,13 +124,18 @@ export class ProductService {
       isDefault: option.sortOrder === 0,
     }));
 
+    const discountRate = product.discountRate ?? 0;
+    const discountedPrice = discountRate > 0
+      ? (product.discountedPrice ?? Math.round(product.basePrice * (1 - discountRate / 100)))
+      : product.basePrice;
+
     return {
       id: product.id,
       name: product.name,
       imageUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl),
       originalPrice: product.basePrice,
-      discountPercent: 0,
-      discountedPrice: product.basePrice,
+      discountPercent: discountRate,
+      discountedPrice: discountedPrice,
       summary: summaryInfo?.value || detailContent.description?.substring(0, 100),
       origin: originInfo?.value,
       reviewCount: reviewStats?.reviewCount ?? 0,
@@ -189,6 +194,11 @@ export class ProductService {
       }
     }
 
+    const discountRate = product.discountRate ?? 0;
+    const discountedPrice = discountRate > 0
+      ? (product.discountedPrice ?? Math.round(product.basePrice * (1 - discountRate / 100)))
+      : product.basePrice;
+
     return {
       id: product.id,
       name: product.name,
@@ -196,9 +206,9 @@ export class ProductService {
       description: descriptionText,
       thumbnailUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl),
       basePrice: product.basePrice,
-      discountRate: 0,
-      isDiscounted: false,
-      discountedPrice: product.basePrice,
+      discountRate: discountRate,
+      isDiscounted: discountRate > 0,
+      discountedPrice: discountedPrice,
       lowestPrice,
       weight: product.weight ?? undefined,
       origin: product.origin ?? undefined,

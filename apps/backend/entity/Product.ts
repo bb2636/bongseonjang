@@ -53,6 +53,12 @@ export class Product {
   @Column({ type: 'varchar', length: 200, nullable: true, name: 'shipping_method' })
   shippingMethod!: string | null;
 
+  @Column({ type: 'int', default: 0, name: 'discount_rate' })
+  discountRate!: number;
+
+  @Column({ type: 'int', nullable: true, name: 'discounted_price' })
+  discountedPrice!: number | null;
+
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date;
 
