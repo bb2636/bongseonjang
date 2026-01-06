@@ -121,6 +121,11 @@ const PaymentFailPage = lazy(() =>
     default: m.PaymentFailPage,
   }))
 );
+const PaymentSuccessDemoPage = lazy(() =>
+  import("./features/payment/pages/PaymentSuccessDemoPage").then((m) => ({
+    default: m.PaymentSuccessDemoPage,
+  }))
+);
 
 const NoticeListPage = lazy(() =>
   import("./features/notice").then((m) => ({ default: m.NoticeListPage }))
@@ -340,6 +345,7 @@ export default function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/checkout/guest" element={<GuestCheckoutPage />} />
         <Route path="/payment/success" element={<PaymentSuccessPage />} />
+        <Route path="/payment/success/demo" element={<PaymentSuccessDemoPage />} />
         <Route path="/payment/fail" element={<PaymentFailPage />} />
         <Route path="/notice" element={<NoticeListPage />} />
         <Route path="/notice/:id" element={<NoticeDetailPage />} />
