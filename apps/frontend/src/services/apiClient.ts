@@ -32,17 +32,20 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private getAuthToken(): string | null {
+  private getAuthToken(endpoint: string): string | null {
+    if (endpoint.startsWith('/admin')) {
+      return sessionStorage.getItem('admin_token');
+    }
     return localStorage.getItem('user_token');
   }
 
-  private getHeaders(customHeaders?: Record<string, string>): Headers {
+  private getHeaders(endpoint: string, customHeaders?: Record<string, string>): Headers {
     const headers = new Headers({
       'Content-Type': 'application/json',
       ...customHeaders,
     });
 
-    const token = this.getAuthToken();
+    const token = this.getAuthToken(endpoint);
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
     }
@@ -54,7 +57,7 @@ class ApiClient {
     const { method = 'GET', body, headers: customHeaders } = options;
     
     const url = `${this.baseUrl}${endpoint}`;
-    const headers = this.getHeaders(customHeaders);
+    const headers = this.getHeaders(endpoint, customHeaders);
 
     const config: RequestInit = {
       method,
