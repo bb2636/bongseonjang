@@ -125,14 +125,15 @@ export default function QuickCartBottomSheet() {
   };
 
   const calculateItemPrice = (item: SelectedItem): number => {
-    if (item.option && product) {
-      const finalPrice = product.basePrice + item.option.additionalPrice;
-      return finalPrice * item.quantity;
+    if (!product) return 0;
+    const usesMainOptions = !(product.options && product.options.length > 0);
+    if (item.option) {
+      const unitPrice = usesMainOptions 
+        ? (item.option.additionalPrice || product.discountedPrice)
+        : (product.basePrice + item.option.additionalPrice);
+      return unitPrice * item.quantity;
     }
-    if (product) {
-      return product.discountedPrice * item.quantity;
-    }
-    return 0;
+    return product.discountedPrice * item.quantity;
   };
 
   const formatPrice = (price: number): string => {
@@ -169,10 +170,16 @@ export default function QuickCartBottomSheet() {
           throw new Error(errorData.error || 'Failed to add to cart');
         }
       } else {
+        const usesMainOptions = !(product.options && product.options.length > 0);
         for (const item of selectedItems) {
-          const unitPrice = item.option 
-            ? product.basePrice + item.option.additionalPrice
-            : product.discountedPrice;
+          let unitPrice: number;
+          if (item.option) {
+            unitPrice = usesMainOptions 
+              ? (item.option.additionalPrice || product.discountedPrice)
+              : (product.basePrice + item.option.additionalPrice);
+          } else {
+            unitPrice = product.discountedPrice;
+          }
           guestCartStorage.addItem({
             productId: product.id,
             productName: product.name,
@@ -201,14 +208,23 @@ export default function QuickCartBottomSheet() {
   const handleBuyNow = async () => {
     if (selectedItems.length === 0 || !product) return;
 
-    const items = selectedItems.map(item => ({
-      productOptionId: item.option?.id || null,
-      optionName: item.option?.name || null,
-      quantity: item.quantity,
-      unitPrice: item.option 
-        ? product.basePrice + item.option.additionalPrice
-        : product.discountedPrice,
-    }));
+    const usesMainOptions = !(product.options && product.options.length > 0);
+    const items = selectedItems.map(item => {
+      let unitPrice: number;
+      if (item.option) {
+        unitPrice = usesMainOptions 
+          ? (item.option.additionalPrice || product.discountedPrice)
+          : (product.basePrice + item.option.additionalPrice);
+      } else {
+        unitPrice = product.discountedPrice;
+      }
+      return {
+        productOptionId: item.option?.id || null,
+        optionName: item.option?.name || null,
+        quantity: item.quantity,
+        unitPrice,
+      };
+    });
 
     const directPurchaseData = {
       productId: product.id,
@@ -272,19 +288,28 @@ export default function QuickCartBottomSheet() {
                     </button>
                     {isDropdownOpen && (
                       <div className="quick-cart-sheet__dropdown-menu">
-                        {productOptions.map((option) => (
-                          <button
-                            key={option.id}
-                            className={`quick-cart-sheet__dropdown-item ${option.stockQty <= 0 ? 'quick-cart-sheet__dropdown-item--disabled' : ''}`}
-                            onClick={() => option.stockQty > 0 && handleOptionSelect(option)}
-                            disabled={option.stockQty <= 0}
-                          >
-                            <span>{option.name}</span>
-                            <span className="quick-cart-sheet__dropdown-price">
-                              {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : formatPrice(product.basePrice)}
-                            </span>
-                          </button>
-                        ))}
+                        {productOptions.map((option) => {
+                          const usesMainOptions = !(product.options && product.options.length > 0);
+                          const displayPrice = usesMainOptions
+                            ? (option.additionalPrice || product.discountedPrice)
+                            : option.additionalPrice;
+                          const priceLabel = usesMainOptions
+                            ? formatPrice(displayPrice)
+                            : (displayPrice > 0 ? `+${formatPrice(displayPrice)}` : formatPrice(product.basePrice));
+                          return (
+                            <button
+                              key={option.id}
+                              className={`quick-cart-sheet__dropdown-item ${option.stockQty <= 0 ? 'quick-cart-sheet__dropdown-item--disabled' : ''}`}
+                              onClick={() => option.stockQty > 0 && handleOptionSelect(option)}
+                              disabled={option.stockQty <= 0}
+                            >
+                              <span>{option.name}</span>
+                              <span className="quick-cart-sheet__dropdown-price">
+                                {priceLabel}
+                              </span>
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>

@@ -64,14 +64,15 @@ export function QuickCartProvider({ children }: QuickCartProviderProps) {
         throw new Error('상품 정보가 올바르지 않습니다');
       }
       
+      const basePrice = data.basePrice ?? 0;
       const discountedPrice = data.isDiscounted
-        ? Math.round(data.basePrice * (1 - (data.discountRate || 0) / 100))
-        : data.basePrice;
+        ? Math.round(basePrice * (1 - (data.discountRate || 0) / 100))
+        : basePrice;
 
       const quickCartProduct: QuickCartProduct = {
         id: data.id,
         name: data.name,
-        basePrice: data.basePrice,
+        basePrice,
         discountedPrice,
         imageUrl: data.images?.[0]?.imageUrl,
         isOptionRequired: data.isOptionRequired,
