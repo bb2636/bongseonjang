@@ -80,9 +80,11 @@ export default function ProductCarousel({
                 <div className="product-carousel__details">
                   <span className="product-carousel__name">{product.name}</span>
                   <div className="product-carousel__price-row">
-                    <span className="product-carousel__discount">
-                      {product.discountPercent}%
-                    </span>
+                    {product.discountPercent > 0 && (
+                      <span className="product-carousel__discount">
+                        {product.discountPercent}%
+                      </span>
+                    )}
                     <span className="product-carousel__price">
                       {formatPrice(product.discountedPrice)}원
                     </span>
