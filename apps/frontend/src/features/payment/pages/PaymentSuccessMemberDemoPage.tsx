@@ -13,16 +13,15 @@ export function PaymentSuccessMemberDemoPage() {
         
         <h1 className="member-success-title">결제완료!</h1>
         <p className="member-success-subtitle">신선한 바다가 곧 찾아갑니다</p>
-        
+      </div>
+      
+      <div className="member-success-footer">
         <button
           className="member-success-link"
           onClick={() => navigate('/orders')}
         >
           주문내역 확인하기
         </button>
-      </div>
-      
-      <div className="member-success-footer">
         <button
           className="member-success-home-button"
           onClick={() => navigate('/')}

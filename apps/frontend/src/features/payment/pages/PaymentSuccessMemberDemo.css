@@ -59,6 +59,10 @@
 
 .member-success-footer {
   padding: 16px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .member-success-home-button {
