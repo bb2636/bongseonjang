@@ -23,9 +23,6 @@ export function PaymentSuccessDemoPage() {
         <p className="payment-result-guest-notice">
           주문 조회를 위해 주문번호와 비밀번호를 기억해주세요.
         </p>
-        <p className="payment-result-shipping-notice">
-          배송비는 주문 확인 후 별도 연락드립니다.
-        </p>
         <div className="payment-result-buttons">
           <button
             className="payment-result-button payment-result-button--primary"

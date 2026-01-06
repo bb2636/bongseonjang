@@ -8,9 +8,10 @@ export function PaymentSuccessMemberDemoPage() {
   return (
     <div className="payment-result-page">
       <div className="payment-result-content">
-        <div className="payment-result-icon payment-result-icon--success">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-            <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <div className="payment-result-animated-check">
+          <svg className="checkmark" viewBox="0 0 52 52">
+            <circle className="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path className="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
           </svg>
         </div>
         <h1 className="payment-result-title">결제 완료</h1>
@@ -19,9 +20,6 @@ export function PaymentSuccessMemberDemoPage() {
         </p>
         <p className="payment-result-order-number">
           주문번호: {orderNumber}
-        </p>
-        <p className="payment-result-shipping-notice">
-          배송비는 주문 확인 후 별도 연락드립니다.
         </p>
         <div className="payment-result-buttons">
           <button
