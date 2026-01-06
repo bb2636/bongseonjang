@@ -8,20 +8,16 @@ export function PaymentSuccessMemberDemoPage() {
     <div className="member-success-page">
       <div className="member-success-content">
         <div className="member-success-character">
-          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="60" cy="95" rx="35" ry="8" fill="#E8F4FC" />
-            <path d="M30 55C30 35 45 20 60 20C75 20 90 35 90 55C90 75 75 90 60 90C45 90 30 75 30 55Z" fill="#FFE4C4"/>
-            <path d="M25 45C25 45 30 25 60 20C90 25 95 45 95 45C95 45 85 35 60 35C35 35 25 45 25 45Z" fill="#3B9BD5"/>
-            <path d="M20 50C20 50 25 30 60 25C95 30 100 50 100 50L95 55C95 55 85 40 60 40C35 40 25 55 25 55L20 50Z" fill="#3B9BD5"/>
-            <circle cx="45" cy="55" r="12" fill="white" stroke="#333" strokeWidth="2"/>
-            <circle cx="75" cy="55" r="12" fill="white" stroke="#333" strokeWidth="2"/>
-            <circle cx="45" cy="55" r="4" fill="#333"/>
-            <circle cx="75" cy="55" r="4" fill="#333"/>
-            <path d="M33 52C33 52 38 48 45 48" stroke="#333" strokeWidth="2" strokeLinecap="round"/>
-            <path d="M87 52C87 52 82 48 75 48" stroke="#333" strokeWidth="2" strokeLinecap="round"/>
-            <path d="M50 72C50 72 55 78 60 78C65 78 70 72 70 72" stroke="#333" strokeWidth="2" strokeLinecap="round" fill="none"/>
-            <ellipse cx="35" cy="65" rx="5" ry="3" fill="#FFB6C1" opacity="0.5"/>
-            <ellipse cx="85" cy="65" rx="5" ry="3" fill="#FFB6C1" opacity="0.5"/>
+          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="50" cy="58" rx="32" ry="30" fill="#FFECD2"/>
+            <path d="M18 48C18 48 22 28 50 24C78 28 82 48 82 48C82 48 75 38 50 38C25 38 18 48 18 48Z" fill="#4AADE8"/>
+            <path d="M14 42C14 42 20 18 50 14C80 18 86 42 86 42L82 48C82 48 74 32 50 32C26 32 18 48 18 48L14 42Z" fill="#4AADE8"/>
+            <circle cx="36" cy="54" r="10" fill="white" stroke="#2C2C2C" strokeWidth="2"/>
+            <circle cx="64" cy="54" r="10" fill="white" stroke="#2C2C2C" strokeWidth="2"/>
+            <circle cx="36" cy="54" r="3" fill="#2C2C2C"/>
+            <circle cx="64" cy="54" r="3" fill="#2C2C2C"/>
+            <line x1="46" y1="54" x2="54" y2="54" stroke="#2C2C2C" strokeWidth="2"/>
+            <path d="M40 70C40 70 45 76 50 76C55 76 60 70 60 70" stroke="#2C2C2C" strokeWidth="2" strokeLinecap="round" fill="none"/>
           </svg>
         </div>
         
