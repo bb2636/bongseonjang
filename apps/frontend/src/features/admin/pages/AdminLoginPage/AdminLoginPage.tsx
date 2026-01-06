@@ -103,9 +103,10 @@ export function AdminLoginPage() {
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
     if (token) {
-      navigate('/admin');
+      navigate('/admin', { replace: true });
     }
-  }, [navigate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="admin-login">
