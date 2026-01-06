@@ -166,12 +166,21 @@ export function GuestCheckoutPage() {
   const displayItems: DisplayItem[] = useMemo(() => {
     if (isDirectMode && directProduct && directPurchaseData) {
       return directPurchaseData.items.map((item, index) => {
+        const isFromMainOptions = directProduct.mainOptions.some(opt => opt.id === item.productOptionId);
         const productOption = item.productOptionId 
           ? directProduct.options.find(opt => opt.id === item.productOptionId) ||
             directProduct.mainOptions.find(opt => opt.id === item.productOptionId)
           : null;
         
-        const unitPrice = productOption ? productOption.price : directProduct.discountedPrice;
+        let unitPrice: number;
+        if (productOption) {
+          const additionalPrice = 'additionalPrice' in productOption ? productOption.additionalPrice : 0;
+          unitPrice = isFromMainOptions 
+            ? (additionalPrice || directProduct.discountedPrice)
+            : (directProduct.basePrice + additionalPrice);
+        } else {
+          unitPrice = directProduct.discountedPrice;
+        }
         
         return {
           id: `direct-${index}`,
