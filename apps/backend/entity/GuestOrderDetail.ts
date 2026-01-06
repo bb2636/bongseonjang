@@ -19,6 +19,9 @@ export class GuestOrderDetail {
   @Column({ type: 'varchar', length: 255, nullable: true })
   guestEmail!: string | null;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  orderPasswordHash!: string | null;
+
   @Column({ type: 'uuid', nullable: true })
   claimedUserId!: string | null;
 

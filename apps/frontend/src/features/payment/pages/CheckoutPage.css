@@ -696,3 +696,10 @@
 .checkout-address-search-button:hover {
   background-color: rgba(59, 155, 213, 0.1);
 }
+
+.checkout-input-hint {
+  margin: 4px 0 0;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  color: rgba(12, 12, 12, 0.5);
+}

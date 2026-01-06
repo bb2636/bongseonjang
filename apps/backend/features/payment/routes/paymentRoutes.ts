@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { In } from 'typeorm';
 import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { AppDataSource } from '../../../config/database';
 import { Order } from '../../../entity/Order';
 import { OrderItem } from '../../../entity/OrderItem';
@@ -958,6 +959,7 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
       guestName,
       guestPhone,
       guestEmail,
+      orderPassword,
       recipientName, 
       recipientPhone, 
       postalCode, 
@@ -975,6 +977,10 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
 
     if (!guestName || !guestPhone) {
       return res.status(400).json({ error: '주문자 정보를 입력해주세요' });
+    }
+
+    if (!orderPassword || orderPassword.length < 4 || orderPassword.length > 6) {
+      return res.status(400).json({ error: '주문 비밀번호는 4~6자리로 입력해주세요' });
     }
 
     if (!recipientName || !recipientPhone || !postalCode || !address) {
@@ -1045,12 +1051,14 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
       await orderItemRepository.save(orderItem);
     }
 
+    const orderPasswordHash = await bcrypt.hash(orderPassword, 10);
     const guestOrderDetail = guestOrderDetailRepository.create({
       orderId: order.id,
       guestName,
       guestPhoneHash: hashPhone(guestPhone),
       guestPhoneLast4: guestPhone.slice(-4),
       guestEmail: guestEmail || null,
+      orderPasswordHash,
     });
     await guestOrderDetailRepository.save(guestOrderDetail);
 
@@ -1093,64 +1101,73 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
 
 router.post('/guest/lookup', async (req: Request, res: Response) => {
   try {
-    const { guestName, guestPhone } = req.body;
+    const { orderNumber, orderPassword } = req.body;
 
-    if (!guestName || !guestPhone) {
-      return res.status(400).json({ error: '주문자 이름과 휴대폰 번호를 입력해주세요' });
+    if (!orderNumber || !orderPassword) {
+      return res.status(400).json({ error: '주문번호와 주문 비밀번호를 입력해주세요' });
     }
 
-    const phoneHash = hashPhone(guestPhone);
-
-    const guestOrderDetailRepository = AppDataSource.getRepository(GuestOrderDetail);
     const orderRepository = AppDataSource.getRepository(Order);
+    const guestOrderDetailRepository = AppDataSource.getRepository(GuestOrderDetail);
 
-    const guestDetails = await guestOrderDetailRepository.find({
-      where: { 
-        guestName,
-        guestPhoneHash: phoneHash,
-      },
+    const order = await orderRepository.findOne({
+      where: { orderNumber },
+      relations: ['items'],
     });
 
-    if (guestDetails.length === 0) {
-      return res.json({ orders: [] });
+    if (!order) {
+      return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
     }
 
-    const orderIds = guestDetails.map(g => g.orderId);
-    
-    const orders = await orderRepository.find({
-      where: { id: In(orderIds) },
-      relations: ['items'],
-      order: { createdAt: 'DESC' },
+    const guestDetail = await guestOrderDetailRepository.findOne({
+      where: { orderId: order.id },
     });
 
-    const ordersWithGuestInfo = orders.map(order => {
-      const guestDetail = guestDetails.find(g => g.orderId === order.id);
-      return {
-        id: order.id,
-        orderNumber: order.orderNumber,
-        status: order.status,
-        totalProductPrice: order.totalProductPrice,
-        finalAmount: order.finalAmount,
-        recipientName: order.recipientName,
-        recipientPhone: order.recipientPhone.slice(0, -4) + '****',
-        address: order.address,
-        createdAt: order.createdAt,
-        paidAt: order.paidAt,
-        items: order.items.map(item => ({
-          productId: item.productId,
-          productName: item.productName,
-          optionName: item.optionName,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          totalPrice: item.totalPrice,
-        })),
-        isClaimed: !!guestDetail?.claimedUserId,
-      };
-    });
+    if (!guestDetail) {
+      return res.status(404).json({ error: '비회원 주문 정보를 찾을 수 없습니다' });
+    }
 
-    return res.json({ orders: ordersWithGuestInfo });
+    if (!guestDetail.orderPasswordHash) {
+      return res.status(400).json({ error: '비밀번호가 설정되지 않은 주문입니다' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(orderPassword, guestDetail.orderPasswordHash);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: '주문 비밀번호가 일치하지 않습니다' });
+    }
+
+    const orderData = {
+      id: order.id,
+      orderNumber: order.orderNumber,
+      status: order.status,
+      totalProductPrice: order.totalProductPrice,
+      finalAmount: order.finalAmount,
+      recipientName: order.recipientName,
+      recipientPhone: order.recipientPhone.slice(0, -4) + '****',
+      postalCode: order.postalCode,
+      address: order.address,
+      addressDetail: order.addressDetail,
+      deliveryRequest: order.deliveryRequest,
+      createdAt: order.createdAt,
+      paidAt: order.paidAt,
+      items: order.items.map(item => ({
+        productId: item.productId,
+        productName: item.productName,
+        productImageUrl: item.productImageUrl,
+        optionName: item.optionName,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        totalPrice: item.totalPrice,
+      })),
+      guestName: guestDetail.guestName,
+      guestPhoneLast4: guestDetail.guestPhoneLast4,
+      guestEmail: guestDetail.guestEmail,
+      isClaimed: !!guestDetail.claimedUserId,
+    };
+
+    return res.json({ order: orderData });
   } catch (error) {
-    console.error('Failed to lookup guest orders:', error);
+    console.error('Failed to lookup guest order:', error);
     return res.status(500).json({ error: '주문 조회에 실패했습니다' });
   }
 });

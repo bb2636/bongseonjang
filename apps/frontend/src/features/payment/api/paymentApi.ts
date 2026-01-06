@@ -175,6 +175,7 @@ export interface PrepareGuestPaymentRequest {
   guestName: string;
   guestPhone: string;
   guestEmail?: string;
+  orderPassword: string;
   recipientName: string;
   recipientPhone: string;
   postalCode: string;
@@ -204,13 +205,14 @@ export async function prepareGuestPayment(data: PrepareGuestPaymentRequest): Pro
 }
 
 export interface GuestOrderLookupRequest {
-  guestName: string;
-  guestPhone: string;
+  orderNumber: string;
+  orderPassword: string;
 }
 
 export interface GuestOrderItem {
   productId: string;
   productName: string;
+  productImageUrl?: string | null;
   optionName: string | null;
   quantity: number;
   unitPrice: number;
@@ -225,14 +227,20 @@ export interface GuestOrder {
   finalAmount: number;
   recipientName: string;
   recipientPhone: string;
+  postalCode: string;
   address: string;
+  addressDetail: string | null;
+  deliveryRequest: string | null;
   createdAt: string;
   paidAt: string | null;
   items: GuestOrderItem[];
+  guestName: string;
+  guestPhoneLast4: string;
+  guestEmail: string | null;
   isClaimed: boolean;
 }
 
-export async function lookupGuestOrders(data: GuestOrderLookupRequest): Promise<{ orders: GuestOrder[] }> {
+export async function lookupGuestOrder(data: GuestOrderLookupRequest): Promise<{ order: GuestOrder }> {
   const response = await fetch('/api/payment/guest/lookup', {
     method: 'POST',
     headers: {

@@ -1,10 +1,10 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useQuery } from '@tanstack/react-query';
 import { prepareGuestPayment, GuestCartItem } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
-import { guestCartStorage } from '../../../utils/guestStorage';
+import { guestCartStorage, guestShippingStorage, guestOrdererStorage } from '../../../utils/guestStorage';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
@@ -82,6 +82,7 @@ export function GuestCheckoutPage() {
   const [guestName, setGuestName] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
+  const [orderPassword, setOrderPassword] = useState('');
 
   const [recipientName, setRecipientName] = useState('');
   const [recipientPhone, setRecipientPhone] = useState('');
@@ -98,6 +99,55 @@ export function GuestCheckoutPage() {
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
   const [termsAgreed, setTermsAgreed] = useState(false);
+
+  useEffect(() => {
+    const savedOrderer = guestOrdererStorage.get();
+    if (savedOrderer) {
+      setGuestName(savedOrderer.guestName);
+      setGuestPhone(savedOrderer.guestPhone);
+      setGuestEmail(savedOrderer.guestEmail);
+    }
+    
+    const savedShipping = guestShippingStorage.get();
+    if (savedShipping) {
+      setRecipientName(savedShipping.recipientName);
+      setRecipientPhone(savedShipping.recipientPhone);
+      setPostalCode(savedShipping.postalCode);
+      setAddress(savedShipping.address);
+      setAddressDetail(savedShipping.addressDetail);
+      setDeliveryRequest(savedShipping.deliveryRequest);
+      setSameAsOrderer(false);
+    }
+  }, []);
+
+  const saveOrdererToStorage = useCallback(() => {
+    if (guestName || guestPhone || guestEmail) {
+      guestOrdererStorage.save({ guestName, guestPhone, guestEmail });
+    }
+  }, [guestName, guestPhone, guestEmail]);
+
+  const saveShippingToStorage = useCallback(() => {
+    if (recipientName || postalCode || address) {
+      guestShippingStorage.save({
+        recipientName,
+        recipientPhone,
+        postalCode,
+        address,
+        addressDetail,
+        deliveryRequest: deliveryRequest === '직접 입력' ? customDeliveryRequest : deliveryRequest,
+      });
+    }
+  }, [recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, customDeliveryRequest]);
+
+  useEffect(() => {
+    const timer = setTimeout(saveOrdererToStorage, 500);
+    return () => clearTimeout(timer);
+  }, [saveOrdererToStorage]);
+
+  useEffect(() => {
+    const timer = setTimeout(saveShippingToStorage, 500);
+    return () => clearTimeout(timer);
+  }, [saveShippingToStorage]);
 
   const { data: directProduct, isLoading: isDirectProductLoading } = useQuery({
     queryKey: ['directProduct', directPurchaseData?.productId],
@@ -207,6 +257,14 @@ export function GuestCheckoutPage() {
       showToast('주문자 휴대폰 번호를 정확히 입력해주세요', 'error');
       return false;
     }
+    if (!orderPassword || orderPassword.length < 4 || orderPassword.length > 6) {
+      showToast('주문 비밀번호는 4~6자리로 입력해주세요', 'error');
+      return false;
+    }
+    if (!/^\d+$/.test(orderPassword)) {
+      showToast('주문 비밀번호는 숫자만 입력해주세요', 'error');
+      return false;
+    }
     if (!recipientName.trim()) {
       showToast('수령인 이름을 입력해주세요', 'error');
       return false;
@@ -259,6 +317,7 @@ export function GuestCheckoutPage() {
         guestName,
         guestPhone,
         guestEmail: guestEmail || undefined,
+        orderPassword,
         recipientName,
         recipientPhone,
         postalCode,
@@ -364,6 +423,19 @@ export function GuestCheckoutPage() {
                 onChange={(e) => setGuestEmail(e.target.value)}
                 placeholder="주문 확인 메일을 받으실 이메일"
               />
+            </div>
+            <div className="checkout-input-group">
+              <label className="checkout-label">주문 비밀번호 *</label>
+              <input
+                type="password"
+                inputMode="numeric"
+                className="checkout-input"
+                value={orderPassword}
+                onChange={(e) => setOrderPassword(e.target.value.replace(/[^0-9]/g, ''))}
+                placeholder="4~6자리 숫자 (주문 조회 시 사용)"
+                maxLength={6}
+              />
+              <p className="checkout-input-hint">비회원 주문 조회 시 주문번호와 함께 사용됩니다</p>
             </div>
           </div>
         </section>

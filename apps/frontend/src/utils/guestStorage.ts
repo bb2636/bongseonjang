@@ -119,6 +119,94 @@ export const guestCartStorage = {
   },
 };
 
+export interface GuestShippingAddress {
+  recipientName: string;
+  recipientPhone: string;
+  postalCode: string;
+  address: string;
+  addressDetail: string;
+  deliveryRequest: string;
+}
+
+export interface GuestOrdererInfo {
+  guestName: string;
+  guestPhone: string;
+  guestEmail: string;
+}
+
+const GUEST_SHIPPING_KEY = 'guest_shipping_address';
+const GUEST_ORDERER_KEY = 'guest_orderer_info';
+
+export const guestShippingStorage = {
+  get(): GuestShippingAddress | null {
+    try {
+      const data = localStorage.getItem(GUEST_SHIPPING_KEY);
+      if (!data) return null;
+      const parsed = JSON.parse(data);
+      if (parsed.version !== STORAGE_VERSION) {
+        localStorage.removeItem(GUEST_SHIPPING_KEY);
+        return null;
+      }
+      return parsed.data || null;
+    } catch {
+      localStorage.removeItem(GUEST_SHIPPING_KEY);
+      return null;
+    }
+  },
+
+  save(address: GuestShippingAddress): void {
+    try {
+      const data = {
+        version: STORAGE_VERSION,
+        data: address,
+        updatedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(GUEST_SHIPPING_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('Failed to save shipping address:', error);
+    }
+  },
+
+  clear(): void {
+    localStorage.removeItem(GUEST_SHIPPING_KEY);
+  },
+};
+
+export const guestOrdererStorage = {
+  get(): GuestOrdererInfo | null {
+    try {
+      const data = localStorage.getItem(GUEST_ORDERER_KEY);
+      if (!data) return null;
+      const parsed = JSON.parse(data);
+      if (parsed.version !== STORAGE_VERSION) {
+        localStorage.removeItem(GUEST_ORDERER_KEY);
+        return null;
+      }
+      return parsed.data || null;
+    } catch {
+      localStorage.removeItem(GUEST_ORDERER_KEY);
+      return null;
+    }
+  },
+
+  save(info: GuestOrdererInfo): void {
+    try {
+      const data = {
+        version: STORAGE_VERSION,
+        data: info,
+        updatedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(GUEST_ORDERER_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('Failed to save orderer info:', error);
+    }
+  },
+
+  clear(): void {
+    localStorage.removeItem(GUEST_ORDERER_KEY);
+  },
+};
+
 export const guestWishlistStorage = {
   getItems(): GuestWishlistItem[] {
     return getStorageData<GuestWishlistItem>(GUEST_WISHLIST_KEY);
