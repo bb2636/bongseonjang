@@ -2,22 +2,22 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGoBack } from '../../../../hooks/useGoBack';
 import { GUEST_ORDER_MESSAGES } from '../constants';
-import { lookupGuestOrders, GuestOrder } from '../../../payment/api/paymentApi';
+import { lookupGuestOrder, GuestOrder } from '../../../payment/api/paymentApi';
 import { useToast } from '../../../../contexts/ToastContext';
 
 interface GuestOrderLookupState {
-  ordererName: string;
-  phone: string;
+  orderNumber: string;
+  orderPassword: string;
 }
 
 interface GuestOrderLookupErrors {
-  ordererName: string | null;
-  phone: string | null;
+  orderNumber: string | null;
+  orderPassword: string | null;
 }
 
 interface TouchedFields {
-  ordererName: boolean;
-  phone: boolean;
+  orderNumber: boolean;
+  orderPassword: boolean;
 }
 
 export function useGuestOrderLookup() {
@@ -26,65 +26,66 @@ export function useGuestOrderLookup() {
   const { showToast } = useToast();
   
   const [formData, setFormData] = useState<GuestOrderLookupState>({
-    ordererName: '',
-    phone: '',
+    orderNumber: '',
+    orderPassword: '',
   });
   
   const [touched, setTouched] = useState<TouchedFields>({
-    ordererName: false,
-    phone: false,
+    orderNumber: false,
+    orderPassword: false,
   });
   
   const [isLoading, setIsLoading] = useState(false);
-  const [orders, setOrders] = useState<GuestOrder[]>([]);
+  const [order, setOrder] = useState<GuestOrder | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const validateRequired = useCallback((value: string): string | null => {
+  const validateOrderNumber = useCallback((value: string): string | null => {
     if (!value.trim()) {
       return GUEST_ORDER_MESSAGES.REQUIRED;
     }
     return null;
   }, []);
 
-  const validatePhone = useCallback((value: string): string | null => {
+  const validatePassword = useCallback((value: string): string | null => {
     if (!value.trim()) {
       return GUEST_ORDER_MESSAGES.REQUIRED;
     }
-    const phoneRegex = /^01[0-9]{8,9}$/;
-    const cleaned = value.replace(/[^0-9]/g, '');
-    if (!phoneRegex.test(cleaned)) {
-      return '올바른 휴대폰 번호를 입력해주세요';
+    if (value.length < 4 || value.length > 6) {
+      return '비밀번호는 4~6자리입니다';
+    }
+    if (!/^\d+$/.test(value)) {
+      return '숫자만 입력해주세요';
     }
     return null;
   }, []);
 
   const errors: GuestOrderLookupErrors = {
-    ordererName: touched.ordererName ? validateRequired(formData.ordererName) : null,
-    phone: touched.phone ? validatePhone(formData.phone) : null,
+    orderNumber: touched.orderNumber ? validateOrderNumber(formData.orderNumber) : null,
+    orderPassword: touched.orderPassword ? validatePassword(formData.orderPassword) : null,
   };
 
-  const isValid = !validateRequired(formData.ordererName) && 
-                  !validatePhone(formData.phone);
+  const isValid = !validateOrderNumber(formData.orderNumber) && 
+                  !validatePassword(formData.orderPassword);
 
-  const onOrdererNameChange = useCallback((value: string) => {
-    setFormData(prev => ({ ...prev, ordererName: value }));
+  const onOrderNumberChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, orderNumber: value }));
   }, []);
 
-  const onPhoneChange = useCallback((value: string) => {
+  const onOrderPasswordChange = useCallback((value: string) => {
     const cleaned = value.replace(/[^0-9]/g, '');
-    setFormData(prev => ({ ...prev, phone: cleaned }));
+    setFormData(prev => ({ ...prev, orderPassword: cleaned }));
   }, []);
 
-  const onOrdererNameBlur = useCallback(() => {
-    setTouched(prev => ({ ...prev, ordererName: true }));
+  const onOrderNumberBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, orderNumber: true }));
   }, []);
 
-  const onPhoneBlur = useCallback(() => {
-    setTouched(prev => ({ ...prev, phone: true }));
+  const onOrderPasswordBlur = useCallback(() => {
+    setTouched(prev => ({ ...prev, orderPassword: true }));
   }, []);
 
   const onSubmit = useCallback(async () => {
-    setTouched({ ordererName: true, phone: true });
+    setTouched({ orderNumber: true, orderPassword: true });
 
     if (!isValid) {
       return;
@@ -93,17 +94,16 @@ export function useGuestOrderLookup() {
     setIsLoading(true);
     setHasSearched(true);
     try {
-      const result = await lookupGuestOrders({
-        guestName: formData.ordererName,
-        guestPhone: formData.phone,
+      const result = await lookupGuestOrder({
+        orderNumber: formData.orderNumber,
+        orderPassword: formData.orderPassword,
       });
-      setOrders(result.orders);
-      if (result.orders.length === 0) {
-        showToast('조회된 주문이 없습니다', 'info');
-      }
+      setOrder(result.order);
     } catch (error) {
       console.error('Guest order lookup failed:', error);
-      showToast('주문 조회에 실패했습니다', 'error');
+      setOrder(null);
+      const errorMessage = error instanceof Error ? error.message : '주문 조회에 실패했습니다';
+      showToast(errorMessage, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -119,17 +119,17 @@ export function useGuestOrderLookup() {
 
   return {
     guestOrderLookup: {
-      ordererName: formData.ordererName,
-      phone: formData.phone,
+      orderNumber: formData.orderNumber,
+      orderPassword: formData.orderPassword,
       isLoading,
       isValid,
       errors,
-      orders,
+      order,
       hasSearched,
-      onOrdererNameChange,
-      onPhoneChange,
-      onOrdererNameBlur,
-      onPhoneBlur,
+      onOrderNumberChange,
+      onOrderPasswordChange,
+      onOrderNumberBlur,
+      onOrderPasswordBlur,
       onSubmit,
       onBack,
       onOrderClick,
