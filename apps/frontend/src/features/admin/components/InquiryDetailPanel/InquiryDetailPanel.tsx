@@ -55,7 +55,7 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
   }, [isOpen, inquiryId]);
 
   const getAuthHeaders = () => {
-    const token = localStorage.getItem('admin_token');
+    const token = sessionStorage.getItem('admin_token');
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   };
 

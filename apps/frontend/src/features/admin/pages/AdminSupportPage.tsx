@@ -58,7 +58,7 @@ export function AdminSupportPage() {
 
   const fetchNoticeTypes = async () => {
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch('/api/admin/notices/types', {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -80,7 +80,7 @@ export function AdminSupportPage() {
       if (keyword) {
         params.append('keyword', keyword);
       }
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/notices?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -455,7 +455,7 @@ function NoticeAddForm({ noticeTypes, onClose, onSuccess }: NoticeAddFormProps) 
     setShowConfirmDialog(false);
     setIsSaving(true);
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch('/api/admin/notices', {
         method: 'POST',
         headers: {
@@ -706,7 +706,7 @@ function FaqAddForm({ faqCategories, onClose, onSuccess }: FaqAddFormProps) {
     setShowConfirmDialog(false);
     setIsSaving(true);
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch('/api/admin/faqs', {
         method: 'POST',
         headers: {

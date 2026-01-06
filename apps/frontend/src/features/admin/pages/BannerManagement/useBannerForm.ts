@@ -154,7 +154,7 @@ export function useBannerForm(
         : '/api/admin/banners';
       const method = isEditing ? 'PUT' : 'POST';
 
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(url, {
         method,
         headers: {

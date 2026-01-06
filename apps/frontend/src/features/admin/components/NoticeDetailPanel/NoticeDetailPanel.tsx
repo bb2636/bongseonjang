@@ -48,7 +48,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
   const fetchNotice = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/notices/${noticeId}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -91,7 +91,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
 
     setIsSaving(true);
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/notices/${noticeId}`, {
         method: 'PUT',
         headers: {
@@ -125,7 +125,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
     if (!confirm('정말 삭제하시겠습니까?')) return;
 
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/notices/${noticeId}`, {
         method: 'DELETE',
         headers: {

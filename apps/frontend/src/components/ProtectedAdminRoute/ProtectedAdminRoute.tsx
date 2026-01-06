@@ -1,13 +1,31 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
 
+const ADMIN_TOKEN_KEY = 'admin_token';
+const LAST_ACTIVITY_KEY = 'admin_last_activity';
+const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000;
+
 interface ProtectedAdminRouteProps {
   children: React.ReactNode;
 }
 
 export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
   const location = useLocation();
-  const token = useMemo(() => localStorage.getItem('admin_token'), []);
+  const token = useMemo(() => {
+    const storedToken = sessionStorage.getItem(ADMIN_TOKEN_KEY);
+    if (!storedToken) return null;
+    
+    const lastActivity = sessionStorage.getItem(LAST_ACTIVITY_KEY);
+    if (lastActivity) {
+      const elapsed = Date.now() - parseInt(lastActivity, 10);
+      if (elapsed > INACTIVITY_TIMEOUT_MS) {
+        sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+        sessionStorage.removeItem(LAST_ACTIVITY_KEY);
+        return null;
+      }
+    }
+    return storedToken;
+  }, []);
   const [isChecking, setIsChecking] = useState(!!token);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -30,15 +48,18 @@ export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
           if (data.user?.isAdmin) {
             setIsAdmin(true);
           } else {
-            localStorage.removeItem('admin_token');
+            sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+            sessionStorage.removeItem(LAST_ACTIVITY_KEY);
             setIsAdmin(false);
           }
         } else {
-          localStorage.removeItem('admin_token');
+          sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+          sessionStorage.removeItem(LAST_ACTIVITY_KEY);
           setIsAdmin(false);
         }
       } catch {
-        localStorage.removeItem('admin_token');
+        sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+        sessionStorage.removeItem(LAST_ACTIVITY_KEY);
         setIsAdmin(false);
       } finally {
         setIsChecking(false);

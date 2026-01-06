@@ -176,7 +176,7 @@ export function useProductForm() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch('/api/admin/products/categories', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -205,7 +205,7 @@ export function useProductForm() {
 
   const fetchExposureCategories = useCallback(async () => {
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch('/api/admin/products/exposure-categories', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -454,7 +454,7 @@ export function useProductForm() {
     setEditingProductId(productId);
 
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/products/${productId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -632,7 +632,7 @@ export function useProductForm() {
     formDataUpload.append('image', file);
     formDataUpload.append('purpose', purpose);
 
-    const token = localStorage.getItem('admin_token');
+    const token = sessionStorage.getItem('admin_token');
     const response = await fetch('/api/upload', {
       method: 'POST',
       headers: {
@@ -728,7 +728,7 @@ export function useProductForm() {
         ? `/api/admin/products/${editingProductId}`
         : '/api/admin/products';
       
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(url, {
         method: isUpdate ? 'PUT' : 'POST',
         headers: {

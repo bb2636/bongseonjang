@@ -46,7 +46,7 @@ export function useProductManagement() {
         params.append('search', searchQuery.trim());
       }
 
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/products?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -115,7 +115,7 @@ export function useProductManagement() {
 
   const deleteProduct = async (productId: string): Promise<boolean> => {
     try {
-      const token = localStorage.getItem('admin_token');
+      const token = sessionStorage.getItem('admin_token');
       const response = await fetch(`/api/admin/products/${productId}`, {
         method: 'DELETE',
         headers: {
