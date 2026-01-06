@@ -1,10 +1,18 @@
+import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { guestCartStorage, guestShippingStorage, guestOrdererStorage } from '../../../utils/guestStorage';
 import './PaymentResultPage.css';
 
 export function PaymentSuccessPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const orderNumber = searchParams.get('orderNumber');
+
+  useEffect(() => {
+    guestCartStorage.clear();
+    guestShippingStorage.clear();
+    guestOrdererStorage.clear();
+  }, []);
 
   return (
     <div className="payment-result-page">
