@@ -1,0 +1,79 @@
+.member-success-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+}
+
+.member-success-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.member-success-character {
+  margin-bottom: 32px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.member-success-title {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0C0C0C;
+  margin: 0 0 12px 0;
+}
+
+.member-success-subtitle {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #0C0C0C;
+  margin: 0 0 40px 0;
+}
+
+.member-success-link {
+  background: transparent;
+  border: none;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(12, 12, 12, 0.5);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.member-success-footer {
+  padding: 16px 24px 32px;
+}
+
+.member-success-home-button {
+  width: 100%;
+  padding: 16px;
+  background-color: #3B9BD5;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+
+.member-success-home-button:active {
+  background-color: #2d7eb3;
+}
