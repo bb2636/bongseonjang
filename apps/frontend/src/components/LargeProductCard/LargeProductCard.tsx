@@ -36,7 +36,9 @@ export default function LargeProductCard({ product }: LargeProductCardProps) {
         <div className="large-product-card__details">
           <span className="large-product-card__name">{product.name}</span>
           <div className="large-product-card__price-row">
-            <span className="large-product-card__discount">{product.discountPercent}%</span>
+            {product.discountPercent > 0 && (
+              <span className="large-product-card__discount">{product.discountPercent}%</span>
+            )}
             <span className="large-product-card__price">{formatPrice(product.discountedPrice)}원</span>
           </div>
         </div>

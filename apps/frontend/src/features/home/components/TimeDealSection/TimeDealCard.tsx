@@ -68,7 +68,9 @@ export function TimeDealCard({ deal }: TimeDealCardProps) {
         <div className="time-deal-card__details">
           <span className="time-deal-card__name">{deal.name}</span>
           <div className="time-deal-card__price-row">
-            <span className="time-deal-card__discount">{deal.discountPercent}%</span>
+            {deal.discountPercent > 0 && (
+              <span className="time-deal-card__discount">{deal.discountPercent}%</span>
+            )}
             <span className="time-deal-card__price">{formatPrice(deal.discountedPrice)}원</span>
           </div>
         </div>

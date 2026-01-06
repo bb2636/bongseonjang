@@ -1,18 +1,29 @@
 import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
 import { guestCartStorage, guestShippingStorage, guestOrdererStorage } from '../../../utils/guestStorage';
 import './PaymentResultPage.css';
 
 export function PaymentSuccessPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const orderNumber = searchParams.get('orderNumber');
+  const isGuest = searchParams.get('guest') === 'true';
 
   useEffect(() => {
     guestCartStorage.clear();
     guestShippingStorage.clear();
     guestOrdererStorage.clear();
   }, []);
+
+  const handleViewOrders = () => {
+    if (user) {
+      navigate('/orders');
+    } else {
+      navigate('/orders/guest');
+    }
+  };
 
   return (
     <div className="payment-result-page">
@@ -31,13 +42,18 @@ export function PaymentSuccessPage() {
             주문번호: {orderNumber}
           </p>
         )}
+        {isGuest && (
+          <p className="payment-result-guest-notice">
+            주문 조회를 위해 주문번호와 비밀번호를 기억해주세요.
+          </p>
+        )}
         <p className="payment-result-shipping-notice">
           배송비는 주문 확인 후 별도 연락드립니다.
         </p>
         <div className="payment-result-buttons">
           <button
             className="payment-result-button payment-result-button--primary"
-            onClick={() => navigate('/orders')}
+            onClick={handleViewOrders}
           >
             주문 내역 보기
           </button>
