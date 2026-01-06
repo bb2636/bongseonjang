@@ -243,18 +243,19 @@ export function InquiryList({ onView, refreshTrigger }: InquiryListProps) {
         </div>
       </div>
 
-      <div className="inquiry-list__table">
-        <div className="inquiry-list__table-header">
-          <div className="inquiry-list__table-cell inquiry-list__table-cell--user">사용자</div>
-          <div className="inquiry-list__table-cell inquiry-list__table-cell--type">문의 유형</div>
-          <div className="inquiry-list__table-cell inquiry-list__table-cell--product">문의 상품</div>
-          <div className="inquiry-list__table-cell inquiry-list__table-cell--question">문의 제목</div>
-          <div className="inquiry-list__table-cell inquiry-list__table-cell--date">문의 등록일</div>
-          <div className="inquiry-list__table-cell inquiry-list__table-cell--status">상태</div>
-          <div className="inquiry-list__table-cell inquiry-list__table-cell--action">관리</div>
-        </div>
+      <div className="inquiry-list__table-wrapper">
+        <div className="inquiry-list__table">
+          <div className="inquiry-list__table-header">
+            <div className="inquiry-list__table-cell inquiry-list__table-cell--user">사용자</div>
+            <div className="inquiry-list__table-cell inquiry-list__table-cell--type">문의 유형</div>
+            <div className="inquiry-list__table-cell inquiry-list__table-cell--product">문의 상품</div>
+            <div className="inquiry-list__table-cell inquiry-list__table-cell--question">문의 제목</div>
+            <div className="inquiry-list__table-cell inquiry-list__table-cell--date">문의 등록일</div>
+            <div className="inquiry-list__table-cell inquiry-list__table-cell--status">상태</div>
+            <div className="inquiry-list__table-cell inquiry-list__table-cell--action">관리</div>
+          </div>
 
-        <div className="inquiry-list__table-body">
+          <div className="inquiry-list__table-body">
           {isLoading ? (
             <div className="inquiry-list__loading">로딩 중...</div>
           ) : inquiries.length === 0 ? (
@@ -300,6 +301,7 @@ export function InquiryList({ onView, refreshTrigger }: InquiryListProps) {
               </div>
             ))
           )}
+          </div>
         </div>
       </div>
     </div>
