@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, Re
 
 const ADMIN_TOKEN_KEY = 'admin_token';
 const LAST_ACTIVITY_KEY = 'admin_last_activity';
-const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000;
+const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000;
 
 interface AdminAuthContextType {
   isAuthenticated: boolean;
