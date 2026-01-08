@@ -38,7 +38,9 @@ export default function GuestProfileView() {
         </div>
       </main>
 
-      <ProfileBanner isGuest />
+      <div className="guest-profile-view__banner-wrapper">
+        <ProfileBanner isGuest />
+      </div>
 
       <BottomNav />
     </div>

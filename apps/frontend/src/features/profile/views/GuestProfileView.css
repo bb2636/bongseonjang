@@ -3,16 +3,20 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: var(--color-background);
+  padding-bottom: 94px;
 }
 
 .guest-profile-view__content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding: 24px 16px;
-  padding-bottom: 80px;
+}
+
+.guest-profile-view__banner-wrapper {
+  margin-top: auto;
 }
 
 .guest-profile-view__buttons {
