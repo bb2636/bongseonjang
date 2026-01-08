@@ -29,6 +29,7 @@ interface CouponDto {
   validFrom: Date | null;
   validTo: Date | null;
   isIssued: boolean;
+  allowMultipleUse: boolean;
 }
 
 interface CouponListResponse {
@@ -117,6 +118,7 @@ export class CouponService {
         validFrom,
         validTo,
         isIssued: true,
+        allowMultipleUse: couponDetails.allowMultipleUse,
       });
     }
 
@@ -136,6 +138,7 @@ export class CouponService {
       validFrom: coupon.validFrom,
       validTo: coupon.validTo,
       isIssued,
+      allowMultipleUse: coupon.allowMultipleUse,
     };
   }
 
