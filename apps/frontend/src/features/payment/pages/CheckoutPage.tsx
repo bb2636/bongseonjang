@@ -58,7 +58,7 @@ const DELIVERY_REQUEST_OPTIONS = [
 
 const DEFAULT_SHIPPING_CONFIG = {
   BASE_FEE: 3500,
-  EXTRA_FEE: 3500,
+  ISLAND_FEE: 5000,
   FREE_THRESHOLD: null as number | null,
 };
 
@@ -272,9 +272,9 @@ export function CheckoutPage() {
   const baseShippingFee = useMemo(() => {
     const freeThreshold = shippingConfig.freeShippingThreshold;
     if (freeThreshold !== null && productAmount >= freeThreshold) return 0;
-    const baseFee = shippingConfig.shippingFee;
-    const extraFee = currentAddress && isRemoteArea(currentAddress.postalCode) ? DEFAULT_SHIPPING_CONFIG.EXTRA_FEE : 0;
-    return baseFee + extraFee;
+    
+    const isIsland = currentAddress && isRemoteArea(currentAddress.postalCode);
+    return isIsland ? DEFAULT_SHIPPING_CONFIG.ISLAND_FEE : shippingConfig.shippingFee;
   }, [productAmount, currentAddress, shippingConfig]);
 
   const couponDiscount = useMemo(() => {
