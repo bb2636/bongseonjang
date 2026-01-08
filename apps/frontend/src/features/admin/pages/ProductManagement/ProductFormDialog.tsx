@@ -65,7 +65,6 @@ export function ProductFormDialog({
     handleCountdownDaysChange,
     handleDescriptionChange,
     handleCautionChange,
-    handleStorageMethodChange,
     handleExpirationInfoChange,
     handleWeightChange,
     handleOriginChange,
@@ -75,9 +74,6 @@ export function ProductFormDialog({
     handleOptionChange,
     handleAddOption,
     handleRemoveOption,
-    handleProductInfoChange,
-    handleAddProductInfo,
-    handleRemoveProductInfo,
     handleShippingDetailChange,
     handleAddShippingDetail,
     handleRemoveShippingDetail,
@@ -624,46 +620,6 @@ export function ProductFormDialog({
                   maxLength={200}
                 />
               </div>
-            </div>
-            <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
-              <label className="product-form-dialog__label">보관 방법 상세</label>
-              <div className="product-form-dialog__option-list">
-                {formData.productInfos.map((info: ProductInfo) => (
-                  <div key={info.id} className="product-form-dialog__info-row">
-                    <input
-                      type="text"
-                      className="product-form-dialog__input product-form-dialog__info-label-input"
-                      placeholder="항목명"
-                      value={info.label}
-                      onChange={(e) => handleProductInfoChange(info.id, 'label', e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      className="product-form-dialog__input product-form-dialog__info-value-input"
-                      placeholder="내용 입력"
-                      value={info.value}
-                      onChange={(e) => handleProductInfoChange(info.id, 'value', e.target.value)}
-                    />
-                    {formData.productInfos.length > 1 && (
-                      <button
-                        type="button"
-                        className="product-form-dialog__remove-button"
-                        onClick={() => handleRemoveProductInfo(info.id)}
-                      >
-                        삭제
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="product-form-dialog__add-button"
-                onClick={handleAddProductInfo}
-                style={{ marginTop: 12 }}
-              >
-                <PlusIcon /> 추가
-              </button>
             </div>
           </section>
 

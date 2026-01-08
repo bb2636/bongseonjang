@@ -3,7 +3,7 @@ export interface Coupon {
   code: string;
   name: string;
   description: string | null;
-  discountType: 'fixed' | 'percent';
+  discountType: 'fixed' | 'percent' | 'shipping';
   discountValue: number;
   maxDiscountAmount: number | null;
   minOrderAmount: number;
