@@ -1,4 +1,4 @@
-import { AppBar } from "@/components/AppBar";
+import { AppBar, AppBarSpacer } from "@/components/AppBar";
 import { CategoryTabs } from "../components/CategoryTabs";
 import { DefaultHomeContent } from "../components/DefaultHomeContent";
 import { BestProductsContent } from "../components/BestProductsContent";
@@ -35,6 +35,7 @@ export default function HomeShellView({ shell }: HomeShellViewProps) {
   return (
     <div className="home-shell">
       <AppBar onLogoClick={onLogoClick} />
+      <AppBarSpacer />
 
       <main className="home-shell__content">
         <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />

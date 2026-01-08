@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { MainLayout } from '../../../layouts';
-import AppBar from '../../../components/AppBar/AppBar';
+import AppBar, { AppBarSpacer } from '../../../components/AppBar/AppBar';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { fetchPendingReviewItems, fetchMyReviews, ReviewableOrderItemDto, MyReviewDto } from '../api/reviewApi';
 import './ReviewListPage.css';
@@ -119,6 +119,7 @@ export default function ReviewListPage() {
           showCart
           onCartClick={() => navigate('/cart')}
         />
+        <AppBarSpacer variant="subpage" />
 
         <div className="review-list-page__tabs">
           <button

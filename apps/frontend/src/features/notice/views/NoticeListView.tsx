@@ -1,4 +1,5 @@
 import { AppBar } from '../../../components';
+import { AppBarSpacer } from '../../../components/AppBar';
 import { useNoticeListPage } from '../hooks/useNoticeListPage';
 import './NoticeListView.css';
 
@@ -46,12 +47,14 @@ export default function NoticeListView({ state, actions }: NoticeListViewProps) 
   return (
     <div className="notice-list-page">
       <AppBar
+        variant="subpage"
         title="공지사항"
         showBackButton
         onBackClick={handleBack}
         showCart
         onCartClick={handleCartClick}
       />
+      <AppBarSpacer variant="subpage" />
 
       <main className="notice-list-page__content">{renderContent()}</main>
     </div>

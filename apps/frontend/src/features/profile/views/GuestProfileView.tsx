@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import AppBar from '../../../components/AppBar/AppBar';
+import AppBar, { AppBarSpacer } from '../../../components/AppBar/AppBar';
 import BottomNav from '../../../components/BottomNav/BottomNav';
 import { MypageBanner } from '../components/MypageBanner';
 import './GuestProfileView.css';
@@ -18,6 +18,7 @@ export default function GuestProfileView() {
   return (
     <div className="guest-profile-view">
       <AppBar />
+      <AppBarSpacer />
       
       <main className="guest-profile-view__content">
         <div className="guest-profile-view__buttons">

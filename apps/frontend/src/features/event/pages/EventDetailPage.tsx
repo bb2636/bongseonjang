@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { AppBar } from '@/components/AppBar';
+import { AppBar, AppBarSpacer } from '@/components/AppBar';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
 import { useGoBack } from '../../../hooks/useGoBack';
 import './EventDetailPage.css';
@@ -64,6 +64,7 @@ export default function EventDetailPage() {
           showCart
           onCartClick={handleCartClick}
         />
+        <AppBarSpacer variant="subpage" />
         <div className="event-detail-page__loading">
           <div className="event-detail-page__spinner" />
         </div>
@@ -82,6 +83,7 @@ export default function EventDetailPage() {
           showCart
           onCartClick={handleCartClick}
         />
+        <AppBarSpacer variant="subpage" />
         <div className="event-detail-page__error">
           <p>{error || '이벤트를 찾을 수 없습니다'}</p>
           <button onClick={handleBack} className="event-detail-page__back-btn">
@@ -102,6 +104,7 @@ export default function EventDetailPage() {
         showCart
         onCartClick={handleCartClick}
       />
+      <AppBarSpacer variant="subpage" />
       <main className="event-detail-page__content">
         <img
           src={event.imageUrl}

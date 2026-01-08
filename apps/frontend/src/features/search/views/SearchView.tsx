@@ -1,5 +1,5 @@
 import './SearchView.css';
-import { AppBar } from '@/components/AppBar';
+import { AppBar, AppBarSpacer } from '@/components/AppBar';
 import SearchInput from '../components/SearchInput';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import { BottomNav } from '@/components/BottomNav';
@@ -17,7 +17,8 @@ interface SearchViewProps {
 export default function SearchView({ state, actions }: SearchViewProps) {
   return (
     <div className="search-view">
-      <AppBar />
+      <AppBar variant="subpage" />
+      <AppBarSpacer variant="subpage" />
       
       <main className="search-view__content">
         <section className="search-view__search-section">

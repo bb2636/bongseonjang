@@ -1,4 +1,4 @@
-import { AppBar } from '@/components/AppBar';
+import { AppBar, AppBarSpacer } from '@/components/AppBar';
 import { CategoryTabs } from '../components/CategoryTabs';
 import { FilterChips } from '../../home/components/FilterChips';
 import { ProductGridContent } from '@/components/ProductGridContent';
@@ -43,11 +43,13 @@ export default function CategoryProductsView({
   return (
     <div className="category-products-page">
       <AppBar 
+        variant="subpage"
         showBackButton
         onBackClick={onBack}
         showLogo={false}
         onCartClick={onCartClick}
       />
+      <AppBarSpacer variant="subpage" />
       <CategoryTabs 
         activeSlug={activeSlug}
         onTabChange={onTabChange}

@@ -1,6 +1,6 @@
 import type { MyInquiry, InquiryType, SortOrder } from "../types/myInquiry";
 import { INQUIRY_TYPE_OPTIONS, SORT_OPTIONS } from "../types/myInquiry";
-import AppBar from "../../../components/AppBar/AppBar";
+import AppBar, { AppBarSpacer } from "../../../components/AppBar/AppBar";
 import "./MyInquiriesView.css";
 
 import { useMyInquiriesPage } from '../hooks/useMyInquiriesPage';
@@ -223,6 +223,7 @@ export default function MyInquiriesView({ state, actions }: MyInquiriesViewProps
         showCart
         onCartClick={onCartClick}
       />
+      <AppBarSpacer variant="subpage" />
 
       <main className="my-inquiries__content">
         <div className="my-inquiries__filters">

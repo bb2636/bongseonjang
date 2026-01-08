@@ -1,4 +1,5 @@
 import { AppBar } from '../../../components';
+import { AppBarSpacer } from '../../../components/AppBar';
 import { useInvestmentInfoDetailPage } from '../hooks/useInvestmentInfoDetailPage';
 import './InvestmentInfoDetailView.css';
 
@@ -51,12 +52,14 @@ export default function InvestmentInfoDetailView({ state, actions }: InvestmentI
   return (
     <div className="investment-info-detail-page">
       <AppBar
+        variant="subpage"
         title="투자정보"
         showBackButton
         onBackClick={handleBack}
         showCart
         onCartClick={handleCartClick}
       />
+      <AppBarSpacer variant="subpage" />
 
       <main className="investment-info-detail-page__content">{renderContent()}</main>
     </div>

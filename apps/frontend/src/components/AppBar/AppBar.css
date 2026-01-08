@@ -10,6 +10,11 @@
   background: #FFFFFF;
   box-sizing: border-box;
   flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
 .app-bar__left {
@@ -122,10 +127,22 @@
   justify-content: space-between;
   align-items: center;
   padding: calc(10px + var(--safe-area-top, 0px)) 8px 10px 8px;
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   background: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.app-bar-spacer {
+  height: calc(48px + var(--safe-area-top, 0px));
+  flex-shrink: 0;
+}
+
+.app-bar-spacer--subpage {
+  height: calc(52px + var(--safe-area-top, 0px));
   flex-shrink: 0;
 }
 

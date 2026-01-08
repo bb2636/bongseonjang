@@ -3,6 +3,15 @@ import { useCart } from '../../contexts';
 import { useGoBack } from '../../hooks/useGoBack';
 import './AppBar.css';
 
+interface AppBarSpacerProps {
+  variant?: 'default' | 'subpage';
+}
+
+export function AppBarSpacer({ variant = 'default' }: AppBarSpacerProps) {
+  const className = variant === 'subpage' ? 'app-bar-spacer--subpage' : 'app-bar-spacer';
+  return <div className={className} />;
+}
+
 interface AppBarProps {
   variant?: 'default' | 'subpage';
   title?: string;

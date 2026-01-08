@@ -1,5 +1,5 @@
 import { UserProfile, Order, MenuSection } from '../types/profile';
-import AppBar from '../../../components/AppBar/AppBar';
+import AppBar, { AppBarSpacer } from '../../../components/AppBar/AppBar';
 import ProfileHeader from '../components/ProfileHeader/ProfileHeader';
 import SummaryCard from '../components/SummaryCard/SummaryCard';
 import RecentOrders from '../components/RecentOrders/RecentOrders';
@@ -41,6 +41,7 @@ export default function ProfileView({ state, actions }: ProfileViewProps) {
     return (
       <div className="profile-view">
         <AppBar />
+        <AppBarSpacer />
         <ProfileSkeleton />
         <BottomNav />
       </div>
@@ -51,6 +52,7 @@ export default function ProfileView({ state, actions }: ProfileViewProps) {
     return (
       <div className="profile-view">
         <AppBar />
+        <AppBarSpacer />
         <div className="profile-view__error">
           <p className="profile-view__error-message">{state.error}</p>
           <button
@@ -69,6 +71,7 @@ export default function ProfileView({ state, actions }: ProfileViewProps) {
   return (
     <div className="profile-view">
       <AppBar />
+      <AppBarSpacer />
       
       <main className="profile-view__content">
         <ProfileHeader

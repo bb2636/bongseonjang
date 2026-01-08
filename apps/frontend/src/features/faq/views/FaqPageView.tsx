@@ -1,5 +1,6 @@
 import { ChangeEvent } from 'react';
 import { AppBar } from '../../../components';
+import { AppBarSpacer } from '../../../components/AppBar';
 import { useFaqPage } from '../hooks/useFaqPage';
 import './FaqPageView.css';
 
@@ -33,12 +34,14 @@ export default function FaqPageView({ state, actions }: FaqPageViewProps) {
   return (
     <div className="faq-page">
       <AppBar
+        variant="subpage"
         title="FAQ"
         showBackButton
         onBackClick={handleBack}
         showCart
         onCartClick={handleCartClick}
       />
+      <AppBarSpacer variant="subpage" />
 
       <main className="faq-page__content">
         <section className="faq-search">
