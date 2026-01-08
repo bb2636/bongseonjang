@@ -1,0 +1,83 @@
+bongcook.webp:1  GET https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/assets/image/category/bongcook.webp 502 (Bad Gateway)
+Image
+commitMount @ chunk-QRIPYZTF.js?v=91f8a8ef:8459
+commitLayoutEffectOnFiber @ chunk-QRIPYZTF.js?v=91f8a8ef:17150
+commitLayoutMountEffects_complete @ chunk-QRIPYZTF.js?v=91f8a8ef:18030
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=91f8a8ef:18019
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=91f8a8ef:18000
+commitLayoutEffects @ chunk-QRIPYZTF.js?v=91f8a8ef:17970
+commitRootImpl @ chunk-QRIPYZTF.js?v=91f8a8ef:19406
+commitRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:19330
+finishConcurrentRender @ chunk-QRIPYZTF.js?v=91f8a8ef:18858
+performConcurrentWorkOnRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:18768
+workLoop @ chunk-QRIPYZTF.js?v=91f8a8ef:197
+flushWork @ chunk-QRIPYZTF.js?v=91f8a8ef:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=91f8a8ef:384Understand this error
+badameun.webp:1  GET https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/assets/image/category/badameun.webp 502 (Bad Gateway)
+Image
+commitMount @ chunk-QRIPYZTF.js?v=91f8a8ef:8459
+commitLayoutEffectOnFiber @ chunk-QRIPYZTF.js?v=91f8a8ef:17150
+commitLayoutMountEffects_complete @ chunk-QRIPYZTF.js?v=91f8a8ef:18030
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=91f8a8ef:18019
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=91f8a8ef:18000
+commitLayoutEffects @ chunk-QRIPYZTF.js?v=91f8a8ef:17970
+commitRootImpl @ chunk-QRIPYZTF.js?v=91f8a8ef:19406
+commitRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:19330
+finishConcurrentRender @ chunk-QRIPYZTF.js?v=91f8a8ef:18858
+performConcurrentWorkOnRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:18768
+workLoop @ chunk-QRIPYZTF.js?v=91f8a8ef:197
+flushWork @ chunk-QRIPYZTF.js?v=91f8a8ef:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=91f8a8ef:384Understand this error
+fourseason.webp:1  GET https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/assets/image/category/fourseason.webp 502 (Bad Gateway)
+Image
+commitMount @ chunk-QRIPYZTF.js?v=91f8a8ef:8459
+commitLayoutEffectOnFiber @ chunk-QRIPYZTF.js?v=91f8a8ef:17150
+commitLayoutMountEffects_complete @ chunk-QRIPYZTF.js?v=91f8a8ef:18030
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=91f8a8ef:18019
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=91f8a8ef:18000
+commitLayoutEffects @ chunk-QRIPYZTF.js?v=91f8a8ef:17970
+commitRootImpl @ chunk-QRIPYZTF.js?v=91f8a8ef:19406
+commitRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:19330
+finishConcurrentRender @ chunk-QRIPYZTF.js?v=91f8a8ef:18858
+performConcurrentWorkOnRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:18768
+workLoop @ chunk-QRIPYZTF.js?v=91f8a8ef:197
+flushWork @ chunk-QRIPYZTF.js?v=91f8a8ef:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=91f8a8ef:384Understand this error
+obada.webp:1  GET https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/src/assets/image/category/obada.webp 502 (Bad Gateway)
+Image
+commitMount @ chunk-QRIPYZTF.js?v=91f8a8ef:8459
+commitLayoutEffectOnFiber @ chunk-QRIPYZTF.js?v=91f8a8ef:17150
+commitLayoutMountEffects_complete @ chunk-QRIPYZTF.js?v=91f8a8ef:18030
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=91f8a8ef:18019
+commitLayoutEffects_begin @ chunk-QRIPYZTF.js?v=91f8a8ef:18000
+commitLayoutEffects @ chunk-QRIPYZTF.js?v=91f8a8ef:17970
+commitRootImpl @ chunk-QRIPYZTF.js?v=91f8a8ef:19406
+commitRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:19330
+finishConcurrentRender @ chunk-QRIPYZTF.js?v=91f8a8ef:18858
+performConcurrentWorkOnRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:18768
+workLoop @ chunk-QRIPYZTF.js?v=91f8a8ef:197
+flushWork @ chunk-QRIPYZTF.js?v=91f8a8ef:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=91f8a8ef:384Understand this error
+apiClient.ts:71  GET https://ee7ea1ce-f859-4b8f-adbd-76e2e1129002-00-q53a4ukg6uhs.janeway.replit.dev/api/products/categories 502 (Bad Gateway)
+request @ apiClient.ts:71
+get @ apiClient.ts:96
+fetchCategories @ useProductCategories.ts:26
+(anonymous) @ useProductCategories.ts:44
+commitHookEffectListMount @ chunk-QRIPYZTF.js?v=91f8a8ef:16963
+invokePassiveEffectMountInDEV @ chunk-QRIPYZTF.js?v=91f8a8ef:18374
+invokeEffectsInDev @ chunk-QRIPYZTF.js?v=91f8a8ef:19754
+commitDoubleInvokeEffectsInDEV @ chunk-QRIPYZTF.js?v=91f8a8ef:19739
+flushPassiveEffectsImpl @ chunk-QRIPYZTF.js?v=91f8a8ef:19556
+flushPassiveEffects @ chunk-QRIPYZTF.js?v=91f8a8ef:19500
+performSyncWorkOnRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:18921
+flushSyncCallbacks @ chunk-QRIPYZTF.js?v=91f8a8ef:9166
+commitRootImpl @ chunk-QRIPYZTF.js?v=91f8a8ef:19485
+commitRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:19330
+finishConcurrentRender @ chunk-QRIPYZTF.js?v=91f8a8ef:18858
+performConcurrentWorkOnRoot @ chunk-QRIPYZTF.js?v=91f8a8ef:18768
+workLoop @ chunk-QRIPYZTF.js?v=91f8a8ef:197
+flushWork @ chunk-QRIPYZTF.js?v=91f8a8ef:176
+performWorkUntilDeadline @ chunk-QRIPYZTF.js?v=91f8a8ef:384Understand this error
+useProductCategories.ts:37 Failed to fetch product categories: ApiError: Request failed with status 502
+    at ApiClient.request (apiClient.ts:85:13)
+    at async fetchCategories (useProductCategories.ts:26:31)
