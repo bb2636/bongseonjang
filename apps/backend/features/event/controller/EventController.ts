@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { EventService } from '../application/EventService';
+import type { EventService } from '../application/EventService.js';
 
 export class EventController {
   constructor(private readonly eventService: EventService) {}
