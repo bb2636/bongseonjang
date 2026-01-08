@@ -1,4 +1,4 @@
-import { useRef, useState, ChangeEvent } from 'react';
+import { useRef, useState, ChangeEvent, useEffect } from 'react';
 import { BannerPosition, Banner } from './useBannerManagement';
 import { useBannerForm, LinkType } from './useBannerForm';
 import { ConfirmModal } from '../../../../components';
@@ -26,7 +26,16 @@ export function BannerFormDialog({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const isEditing = !!editingBanner;
+
+  useEffect(() => {
+    if (isOpen) {
+      setShowSnackbar(false);
+      setShowConfirmModal(false);
+      setIsConfirming(false);
+    }
+  }, [isOpen]);
   const {
     formData,
     isSubmitting,
@@ -55,11 +64,18 @@ export function BannerFormDialog({
   };
 
   const handleConfirmSubmit = async () => {
+    if (isConfirming) return;
+    setIsConfirming(true);
     setShowConfirmModal(false);
-    const success = await submitForm();
-    if (success) {
-      onSuccess();
-      setShowSnackbar(true);
+    
+    try {
+      const success = await submitForm();
+      if (success) {
+        onSuccess();
+        setShowSnackbar(true);
+      }
+    } finally {
+      setIsConfirming(false);
     }
   };
 
