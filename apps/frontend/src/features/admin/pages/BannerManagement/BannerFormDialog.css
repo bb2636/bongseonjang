@@ -141,7 +141,7 @@
   outline: none;
   resize: vertical;
   min-height: 80px;
-  width: 100%;
+  max-width: calc(50% - 8px);
   box-sizing: border-box;
 }
 
