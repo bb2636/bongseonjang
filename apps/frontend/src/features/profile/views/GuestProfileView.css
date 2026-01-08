@@ -2,33 +2,51 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-background);
+  background-color: #FFFFFF;
 }
 
 .guest-profile-view__content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 24px 16px;
   padding-bottom: 80px;
+}
+
+.guest-profile-view__header {
+  padding: 24px 20px 28px;
+  background-color: #F5D03A;
+}
+
+.guest-profile-view__title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 128%;
+  color: #0C0C0C;
+  margin: 0 0 8px;
+}
+
+.guest-profile-view__description {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: rgba(12, 12, 12, 0.8);
+  margin: 0 0 20px;
 }
 
 .guest-profile-view__buttons {
   display: flex;
-  flex-direction: column;
   gap: 12px;
-  width: 100%;
-  max-width: 320px;
 }
 
 .guest-profile-view__button {
-  width: 100%;
-  padding: 16px 24px;
-  border-radius: 8px;
-  font-size: 16px;
+  flex: 1;
+  height: 48px;
+  border-radius: 4px;
+  font-family: 'Pretendard', sans-serif;
   font-weight: 600;
+  font-size: 15px;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
@@ -37,14 +55,52 @@
   opacity: 0.8;
 }
 
+.guest-profile-view__button--outline {
+  background-color: transparent;
+  color: #3B9BD5;
+  border: 1px solid #3B9BD5;
+}
+
 .guest-profile-view__button--primary {
-  background-color: var(--color-primary);
-  color: white;
+  background-color: #3B9BD5;
+  color: #FFFFFF;
   border: none;
 }
 
-.guest-profile-view__button--secondary {
-  background-color: white;
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
+.guest-profile-view__divider {
+  height: 8px;
+  background-color: rgba(12, 12, 12, 0.04);
+}
+
+.guest-profile-view__menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.guest-profile-view__menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  color: #0C0C0C;
+  cursor: pointer;
+  text-align: left;
+}
+
+.guest-profile-view__menu-item:last-child {
+  border-bottom: none;
+}
+
+.guest-profile-view__banner-container {
+  position: fixed;
+  bottom: calc(94px + var(--safe-area-bottom, 0px));
+  left: 0;
+  right: 0;
+  padding: 0 16px;
 }

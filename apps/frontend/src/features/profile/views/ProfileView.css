@@ -67,3 +67,11 @@
 .profile-view__retry-button:active {
   background: #2A8BC5;
 }
+
+.profile-view__banner-container {
+  position: fixed;
+  bottom: calc(94px + var(--safe-area-bottom, 0px));
+  left: 0;
+  right: 0;
+  padding: 0 16px;
+}

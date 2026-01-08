@@ -7,6 +7,7 @@ import MenuList from '../components/MenuList/MenuList';
 import ProfileSkeleton from '../components/ProfileSkeleton';
 import BottomNav from '../../../components/BottomNav/BottomNav';
 import { ConfirmModal } from '../../../components/ConfirmModal';
+import { MyPageBanner } from '../components/MyPageBanner';
 import './ProfileView.css';
 
 interface ProfileViewProps {
@@ -102,6 +103,10 @@ export default function ProfileView({ state, actions }: ProfileViewProps) {
           onItemClick={actions.onMenuItemClick}
           onLogout={actions.onLogoutClick}
         />
+
+        <div className="profile-view__banner-container">
+          <MyPageBanner />
+        </div>
       </main>
 
       <BottomNav />
