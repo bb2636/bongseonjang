@@ -9,17 +9,20 @@
   height: calc(48px + var(--safe-area-top, 0px));
   background: #FFFFFF;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .app-bar__left {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .app-bar__right {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .app-bar__back-button {
@@ -28,11 +31,14 @@
   align-items: center;
   width: 40px;
   height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   padding: 0;
   background: transparent;
   border: none;
   cursor: pointer;
   margin-left: -8px;
+  flex-shrink: 0;
 }
 
 .app-bar__back-button:hover {
@@ -67,9 +73,12 @@
   padding: 10px;
   width: 42px;
   height: 42px;
+  min-width: 42px;
+  min-height: 42px;
   background: transparent;
   border: none;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .app-bar__cart-button:hover {
@@ -80,6 +89,9 @@
 .app-bar__cart-icon {
   width: 26px;
   height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  flex-shrink: 0;
 }
 
 .app-bar__cart-badge {
@@ -114,6 +126,7 @@
   top: 0;
   z-index: 100;
   background: #FFFFFF;
+  flex-shrink: 0;
 }
 
 .app-bar__title--subpage {
@@ -132,4 +145,7 @@
 .app-bar__placeholder {
   width: 42px;
   height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  flex-shrink: 0;
 }
