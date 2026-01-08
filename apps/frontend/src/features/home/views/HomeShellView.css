@@ -8,6 +8,6 @@
 
 .home-shell__content {
   flex: 1;
-  padding-bottom: 94px;
+  padding-bottom: 0;
   overflow-x: hidden;
 }
