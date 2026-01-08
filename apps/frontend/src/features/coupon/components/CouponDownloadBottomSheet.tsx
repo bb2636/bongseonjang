@@ -12,8 +12,17 @@ interface CouponDownloadBottomSheetProps {
   onIssueCoupon: (couponId: string) => void;
 }
 
-function formatDate(dateString: string): string {
+function isAlwaysAvailable(dateString: string | null | undefined): boolean {
+  if (!dateString) return true;
   const date = new Date(dateString);
+  return isNaN(date.getTime()) || date.getFullYear() <= 1970;
+}
+
+function formatDate(dateString: string | null | undefined): string {
+  if (isAlwaysAvailable(dateString)) {
+    return '상시발급';
+  }
+  const date = new Date(dateString!);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');

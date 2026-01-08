@@ -19,11 +19,11 @@ function isAlwaysAvailable(dateString: string | null | undefined): boolean {
   return isNaN(date.getTime()) || date.getFullYear() <= EPOCH_YEAR;
 }
 
-function formatDate(dateString: string): string {
+function formatDate(dateString: string | null | undefined): string {
   if (isAlwaysAvailable(dateString)) {
     return '상시발급';
   }
-  const date = new Date(dateString);
+  const date = new Date(dateString!);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -32,11 +32,11 @@ function formatDate(dateString: string): string {
   return `${year}.${month}.${day} ${hours}:${minutes}까지`;
 }
 
-function isExpiringSoon(dateString: string): boolean {
+function isExpiringSoon(dateString: string | null | undefined): boolean {
   if (isAlwaysAvailable(dateString)) {
     return false;
   }
-  const expiryDate = new Date(dateString);
+  const expiryDate = new Date(dateString!);
   const now = new Date();
   const timeRemaining = expiryDate.getTime() - now.getTime();
   return timeRemaining > 0 && timeRemaining <= TWENTY_FOUR_HOURS_MS;

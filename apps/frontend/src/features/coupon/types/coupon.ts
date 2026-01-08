@@ -8,8 +8,8 @@ export interface Coupon {
   maxDiscountAmount: number | null;
   minOrderAmount: number;
   targetType: string;
-  validFrom: string;
-  validTo: string;
+  validFrom: string | null;
+  validTo: string | null;
   isIssued: boolean;
 }
 
