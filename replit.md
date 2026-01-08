@@ -151,7 +151,9 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 - **장바구니/주문**: `carts`, `cart_items`, `orders`, `order_items`, `order_status_history` 테이블로 관리. 주문 시 상품 가격/옵션 스냅샷 저장.
 - **배송**: `shipping_addresses`, `shipments`, `shipment_events` 테이블.
 - **결제**: `payments`, `payment_refunds` 테이블. NicePayments v1 API 연동. 장바구니 항목 ID 스냅샷(`cartItemIdsSnapshot`)을 통해 결제 완료 후 선택된 항목만 삭제.
-- **쿠폰/포인트**: `coupons`, `coupon_issuances`, `point_wallets`, `point_transactions` 테이블. 포인트 만료 관리.
+- **쿠폰/포인트**: `coupons`, `coupon_issuances`, `coupon_apply_exposure_categories`, `point_wallets`, `point_transactions` 테이블. 포인트 만료 관리.
+  - **브랜드 카테고리 쿠폰**: ExposureCategory 기반 쿠폰 적용 지원 (바담은:3, 봉쿡:6, 오바다:9, 포시즌:10)
+  - **복수 쿠폰 사용**: `allowMultipleUse: true` 쿠폰들끼리 중복 적용 가능. Order.userCouponIdsJson에 JSON 배열로 저장.
 - **찜**: `wishlists`, `wishlist_items` 테이블.
 - **고객센터**: `support_tickets`, `support_messages` 테이블.
 - **비회원 결제**: 비회원도 장바구니/찜/결제 가능. localStorage에 버전 관리 스키마로 저장. 로그인 시 서버로 자동 병합.
