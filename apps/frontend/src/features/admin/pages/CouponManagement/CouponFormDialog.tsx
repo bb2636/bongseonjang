@@ -19,6 +19,18 @@ interface Category {
   name: string;
 }
 
+interface BrandCategory {
+  id: number;
+  name: string;
+}
+
+const BRAND_CATEGORIES: BrandCategory[] = [
+  { id: 3, name: '바담은' },
+  { id: 6, name: '봉쿡' },
+  { id: 9, name: '오바다' },
+  { id: 10, name: '포시즌' },
+];
+
 interface GradeOption {
   value: string;
   label: string;
@@ -40,6 +52,7 @@ interface CouponFormData {
   minOrderAmount: string;
   targetType: TargetType;
   targetCategories: string[];
+  targetExposureCategories: number[];
   issueType: IssueType;
   issueGrades: string[];
   validityType: ValidityType;
@@ -61,6 +74,7 @@ const INITIAL_FORM_DATA: CouponFormData = {
   minOrderAmount: '',
   targetType: 'all',
   targetCategories: [],
+  targetExposureCategories: [],
   issueType: 'all',
   issueGrades: [],
   validityType: 'fixed',
@@ -110,6 +124,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         minOrderAmount: coupon.minOrderAmount ? String(coupon.minOrderAmount) : '',
         targetType: coupon.targetType,
         targetCategories: coupon.targetCategories || [],
+        targetExposureCategories: coupon.targetExposureCategories || [],
         issueType: coupon.issueType,
         issueGrades: coupon.issueGrades || [],
         validityType: coupon.validityType as ValidityType,
@@ -140,6 +155,15 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
     });
   };
 
+  const handleBrandCategoryToggle = (brandId: number) => {
+    setFormData(prev => {
+      const newBrands = prev.targetExposureCategories.includes(brandId)
+        ? prev.targetExposureCategories.filter(id => id !== brandId)
+        : [...prev.targetExposureCategories, brandId];
+      return { ...prev, targetExposureCategories: newBrands };
+    });
+  };
+
   const handleGradeChange = (grade: string) => {
     setFormData(prev => ({ ...prev, issueGrades: [grade] }));
   };
@@ -161,8 +185,8 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
       return;
     }
 
-    if (formData.targetType === 'category' && formData.targetCategories.length === 0) {
-      setError('특정 카테고리를 선택해주세요.');
+    if (formData.targetType === 'category' && formData.targetCategories.length === 0 && formData.targetExposureCategories.length === 0) {
+      setError('특정 카테고리 또는 브랜드를 선택해주세요.');
       setIsSubmitting(false);
       return;
     }
@@ -193,6 +217,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         minOrderAmount,
         targetType: formData.targetType,
         targetCategories: formData.targetType === 'category' ? formData.targetCategories : undefined,
+        targetExposureCategories: formData.targetType === 'category' ? formData.targetExposureCategories : undefined,
         issueType: formData.issueType,
         issueGrades: formData.issueType === 'grade' ? formData.issueGrades : undefined,
         validityType: formData.validityType,
@@ -397,28 +422,47 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
             </div>
 
             {formData.targetType === 'category' && (
-              <div className="coupon-form-dialog__field">
-                <label className="coupon-form-dialog__label">카테고리 선택 *</label>
-                {isCategoriesLoading ? (
-                  <div className="coupon-form-dialog__category-loading">카테고리 로딩 중...</div>
-                ) : categories.length === 0 ? (
-                  <div className="coupon-form-dialog__category-empty">등록된 카테고리가 없습니다</div>
-                ) : (
+              <>
+                <div className="coupon-form-dialog__field">
+                  <label className="coupon-form-dialog__label">브랜드 선택</label>
                   <div className="coupon-form-dialog__category-list">
-                    {categories.map((category) => (
-                      <label key={category.id} className="coupon-form-dialog__category-item">
+                    {BRAND_CATEGORIES.map((brand) => (
+                      <label key={brand.id} className="coupon-form-dialog__category-item">
                         <input
                           type="checkbox"
-                          checked={formData.targetCategories.includes(category.id)}
-                          onChange={() => handleCategoryToggle(category.id)}
+                          checked={formData.targetExposureCategories.includes(brand.id)}
+                          onChange={() => handleBrandCategoryToggle(brand.id)}
                         />
                         <span className="coupon-form-dialog__category-checkbox"></span>
-                        <span className="coupon-form-dialog__category-name">{category.name}</span>
+                        <span className="coupon-form-dialog__category-name">{brand.name}</span>
                       </label>
                     ))}
                   </div>
-                )}
-              </div>
+                </div>
+
+                <div className="coupon-form-dialog__field">
+                  <label className="coupon-form-dialog__label">카테고리 선택</label>
+                  {isCategoriesLoading ? (
+                    <div className="coupon-form-dialog__category-loading">카테고리 로딩 중...</div>
+                  ) : categories.length === 0 ? (
+                    <div className="coupon-form-dialog__category-empty">등록된 카테고리가 없습니다</div>
+                  ) : (
+                    <div className="coupon-form-dialog__category-list">
+                      {categories.map((category) => (
+                        <label key={category.id} className="coupon-form-dialog__category-item">
+                          <input
+                            type="checkbox"
+                            checked={formData.targetCategories.includes(category.id)}
+                            onChange={() => handleCategoryToggle(category.id)}
+                          />
+                          <span className="coupon-form-dialog__category-checkbox"></span>
+                          <span className="coupon-form-dialog__category-name">{category.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
             )}
           </div>
 
