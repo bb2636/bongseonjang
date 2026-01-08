@@ -21,6 +21,10 @@ const TABS: TabConfig[] = [
   { id: 'all', label: '전체상품' },
 ];
 
+export function CategoryTabsSpacer() {
+  return <div className="category-tabs-spacer" />;
+}
+
 export default function CategoryTabs({ activeTab, onTabChange }: CategoryTabsProps) {
   const isTabActive = (tabId: TabCategoryTab) => {
     return activeTab === tabId;

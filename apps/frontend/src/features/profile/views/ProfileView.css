@@ -1,7 +1,15 @@
 .profile-view {
   min-height: 100vh;
   background: #FFFFFF;
-  padding-bottom: 94px;
+  padding-bottom: calc(94px + 94px + var(--safe-area-bottom, 0px));
+}
+
+.profile-view .mypage-banner {
+  position: fixed;
+  bottom: calc(94px + var(--safe-area-bottom, 0px));
+  left: 0;
+  right: 0;
+  z-index: 999;
 }
 
 .profile-view__content {
