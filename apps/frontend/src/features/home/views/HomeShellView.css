@@ -3,7 +3,6 @@
   flex-direction: column;
   min-height: 100vh;
   background: #FFFFFF;
-  overflow-x: hidden;
 }
 
 .home-shell__header {
@@ -16,5 +15,4 @@
 .home-shell__content {
   flex: 1;
   padding-bottom: 94px;
-  overflow-x: hidden;
 }
