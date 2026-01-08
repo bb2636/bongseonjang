@@ -129,7 +129,14 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.userId;
-    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod, shippingFee = 0, userCouponId, usedPoints = 0 } = req.body;
+    const { selectedItemIds, recipientName, recipientPhone, postalCode, address, addressDetail, deliveryRequest, returnUrl: clientReturnUrl, paymentMethod, shippingFee = 0, userCouponIds: rawUserCouponIds, userCouponId: legacyUserCouponId, usedPoints = 0 } = req.body;
+    
+    let userCouponIds: number[] = [];
+    if (Array.isArray(rawUserCouponIds)) {
+      userCouponIds = rawUserCouponIds.map((id: unknown) => Number(id)).filter((id: number) => !isNaN(id) && id > 0);
+    } else if (legacyUserCouponId) {
+      userCouponIds = [Number(legacyUserCouponId)];
+    }
 
     if (!selectedItemIds || !Array.isArray(selectedItemIds) || selectedItemIds.length === 0) {
       return res.status(400).json({ error: '결제할 상품을 선택해주세요' });
@@ -219,81 +226,93 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     const shippingAmount = Number(shippingFee) || 0;
     
     let couponDiscountAmount = 0;
-    let appliedUserCouponId: number | null = null;
+    const appliedUserCouponIds: number[] = [];
     const couponRepository = new CouponRepository();
     
-    if (userCouponId) {
-      const userCoupon = await couponRepository.getUserCouponById(Number(userCouponId));
-      
-      if (!userCoupon) {
-        return res.status(400).json({ error: '쿠폰을 찾을 수 없습니다' });
-      }
-      
-      if (userCoupon.userId !== userId) {
-        return res.status(400).json({ error: '본인의 쿠폰만 사용할 수 있습니다' });
-      }
-      
-      if (userCoupon.status !== 'ISSUED') {
-        return res.status(400).json({ error: '이미 사용되었거나 만료된 쿠폰입니다' });
-      }
-      
+    if (userCouponIds.length > 0) {
       const now = new Date();
+      let shippingDiscountApplied = false;
       
-      if (userCoupon.validFrom && now < userCoupon.validFrom) {
-        return res.status(400).json({ error: '아직 사용할 수 없는 쿠폰입니다' });
-      }
-      
-      if (userCoupon.validTo && now > userCoupon.validTo) {
-        return res.status(400).json({ error: '유효기간이 지난 쿠폰입니다' });
-      }
-      
-      const couponDetails = await couponRepository.findCouponById(userCoupon.couponId);
-      
-      if (!couponDetails || !couponDetails.isActive) {
-        return res.status(400).json({ error: '사용할 수 없는 쿠폰입니다' });
-      }
-      
-      if (couponDetails.minOrderAmount > totalProductPrice) {
-        return res.status(400).json({ 
-          error: `최소 주문 금액 ${couponDetails.minOrderAmount.toLocaleString()}원 이상 구매 시 사용 가능합니다` 
-        });
-      }
-      
-      if (couponDetails.targetType === 'category') {
-        const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
-        const targetExposureCategoryIds = await couponRepository.getCouponTargetExposureCategories(couponDetails.id);
-        if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
-          const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
-          for (const item of cartItems) {
-            if (!item.product) continue;
-            const matches = await checkProductMatchesTargetCategories(
-              item.product.id,
-              item.product.productCategoryId,
-              targetCategoryIds,
-              targetBrandExposureNames,
-              targetExposureCategoryIds
-            );
-            if (!matches) {
-              return res.status(400).json({ 
-                error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 대상 카테고리가 아닌 상품이 포함되어 있습니다.' 
-              });
+      for (const userCouponId of userCouponIds) {
+        const userCoupon = await couponRepository.getUserCouponById(userCouponId);
+        
+        if (!userCoupon) {
+          return res.status(400).json({ error: '쿠폰을 찾을 수 없습니다' });
+        }
+        
+        if (userCoupon.userId !== userId) {
+          return res.status(400).json({ error: '본인의 쿠폰만 사용할 수 있습니다' });
+        }
+        
+        if (userCoupon.status !== 'ISSUED') {
+          return res.status(400).json({ error: '이미 사용되었거나 만료된 쿠폰입니다' });
+        }
+        
+        if (userCoupon.validFrom && now < userCoupon.validFrom) {
+          return res.status(400).json({ error: '아직 사용할 수 없는 쿠폰입니다' });
+        }
+        
+        if (userCoupon.validTo && now > userCoupon.validTo) {
+          return res.status(400).json({ error: '유효기간이 지난 쿠폰입니다' });
+        }
+        
+        const couponDetails = await couponRepository.findCouponById(userCoupon.couponId);
+        
+        if (!couponDetails || !couponDetails.isActive) {
+          return res.status(400).json({ error: '사용할 수 없는 쿠폰입니다' });
+        }
+        
+        if (userCouponIds.length > 1 && !couponDetails.allowMultipleUse) {
+          return res.status(400).json({ error: '해당 쿠폰은 다른 쿠폰과 함께 사용할 수 없습니다' });
+        }
+        
+        if (couponDetails.minOrderAmount > totalProductPrice) {
+          return res.status(400).json({ 
+            error: `최소 주문 금액 ${couponDetails.minOrderAmount.toLocaleString()}원 이상 구매 시 사용 가능합니다` 
+          });
+        }
+        
+        if (couponDetails.targetType === 'category') {
+          const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
+          const targetExposureCategoryIds = await couponRepository.getCouponTargetExposureCategories(couponDetails.id);
+          if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
+            const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
+            for (const item of cartItems) {
+              if (!item.product) continue;
+              const matches = await checkProductMatchesTargetCategories(
+                item.product.id,
+                item.product.productCategoryId,
+                targetCategoryIds,
+                targetBrandExposureNames,
+                targetExposureCategoryIds
+              );
+              if (!matches) {
+                return res.status(400).json({ 
+                  error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 대상 카테고리가 아닌 상품이 포함되어 있습니다.' 
+                });
+              }
             }
           }
         }
-      }
-      
-      if (couponDetails.discountType === 'fixed') {
-        couponDiscountAmount = Math.min(couponDetails.discountValue, totalProductPrice);
-      } else if (couponDetails.discountType === 'rate') {
-        couponDiscountAmount = Math.floor(totalProductPrice * (couponDetails.discountValue / 100));
-        if (couponDetails.maxDiscountAmount && couponDiscountAmount > couponDetails.maxDiscountAmount) {
-          couponDiscountAmount = couponDetails.maxDiscountAmount;
+        
+        let thisCouponDiscount = 0;
+        if (couponDetails.discountType === 'fixed') {
+          thisCouponDiscount = Math.min(couponDetails.discountValue, totalProductPrice - couponDiscountAmount);
+        } else if (couponDetails.discountType === 'rate') {
+          thisCouponDiscount = Math.floor(totalProductPrice * (couponDetails.discountValue / 100));
+          if (couponDetails.maxDiscountAmount && thisCouponDiscount > couponDetails.maxDiscountAmount) {
+            thisCouponDiscount = couponDetails.maxDiscountAmount;
+          }
+        } else if (couponDetails.discountType === 'shipping') {
+          if (!shippingDiscountApplied) {
+            thisCouponDiscount = shippingAmount;
+            shippingDiscountApplied = true;
+          }
         }
-      } else if (couponDetails.discountType === 'shipping') {
-        couponDiscountAmount = shippingAmount;
+        
+        couponDiscountAmount += thisCouponDiscount;
+        appliedUserCouponIds.push(userCoupon.id);
       }
-      
-      appliedUserCouponId = userCoupon.id;
     }
     
     const validatedUsedPoints = Math.max(0, Math.min(usedPoints, totalProductPrice + shippingAmount - couponDiscountAmount));
@@ -326,7 +345,8 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       deliveryRequest: deliveryRequest || null,
       cartItemIdsSnapshot: cartItemIds,
       returnUrl: returnUrlOrigin,
-      userCouponId: appliedUserCouponId,
+      userCouponId: appliedUserCouponIds.length > 0 ? appliedUserCouponIds[0] : null,
+      userCouponIdsJson: appliedUserCouponIds.length > 0 ? JSON.stringify(appliedUserCouponIds) : null,
     });
 
     await orderRepository.save(order);
@@ -592,7 +612,13 @@ async function handlePaymentCallback(req: Request, res: Response) {
         await paymentRepository.save(payment);
       }
 
-      if (order.userCouponId) {
+      if (order.userCouponIdsJson) {
+        const couponRepository = new CouponRepository();
+        const couponIds: number[] = JSON.parse(order.userCouponIdsJson);
+        for (const couponId of couponIds) {
+          await couponRepository.useUserCoupon(couponId, order.id);
+        }
+      } else if (order.userCouponId) {
         const couponRepository = new CouponRepository();
         await couponRepository.useUserCoupon(order.userCouponId, order.id);
       }
@@ -647,9 +673,17 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       returnUrl: clientReturnUrl, 
       paymentMethod,
       shippingFee = 0,
-      userCouponId,
+      userCouponIds: rawUserCouponIds,
+      userCouponId: legacyUserCouponId,
       usedPoints = 0
     } = req.body;
+    
+    let userCouponIds: number[] = [];
+    if (Array.isArray(rawUserCouponIds)) {
+      userCouponIds = rawUserCouponIds.map((id: unknown) => Number(id)).filter((id: number) => !isNaN(id) && id > 0);
+    } else if (legacyUserCouponId) {
+      userCouponIds = [Number(legacyUserCouponId)];
+    }
 
     if (!productId) {
       return res.status(400).json({ error: '상품 정보가 필요합니다' });
@@ -761,94 +795,93 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
     const shippingAmount = Number(shippingFee) || 0;
     
     let couponDiscountAmount = 0;
-    let appliedUserCouponId: number | null = null;
+    const appliedUserCouponIds: number[] = [];
     const couponRepository = new CouponRepository();
     
-    if (userCouponId) {
-      const userCoupon = await couponRepository.getUserCouponById(Number(userCouponId));
-      
-      if (!userCoupon) {
-        return res.status(400).json({ error: '쿠폰을 찾을 수 없습니다' });
-      }
-      
-      if (userCoupon.userId !== userId) {
-        return res.status(400).json({ error: '본인의 쿠폰만 사용할 수 있습니다' });
-      }
-      
-      if (userCoupon.status !== 'ISSUED') {
-        return res.status(400).json({ error: '이미 사용되었거나 만료된 쿠폰입니다' });
-      }
-      
+    if (userCouponIds.length > 0) {
       const now = new Date();
+      let shippingDiscountApplied = false;
       
-      if (userCoupon.validFrom && now < userCoupon.validFrom) {
-        return res.status(400).json({ error: '아직 사용할 수 없는 쿠폰입니다' });
-      }
-      
-      if (userCoupon.validTo && now > userCoupon.validTo) {
-        return res.status(400).json({ error: '유효기간이 지난 쿠폰입니다' });
-      }
-      
-      const couponDetails = await couponRepository.findCouponById(userCoupon.couponId);
-      
-      if (!couponDetails || !couponDetails.isActive) {
-        return res.status(400).json({ error: '사용할 수 없는 쿠폰입니다' });
-      }
-      
-      if (couponDetails.minOrderAmount > totalProductPrice) {
-        return res.status(400).json({ 
-          error: `최소 주문 금액 ${couponDetails.minOrderAmount.toLocaleString()}원 이상 구매 시 사용 가능합니다` 
-        });
-      }
-      
-      console.log('[DEBUG COUPON] targetType:', couponDetails.targetType);
-      console.log('[DEBUG COUPON] couponDetails.id:', couponDetails.id);
-      
-      if (couponDetails.targetType === 'category') {
-        const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
-        const targetExposureCategoryIds = await couponRepository.getCouponTargetExposureCategories(couponDetails.id);
-        console.log('[DEBUG COUPON] targetCategoryIds:', targetCategoryIds);
-        console.log('[DEBUG COUPON] targetExposureCategoryIds:', targetExposureCategoryIds);
-        console.log('[DEBUG COUPON] product.id:', product.id);
-        console.log('[DEBUG COUPON] product.productCategoryId:', product.productCategoryId);
+      for (const userCouponId of userCouponIds) {
+        const userCoupon = await couponRepository.getUserCouponById(userCouponId);
         
-        if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
-          const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
-          console.log('[DEBUG COUPON] targetBrandExposureNames:', targetBrandExposureNames);
+        if (!userCoupon) {
+          return res.status(400).json({ error: '쿠폰을 찾을 수 없습니다' });
+        }
+        
+        if (userCoupon.userId !== userId) {
+          return res.status(400).json({ error: '본인의 쿠폰만 사용할 수 있습니다' });
+        }
+        
+        if (userCoupon.status !== 'ISSUED') {
+          return res.status(400).json({ error: '이미 사용되었거나 만료된 쿠폰입니다' });
+        }
+        
+        if (userCoupon.validFrom && now < userCoupon.validFrom) {
+          return res.status(400).json({ error: '아직 사용할 수 없는 쿠폰입니다' });
+        }
+        
+        if (userCoupon.validTo && now > userCoupon.validTo) {
+          return res.status(400).json({ error: '유효기간이 지난 쿠폰입니다' });
+        }
+        
+        const couponDetails = await couponRepository.findCouponById(userCoupon.couponId);
+        
+        if (!couponDetails || !couponDetails.isActive) {
+          return res.status(400).json({ error: '사용할 수 없는 쿠폰입니다' });
+        }
+        
+        if (userCouponIds.length > 1 && !couponDetails.allowMultipleUse) {
+          return res.status(400).json({ error: '해당 쿠폰은 다른 쿠폰과 함께 사용할 수 없습니다' });
+        }
+        
+        if (couponDetails.minOrderAmount > totalProductPrice) {
+          return res.status(400).json({ 
+            error: `최소 주문 금액 ${couponDetails.minOrderAmount.toLocaleString()}원 이상 구매 시 사용 가능합니다` 
+          });
+        }
+        
+        if (couponDetails.targetType === 'category') {
+          const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
+          const targetExposureCategoryIds = await couponRepository.getCouponTargetExposureCategories(couponDetails.id);
           
-          const matches = await checkProductMatchesTargetCategories(
-            product.id,
-            product.productCategoryId,
-            targetCategoryIds,
-            targetBrandExposureNames,
-            targetExposureCategoryIds
-          );
-          console.log('[DEBUG COUPON] matches:', matches);
-          
-          if (!matches) {
-            return res.status(400).json({ 
-              error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다' 
-            });
+          if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
+            const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
+            
+            const matches = await checkProductMatchesTargetCategories(
+              product.id,
+              product.productCategoryId,
+              targetCategoryIds,
+              targetBrandExposureNames,
+              targetExposureCategoryIds
+            );
+            
+            if (!matches) {
+              return res.status(400).json({ 
+                error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다' 
+              });
+            }
           }
-        } else {
-          console.log('[DEBUG COUPON] No target categories found - coupon passes all products!');
         }
-      } else {
-        console.log('[DEBUG COUPON] targetType is not category, skipping validation');
-      }
-      
-      if (couponDetails.discountType === 'fixed') {
-        couponDiscountAmount = Math.min(couponDetails.discountValue, totalProductPrice);
-      } else if (couponDetails.discountType === 'rate') {
-        couponDiscountAmount = Math.floor(totalProductPrice * (couponDetails.discountValue / 100));
-        if (couponDetails.maxDiscountAmount && couponDiscountAmount > couponDetails.maxDiscountAmount) {
-          couponDiscountAmount = couponDetails.maxDiscountAmount;
+        
+        let thisCouponDiscount = 0;
+        if (couponDetails.discountType === 'fixed') {
+          thisCouponDiscount = Math.min(couponDetails.discountValue, totalProductPrice - couponDiscountAmount);
+        } else if (couponDetails.discountType === 'rate') {
+          thisCouponDiscount = Math.floor(totalProductPrice * (couponDetails.discountValue / 100));
+          if (couponDetails.maxDiscountAmount && thisCouponDiscount > couponDetails.maxDiscountAmount) {
+            thisCouponDiscount = couponDetails.maxDiscountAmount;
+          }
+        } else if (couponDetails.discountType === 'shipping') {
+          if (!shippingDiscountApplied) {
+            thisCouponDiscount = shippingAmount;
+            shippingDiscountApplied = true;
+          }
         }
-      } else if (couponDetails.discountType === 'shipping') {
-        couponDiscountAmount = shippingAmount;
+        
+        couponDiscountAmount += thisCouponDiscount;
+        appliedUserCouponIds.push(userCoupon.id);
       }
-      
-      appliedUserCouponId = userCoupon.id;
     }
     
     const validatedUsedPoints = Math.max(0, Math.min(usedPoints, totalProductPrice + shippingAmount - couponDiscountAmount));
@@ -879,7 +912,8 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       deliveryRequest: deliveryRequest || null,
       cartItemIdsSnapshot: [],
       returnUrl: returnUrlOrigin,
-      userCouponId: appliedUserCouponId,
+      userCouponId: appliedUserCouponIds.length > 0 ? appliedUserCouponIds[0] : null,
+      userCouponIdsJson: appliedUserCouponIds.length > 0 ? JSON.stringify(appliedUserCouponIds) : null,
     });
 
     await orderRepository.save(order);

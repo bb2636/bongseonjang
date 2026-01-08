@@ -83,6 +83,9 @@ export class Order {
   @Column({ name: 'user_coupon_id', type: 'int', nullable: true })
   userCouponId!: number | null;
 
+  @Column({ type: 'text', nullable: true })
+  userCouponIdsJson!: string | null;
+
   @ManyToOne('User', { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'userId' })
   user!: User | null;
