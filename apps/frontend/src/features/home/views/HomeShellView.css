@@ -6,13 +6,16 @@
 }
 
 .home-shell__header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   background: #FFFFFF;
 }
 
 .home-shell__content {
   flex: 1;
+  padding-top: 86px;
   padding-bottom: 94px;
 }
