@@ -22,14 +22,32 @@ export function useCouponPage() {
   const validCoupons = useMemo(() => {
     if (!data?.coupons) return [];
     const now = new Date();
+    const EPOCH_YEAR = 1970;
+
+    const isAlwaysAvailable = (validTo: string | null | undefined): boolean => {
+      if (!validTo) return true;
+      const date = new Date(validTo);
+      return isNaN(date.getTime()) || date.getFullYear() <= EPOCH_YEAR;
+    };
+
     return data.coupons
       .filter(coupon => {
-        if (coupon.validTo && new Date(coupon.validTo) < now) {
+        if (isAlwaysAvailable(coupon.validTo)) {
+          return true;
+        }
+        if (new Date(coupon.validTo) < now) {
           return false;
         }
         return true;
       })
       .sort((a, b) => {
+        const aAlways = isAlwaysAvailable(a.validTo);
+        const bAlways = isAlwaysAvailable(b.validTo);
+
+        if (aAlways && bAlways) return 0;
+        if (aAlways) return 1;
+        if (bAlways) return -1;
+
         const aTime = new Date(a.validTo).getTime();
         const bTime = new Date(b.validTo).getTime();
         return aTime - bTime;

@@ -11,8 +11,18 @@ interface CouponDownloadPageProps {
 }
 
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+const EPOCH_YEAR = 1970;
+
+function isAlwaysAvailable(dateString: string | null | undefined): boolean {
+  if (!dateString) return true;
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) || date.getFullYear() <= EPOCH_YEAR;
+}
 
 function formatDate(dateString: string): string {
+  if (isAlwaysAvailable(dateString)) {
+    return '상시발급';
+  }
   const date = new Date(dateString);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -23,6 +33,9 @@ function formatDate(dateString: string): string {
 }
 
 function isExpiringSoon(dateString: string): boolean {
+  if (isAlwaysAvailable(dateString)) {
+    return false;
+  }
   const expiryDate = new Date(dateString);
   const now = new Date();
   const timeRemaining = expiryDate.getTime() - now.getTime();
