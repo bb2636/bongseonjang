@@ -68,6 +68,7 @@ export { CouponValidityFixedRange } from './CouponValidityFixedRange';
 export { CouponValidityAfterIssueDays } from './CouponValidityAfterIssueDays';
 export { CouponApplyAllProducts } from './CouponApplyAllProducts';
 export { CouponApplyCategory } from './CouponApplyCategory';
+export { CouponApplyExposureCategory } from './CouponApplyExposureCategory';
 export { CouponIssueAllUsers } from './CouponIssueAllUsers';
 export { CouponIssueNewUsers } from './CouponIssueNewUsers';
 export { CouponIssueGrade } from './CouponIssueGrade';

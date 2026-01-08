@@ -6,6 +6,7 @@ import type { CouponValidityFixedRange } from './CouponValidityFixedRange';
 import type { CouponValidityAfterIssueDays } from './CouponValidityAfterIssueDays';
 import type { CouponApplyAllProducts } from './CouponApplyAllProducts';
 import type { CouponApplyCategory } from './CouponApplyCategory';
+import type { CouponApplyExposureCategory } from './CouponApplyExposureCategory';
 import type { CouponIssueAllUsers } from './CouponIssueAllUsers';
 import type { CouponIssueNewUsers } from './CouponIssueNewUsers';
 import type { CouponIssueGrade } from './CouponIssueGrade';
@@ -63,6 +64,9 @@ export class Coupon {
 
   @OneToMany('CouponApplyCategory', 'coupon')
   applyCategories!: CouponApplyCategory[];
+
+  @OneToMany('CouponApplyExposureCategory', 'coupon')
+  applyExposureCategories!: CouponApplyExposureCategory[];
 
   @OneToOne('CouponIssueAllUsers', 'coupon')
   issueAllUsers!: CouponIssueAllUsers | null;

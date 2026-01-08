@@ -8,6 +8,7 @@ import { CouponValidityFixedRange } from '../../../entity/CouponValidityFixedRan
 import { CouponValidityAfterIssueDays } from '../../../entity/CouponValidityAfterIssueDays';
 import { CouponApplyAllProducts } from '../../../entity/CouponApplyAllProducts';
 import { CouponApplyCategory } from '../../../entity/CouponApplyCategory';
+import { CouponApplyExposureCategory } from '../../../entity/CouponApplyExposureCategory';
 import { CouponIssueAllUsers } from '../../../entity/CouponIssueAllUsers';
 import { CouponIssueNewUsers } from '../../../entity/CouponIssueNewUsers';
 import { CouponIssueGrade } from '../../../entity/CouponIssueGrade';
@@ -23,6 +24,7 @@ export interface AdminCouponDto {
   minOrderAmount: number;
   targetType: 'all' | 'category';
   targetCategories: string[];
+  targetExposureCategories: number[];
   issueType: 'all' | 'new' | 'grade';
   issueGrades: string[];
   validityType: 'fixed' | 'afterIssue' | 'unlimited';
@@ -47,6 +49,7 @@ export interface CreateCouponDto {
   minOrderAmount?: number;
   targetType: 'all' | 'category';
   targetCategories?: string[];
+  targetExposureCategories?: number[];
   issueType: 'all' | 'new' | 'grade';
   issueGrades?: string[];
   validityType: 'fixed' | 'afterIssue' | 'unlimited';
@@ -84,6 +87,7 @@ export class AdminCouponService {
   private validityAfterIssueDaysRepo = AppDataSource.getRepository(CouponValidityAfterIssueDays);
   private applyAllProductsRepo = AppDataSource.getRepository(CouponApplyAllProducts);
   private applyCategoryRepo = AppDataSource.getRepository(CouponApplyCategory);
+  private applyExposureCategoryRepo = AppDataSource.getRepository(CouponApplyExposureCategory);
   private issueAllUsersRepo = AppDataSource.getRepository(CouponIssueAllUsers);
   private issueNewUsersRepo = AppDataSource.getRepository(CouponIssueNewUsers);
   private issueGradeRepo = AppDataSource.getRepository(CouponIssueGrade);
@@ -176,12 +180,22 @@ export class AdminCouponService {
       await this.applyAllProductsRepo.save({
         couponId: savedCoupon.id,
       });
-    } else if (data.targetType === 'category' && data.targetCategories) {
-      for (const categoryId of data.targetCategories) {
-        await this.applyCategoryRepo.save({
-          couponId: savedCoupon.id,
-          categoryId,
-        });
+    } else if (data.targetType === 'category') {
+      if (data.targetCategories) {
+        for (const categoryId of data.targetCategories) {
+          await this.applyCategoryRepo.save({
+            couponId: savedCoupon.id,
+            categoryId,
+          });
+        }
+      }
+      if (data.targetExposureCategories) {
+        for (const exposureCategoryId of data.targetExposureCategories) {
+          await this.applyExposureCategoryRepo.save({
+            couponId: savedCoupon.id,
+            exposureCategoryId,
+          });
+        }
       }
     }
 
@@ -215,6 +229,7 @@ export class AdminCouponService {
       const validityAfterIssueDaysRepo = manager.getRepository(CouponValidityAfterIssueDays);
       const applyAllProductsRepo = manager.getRepository(CouponApplyAllProducts);
       const applyCategoryRepo = manager.getRepository(CouponApplyCategory);
+      const applyExposureCategoryRepo = manager.getRepository(CouponApplyExposureCategory);
       const issueAllUsersRepo = manager.getRepository(CouponIssueAllUsers);
       const issueNewUsersRepo = manager.getRepository(CouponIssueNewUsers);
       const issueGradeRepo = manager.getRepository(CouponIssueGrade);
@@ -287,12 +302,20 @@ export class AdminCouponService {
       if (data.targetType !== undefined) {
         await applyAllProductsRepo.delete({ couponId: id });
         await applyCategoryRepo.delete({ couponId: id });
+        await applyExposureCategoryRepo.delete({ couponId: id });
 
         if (data.targetType === 'all') {
           await applyAllProductsRepo.save({ couponId: id });
-        } else if (data.targetType === 'category' && data.targetCategories) {
-          for (const categoryId of data.targetCategories) {
-            await applyCategoryRepo.save({ couponId: id, categoryId });
+        } else if (data.targetType === 'category') {
+          if (data.targetCategories) {
+            for (const categoryId of data.targetCategories) {
+              await applyCategoryRepo.save({ couponId: id, categoryId });
+            }
+          }
+          if (data.targetExposureCategories) {
+            for (const exposureCategoryId of data.targetExposureCategories) {
+              await applyExposureCategoryRepo.save({ couponId: id, exposureCategoryId });
+            }
           }
         }
       }
@@ -328,6 +351,7 @@ export class AdminCouponService {
     await this.validityAfterIssueDaysRepo.delete({ couponId: id });
     await this.applyAllProductsRepo.delete({ couponId: id });
     await this.applyCategoryRepo.delete({ couponId: id });
+    await this.applyExposureCategoryRepo.delete({ couponId: id });
     await this.issueAllUsersRepo.delete({ couponId: id });
     await this.issueNewUsersRepo.delete({ couponId: id });
     await this.issueGradeRepo.delete({ couponId: id });
@@ -373,12 +397,15 @@ export class AdminCouponService {
 
     let targetType: 'all' | 'category' = 'all';
     let targetCategories: string[] = [];
+    let targetExposureCategories: number[] = [];
     const applyAllProducts = await this.applyAllProductsRepo.findOne({ where: { couponId: coupon.id } });
     if (!applyAllProducts) {
       const applyCategories = await this.applyCategoryRepo.find({ where: { couponId: coupon.id } });
-      if (applyCategories.length > 0) {
+      const applyExposureCategories = await this.applyExposureCategoryRepo.find({ where: { couponId: coupon.id } });
+      if (applyCategories.length > 0 || applyExposureCategories.length > 0) {
         targetType = 'category';
         targetCategories = applyCategories.map(c => c.categoryId);
+        targetExposureCategories = applyExposureCategories.map(c => Number(c.exposureCategoryId));
       }
     }
 
@@ -429,6 +456,7 @@ export class AdminCouponService {
       minOrderAmount: coupon.minOrderAmount,
       targetType,
       targetCategories,
+      targetExposureCategories,
       issueType,
       issueGrades,
       validityType,
