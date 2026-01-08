@@ -133,6 +133,8 @@ export function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [selectedCouponIds, setSelectedCouponIds] = useState<number[]>([]);
+  const [isCouponDropdownOpen, setIsCouponDropdownOpen] = useState(false);
+  const couponDropdownRef = useRef<HTMLDivElement>(null);
 
   const { data: cart, isLoading: isCartLoading } = useQuery({
     queryKey: ['cart'],
@@ -360,14 +362,51 @@ export function CheckoutPage() {
     setPointInput(maxUsable.toString());
   };
 
-  const handleCouponToggle = (couponId: number) => {
+  const handleCouponSelect = (couponId: number) => {
+    const coupon = myCoupons.find(c => c.id === couponId);
+    if (!coupon) return;
+    
     setSelectedCouponIds(prev => {
       if (prev.includes(couponId)) {
-        return prev.filter(id => id !== couponId);
+        return prev;
       }
+      
+      if (!coupon.allowMultipleUse) {
+        return [couponId];
+      }
+      
+      const hasNonStackableSelected = prev.some(id => {
+        const selectedCoupon = myCoupons.find(c => c.id === id);
+        return selectedCoupon && !selectedCoupon.allowMultipleUse;
+      });
+      
+      if (hasNonStackableSelected) {
+        return [couponId];
+      }
+      
       return [...prev, couponId];
     });
+    setIsCouponDropdownOpen(false);
   };
+
+  const handleCouponRemove = (couponId: number) => {
+    setSelectedCouponIds(prev => prev.filter(id => id !== couponId));
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (couponDropdownRef.current && !couponDropdownRef.current.contains(event.target as Node)) {
+        setIsCouponDropdownOpen(false);
+      }
+    };
+    
+    if (isCouponDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCouponDropdownOpen]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -651,47 +690,104 @@ export function CheckoutPage() {
         </section>
 
         <section className="checkout-section">
-          <div 
-            className="checkout-section-header checkout-section-header--clickable"
-          >
+          <div className="checkout-section-header">
             <h2 className="checkout-section-title">쿠폰 할인</h2>
-            <svg 
-              className="checkout-expand-icon checkout-expand-icon--expanded"
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none"
-            >
-              <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
           </div>
           <div className="checkout-coupon-section">
-            {usableCoupons.length === 0 ? (
-              <p className="checkout-coupon-empty">적용할 수 있는 쿠폰이 없습니다</p>
-            ) : (
-              <div className="checkout-coupon-list">
-                {usableCoupons.map(coupon => (
-                  <label key={coupon.id} className="checkout-coupon-item">
-                    <input
-                      type="checkbox"
-                      checked={selectedCouponIds.includes(coupon.id)}
-                      onChange={() => handleCouponToggle(coupon.id)}
-                    />
-                    <span className="checkout-coupon-item__checkmark"></span>
-                    <span className="checkout-coupon-item__info">
-                      <span className="checkout-coupon-item__name">{coupon.name}</span>
-                      <span className="checkout-coupon-item__discount">
-                        {coupon.discountType === 'fixed' 
-                          ? `${coupon.discountValue.toLocaleString()}원` 
-                          : coupon.discountType === 'rate'
-                            ? `${coupon.discountValue}%`
-                            : '배송비 무료'} 할인
-                      </span>
+            {selectedCoupons.length > 0 && (
+              <div className="checkout-coupon-tags">
+                {selectedCoupons.map(coupon => (
+                  <div key={coupon.id} className="checkout-coupon-tag">
+                    <span className="checkout-coupon-tag__text">
+                      {coupon.name}
+                      {coupon.discountType === 'shipping' 
+                        ? ' (배송비 쿠폰)'
+                        : coupon.discountType === 'fixed'
+                          ? ` (-${coupon.discountValue.toLocaleString()}원)`
+                          : ` (-${coupon.discountValue}%)`}
                     </span>
-                  </label>
+                    <button 
+                      type="button" 
+                      className="checkout-coupon-tag__remove"
+                      onClick={() => handleCouponRemove(coupon.id)}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
+            
+            {usableCoupons.length === 0 ? (
+              <p className="checkout-coupon-empty">적용할 수 있는 쿠폰이 없습니다</p>
+            ) : (
+              <div className="checkout-coupon-select" ref={couponDropdownRef}>
+                <button
+                  type="button"
+                  className="checkout-coupon-select__trigger"
+                  onClick={() => setIsCouponDropdownOpen(!isCouponDropdownOpen)}
+                >
+                  <span className="checkout-coupon-select__placeholder">
+                    {selectedCoupons.length > 0 
+                      ? `${selectedCoupons.length}개 쿠폰 적용됨` 
+                      : '쿠폰을 선택해주세요'}
+                  </span>
+                  <svg 
+                    className={`checkout-coupon-select__arrow ${isCouponDropdownOpen ? 'checkout-coupon-select__arrow--open' : ''}`}
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none"
+                  >
+                    <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                
+                {isCouponDropdownOpen && (
+                  <div className="checkout-coupon-select__dropdown">
+                    {usableCoupons.map(coupon => {
+                      const isSelected = selectedCouponIds.includes(coupon.id);
+                      const hasNonStackableSelected = selectedCoupons.some(c => !c.allowMultipleUse);
+                      const isDisabled = !isSelected && hasNonStackableSelected;
+                      
+                      return (
+                        <button
+                          key={coupon.id}
+                          type="button"
+                          className={`checkout-coupon-select__option ${isSelected ? 'checkout-coupon-select__option--selected' : ''} ${isDisabled ? 'checkout-coupon-select__option--disabled' : ''}`}
+                          onClick={() => !isDisabled && !isSelected && handleCouponSelect(coupon.id)}
+                          disabled={isDisabled}
+                        >
+                          <div className="checkout-coupon-select__option-info">
+                            <span className="checkout-coupon-select__option-name">
+                              {coupon.name}
+                              {!coupon.allowMultipleUse && (
+                                <span className="checkout-coupon-select__badge">(중복 불가)</span>
+                              )}
+                            </span>
+                            <span className="checkout-coupon-select__option-discount">
+                              {coupon.discountType === 'shipping' 
+                                ? '배송비 쿠폰'
+                                : coupon.discountType === 'fixed'
+                                  ? `${coupon.discountValue.toLocaleString()}원 할인`
+                                  : `${coupon.discountValue}% 할인${coupon.maxDiscountAmount ? ` (최대 ${coupon.maxDiscountAmount.toLocaleString()}원)` : ''}`}
+                            </span>
+                          </div>
+                          {isSelected && (
+                            <svg className="checkout-coupon-select__check" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                              <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+            
             {hasInvalidMultipleCouponSelection && (
               <p className="checkout-coupon-warning">
                 중복 사용이 불가능한 쿠폰이 포함되어 있습니다
@@ -808,7 +904,7 @@ export function CheckoutPage() {
         <button
           type="submit"
           className="checkout-submit-button"
-          disabled={isProcessing || !currentAddress || !termsAgreed}
+          disabled={isProcessing || !currentAddress || !termsAgreed || hasInvalidMultipleCouponSelection}
         >
           {isProcessing ? '처리 중...' : `${finalAmount.toLocaleString()}원 결제하기`}
         </button>
