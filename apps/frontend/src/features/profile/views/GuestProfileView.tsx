@@ -38,7 +38,7 @@ export default function GuestProfileView() {
         </div>
       </main>
 
-      <ProfileBanner />
+      <ProfileBanner isGuest />
 
       <BottomNav />
     </div>

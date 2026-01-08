@@ -1,5 +1,14 @@
 .profile-banner {
   width: 100%;
-  padding: 0 16px;
   box-sizing: border-box;
+}
+
+.profile-banner--guest {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.profile-banner--guest .banner-carousel {
+  border-radius: 12px;
+  overflow: hidden;
 }
