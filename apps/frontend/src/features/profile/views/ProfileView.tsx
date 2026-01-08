@@ -5,6 +5,7 @@ import SummaryCard from '../components/SummaryCard/SummaryCard';
 import RecentOrders from '../components/RecentOrders/RecentOrders';
 import MenuList from '../components/MenuList/MenuList';
 import ProfileSkeleton from '../components/ProfileSkeleton';
+import { MypageBanner } from '../components/MypageBanner';
 import BottomNav from '../../../components/BottomNav/BottomNav';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import './ProfileView.css';
@@ -104,6 +105,7 @@ export default function ProfileView({ state, actions }: ProfileViewProps) {
         />
       </main>
 
+      <MypageBanner />
       <BottomNav />
 
       <ConfirmModal

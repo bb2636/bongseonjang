@@ -1,0 +1,21 @@
+.mypage-banner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.mypage-banner__item {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.mypage-banner__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
