@@ -269,7 +269,11 @@ export function BannerFormDialog({
                       value={formData.description}
                       onChange={(e) => handleDescriptionChange(e.target.value)}
                       rows={3}
+                      maxLength={1000}
                     />
+                    <p className="banner-form-dialog__char-count">
+                      {formData.description.length}/1000
+                    </p>
                   </div>
                   <div className="banner-form-dialog__form-field" />
                 </div>
