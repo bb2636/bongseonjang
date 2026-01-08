@@ -10,12 +10,21 @@ export interface BannerFormData {
   linkType: LinkType;
   linkUrl: string;
   isActive: boolean;
+  description: string;
+  startDate: string;
+  endDate: string;
 }
 
 function determineLinkType(linkUrl: string | null): LinkType {
   if (!linkUrl) return 'none';
   if (linkUrl.startsWith('http://') || linkUrl.startsWith('https://')) return 'external';
   return 'internal';
+}
+
+function formatDateForInput(date: Date | string | null): string {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toISOString().split('T')[0];
 }
 
 function createInitialFormData(defaultPositionCode: string): BannerFormData {
@@ -26,6 +35,9 @@ function createInitialFormData(defaultPositionCode: string): BannerFormData {
     linkType: 'internal',
     linkUrl: '',
     isActive: true,
+    description: '',
+    startDate: '',
+    endDate: '',
   };
 }
 
@@ -50,6 +62,9 @@ export function useBannerForm(
         linkType: determineLinkType(editingBanner.linkUrl),
         linkUrl: editingBanner.linkUrl || '',
         isActive: editingBanner.isActive,
+        description: editingBanner.description || '',
+        startDate: formatDateForInput(editingBanner.startedAt),
+        endDate: formatDateForInput(editingBanner.endedAt),
       });
       setPreviewUrl(editingBanner.imageUrl);
     } else {
@@ -77,6 +92,18 @@ export function useBannerForm(
 
   const handleLinkUrlChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, linkUrl: value }));
+  }, []);
+
+  const handleDescriptionChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, description: value }));
+  }, []);
+
+  const handleStartDateChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, startDate: value }));
+  }, []);
+
+  const handleEndDateChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, endDate: value }));
   }, []);
 
   const handleFileSelect = useCallback((file: File | null) => {
@@ -167,6 +194,9 @@ export function useBannerForm(
           imageUrl,
           linkUrl: formData.linkUrl || null,
           isActive: formData.isActive,
+          description: formData.description || null,
+          startedAt: formData.startDate || null,
+          endedAt: formData.endDate || null,
         }),
       });
 
@@ -195,6 +225,9 @@ export function useBannerForm(
     handlePositionChange,
     handleLinkTypeChange,
     handleLinkUrlChange,
+    handleDescriptionChange,
+    handleStartDateChange,
+    handleEndDateChange,
     handleFileSelect,
     resetForm,
     submitForm,

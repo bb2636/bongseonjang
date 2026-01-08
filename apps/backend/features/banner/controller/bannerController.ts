@@ -51,7 +51,7 @@ export class BannerController {
 
   async createBanner(req: Request, res: Response): Promise<void> {
     try {
-      const { bannerPositionId, title, imageUrl, linkUrl, isActive, startedAt, endedAt } = req.body;
+      const { bannerPositionId, title, imageUrl, linkUrl, isActive, startedAt, endedAt, description } = req.body;
 
       if (!bannerPositionId || !imageUrl) {
         res.status(400).json({ message: '필수 필드가 누락되었습니다' });
@@ -66,6 +66,7 @@ export class BannerController {
         isActive: isActive ?? true,
         startedAt: startedAt ? new Date(startedAt) : null,
         endedAt: endedAt ? new Date(endedAt) : null,
+        description: description || null,
       });
 
       res.status(201).json(banner);
@@ -83,7 +84,7 @@ export class BannerController {
         return;
       }
 
-      const { title, imageUrl, linkUrl, isActive, startedAt, endedAt } = req.body;
+      const { title, imageUrl, linkUrl, isActive, startedAt, endedAt, description } = req.body;
 
       const banner = await bannerRepository.updateBanner(id, {
         title,
@@ -92,6 +93,7 @@ export class BannerController {
         isActive,
         startedAt: startedAt ? new Date(startedAt) : null,
         endedAt: endedAt ? new Date(endedAt) : null,
+        description: description !== undefined ? (description || null) : undefined,
       });
 
       if (!banner) {

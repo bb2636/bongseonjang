@@ -15,6 +15,7 @@ export interface Banner {
   title: string | null;
   imageUrl: string;
   linkUrl: string | null;
+  description: string | null;
   sortNo: number;
   isActive: boolean;
   startedAt: string | null;

@@ -22,6 +22,9 @@ export class Banner {
   @Column({ type: 'varchar', length: 500, name: 'link_url', nullable: true })
   linkUrl!: string | null;
 
+  @Column({ type: 'text', nullable: true })
+  description!: string | null;
+
   @Column({ type: 'int', name: 'sort_no', default: 0 })
   sortNo!: number;
 

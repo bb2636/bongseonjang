@@ -47,6 +47,7 @@ export class BannerRepository {
     isActive?: boolean;
     startedAt?: Date | null;
     endedAt?: Date | null;
+    description?: string | null;
   }): Promise<Banner> {
     const banner = this.bannerRepo.create({
       position: { id: data.bannerPositionId },
@@ -56,6 +57,7 @@ export class BannerRepository {
       isActive: data.isActive ?? true,
       startedAt: data.startedAt,
       endedAt: data.endedAt,
+      description: data.description,
     });
     return this.bannerRepo.save(banner);
   }
