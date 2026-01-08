@@ -21,6 +21,7 @@ export interface CouponWithDetails extends Coupon {
   validFrom: Date | null;
   validTo: Date | null;
   targetType: 'all' | 'category';
+  allowMultipleUse: boolean;
 }
 
 export class CouponRepository {

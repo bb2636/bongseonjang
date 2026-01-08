@@ -425,6 +425,91 @@
   margin: 8px 0 0 0;
 }
 
+.checkout-coupon-empty {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: rgba(12, 12, 12, 0.6);
+  margin: 0;
+}
+
+.checkout-coupon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkout-coupon-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  border: 1px solid rgba(12, 12, 12, 0.1);
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.checkout-coupon-item:hover {
+  border-color: rgba(12, 12, 12, 0.2);
+}
+
+.checkout-coupon-item input[type="checkbox"] {
+  display: none;
+}
+
+.checkout-coupon-item__checkmark {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid rgba(12, 12, 12, 0.2);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.checkout-coupon-item__checkmark::after {
+  content: '';
+  width: 6px;
+  height: 10px;
+  border: solid transparent;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.checkout-coupon-item input[type="checkbox"]:checked + .checkout-coupon-item__checkmark {
+  background-color: #3B9BD5;
+  border-color: #3B9BD5;
+}
+
+.checkout-coupon-item input[type="checkbox"]:checked + .checkout-coupon-item__checkmark::after {
+  border-color: #fff;
+}
+
+.checkout-coupon-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkout-coupon-item__name {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0C0C0C;
+  line-height: 1.4;
+}
+
+.checkout-coupon-item__discount {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  color: #3B9BD5;
+  font-weight: 500;
+}
+
 .checkout-summary {
   display: flex;
   flex-direction: column;

@@ -10,6 +10,7 @@ export interface CouponDto {
   validFrom: string | null;
   validTo: string | null;
   isIssued: boolean;
+  allowMultipleUse: boolean;
 }
 
 interface PreparePaymentRequest {
@@ -22,7 +23,7 @@ interface PreparePaymentRequest {
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
-  userCouponId?: number;
+  userCouponIds?: number[];
   usedPoints?: number;
 }
 
@@ -42,7 +43,7 @@ export interface PrepareDirectPaymentRequest {
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
-  userCouponId?: number;
+  userCouponIds?: number[];
   usedPoints?: number;
 }
 

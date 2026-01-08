@@ -132,7 +132,7 @@ export function CheckoutPage() {
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
   const [termsAgreed, setTermsAgreed] = useState(false);
-  const [selectedCouponId, setSelectedCouponId] = useState<number | null>(null);
+  const [selectedCouponIds, setSelectedCouponIds] = useState<number[]>([]);
 
   const { data: cart, isLoading: isCartLoading } = useQuery({
     queryKey: ['cart'],
@@ -258,9 +258,14 @@ export function CheckoutPage() {
     return myCoupons.filter(coupon => productAmount >= coupon.minOrderAmount);
   }, [myCoupons, productAmount]);
 
-  const selectedCoupon = useMemo(() => {
-    return myCoupons.find(c => c.id === selectedCouponId) || null;
-  }, [myCoupons, selectedCouponId]);
+  const selectedCoupons = useMemo(() => {
+    return myCoupons.filter(c => selectedCouponIds.includes(c.id));
+  }, [myCoupons, selectedCouponIds]);
+
+  const hasInvalidMultipleCouponSelection = useMemo(() => {
+    if (selectedCoupons.length <= 1) return false;
+    return selectedCoupons.some(c => !c.allowMultipleUse);
+  }, [selectedCoupons]);
 
   const baseShippingFee = useMemo(() => {
     const freeThreshold = shippingConfig.freeShippingThreshold;
@@ -271,34 +276,46 @@ export function CheckoutPage() {
   }, [productAmount, currentAddress, shippingConfig]);
 
   const couponDiscount = useMemo(() => {
-    if (!selectedCoupon) return 0;
-    if (productAmount < selectedCoupon.minOrderAmount) return 0;
+    if (selectedCoupons.length === 0) return 0;
+    if (hasInvalidMultipleCouponSelection) return 0;
     
-    let discount = 0;
-    if (selectedCoupon.discountType === 'fixed') {
-      discount = selectedCoupon.discountValue;
-    } else if (selectedCoupon.discountType === 'rate') {
-      discount = Math.floor(productAmount * selectedCoupon.discountValue / 100);
-      if (selectedCoupon.maxDiscountAmount && discount > selectedCoupon.maxDiscountAmount) {
-        discount = selectedCoupon.maxDiscountAmount;
+    let totalDiscount = 0;
+    for (const coupon of selectedCoupons) {
+      if (productAmount < coupon.minOrderAmount) continue;
+      if (coupon.discountType === 'shipping') continue;
+      
+      let discount = 0;
+      if (coupon.discountType === 'fixed') {
+        discount = coupon.discountValue;
+      } else if (coupon.discountType === 'rate') {
+        discount = Math.floor(productAmount * coupon.discountValue / 100);
+        if (coupon.maxDiscountAmount && discount > coupon.maxDiscountAmount) {
+          discount = coupon.maxDiscountAmount;
+        }
       }
-    } else if (selectedCoupon.discountType === 'shipping') {
-      return 0;
+      totalDiscount += discount;
     }
-    return Math.min(discount, productAmount);
-  }, [selectedCoupon, productAmount]);
+    return Math.min(totalDiscount, productAmount);
+  }, [selectedCoupons, productAmount, hasInvalidMultipleCouponSelection]);
 
   const shippingCouponDiscount = useMemo(() => {
-    if (!selectedCoupon) return 0;
-    if (selectedCoupon.discountType !== 'shipping') return 0;
-    if (productAmount < selectedCoupon.minOrderAmount) return 0;
+    if (selectedCoupons.length === 0) return 0;
+    if (hasInvalidMultipleCouponSelection) return 0;
     if (baseShippingFee === 0) return 0;
     
-    if (selectedCoupon.discountValue === 0) {
-      return baseShippingFee;
+    let totalShippingDiscount = 0;
+    for (const coupon of selectedCoupons) {
+      if (coupon.discountType !== 'shipping') continue;
+      if (productAmount < coupon.minOrderAmount) continue;
+      
+      if (coupon.discountValue === 0) {
+        totalShippingDiscount += baseShippingFee;
+      } else {
+        totalShippingDiscount += coupon.discountValue;
+      }
     }
-    return Math.min(selectedCoupon.discountValue, baseShippingFee);
-  }, [selectedCoupon, productAmount, baseShippingFee]);
+    return Math.min(totalShippingDiscount, baseShippingFee);
+  }, [selectedCoupons, productAmount, baseShippingFee, hasInvalidMultipleCouponSelection]);
   
   const shippingFee = baseShippingFee - shippingCouponDiscount;
   
@@ -343,6 +360,15 @@ export function CheckoutPage() {
     setPointInput(maxUsable.toString());
   };
 
+  const handleCouponToggle = (couponId: number) => {
+    setSelectedCouponIds(prev => {
+      if (prev.includes(couponId)) {
+        return prev.filter(id => id !== couponId);
+      }
+      return [...prev, couponId];
+    });
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -380,7 +406,7 @@ export function CheckoutPage() {
           deliveryRequest: finalDeliveryRequest,
           paymentMethod,
           shippingFee,
-          userCouponId: selectedCouponId ?? undefined,
+          userCouponIds: selectedCouponIds.length > 0 ? selectedCouponIds : undefined,
           usedPoints: usedPoints > 0 ? usedPoints : undefined,
         });
       } else {
@@ -394,7 +420,7 @@ export function CheckoutPage() {
           deliveryRequest: finalDeliveryRequest,
           paymentMethod,
           shippingFee,
-          userCouponId: selectedCouponId ?? undefined,
+          userCouponIds: selectedCouponIds.length > 0 ? selectedCouponIds : undefined,
           usedPoints: usedPoints > 0 ? usedPoints : undefined,
         });
       }
@@ -640,31 +666,35 @@ export function CheckoutPage() {
             </svg>
           </div>
           <div className="checkout-coupon-section">
-            <select 
-              className="checkout-select"
-              value={selectedCouponId ?? ''}
-              onChange={(e) => setSelectedCouponId(e.target.value ? Number(e.target.value) : null)}
-            >
-              {usableCoupons.length === 0 ? (
-                <option value="">적용할 수 있는 쿠폰이 없습니다</option>
-              ) : (
-                <>
-                  <option value="">쿠폰을 선택해주세요</option>
-                  {usableCoupons.map(coupon => (
-                    <option key={coupon.id} value={coupon.id}>
-                      {coupon.name} ({coupon.discountType === 'fixed' 
-                        ? `${coupon.discountValue.toLocaleString()}원` 
-                        : coupon.discountType === 'rate'
-                          ? `${coupon.discountValue}%`
-                          : '배송비 무료'} 할인)
-                    </option>
-                  ))}
-                </>
-              )}
-            </select>
-            {selectedCoupon && productAmount < selectedCoupon.minOrderAmount && (
+            {usableCoupons.length === 0 ? (
+              <p className="checkout-coupon-empty">적용할 수 있는 쿠폰이 없습니다</p>
+            ) : (
+              <div className="checkout-coupon-list">
+                {usableCoupons.map(coupon => (
+                  <label key={coupon.id} className="checkout-coupon-item">
+                    <input
+                      type="checkbox"
+                      checked={selectedCouponIds.includes(coupon.id)}
+                      onChange={() => handleCouponToggle(coupon.id)}
+                    />
+                    <span className="checkout-coupon-item__checkmark"></span>
+                    <span className="checkout-coupon-item__info">
+                      <span className="checkout-coupon-item__name">{coupon.name}</span>
+                      <span className="checkout-coupon-item__discount">
+                        {coupon.discountType === 'fixed' 
+                          ? `${coupon.discountValue.toLocaleString()}원` 
+                          : coupon.discountType === 'rate'
+                            ? `${coupon.discountValue}%`
+                            : '배송비 무료'} 할인
+                      </span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
+            {hasInvalidMultipleCouponSelection && (
               <p className="checkout-coupon-warning">
-                최소 주문금액 {selectedCoupon.minOrderAmount.toLocaleString()}원 이상부터 사용 가능합니다
+                중복 사용이 불가능한 쿠폰이 포함되어 있습니다
               </p>
             )}
             <p className="checkout-coupon-available">
