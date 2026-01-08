@@ -3,18 +3,11 @@
   flex-direction: column;
   min-height: 100vh;
   background: #FFFFFF;
-}
-
-.home-shell__header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: #FFFFFF;
+  overflow-x: hidden;
 }
 
 .home-shell__content {
   flex: 1;
-  padding-top: calc(86px + var(--safe-area-top, 0px));
+  padding-bottom: 94px;
+  overflow-x: hidden;
 }

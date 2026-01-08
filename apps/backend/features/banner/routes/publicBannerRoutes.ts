@@ -4,7 +4,6 @@ import { bannerRepository } from '../repository/bannerRepository';
 const heroRouter = Router();
 const middleBannerRouter = Router();
 const bottomBannerRouter = Router();
-const mypageBannerRouter = Router();
 
 async function getBannersByPosition(positionCode: string, res: Response) {
   try {
@@ -45,13 +44,8 @@ bottomBannerRouter.get('/', async (req: Request, res: Response) => {
   await getBannersByPosition('HOME_BOTTOM', res);
 });
 
-mypageBannerRouter.get('/', async (req: Request, res: Response) => {
-  await getBannersByPosition('MYPAGE', res);
-});
-
 export { 
   heroRouter as publicHeroRoutes, 
   middleBannerRouter as publicMiddleBannerRoutes,
-  bottomBannerRouter as publicBottomBannerRoutes,
-  mypageBannerRouter as publicMypageBannerRoutes
+  bottomBannerRouter as publicBottomBannerRoutes 
 };

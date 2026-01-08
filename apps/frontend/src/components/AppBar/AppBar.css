@@ -3,7 +3,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: var(--safe-area-top, 0px) 8px 0 16px;
+  padding: var(--safe-area-top, 0) 8px 0 16px;
   width: 100%;
   min-height: 48px;
   height: calc(48px + var(--safe-area-top, 0px));

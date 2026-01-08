@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import AppBar from '../../../components/AppBar/AppBar';
 import BottomNav from '../../../components/BottomNav/BottomNav';
-import ProfileBanner from '../components/ProfileBanner';
 import './GuestProfileView.css';
 
 export default function GuestProfileView() {
@@ -37,10 +36,6 @@ export default function GuestProfileView() {
           </button>
         </div>
       </main>
-
-      <div className="guest-profile-view__banner-wrapper">
-        <ProfileBanner isGuest />
-      </div>
 
       <BottomNav />
     </div>

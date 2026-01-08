@@ -260,17 +260,17 @@ export function BannerFormDialog({
 
               <section className="banner-form-dialog__section">
                 <h3 className="banner-form-dialog__section-title">이벤트 정보</h3>
+                <div className="banner-form-dialog__form-field">
+                  <label className="banner-form-dialog__label">이벤트 설명</label>
+                  <textarea
+                    className="banner-form-dialog__textarea"
+                    placeholder="이벤트 상세 설명을 입력하세요"
+                    value={formData.description}
+                    onChange={(e) => handleDescriptionChange(e.target.value)}
+                    rows={3}
+                  />
+                </div>
                 <div className="banner-form-dialog__form-row">
-                  <div className="banner-form-dialog__form-field">
-                    <label className="banner-form-dialog__label">이벤트 설명</label>
-                    <textarea
-                      className="banner-form-dialog__textarea"
-                      placeholder="이벤트 상세 설명을 입력하세요"
-                      value={formData.description}
-                      onChange={(e) => handleDescriptionChange(e.target.value)}
-                      rows={3}
-                    />
-                  </div>
                   <div className="banner-form-dialog__form-field">
                     <label className="banner-form-dialog__label">시작일</label>
                     <input
@@ -279,7 +279,9 @@ export function BannerFormDialog({
                       value={formData.startDate}
                       onChange={(e) => handleStartDateChange(e.target.value)}
                     />
-                    <label className="banner-form-dialog__label banner-form-dialog__label--mt">종료일</label>
+                  </div>
+                  <div className="banner-form-dialog__form-field">
+                    <label className="banner-form-dialog__label">종료일</label>
                     <input
                       type="date"
                       className="banner-form-dialog__input"
