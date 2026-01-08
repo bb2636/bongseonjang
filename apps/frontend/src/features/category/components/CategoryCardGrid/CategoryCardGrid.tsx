@@ -22,7 +22,7 @@ const brandCategories: BrandCategory[] = [
   },
   {
     id: 'obada',
-    name: '오바다',
+    name: '온바다',
     subtitle: '수산물',
     imageSrc: obadaImage,
   },

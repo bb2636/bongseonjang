@@ -32,7 +32,7 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
     const fetchCategories = async () => {
       try {
         const categories = await apiClient.get<ApiCategory[]>('/products/categories');
-        const brandCategoryNames = ['바담은', '봉쿡', '포시즌', '오바다'];
+        const brandCategoryNames = ['바담은', '봉쿡', '포시즌', '온바다'];
         const mapped = categories
           .filter((cat) => !brandCategoryNames.includes(cat.name))
           .map((cat) => ({

@@ -6,6 +6,13 @@
   overflow-x: hidden;
 }
 
+.home-shell__header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #FFFFFF;
+}
+
 .home-shell__content {
   flex: 1;
   padding-bottom: 94px;

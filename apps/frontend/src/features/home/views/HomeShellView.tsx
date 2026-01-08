@@ -34,10 +34,12 @@ export default function HomeShellView({ shell }: HomeShellViewProps) {
 
   return (
     <div className="home-shell">
-      <AppBar onLogoClick={onLogoClick} />
+      <header className="home-shell__header">
+        <AppBar onLogoClick={onLogoClick} />
+        <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />
+      </header>
 
       <main className="home-shell__content">
-        <CategoryTabs activeTab={activeTab} onTabChange={onTabChange} />
         {renderContent()}
       </main>
     </div>
