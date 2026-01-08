@@ -28,6 +28,7 @@ import { adminOrderRoutes } from '../features/admin/routes/adminOrderRoutes';
 import { userRoutes } from '../features/user';
 import { termsRoutes, adminTermsRoutes } from '../features/terms';
 import homeDataRoutes from '../features/home/routes/homeDataRoutes';
+import shippingRoutes from '../features/shipping/routes/shippingRoutes';
 import { adminAuthMiddleware } from '../common/middleware/adminAuthMiddleware';
 
 const router = Router();
@@ -56,6 +57,7 @@ router.use('/coupons', couponRoutes);
 router.use('/wishlist', wishlistRoutes);
 router.use('/orders', orderHistoryRoutes);
 router.use('/payment', paymentRoutes);
+router.use('/shipping', shippingRoutes);
 router.use('/address', addressRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/terms', termsRoutes);
