@@ -182,17 +182,9 @@ export class CouponRepository {
         return { canIssue: false, reason: '사용자를 찾을 수 없습니다' };
       }
       
-      const gradeToId: Record<MembershipGrade, number> = {
-        [MembershipGrade.BRONZE]: 1,
-        [MembershipGrade.SILVER]: 2,
-        [MembershipGrade.GOLD]: 3,
-        [MembershipGrade.VIP]: 4,
-      };
+      const allowedGrades = issueGrades.map(g => g.grade);
       
-      const userGradeId = gradeToId[user.membershipGrade] || 1;
-      const allowedGradeIds = issueGrades.map(g => g.gradeId);
-      
-      if (allowedGradeIds.includes(userGradeId)) {
+      if (allowedGrades.includes(user.membershipGrade)) {
         return { canIssue: true };
       }
       
