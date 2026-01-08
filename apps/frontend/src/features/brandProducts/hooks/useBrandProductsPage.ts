@@ -9,14 +9,14 @@ const STALE_TIME = 5 * 60 * 1000;
 
 const BRAND_TAG_MAP: Record<string, string> = {
   badameun: '바담은 제품',
-  obada: '오바다 제품',
+  obada: '온바다 제품',
   fourseason: '포시즌 제품',
   bongcook: '봉쿡 제품',
 };
 
 const BRAND_DISPLAY_NAMES: Record<string, string> = {
   badameun: '바담은',
-  obada: '오바다',
+  obada: '온바다',
   fourseason: '포시즌',
   bongcook: '봉쿡',
 };

@@ -7,7 +7,7 @@ interface Brand {
 
 const BRANDS: Brand[] = [
   { id: 'badameun', name: '바담은' },
-  { id: 'obada', name: '오바다' },
+  { id: 'obada', name: '온바다' },
   { id: 'fourseason', name: '포시즌' },
   { id: 'bongcook', name: '봉쿡' },
 ];

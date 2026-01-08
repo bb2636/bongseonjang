@@ -27,7 +27,7 @@ interface BrandCategory {
 const BRAND_CATEGORIES: BrandCategory[] = [
   { id: 3, name: '바담은' },
   { id: 6, name: '봉쿡' },
-  { id: 9, name: '오바다' },
+  { id: 9, name: '온바다' },
   { id: 10, name: '포시즌' },
 ];
 
