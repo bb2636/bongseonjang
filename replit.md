@@ -142,6 +142,7 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 
 ### Core Features
 - **홈 화면**: Feature-first 레이아웃, 자체 AppBar/BottomNav, Swiper.js 기반 HeroBanner.
+- **이벤트**: HOME_EVENT 배너 위치를 이벤트로 활용. 별도 events 테이블 대신 banners 테이블의 HOME_EVENT 포지션 사용. Banner 엔티티에 description, startedAt, endedAt 필드로 이벤트 정보 저장. `/api/events` 엔드포인트가 HOME_EVENT 배너를 EventDto로 변환하여 반환.
 - **상품 상세**: "상품정보", "후기 N", "문의" 탭 네비게이션. ReviewService 주입을 통한 리뷰 통계 제공.
 - **2단계 상품 옵션**: MainOption(기본 가격)과 SubOption(추가 금액)으로 구성. lowestPrice 자동 계산. OptionBottomSheet로 선택. 레거시 상품 지원.
 - **카테고리 페이지**: 바텀 네비게이션에서 접근. CategoryAppBar, CategoryList를 포함하며, 카테고리 클릭 시 해당 탭으로 이동.

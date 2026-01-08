@@ -7,7 +7,7 @@ const router = Router();
 const eventService = new EventService();
 const eventController = new EventController(eventService);
 
-router.get('/', (req, res) => eventController.getActiveEvents(req, res));
-router.get('/:id', (req, res) => eventController.getEventById(req, res));
+router.get('/', eventController.getActiveEvents.bind(eventController));
+router.get('/:id', eventController.getEventById.bind(eventController));
 
 export default router;
