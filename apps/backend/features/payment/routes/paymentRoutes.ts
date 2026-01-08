@@ -42,14 +42,11 @@ async function checkProductMatchesTargetCategories(
   productId: string,
   productCategoryId: string | null,
   targetCategoryIds: string[],
-  targetBrandExposureNames: string[]
+  targetBrandExposureNames: string[],
+  targetExposureCategoryIds: number[] = []
 ): Promise<boolean> {
   if (productCategoryId && targetCategoryIds.includes(productCategoryId)) {
     return true;
-  }
-  
-  if (targetBrandExposureNames.length === 0) {
-    return false;
   }
   
   const pecRepo = AppDataSource.getRepository(ProductExposureCategory);
@@ -59,9 +56,18 @@ async function checkProductMatchesTargetCategories(
   });
   
   for (const pec of productExposureCategories) {
-    if (pec.exposureCategory && targetBrandExposureNames.includes(pec.exposureCategory.name)) {
-      return true;
+    if (pec.exposureCategory) {
+      if (targetBrandExposureNames.includes(pec.exposureCategory.name)) {
+        return true;
+      }
+      if (targetExposureCategoryIds.includes(Number(pec.exposureCategory.id))) {
+        return true;
+      }
     }
+  }
+  
+  if (targetBrandExposureNames.length === 0 && targetExposureCategoryIds.length === 0 && targetCategoryIds.length === 0) {
+    return true;
   }
   
   return false;
@@ -255,7 +261,8 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
-        if (targetCategoryIds.length > 0) {
+        const targetExposureCategoryIds = await couponRepository.getCouponTargetExposureCategories(couponDetails.id);
+        if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
           const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
           for (const item of cartItems) {
             if (!item.product) continue;
@@ -263,7 +270,8 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
               item.product.id,
               item.product.productCategoryId,
               targetCategoryIds,
-              targetBrandExposureNames
+              targetBrandExposureNames,
+              targetExposureCategoryIds
             );
             if (!matches) {
               return res.status(400).json({ 
@@ -798,11 +806,13 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       
       if (couponDetails.targetType === 'category') {
         const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
+        const targetExposureCategoryIds = await couponRepository.getCouponTargetExposureCategories(couponDetails.id);
         console.log('[DEBUG COUPON] targetCategoryIds:', targetCategoryIds);
+        console.log('[DEBUG COUPON] targetExposureCategoryIds:', targetExposureCategoryIds);
         console.log('[DEBUG COUPON] product.id:', product.id);
         console.log('[DEBUG COUPON] product.productCategoryId:', product.productCategoryId);
         
-        if (targetCategoryIds.length > 0) {
+        if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
           const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
           console.log('[DEBUG COUPON] targetBrandExposureNames:', targetBrandExposureNames);
           
@@ -810,7 +820,8 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
             product.id,
             product.productCategoryId,
             targetCategoryIds,
-            targetBrandExposureNames
+            targetBrandExposureNames,
+            targetExposureCategoryIds
           );
           console.log('[DEBUG COUPON] matches:', matches);
           

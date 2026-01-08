@@ -8,6 +8,7 @@ import { CouponValidityFixedRange } from '../../../entity/CouponValidityFixedRan
 import { CouponValidityAfterIssueDays } from '../../../entity/CouponValidityAfterIssueDays';
 import { CouponApplyAllProducts } from '../../../entity/CouponApplyAllProducts';
 import { CouponApplyCategory } from '../../../entity/CouponApplyCategory';
+import { CouponApplyExposureCategory } from '../../../entity/CouponApplyExposureCategory';
 import { CouponIssueAllUsers } from '../../../entity/CouponIssueAllUsers';
 import { CouponIssueNewUsers } from '../../../entity/CouponIssueNewUsers';
 import { CouponIssueGrade } from '../../../entity/CouponIssueGrade';
@@ -32,6 +33,7 @@ export class CouponRepository {
   private validityAfterIssueDaysRepo = AppDataSource.getRepository(CouponValidityAfterIssueDays);
   private applyAllProductsRepo = AppDataSource.getRepository(CouponApplyAllProducts);
   private applyCategoryRepo = AppDataSource.getRepository(CouponApplyCategory);
+  private applyExposureCategoryRepo = AppDataSource.getRepository(CouponApplyExposureCategory);
   private issueAllUsersRepo = AppDataSource.getRepository(CouponIssueAllUsers);
   private issueNewUsersRepo = AppDataSource.getRepository(CouponIssueNewUsers);
   private issueGradeRepo = AppDataSource.getRepository(CouponIssueGrade);
@@ -236,5 +238,12 @@ export class CouponRepository {
       where: { couponId },
     });
     return applyCategories.map(ac => ac.categoryId);
+  }
+
+  async getCouponTargetExposureCategories(couponId: number): Promise<number[]> {
+    const applyExposureCategories = await this.applyExposureCategoryRepo.find({
+      where: { couponId },
+    });
+    return applyExposureCategories.map(aec => Number(aec.exposureCategoryId));
   }
 }
