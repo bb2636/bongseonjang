@@ -16,5 +16,5 @@
 
 .home-shell__content {
   flex: 1;
-  padding-top: 86px;
+  padding-top: calc(86px + var(--safe-area-top, 0px));
 }
