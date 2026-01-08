@@ -5,6 +5,7 @@ import SummaryCard from '../components/SummaryCard/SummaryCard';
 import RecentOrders from '../components/RecentOrders/RecentOrders';
 import MenuList from '../components/MenuList/MenuList';
 import ProfileSkeleton from '../components/ProfileSkeleton';
+import ProfileBanner from '../components/ProfileBanner';
 import BottomNav from '../../../components/BottomNav/BottomNav';
 import { ConfirmModal } from '../../../components/ConfirmModal';
 import './ProfileView.css';
@@ -103,6 +104,8 @@ export default function ProfileView({ state, actions }: ProfileViewProps) {
           onLogout={actions.onLogoutClick}
         />
       </main>
+
+      <ProfileBanner />
 
       <BottomNav />
 
