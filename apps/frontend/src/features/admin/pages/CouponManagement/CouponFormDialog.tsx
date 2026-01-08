@@ -146,22 +146,22 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleCategoryToggle = (categoryId: string) => {
-    setFormData(prev => {
-      const newCategories = prev.targetCategories.includes(categoryId)
-        ? prev.targetCategories.filter(id => id !== categoryId)
-        : [...prev.targetCategories, categoryId];
-      return { ...prev, targetCategories: newCategories };
-    });
-  };
-
-  const handleBrandCategoryToggle = (brandId: number) => {
-    setFormData(prev => {
-      const newBrands = prev.targetExposureCategories.includes(brandId)
-        ? prev.targetExposureCategories.filter(id => id !== brandId)
-        : [...prev.targetExposureCategories, brandId];
-      return { ...prev, targetExposureCategories: newBrands };
-    });
+  const handleUnifiedCategoryToggle = (id: string | number) => {
+    if (typeof id === 'number') {
+      setFormData(prev => {
+        const newBrands = prev.targetExposureCategories.includes(id)
+          ? prev.targetExposureCategories.filter(brandId => brandId !== id)
+          : [...prev.targetExposureCategories, id];
+        return { ...prev, targetExposureCategories: newBrands };
+      });
+    } else {
+      setFormData(prev => {
+        const newCategories = prev.targetCategories.includes(id)
+          ? prev.targetCategories.filter(catId => catId !== id)
+          : [...prev.targetCategories, id];
+        return { ...prev, targetCategories: newCategories };
+      });
+    }
   };
 
   const handleGradeChange = (grade: string) => {
@@ -186,7 +186,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
     }
 
     if (formData.targetType === 'category' && formData.targetCategories.length === 0 && formData.targetExposureCategories.length === 0) {
-      setError('특정 카테고리 또는 브랜드를 선택해주세요.');
+      setError('특정 카테고리를 선택해주세요.');
       setIsSubmitting(false);
       return;
     }
@@ -422,47 +422,37 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
             </div>
 
             {formData.targetType === 'category' && (
-              <>
-                <div className="coupon-form-dialog__field">
-                  <label className="coupon-form-dialog__label">브랜드 선택</label>
+              <div className="coupon-form-dialog__field">
+                <label className="coupon-form-dialog__label">카테고리 선택</label>
+                {isCategoriesLoading ? (
+                  <div className="coupon-form-dialog__category-loading">카테고리 로딩 중...</div>
+                ) : (
                   <div className="coupon-form-dialog__category-list">
                     {BRAND_CATEGORIES.map((brand) => (
-                      <label key={brand.id} className="coupon-form-dialog__category-item">
+                      <label key={`brand-${brand.id}`} className="coupon-form-dialog__category-item">
                         <input
                           type="checkbox"
                           checked={formData.targetExposureCategories.includes(brand.id)}
-                          onChange={() => handleBrandCategoryToggle(brand.id)}
+                          onChange={() => handleUnifiedCategoryToggle(brand.id)}
                         />
                         <span className="coupon-form-dialog__category-checkbox"></span>
-                        <span className="coupon-form-dialog__category-name">{brand.name}</span>
+                        <span className="coupon-form-dialog__category-name">[브랜드] {brand.name}</span>
+                      </label>
+                    ))}
+                    {categories.map((category) => (
+                      <label key={category.id} className="coupon-form-dialog__category-item">
+                        <input
+                          type="checkbox"
+                          checked={formData.targetCategories.includes(category.id)}
+                          onChange={() => handleUnifiedCategoryToggle(category.id)}
+                        />
+                        <span className="coupon-form-dialog__category-checkbox"></span>
+                        <span className="coupon-form-dialog__category-name">{category.name}</span>
                       </label>
                     ))}
                   </div>
-                </div>
-
-                <div className="coupon-form-dialog__field">
-                  <label className="coupon-form-dialog__label">카테고리 선택</label>
-                  {isCategoriesLoading ? (
-                    <div className="coupon-form-dialog__category-loading">카테고리 로딩 중...</div>
-                  ) : categories.length === 0 ? (
-                    <div className="coupon-form-dialog__category-empty">등록된 카테고리가 없습니다</div>
-                  ) : (
-                    <div className="coupon-form-dialog__category-list">
-                      {categories.map((category) => (
-                        <label key={category.id} className="coupon-form-dialog__category-item">
-                          <input
-                            type="checkbox"
-                            checked={formData.targetCategories.includes(category.id)}
-                            onChange={() => handleCategoryToggle(category.id)}
-                          />
-                          <span className="coupon-form-dialog__category-checkbox"></span>
-                          <span className="coupon-form-dialog__category-name">{category.name}</span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </>
+                )}
+              </div>
             )}
           </div>
 
