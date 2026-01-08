@@ -10,6 +10,8 @@ interface CouponDownloadPageProps {
   onIssueCoupon: (couponId: string) => void;
 }
 
+const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -18,6 +20,13 @@ function formatDate(dateString: string): string {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   return `${year}.${month}.${day} ${hours}:${minutes}까지`;
+}
+
+function isExpiringSoon(dateString: string): boolean {
+  const expiryDate = new Date(dateString);
+  const now = new Date();
+  const timeRemaining = expiryDate.getTime() - now.getTime();
+  return timeRemaining > 0 && timeRemaining <= TWENTY_FOUR_HOURS_MS;
 }
 
 function formatDiscount(coupon: Coupon): string {
@@ -99,7 +108,9 @@ export default function CouponDownloadPage({
                       <span className="coupon-download-card-condition">{formatCondition(coupon)}</span>
                     </div>
                   </div>
-                  <span className="coupon-download-card-expiry">{formatDate(coupon.validTo)}</span>
+                  <span className={`coupon-download-card-expiry ${isExpiringSoon(coupon.validTo) ? 'coupon-download-card-expiry--urgent' : ''}`}>
+                    {formatDate(coupon.validTo)}
+                  </span>
                 </div>
 
                 <button

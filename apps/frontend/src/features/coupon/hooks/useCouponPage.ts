@@ -22,12 +22,18 @@ export function useCouponPage() {
   const validCoupons = useMemo(() => {
     if (!data?.coupons) return [];
     const now = new Date();
-    return data.coupons.filter(coupon => {
-      if (coupon.validTo && new Date(coupon.validTo) < now) {
-        return false;
-      }
-      return true;
-    });
+    return data.coupons
+      .filter(coupon => {
+        if (coupon.validTo && new Date(coupon.validTo) < now) {
+          return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const aTime = new Date(a.validTo).getTime();
+        const bTime = new Date(b.validTo).getTime();
+        return aTime - bTime;
+      });
   }, [data?.coupons]);
 
   const issueMutation = useMutation({
