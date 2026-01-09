@@ -17,6 +17,7 @@ interface InquiryDetail {
   answeredAt: string | null;
   answeredBy: string | null;
   answererName: string | null;
+  imageUrls: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -192,6 +193,29 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
                   {inquiry.question}
                 </div>
               </div>
+
+              {inquiry.imageUrls && inquiry.imageUrls.length > 0 && (
+                <div className="inquiry-panel__field">
+                  <label className="inquiry-panel__label">첨부 이미지</label>
+                  <div className="inquiry-panel__images">
+                    {inquiry.imageUrls.map((url, index) => (
+                      <a 
+                        key={index} 
+                        href={url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inquiry-panel__image-link"
+                      >
+                        <img 
+                          src={url} 
+                          alt={`첨부 이미지 ${index + 1}`} 
+                          className="inquiry-panel__image"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="inquiry-panel__field">
                 <label className="inquiry-panel__label">답변 상태</label>

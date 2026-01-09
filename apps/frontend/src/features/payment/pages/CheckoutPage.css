@@ -731,11 +731,19 @@
   color: #0C0C0C;
 }
 
-.checkout-submit-button {
+.checkout-submit-container {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  padding: 16px;
+  padding-bottom: calc(16px + var(--safe-area-bottom, 0px));
+  background-color: #FFFFFF;
+  z-index: 100;
+}
+
+.checkout-submit-button {
+  width: 100%;
   padding: 16px;
   font-family: 'Pretendard', sans-serif;
   font-weight: 600;
@@ -743,6 +751,7 @@
   color: #fff;
   background-color: #3B9BD5;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
 }
 

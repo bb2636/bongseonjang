@@ -901,13 +901,15 @@ export function CheckoutPage() {
           </label>
         </section>
 
-        <button
-          type="submit"
-          className="checkout-submit-button"
-          disabled={isProcessing || !currentAddress || !termsAgreed || hasInvalidMultipleCouponSelection}
-        >
-          {isProcessing ? '처리 중...' : `${finalAmount.toLocaleString()}원 결제하기`}
-        </button>
+        <div className="checkout-submit-container">
+          <button
+            type="submit"
+            className="checkout-submit-button"
+            disabled={isProcessing || !currentAddress || !termsAgreed || hasInvalidMultipleCouponSelection}
+          >
+            {isProcessing ? '처리 중...' : `${finalAmount.toLocaleString()}원 결제하기`}
+          </button>
+        </div>
       </form>
 
       <DeliveryRequestBottomSheet
