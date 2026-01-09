@@ -1,67 +1,104 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useToast } from '@/contexts/ToastContext';
 
-interface PasswordResetRequestResponse {
+type Step = 'email' | 'emailVerified' | 'codeSent' | 'codeVerified';
+
+interface CheckEmailResponse {
   success: boolean;
+  exists: boolean;
+  isSocialOnlyAccount: boolean;
+  provider: 'kakao' | 'naver' | null;
   message: string;
 }
 
-interface CheckSocialResponse {
-  isSocialOnlyAccount: boolean;
-  provider: 'kakao' | 'naver' | null;
+interface ApiResponse {
+  success: boolean;
+  message: string;
+  expiresInSeconds?: number;
 }
 
-async function checkSocialAccount(email: string): Promise<CheckSocialResponse> {
-  const response = await fetch('/api/auth/password-reset/check-social', {
+async function checkEmailApi(email: string): Promise<CheckEmailResponse> {
+  const response = await fetch('/api/auth/password-reset/check-email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
   });
-  
-  const data = await response.json();
-  
-  if (!response.ok) {
-    throw new Error(data.message || '계정 확인에 실패했습니다');
-  }
-  
-  return data;
+  return response.json();
 }
 
-async function requestPasswordReset(email: string): Promise<PasswordResetRequestResponse> {
-  const response = await fetch('/api/auth/password-reset/request', {
+async function sendCodeApi(email: string): Promise<ApiResponse> {
+  const response = await fetch('/api/auth/password-reset/send-code', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
   });
-  
-  const data = await response.json();
-  
-  if (!response.ok) {
-    throw new Error(data.message || '비밀번호 재설정 요청에 실패했습니다');
-  }
-  
-  return data;
+  return response.json();
 }
+
+async function verifyCodeApi(email: string, code: string): Promise<ApiResponse> {
+  const response = await fetch('/api/auth/password-reset/verify-code', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code }),
+  });
+  return response.json();
+}
+
+async function changePasswordApi(
+  email: string, 
+  code: string, 
+  newPassword: string,
+  confirmPassword: string
+): Promise<ApiResponse> {
+  const response = await fetch('/api/auth/password-reset/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code, newPassword, confirmPassword }),
+  });
+  return response.json();
+}
+
+const TIMER_SECONDS = 180;
 
 export function usePasswordResetRequest() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
+  
+  const [step, setStep] = useState<Step>('email');
   const [email, setEmail] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [touched, setTouched] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [code, setCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [codeError, setCodeError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  
   const [socialProvider, setSocialProvider] = useState<'kakao' | 'naver' | null>(null);
-  const [isCheckingSocial, setIsCheckingSocial] = useState(false);
+  
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const mutation = useMutation({
-    mutationFn: requestPasswordReset,
-    onSuccess: () => {
-      setIsSuccess(true);
-    },
-    onError: (err: Error) => {
-      setError(err.message);
-    },
-  });
+  const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    if (timerSeconds > 0) {
+      timerRef.current = setTimeout(() => {
+        setTimerSeconds(prev => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [timerSeconds]);
 
   const validateEmail = useCallback((value: string): string | null => {
     if (!value.trim()) {
@@ -74,72 +111,229 @@ export function usePasswordResetRequest() {
     return null;
   }, []);
 
-  const isValid = useMemo(() => {
-    return !validateEmail(email);
-  }, [email, validateEmail]);
+  const validatePassword = useCallback((password: string, confirm: string): string | null => {
+    if (!password) {
+      return '새 비밀번호를 입력해주세요.';
+    }
+    if (password.length < 6) {
+      return '비밀번호는 6자 이상이어야 합니다.';
+    }
+    if (!confirm) {
+      return '비밀번호 확인을 입력해주세요.';
+    }
+    if (password !== confirm) {
+      return '비밀번호가 일치하지 않습니다.';
+    }
+    return null;
+  }, []);
 
   const onEmailChange = useCallback((value: string) => {
     setEmail(value);
+    setEmailError(null);
     setSocialProvider(null);
-    if (touched) {
-      setError(validateEmail(value));
+    if (step !== 'email') {
+      setStep('email');
+      setCode('');
+      setCodeError(null);
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordError(null);
+      setTimerSeconds(0);
     }
-  }, [touched, validateEmail]);
+  }, [step]);
 
-  const onEmailBlur = useCallback(async () => {
-    setTouched(true);
-    const emailError = validateEmail(email);
-    setError(emailError);
+  const onCodeChange = useCallback((value: string) => {
+    setCode(value);
+    setCodeError(null);
+  }, []);
 
-    if (!emailError && email.trim()) {
-      setIsCheckingSocial(true);
-      try {
-        const result = await checkSocialAccount(email);
-        if (result.isSocialOnlyAccount) {
-          setSocialProvider(result.provider);
-        } else {
-          setSocialProvider(null);
-        }
-      } catch {
-        setSocialProvider(null);
-      } finally {
-        setIsCheckingSocial(false);
+  const onNewPasswordChange = useCallback((value: string) => {
+    setNewPassword(value);
+    setPasswordError(null);
+  }, []);
+
+  const onConfirmPasswordChange = useCallback((value: string) => {
+    setConfirmPassword(value);
+    setPasswordError(null);
+  }, []);
+
+  const onCheckEmail = useCallback(async () => {
+    const error = validateEmail(email);
+    if (error) {
+      setEmailError(error);
+      return;
+    }
+
+    setIsCheckingEmail(true);
+    setEmailError(null);
+    setSocialProvider(null);
+
+    try {
+      const result = await checkEmailApi(email);
+      
+      if (!result.exists) {
+        setEmailError('가입되지 않은 이메일입니다.');
+        return;
       }
+
+      if (result.isSocialOnlyAccount) {
+        setSocialProvider(result.provider);
+        return;
+      }
+
+      setStep('emailVerified');
+    } catch {
+      setEmailError('계정 확인에 실패했습니다.');
+    } finally {
+      setIsCheckingEmail(false);
     }
   }, [email, validateEmail]);
 
-  const onSubmit = useCallback(() => {
-    setTouched(true);
-    const emailError = validateEmail(email);
-    setError(emailError);
+  const onSendCode = useCallback(async () => {
+    if (step !== 'emailVerified' && step !== 'codeSent') return;
 
-    if (emailError) {
+    setIsSendingCode(true);
+    setCodeError(null);
+
+    try {
+      const result = await sendCodeApi(email);
+      
+      if (!result.success) {
+        setCodeError(result.message);
+        return;
+      }
+
+      setStep('codeSent');
+      setTimerSeconds(TIMER_SECONDS);
+      setCode('');
+      showToast('작성하신 이메일로 인증코드를 보냈어요');
+    } catch {
+      setCodeError('인증코드 발송에 실패했습니다.');
+    } finally {
+      setIsSendingCode(false);
+    }
+  }, [email, step, showToast]);
+
+  const onVerifyCode = useCallback(async () => {
+    if (!code.trim()) {
+      setCodeError('인증코드를 입력해주세요.');
       return;
     }
 
-    if (socialProvider) {
+    setIsVerifyingCode(true);
+    setCodeError(null);
+
+    try {
+      const result = await verifyCodeApi(email, code);
+      
+      if (!result.success) {
+        setCodeError(result.message);
+        return;
+      }
+
+      setStep('codeVerified');
+      setTimerSeconds(0);
+    } catch {
+      setCodeError('인증코드 확인에 실패했습니다.');
+    } finally {
+      setIsVerifyingCode(false);
+    }
+  }, [email, code]);
+
+  const resetToCodeStep = useCallback(() => {
+    setStep('codeSent');
+    setCode('');
+    setCodeError(null);
+    setNewPassword('');
+    setConfirmPassword('');
+    setPasswordError(null);
+    setTimerSeconds(0);
+  }, []);
+
+  const onChangePassword = useCallback(async () => {
+    const error = validatePassword(newPassword, confirmPassword);
+    if (error) {
+      setPasswordError(error);
       return;
     }
 
-    if (mutation.isPending) return;
+    setIsChangingPassword(true);
+    setPasswordError(null);
 
-    mutation.mutate(email);
-  }, [email, mutation, validateEmail, socialProvider]);
+    try {
+      const result = await changePasswordApi(email, code, newPassword, confirmPassword);
+      
+      if (!result.success) {
+        const isSessionExpired = result.message.includes('만료') || result.message.includes('인증이 완료되지');
+        
+        if (isSessionExpired) {
+          resetToCodeStep();
+          showToast('인증이 만료되었습니다. 인증코드를 다시 받아주세요.');
+          return;
+        }
+        
+        setPasswordError(result.message);
+        return;
+      }
+
+      setIsComplete(true);
+      showToast('비밀번호가 성공적으로 변경되었습니다');
+    } catch {
+      setPasswordError('비밀번호 변경에 실패했습니다.');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  }, [email, code, newPassword, confirmPassword, validatePassword, showToast, resetToCodeStep]);
 
   const onBack = useCallback(() => {
-    navigate('/');
+    navigate(-1);
   }, [navigate]);
 
+  const onGoToLogin = useCallback(() => {
+    navigate('/login');
+  }, [navigate]);
+
+  const formatTimer = useCallback((seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }, []);
+
+  const isLoading = isCheckingEmail || isSendingCode || isVerifyingCode || isChangingPassword;
+  const canSendCode = step === 'emailVerified' || step === 'codeSent';
+  const canVerifyCode = step === 'codeSent' && code.trim().length > 0 && timerSeconds > 0;
+  const canChangePassword = step === 'codeVerified' && newPassword && confirmPassword;
+
   return {
+    step,
     email,
-    error,
-    isLoading: mutation.isPending || isCheckingSocial,
-    isValid,
-    isSuccess,
+    code,
+    newPassword,
+    confirmPassword,
+    emailError,
+    codeError,
+    passwordError,
     socialProvider,
+    isLoading,
+    isCheckingEmail,
+    isSendingCode,
+    isVerifyingCode,
+    isChangingPassword,
+    isComplete,
+    timerSeconds,
+    timerFormatted: formatTimer(timerSeconds),
+    canSendCode,
+    canVerifyCode,
+    canChangePassword,
     onEmailChange,
-    onEmailBlur,
-    onSubmit,
+    onCodeChange,
+    onNewPasswordChange,
+    onConfirmPasswordChange,
+    onCheckEmail,
+    onSendCode,
+    onVerifyCode,
+    onChangePassword,
     onBack,
+    onGoToLogin,
   };
 }
