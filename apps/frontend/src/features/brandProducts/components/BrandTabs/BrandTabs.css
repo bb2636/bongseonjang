@@ -1,10 +1,13 @@
 .brand-tabs {
+  width: 100%;
+  border-bottom: 1px solid rgba(12, 12, 12, 0.06);
   background-color: #fff;
-  border-bottom: 1px solid #eee;
 }
 
 .brand-tabs__list {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -19,26 +22,31 @@
 }
 
 .brand-tabs__tab {
-  flex: 1;
-  min-width: 80px;
-  padding: 14px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #666;
-  background: none;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  min-width: 88px;
+  height: 38px;
+  background: transparent;
   border: none;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 0.2s, border-color 0.2s;
   border-bottom: 2px solid transparent;
-}
-
-.brand-tabs__tab:hover {
-  color: #333;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: 'Pretendard', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  text-align: center;
+  letter-spacing: -0.01em;
+  color: rgba(12, 12, 12, 0.9);
+  white-space: nowrap;
 }
 
 .brand-tabs__tab--active {
-  color: #3B9BD5;
-  border-bottom-color: #3B9BD5;
-  font-weight: 600;
+  border-bottom: 2px solid #3B9BD5;
 }
