@@ -29,6 +29,7 @@ export function useHomeShell() {
 
   const handleTabChange = useCallback((tab: CategoryTab) => {
     setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const handleLogoClick = useCallback(() => {
