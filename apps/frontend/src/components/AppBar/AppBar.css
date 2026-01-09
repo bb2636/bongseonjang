@@ -5,8 +5,8 @@
   align-items: center;
   padding: var(--safe-area-top, 0) 8px 0 16px;
   width: 100%;
-  min-height: 48px;
-  height: calc(48px + var(--safe-area-top, 0px));
+  min-height: 44px;
+  height: calc(44px + var(--safe-area-top, 0px));
   background: #FFFFFF;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -137,7 +137,7 @@
 }
 
 .app-bar-spacer {
-  height: calc(48px + var(--safe-area-top, 0px));
+  height: calc(44px + var(--safe-area-top, 0px));
   flex-shrink: 0;
 }
 
