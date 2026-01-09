@@ -98,6 +98,9 @@ export function ProductFormDialog({
       return;
     }
 
+    setShowSnackbar(false);
+    setShowConfirmModal(false);
+
     const shouldInitialize = !initializedRef.current || lastProductIdRef.current !== productId;
     
     if (shouldInitialize) {
