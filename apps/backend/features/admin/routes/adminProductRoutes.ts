@@ -308,6 +308,7 @@ router.get('/:productId', async (req: Request, res: Response) => {
 router.put('/:productId', async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
+    console.log('[DEBUG PUT] Received body:', JSON.stringify({ startDate: req.body.startDate, endDate: req.body.endDate, countdownDays: req.body.countdownDays }));
     const {
       name,
       categoryId,
