@@ -152,7 +152,6 @@ export default function BottomNav({ onHomeClick }: BottomNavProps) {
           );
         })}
       </div>
-      <div className="bottom-nav__indicator" />
     </nav>
   );
 }

@@ -81,15 +81,3 @@
 .bottom-nav__label--active {
   color: #3B9BD5;
 }
-
-.bottom-nav__indicator {
-  width: 134px;
-  height: 5px;
-  background: #111111;
-  border-radius: 100px;
-  margin: 0 auto;
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-}
