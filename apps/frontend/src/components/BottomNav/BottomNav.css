@@ -4,7 +4,7 @@
   align-items: flex-start;
   padding: 0 0 var(--safe-area-bottom, 0px) 0;
   width: 100%;
-  height: calc(48px + var(--safe-area-bottom, 0px));
+  height: calc(94px + var(--safe-area-bottom, 0px));
   background: #FDFDFD;
   border-top: 1px solid rgba(12, 12, 12, 0.06);
   box-sizing: border-box;
@@ -26,7 +26,7 @@
   align-items: center;
   padding: 0;
   width: 100%;
-  height: 48px;
+  height: 94px;
 }
 
 .bottom-nav__item {
@@ -38,7 +38,7 @@
   gap: 2px;
   flex: 1;
   min-width: 0;
-  height: 48px;
+  height: 94px;
   background: transparent;
   border: none;
   cursor: pointer;
