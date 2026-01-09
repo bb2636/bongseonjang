@@ -173,6 +173,7 @@ export function useProductForm() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const editingProductIdRef = useRef<string | null>(null);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -444,6 +445,7 @@ export function useProductForm() {
     setFormData(createInitialFormData());
     setError(null);
     setEditingProductId(null);
+    editingProductIdRef.current = null;
     setFieldErrors({});
     setTouched({});
   }, []);
@@ -452,6 +454,7 @@ export function useProductForm() {
     setIsLoading(true);
     setError(null);
     setEditingProductId(productId);
+    editingProductIdRef.current = productId;
     setFieldErrors({});
     setTouched({});
 
@@ -665,7 +668,8 @@ export function useProductForm() {
     setIsSubmitting(true);
     setError(null);
 
-    const isUpdate = !!editingProductId;
+    const currentEditingProductId = editingProductIdRef.current;
+    const isUpdate = !!currentEditingProductId;
 
     try {
       const thumbnailUrls: string[] = [];
@@ -732,7 +736,7 @@ export function useProductForm() {
       };
 
       const url = isUpdate
-        ? `/api/admin/products/${editingProductId}`
+        ? `/api/admin/products/${currentEditingProductId}`
         : '/api/admin/products';
       
       const token = sessionStorage.getItem('admin_token');
@@ -758,7 +762,7 @@ export function useProductForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, validateForm, resetForm, editingProductId]);
+  }, [formData, validateForm, resetForm]);
 
   return {
     formData,
