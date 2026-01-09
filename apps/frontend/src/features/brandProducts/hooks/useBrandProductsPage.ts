@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useGoBack } from '../../../hooks/useGoBack';
@@ -41,9 +41,12 @@ export function useBrandProductsPage() {
     staleTime: STALE_TIME,
   });
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeBrandId]);
+
   const handleBrandChange = useCallback((newBrandId: string) => {
     navigate(`/brand/${newBrandId}`, { replace: true });
-    window.scrollTo(0, 0);
   }, [navigate]);
 
   const handleProductClick = useCallback((productId: string) => {

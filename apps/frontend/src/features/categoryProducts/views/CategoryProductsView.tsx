@@ -2,6 +2,7 @@ import { AppBar, AppBarSpacer } from '@/components/AppBar';
 import { CategoryTabs } from '../components/CategoryTabs';
 import { FilterChips } from '../../home/components/FilterChips';
 import { ProductGridContent } from '@/components/ProductGridContent';
+import BottomNav from '@/components/BottomNav/BottomNav';
 import type { ProductCardData } from '@/components/ProductCard';
 import './CategoryProductsView.css';
 
@@ -69,6 +70,7 @@ export default function CategoryProductsView({
           onProductClick={onProductClick}
         />
       </main>
+      <BottomNav />
     </div>
   );
 }

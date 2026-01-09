@@ -8,6 +8,7 @@
 .category-products-page__content {
   flex: 1;
   padding: 16px;
+  padding-bottom: 80px;
 }
 
 .category-products-page__loading {
