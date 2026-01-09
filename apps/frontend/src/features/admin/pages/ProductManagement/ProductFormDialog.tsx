@@ -93,6 +93,8 @@ export function ProductFormDialog({
 
   useEffect(() => {
     if (!isOpen) {
+      setShowSnackbar(false);
+      setShowConfirmModal(false);
       initializedRef.current = false;
       lastProductIdRef.current = undefined;
       return;
