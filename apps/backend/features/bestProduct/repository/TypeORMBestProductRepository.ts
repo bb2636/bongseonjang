@@ -56,14 +56,18 @@ export class TypeORMBestProductRepository implements BestProductRepository {
 
   private toDto(product: Product, rank: number): BestProduct {
     const thumbnailImage = product.images?.find((img: ProductImage) => img.isThumbnail);
+    const discountRate = product.discountRate || 0;
+    const discountedPrice = discountRate > 0
+      ? Math.round(product.basePrice * (1 - discountRate / 100))
+      : product.basePrice;
     
     return {
       id: product.id,
       name: product.name,
       imageUrl: toAbsoluteImageUrl(thumbnailImage?.imageUrl) || undefined,
       originalPrice: product.basePrice,
-      discountPercent: 0,
-      discountedPrice: product.basePrice,
+      discountPercent: discountRate,
+      discountedPrice,
       rank,
     };
   }
