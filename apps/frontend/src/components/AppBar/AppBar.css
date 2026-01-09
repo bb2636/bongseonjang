@@ -142,7 +142,7 @@
 }
 
 .app-bar-spacer--subpage {
-  height: calc(44px + var(--safe-area-top, 0px));
+  height: calc(50px + var(--safe-area-top, 0px));
   flex-shrink: 0;
 }
 
