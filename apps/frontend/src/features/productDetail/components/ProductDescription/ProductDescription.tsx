@@ -9,7 +9,6 @@ interface ProductDescriptionProps {
   shippingMethod?: string;
   shippingRegion?: string;
   shippingFee?: number;
-  notice?: string;
   productInfos?: Array<{ label: string; value: string }>;
   shippingDetails?: Array<{ label: string; value: string }>;
 }
@@ -21,9 +20,7 @@ export default function ProductDescription({
   storageMethod,
   expirationInfo,
   shippingMethod,
-  shippingRegion,
   shippingFee = 3500,
-  notice,
   productInfos = [],
   shippingDetails = [],
 }: ProductDescriptionProps) {
@@ -99,13 +96,6 @@ export default function ProductDescription({
             <h3 className="product-description__title">상품설명</h3>
           </div>
           <p className="product-description__text">{description}</p>
-        </div>
-      )}
-
-      {notice && (
-        <div className="product-description__section">
-          <h3 className="product-description__title">안내사항</h3>
-          <p className="product-description__notice">{notice}</p>
         </div>
       )}
     </div>
