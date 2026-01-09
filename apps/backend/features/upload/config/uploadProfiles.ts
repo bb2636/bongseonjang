@@ -1,3 +1,5 @@
+export type ImageOptimizationType = 'banner' | 'thumbnail' | 'product_detail' | 'none';
+
 export interface UploadProfile {
   purpose: string;
   storagePath: string;
@@ -5,6 +7,7 @@ export interface UploadProfile {
   maxFileSizeBytes: number;
   allowedMimeTypes: string[];
   acl: 'public' | 'private';
+  imageOptimization?: ImageOptimizationType;
 }
 
 const COMMON_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -18,6 +21,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
+    imageOptimization: 'thumbnail',
   },
   inquiry: {
     purpose: 'inquiry',
@@ -26,6 +30,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
+    imageOptimization: 'thumbnail',
   },
   profile: {
     purpose: 'profile',
@@ -34,6 +39,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     maxFileSizeBytes: 5 * 1024 * 1024,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
+    imageOptimization: 'thumbnail',
   },
   support: {
     purpose: 'support',
@@ -42,6 +48,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: [...COMMON_IMAGE_MIME_TYPES, 'application/pdf'],
     acl: 'private',
+    imageOptimization: 'none',
   },
   banner: {
     purpose: 'banner',
@@ -50,6 +57,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
+    imageOptimization: 'banner',
   },
   'product-thumbnail': {
     purpose: 'product-thumbnail',
@@ -58,6 +66,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
+    imageOptimization: 'thumbnail',
   },
   'product-detail': {
     purpose: 'product-detail',
@@ -66,6 +75,7 @@ export const UPLOAD_PROFILES: Record<string, UploadProfile> = {
     maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE,
     allowedMimeTypes: COMMON_IMAGE_MIME_TYPES,
     acl: 'public',
+    imageOptimization: 'product_detail',
   },
 };
 

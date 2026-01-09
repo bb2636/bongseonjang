@@ -9,9 +9,25 @@
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1.05;
-  background: #F1F1F1;
+  background: linear-gradient(90deg, #F1F1F1 25%, #E8E8E8 50%, #F1F1F1 75%);
+  background-size: 200% 100%;
+  animation: product-skeleton-shimmer 1.5s ease-in-out infinite;
   border-radius: 4px;
   overflow: hidden;
+}
+
+.product-card__image-container--loaded {
+  background: #F1F1F1;
+  animation: none;
+}
+
+@keyframes product-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .product-card__image {

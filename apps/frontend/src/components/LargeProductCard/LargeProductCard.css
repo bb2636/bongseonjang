@@ -11,9 +11,25 @@
 .large-product-card__image {
   width: 340px;
   height: 220px;
-  background: #F1F1F1;
+  background: linear-gradient(90deg, #F1F1F1 25%, #E8E8E8 50%, #F1F1F1 75%);
+  background-size: 200% 100%;
+  animation: large-product-skeleton-shimmer 1.5s ease-in-out infinite;
   border-radius: 4px;
   overflow: hidden;
+}
+
+.large-product-card__image--loaded {
+  background: #F1F1F1;
+  animation: none;
+}
+
+@keyframes large-product-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .large-product-card__image img {

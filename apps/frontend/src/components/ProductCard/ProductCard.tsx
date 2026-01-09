@@ -42,10 +42,16 @@ export default function ProductCard({
   onClick,
 }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { openQuickCart } = useQuickCart();
 
   const handleImageError = () => {
     setImageError(true);
+    setImageLoaded(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -53,15 +59,18 @@ export default function ProductCard({
     openQuickCart(product.id);
   };
 
+  const containerClass = `product-card__image-container${imageLoaded ? ' product-card__image-container--loaded' : ''}`;
+
   return (
     <div className="product-card" onClick={onClick}>
-      <div className="product-card__image-container">
+      <div className={containerClass}>
         <img
           src={imageError || !product.imageUrl ? FALLBACK_IMAGE : product.imageUrl}
           alt={product.name}
           className="product-card__image"
           loading="lazy"
           onError={handleImageError}
+          onLoad={handleImageLoad}
         />
       </div>
 

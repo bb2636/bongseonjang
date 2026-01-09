@@ -8,8 +8,15 @@ import {
   getObjectAclPolicy,
   setObjectAclPolicy,
 } from "./objectAcl";
+import {
+  optimizeBannerImage,
+  optimizeThumbnailImage,
+  optimizeProductDetailImage,
+  isImageFile,
+} from "./common/utils/imageOptimizer";
 
 const DEFAULT_BUCKET_NAME = "app-storage";
+const CACHE_MAX_AGE_SECONDS = 604800;
 
 let storageClient: Client | null = null;
 
@@ -72,6 +79,47 @@ export class ObjectStorageService {
     return `/objects/${objectName}`;
   }
 
+  async uploadOptimizedImage(
+    buffer: Buffer,
+    originalFilename: string,
+    storagePath: string = "uploads",
+    imageType: 'banner' | 'thumbnail' | 'product_detail' = 'thumbnail',
+    isPublic: boolean = true
+  ): Promise<string> {
+    if (!isImageFile(originalFilename)) {
+      return this.uploadFile(buffer, originalFilename, storagePath, isPublic);
+    }
+
+    console.log('[DEBUG uploadOptimizedImage] imageType:', imageType);
+    console.log('[DEBUG uploadOptimizedImage] original size:', buffer.length);
+
+    let optimizedResult;
+    try {
+      switch (imageType) {
+        case 'banner':
+          optimizedResult = await optimizeBannerImage(buffer);
+          break;
+        case 'product_detail':
+          optimizedResult = await optimizeProductDetailImage(buffer);
+          break;
+        case 'thumbnail':
+        default:
+          optimizedResult = await optimizeThumbnailImage(buffer);
+          break;
+      }
+
+      console.log('[DEBUG uploadOptimizedImage] optimized size:', optimizedResult.optimizedSize);
+      console.log('[DEBUG uploadOptimizedImage] compression ratio:', 
+        ((1 - optimizedResult.optimizedSize / optimizedResult.originalSize) * 100).toFixed(1) + '%');
+
+      const newFilename = originalFilename.replace(/\.[^.]+$/, `.${optimizedResult.format}`);
+      return this.uploadFile(optimizedResult.buffer, newFilename, storagePath, isPublic);
+    } catch (error) {
+      console.warn('[DEBUG uploadOptimizedImage] Optimization failed, uploading original:', error);
+      return this.uploadFile(buffer, originalFilename, storagePath, isPublic);
+    }
+  }
+
   async getUploadSignedUrl(
     storagePath: string,
     extension: string
@@ -130,7 +178,8 @@ export class ObjectStorageService {
     res.set({
       "Content-Type": mimeType,
       "Content-Length": fileBuffer.length,
-      "Cache-Control": `${isPublic ? "public" : "private"}, max-age=3600`,
+      "Cache-Control": `${isPublic ? "public" : "private"}, max-age=${CACHE_MAX_AGE_SECONDS}`,
+      "ETag": `"${objectName}-${fileBuffer.length}"`,
     });
 
     res.send(fileBuffer);

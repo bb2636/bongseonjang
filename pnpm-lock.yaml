@@ -54,6 +54,9 @@ importers:
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
+      sharp:
+        specifier: ^0.34.5
+        version: 0.34.5
       typeorm:
         specifier: ^0.3.28
         version: 0.3.28(pg@8.16.3)
@@ -76,6 +79,9 @@ importers:
       '@types/multer':
         specifier: ^2.0.0
         version: 2.0.0
+      '@types/sharp':
+        specifier: ^0.32.0
+        version: 0.32.0
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -903,6 +909,10 @@ packages:
 
   '@types/serve-static@2.2.0':
     resolution: {integrity: sha512-8mam4H1NHLtu7nmtalF7eyBH14QyOASmcxHhSfEoRyr0nP/YdoesEtU+uSRvMe96TW/HPTtkoKqQLl53N7UXMQ==}
+
+  '@types/sharp@0.32.0':
+    resolution: {integrity: sha512-OOi3kL+FZDnPhVzsfD37J88FNeZh6gQsGcLc95NbeURRGvmSjeXiDcyWzF2o3yh/gQAUn2uhh/e+CPCa5nwAxw==}
+    deprecated: This is a stub types definition. sharp provides its own type definitions, so you do not need this installed.
 
   '@types/slice-ansi@4.0.0':
     resolution: {integrity: sha512-+OpjSaq85gvlZAYINyzKpLeiFkSC4EsC6IIiT6v6TLSU5k5U83fHGj9Lel8oKEXM0HqgrMVCjXPDPVICtxF7EQ==}
@@ -3209,6 +3219,10 @@ snapshots:
     dependencies:
       '@types/http-errors': 2.0.5
       '@types/node': 25.0.2
+
+  '@types/sharp@0.32.0':
+    dependencies:
+      sharp: 0.34.5
 
   '@types/slice-ansi@4.0.0': {}
 

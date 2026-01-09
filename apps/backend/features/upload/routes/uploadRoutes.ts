@@ -64,11 +64,24 @@ router.post(
       }
 
       const objectStorageService = new ObjectStorageService();
-      const objectPath = await objectStorageService.uploadFile(
-        req.file.buffer,
-        req.file.originalname,
-        profile.storagePath,
-      );
+      
+      let objectPath: string;
+      const imageOptimization = profile.imageOptimization || 'none';
+      
+      if (imageOptimization !== 'none') {
+        objectPath = await objectStorageService.uploadOptimizedImage(
+          req.file.buffer,
+          req.file.originalname,
+          profile.storagePath,
+          imageOptimization,
+        );
+      } else {
+        objectPath = await objectStorageService.uploadFile(
+          req.file.buffer,
+          req.file.originalname,
+          profile.storagePath,
+        );
+      }
 
       res.json({ objectPath, purpose });
     } catch (error) {
@@ -115,10 +128,11 @@ router.post(
       }
 
       const objectStorageService = new ObjectStorageService();
-      const objectPath = await objectStorageService.uploadFile(
+      const objectPath = await objectStorageService.uploadOptimizedImage(
         req.file.buffer,
         req.file.originalname,
         "uploads/reviews",
+        "thumbnail",
       );
 
       res.json({

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LargeProduct } from './types';
 import { useQuickCart } from '@/contexts/QuickCartContext';
@@ -14,6 +15,7 @@ function formatPrice(price: number): string {
 export default function LargeProductCard({ product }: LargeProductCardProps) {
   const navigate = useNavigate();
   const { openQuickCart } = useQuickCart();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleCardClick = () => {
     navigate(`/product/${product.id}`);
@@ -24,11 +26,22 @@ export default function LargeProductCard({ product }: LargeProductCardProps) {
     openQuickCart(product.id);
   };
 
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
+  const imageContainerClass = `large-product-card__image${imageLoaded ? ' large-product-card__image--loaded' : ''}`;
+
   return (
     <div className="large-product-card" onClick={handleCardClick}>
-      <div className="large-product-card__image">
+      <div className={imageContainerClass}>
         {product.imageUrl && (
-          <img src={product.imageUrl} alt={product.name} loading="lazy" />
+          <img 
+            src={product.imageUrl} 
+            alt={product.name} 
+            loading="lazy" 
+            onLoad={handleImageLoad}
+          />
         )}
       </div>
 

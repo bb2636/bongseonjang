@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Link } from 'react-router-dom';
@@ -52,6 +53,10 @@ export default function BannerCarousel({
   if (autoplay) swiperModules.push(Autoplay);
   if (pagination) swiperModules.push(Pagination);
 
+  const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.setAttribute('data-loaded', 'true');
+  }, []);
+
   const renderSlideContent = (image: BannerImage, index: number) => {
     const imgElement = (
       <img
@@ -59,6 +64,7 @@ export default function BannerCarousel({
         alt=""
         className="banner-carousel__image"
         loading={index === 0 ? "eager" : "lazy"}
+        onLoad={handleImageLoad}
       />
     );
 
