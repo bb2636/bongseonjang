@@ -80,6 +80,13 @@ button {
   font-family: inherit;
 }
 
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
 input, textarea, select {
   font-family: inherit;
   font-size: inherit;
