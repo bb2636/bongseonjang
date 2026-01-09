@@ -452,6 +452,8 @@ export function useProductForm() {
     setIsLoading(true);
     setError(null);
     setEditingProductId(productId);
+    setFieldErrors({});
+    setTouched({});
 
     try {
       const token = sessionStorage.getItem('admin_token');
