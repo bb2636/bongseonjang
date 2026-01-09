@@ -661,15 +661,21 @@ export function useProductForm() {
   };
 
   const submitForm = useCallback(async (): Promise<boolean> => {
+    console.log('[DEBUG submitForm] Called');
+    console.log('[DEBUG submitForm] editingProductIdRef.current:', editingProductIdRef.current);
+    
     if (!validateForm()) {
+      console.log('[DEBUG submitForm] Validation failed');
       return false;
     }
 
+    console.log('[DEBUG submitForm] Validation passed');
     setIsSubmitting(true);
     setError(null);
 
     const currentEditingProductId = editingProductIdRef.current;
     const isUpdate = !!currentEditingProductId;
+    console.log('[DEBUG submitForm] isUpdate:', isUpdate, 'currentEditingProductId:', currentEditingProductId);
 
     try {
       const thumbnailUrls: string[] = [];
@@ -739,6 +745,9 @@ export function useProductForm() {
         ? `/api/admin/products/${currentEditingProductId}`
         : '/api/admin/products';
       
+      console.log('[DEBUG submitForm] Sending request to:', url, 'method:', isUpdate ? 'PUT' : 'POST');
+      console.log('[DEBUG submitForm] productData dates:', { startDate: productData.startDate, endDate: productData.endDate });
+      
       const token = sessionStorage.getItem('admin_token');
       const response = await fetch(url, {
         method: isUpdate ? 'PUT' : 'POST',
@@ -748,6 +757,8 @@ export function useProductForm() {
         },
         body: JSON.stringify(productData),
       });
+
+      console.log('[DEBUG submitForm] Response status:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json();

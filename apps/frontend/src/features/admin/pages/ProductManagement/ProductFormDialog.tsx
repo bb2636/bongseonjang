@@ -133,8 +133,10 @@ export function ProductFormDialog({
   };
 
   const handleConfirmSubmit = async () => {
+    console.log('[DEBUG handleConfirmSubmit] Called, productId:', productId, 'isEditMode:', isEditMode);
     setShowConfirmModal(false);
     const success = await submitForm();
+    console.log('[DEBUG handleConfirmSubmit] submitForm result:', success);
     if (success) {
       onSuccess();
       setShowSnackbar(true);
