@@ -24,6 +24,8 @@ export default function EventDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+    
     async function fetchEvent() {
       if (!id) return;
       

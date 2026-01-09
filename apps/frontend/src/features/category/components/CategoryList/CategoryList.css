@@ -38,3 +38,30 @@
   letter-spacing: -0.01em;
   color: rgba(12, 12, 12, 0.8);
 }
+
+.category-list__item--skeleton {
+  cursor: default;
+}
+
+.category-list__item--skeleton:hover,
+.category-list__item--skeleton:active {
+  background-color: transparent;
+}
+
+.category-list__skeleton-text {
+  width: 80px;
+  height: 16px;
+  background: linear-gradient(90deg, #f1f1f1 25%, #e8e8e8 50%, #f1f1f1 75%);
+  background-size: 200% 100%;
+  animation: category-skeleton-shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes category-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -7,12 +7,14 @@ import { AppBar, AppBarSpacer } from '@/components/AppBar';
 
 interface CategoryViewProps {
   categories: Category[];
+  isLoading?: boolean;
   onCategoryClick: (category: Category) => void;
   onBrandClick: (brandId: string) => void;
 }
 
 export default function CategoryView({
   categories,
+  isLoading = false,
   onCategoryClick,
   onBrandClick,
 }: CategoryViewProps) {
@@ -27,6 +29,7 @@ export default function CategoryView({
         </div>
         <CategoryList 
           categories={categories}
+          isLoading={isLoading}
           onCategoryClick={onCategoryClick}
         />
         
