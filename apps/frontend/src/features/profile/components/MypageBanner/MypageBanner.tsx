@@ -4,6 +4,8 @@ import { fetchMypageBanners, type MypageBanner as BannerType } from '../../api/m
 import './MypageBanner.css';
 
 export default function MypageBanner() {
+  return null;
+  
   const navigate = useNavigate();
   const [banners, setBanners] = useState<BannerType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
