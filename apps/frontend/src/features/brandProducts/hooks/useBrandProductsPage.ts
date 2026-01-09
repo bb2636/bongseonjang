@@ -43,6 +43,7 @@ export function useBrandProductsPage() {
 
   const handleBrandChange = useCallback((newBrandId: string) => {
     navigate(`/brand/${newBrandId}`, { replace: true });
+    window.scrollTo(0, 0);
   }, [navigate]);
 
   const handleProductClick = useCallback((productId: string) => {
