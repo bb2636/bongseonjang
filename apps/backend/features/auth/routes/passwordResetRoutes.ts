@@ -3,9 +3,54 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { AppDataSource } from '../../../config/database.js';
 import { User } from '../../../entity/User.js';
+import { UserSocialAccount } from '../../../entity/UserSocialAccount.js';
 import { EmailVerificationToken } from '../../../entity/EmailVerificationToken.js';
 
 const router = Router();
+
+router.post('/check-social', async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400).json({ success: false, message: '이메일을 입력해주세요' });
+      return;
+    }
+
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      res.json({ isSocialOnlyAccount: false, provider: null });
+      return;
+    }
+
+    const hasPassword = user.password !== null && user.password !== '';
+
+    if (hasPassword) {
+      res.json({ isSocialOnlyAccount: false, provider: null });
+      return;
+    }
+
+    const socialAccountRepository = AppDataSource.getRepository(UserSocialAccount);
+    const socialAccount = await socialAccountRepository.findOne({ 
+      where: { userId: user.id } 
+    });
+
+    if (socialAccount) {
+      res.json({ 
+        isSocialOnlyAccount: true, 
+        provider: socialAccount.provider 
+      });
+      return;
+    }
+
+    res.json({ isSocialOnlyAccount: false, provider: null });
+  } catch (error) {
+    console.error('Check social account error:', error);
+    res.status(500).json({ success: false, message: '계정 확인에 실패했습니다' });
+  }
+});
 
 router.post('/request', async (req: Request, res: Response) => {
   try {

@@ -7,6 +7,27 @@ interface PasswordResetRequestResponse {
   message: string;
 }
 
+interface CheckSocialResponse {
+  isSocialOnlyAccount: boolean;
+  provider: 'kakao' | 'naver' | null;
+}
+
+async function checkSocialAccount(email: string): Promise<CheckSocialResponse> {
+  const response = await fetch('/api/auth/password-reset/check-social', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(data.message || '계정 확인에 실패했습니다');
+  }
+  
+  return data;
+}
+
 async function requestPasswordReset(email: string): Promise<PasswordResetRequestResponse> {
   const response = await fetch('/api/auth/password-reset/request', {
     method: 'POST',
@@ -29,6 +50,8 @@ export function usePasswordResetRequest() {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [socialProvider, setSocialProvider] = useState<'kakao' | 'naver' | null>(null);
+  const [isCheckingSocial, setIsCheckingSocial] = useState(false);
 
   const mutation = useMutation({
     mutationFn: requestPasswordReset,
@@ -57,14 +80,32 @@ export function usePasswordResetRequest() {
 
   const onEmailChange = useCallback((value: string) => {
     setEmail(value);
+    setSocialProvider(null);
     if (touched) {
       setError(validateEmail(value));
     }
   }, [touched, validateEmail]);
 
-  const onEmailBlur = useCallback(() => {
+  const onEmailBlur = useCallback(async () => {
     setTouched(true);
-    setError(validateEmail(email));
+    const emailError = validateEmail(email);
+    setError(emailError);
+
+    if (!emailError && email.trim()) {
+      setIsCheckingSocial(true);
+      try {
+        const result = await checkSocialAccount(email);
+        if (result.isSocialOnlyAccount) {
+          setSocialProvider(result.provider);
+        } else {
+          setSocialProvider(null);
+        }
+      } catch {
+        setSocialProvider(null);
+      } finally {
+        setIsCheckingSocial(false);
+      }
+    }
   }, [email, validateEmail]);
 
   const onSubmit = useCallback(() => {
@@ -76,10 +117,14 @@ export function usePasswordResetRequest() {
       return;
     }
 
+    if (socialProvider) {
+      return;
+    }
+
     if (mutation.isPending) return;
 
     mutation.mutate(email);
-  }, [email, mutation, validateEmail]);
+  }, [email, mutation, validateEmail, socialProvider]);
 
   const onBack = useCallback(() => {
     navigate('/');
@@ -88,9 +133,10 @@ export function usePasswordResetRequest() {
   return {
     email,
     error,
-    isLoading: mutation.isPending,
+    isLoading: mutation.isPending || isCheckingSocial,
     isValid,
     isSuccess,
+    socialProvider,
     onEmailChange,
     onEmailBlur,
     onSubmit,

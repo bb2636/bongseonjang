@@ -8,10 +8,16 @@ interface PasswordResetRequestViewProps {
   isLoading: boolean;
   isValid: boolean;
   isSuccess: boolean;
+  socialProvider: 'kakao' | 'naver' | null;
   onEmailChange: (value: string) => void;
   onEmailBlur: () => void;
   onSubmit: () => void;
   onBack: () => void;
+}
+
+function getSocialProviderMessage(provider: 'kakao' | 'naver'): string {
+  const providerName = provider === 'kakao' ? '카카오톡' : '네이버';
+  return `${providerName} 간편 가입으로 가입한 계정입니다. 비밀번호 찾기는 '이메일 가입하기'로 가입한 경우에만 가능합니다.`;
 }
 
 export default function PasswordResetRequestView({
@@ -19,6 +25,7 @@ export default function PasswordResetRequestView({
   error,
   isLoading,
   isSuccess,
+  socialProvider,
   onEmailChange,
   onEmailBlur,
   onSubmit,
@@ -81,21 +88,28 @@ export default function PasswordResetRequestView({
           </p>
 
           <div className="password-reset-request-input-group">
-            <Input
-              label="이메일"
-              type="email"
-              placeholder="이메일"
-              value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => onEmailChange(e.target.value)}
-              onBlur={onEmailBlur}
-              error={error}
-            />
+            <div className={`password-reset-request-input-wrapper ${socialProvider ? 'password-reset-request-input-wrapper--social' : ''}`}>
+              <Input
+                label="이메일"
+                type="email"
+                placeholder="이메일"
+                value={email}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => onEmailChange(e.target.value)}
+                onBlur={onEmailBlur}
+                error={socialProvider ? undefined : error}
+              />
+            </div>
+            {socialProvider && (
+              <p className="password-reset-request-social-message">
+                {getSocialProviderMessage(socialProvider)}
+              </p>
+            )}
           </div>
 
           <button 
             className="password-reset-request-submit"
             onClick={onSubmit}
-            disabled={isLoading}
+            disabled={isLoading || !!socialProvider}
           >
             {isLoading ? '발송 중...' : '재설정 링크 보내기'}
           </button>
