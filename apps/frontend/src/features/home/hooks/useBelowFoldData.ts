@@ -3,7 +3,8 @@ import { fetchBelowFoldData } from '../api/homeDataApi';
 import type { BelowFoldData } from '../types/homeData';
 
 const QUERY_KEY = ['homeBelowFoldData'];
-const STALE_TIME = 1 * 60 * 1000;
+const STALE_TIME = 5 * 60 * 1000;
+const GC_TIME = 10 * 60 * 1000;
 
 const emptyBelowFoldData: BelowFoldData = {
   middleBanners: [],
@@ -20,6 +21,8 @@ export function useBelowFoldData(enabled: boolean = true) {
     queryKey: QUERY_KEY,
     queryFn: fetchBelowFoldData,
     staleTime: STALE_TIME,
+    gcTime: GC_TIME,
+    refetchOnWindowFocus: false,
     enabled,
   });
 
