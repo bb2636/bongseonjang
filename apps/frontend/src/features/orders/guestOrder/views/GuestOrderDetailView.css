@@ -86,26 +86,35 @@
   background: #f0f0f0;
 }
 
-.guest-order-detail__order-status--paid,
+.guest-order-detail__order-status--pending {
+  background: rgba(255, 240, 180, 0.6);
+  color: #b89a30;
+}
+
+.guest-order-detail__order-status--paid {
+  background: rgba(200, 180, 255, 0.4);
+  color: #7c5ccc;
+}
+
 .guest-order-detail__order-status--preparing {
-  background: #e6f7ff;
-  color: #1890ff;
+  background: rgba(255, 200, 150, 0.5);
+  color: #cc8844;
 }
 
 .guest-order-detail__order-status--shipping {
-  background: #fff7e6;
-  color: #fa8c16;
+  background: rgba(180, 230, 180, 0.5);
+  color: #5a9a5a;
 }
 
 .guest-order-detail__order-status--delivered {
-  background: #f6ffed;
-  color: #52c41a;
+  background: rgba(150, 220, 230, 0.5);
+  color: #4aa8b8;
 }
 
 .guest-order-detail__order-status--cancelled,
 .guest-order-detail__order-status--refunded {
-  background: #fff1f0;
-  color: #ff4d4f;
+  background: rgba(255, 180, 190, 0.5);
+  color: #e85a6a;
 }
 
 .guest-order-detail__order-number {

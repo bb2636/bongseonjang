@@ -362,23 +362,36 @@
   color: rgba(12, 12, 12, 0.7);
 }
 
-.user-detail-order-status--paid,
-.user-detail-order-status--delivered {
-  background: rgba(35, 157, 255, 0.1);
-  color: #239DFF;
+.user-detail-order-status--pending {
+  background: rgba(255, 240, 180, 0.6);
+  color: #b89a30;
 }
 
-.user-detail-order-status--shipping,
+.user-detail-order-status--paid {
+  background: rgba(200, 180, 255, 0.4);
+  color: #7c5ccc;
+}
+
 .user-detail-order-status--preparing {
-  background: rgba(255, 170, 0, 0.1);
-  color: #FF9500;
+  background: rgba(255, 200, 150, 0.5);
+  color: #cc8844;
+}
+
+.user-detail-order-status--shipping {
+  background: rgba(180, 230, 180, 0.5);
+  color: #5a9a5a;
+}
+
+.user-detail-order-status--delivered {
+  background: rgba(150, 220, 230, 0.5);
+  color: #4aa8b8;
 }
 
 .user-detail-order-status--cancelled,
 .user-detail-order-status--refunded,
 .user-detail-order-status--refund_requested {
-  background: rgba(255, 75, 63, 0.1);
-  color: #FF4B3F;
+  background: rgba(255, 180, 190, 0.5);
+  color: #e85a6a;
 }
 
 .user-detail-order-info {
