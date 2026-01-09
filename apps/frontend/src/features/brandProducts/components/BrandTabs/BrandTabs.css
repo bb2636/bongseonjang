@@ -6,8 +6,12 @@
 .brand-tabs__list {
   display: flex;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
 }
 
 .brand-tabs__list::-webkit-scrollbar {

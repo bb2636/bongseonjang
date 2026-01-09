@@ -9,8 +9,12 @@
   flex-direction: row;
   align-items: center;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
 }
 
 .category-tabs__container::-webkit-scrollbar {
