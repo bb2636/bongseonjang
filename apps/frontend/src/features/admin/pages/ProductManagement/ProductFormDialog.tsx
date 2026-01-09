@@ -40,6 +40,7 @@ export function ProductFormDialog({
   const [showSnackbar, setShowSnackbar] = useState(false);
   const initializedRef = useRef(false);
   const lastProductIdRef = useRef<string | undefined>(undefined);
+  const hasSubmittedRef = useRef(false);
 
   const {
     formData,
@@ -95,6 +96,7 @@ export function ProductFormDialog({
     if (!isOpen) {
       setShowSnackbar(false);
       setShowConfirmModal(false);
+      hasSubmittedRef.current = false;
       initializedRef.current = false;
       lastProductIdRef.current = undefined;
       return;
@@ -102,6 +104,7 @@ export function ProductFormDialog({
 
     setShowSnackbar(false);
     setShowConfirmModal(false);
+    hasSubmittedRef.current = false;
 
     const shouldInitialize = !initializedRef.current || lastProductIdRef.current !== productId;
     
@@ -113,6 +116,7 @@ export function ProductFormDialog({
       fetchExposureCategories();
       
       if (productId) {
+        console.log('[DEBUG useEffect] Loading product:', productId);
         loadProduct(productId);
       } else {
         resetForm();
@@ -138,6 +142,7 @@ export function ProductFormDialog({
     const success = await submitForm();
     console.log('[DEBUG handleConfirmSubmit] submitForm result:', success);
     if (success) {
+      hasSubmittedRef.current = true;
       onSuccess();
       setShowSnackbar(true);
     }
@@ -753,7 +758,7 @@ export function ProductFormDialog({
       />
 
       <Snackbar
-        isOpen={showSnackbar}
+        isOpen={showSnackbar && hasSubmittedRef.current}
         title={isEditMode ? '상품이 수정되었습니다' : '상품이 등록되었습니다'}
         onClose={handleSnackbarClose}
       />
