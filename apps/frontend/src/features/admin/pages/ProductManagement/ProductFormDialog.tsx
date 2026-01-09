@@ -1,4 +1,4 @@
-import { useRef, useEffect, ChangeEvent, useState } from 'react';
+import { useRef, useEffect, useLayoutEffect, ChangeEvent, useState } from 'react';
 import { useProductForm, ProductOption, ProductInfo, ShippingDetail } from './useProductForm';
 import { ConfirmModal, Select, MultiSelect, DateRangePicker } from '../../../../components';
 import { Snackbar } from '../../components/Snackbar';
@@ -92,7 +92,7 @@ export function ProductFormDialog({
   const hasError = (field: string) => touched[field] && fieldErrors[field as keyof typeof fieldErrors];
   const getErrorMessage = (field: string) => fieldErrors[field as keyof typeof fieldErrors];
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isOpen) {
       setShowSnackbar(false);
       setShowConfirmModal(false);
@@ -105,6 +105,10 @@ export function ProductFormDialog({
     setShowSnackbar(false);
     setShowConfirmModal(false);
     hasSubmittedRef.current = false;
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
 
     const shouldInitialize = !initializedRef.current || lastProductIdRef.current !== productId;
     
