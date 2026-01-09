@@ -250,18 +250,18 @@ export default function ProfileEditView({
               </svg>
             </button>
           </div>
-        </form>
-      </div>
 
-      <div className="profile-edit__submit-container">
-        <button
-          type="submit"
-          className="profile-edit__submit-button"
-          disabled={isSubmitting}
-          onClick={handleSubmit}
-        >
-          {isSubmitting ? '저장 중...' : '저장'}
-        </button>
+          <div className="profile-edit__submit-container">
+            <button
+              type="submit"
+              className="profile-edit__submit-button"
+              disabled={isSubmitting}
+              onClick={handleSubmit}
+            >
+              {isSubmitting ? '저장 중...' : '저장'}
+            </button>
+          </div>
+        </form>
       </div>
 
       <AlertModal
