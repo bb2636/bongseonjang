@@ -33,7 +33,7 @@ function formatDiscount(coupon: Coupon): string {
   if (coupon.discountType === 'shipping') {
     return '배송비 쿠폰';
   }
-  if (coupon.discountType === 'percent') {
+  if (coupon.discountType === 'rate') {
     return `${coupon.discountValue}% 할인`;
   }
   return `${coupon.discountValue.toLocaleString()}원 할인`;
