@@ -272,11 +272,15 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
           });
         }
         
+        let applicableSubtotal = totalProductPrice;
+        
         if (couponDetails.targetType === 'category') {
           const targetCategoryIds = await couponRepository.getCouponTargetCategories(couponDetails.id);
           const targetExposureCategoryIds = await couponRepository.getCouponTargetExposureCategories(couponDetails.id);
           if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
             const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
+            
+            let matchingItemsSubtotal = 0;
             for (const item of cartItems) {
               if (!item.product) continue;
               const matches = await checkProductMatchesTargetCategories(
@@ -286,23 +290,35 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
                 targetBrandExposureNames,
                 targetExposureCategoryIds
               );
-              if (!matches) {
-                return res.status(400).json({ 
-                  error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 대상 카테고리가 아닌 상품이 포함되어 있습니다.' 
-                });
+              if (matches) {
+                const productBasePrice = item.product.basePrice ?? 0;
+                const additionalPrice = item.productOption?.price ?? 0;
+                const unitPrice = productBasePrice + additionalPrice;
+                matchingItemsSubtotal += unitPrice * item.quantity;
               }
             }
+            
+            if (matchingItemsSubtotal === 0) {
+              return res.status(400).json({ 
+                error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 적용 가능한 상품이 없습니다.' 
+              });
+            }
+            
+            applicableSubtotal = matchingItemsSubtotal;
           }
         }
         
+        const remainingPayable = totalProductPrice - couponDiscountAmount;
+        
         let thisCouponDiscount = 0;
         if (couponDetails.discountType === 'fixed') {
-          thisCouponDiscount = Math.min(couponDetails.discountValue, totalProductPrice - couponDiscountAmount);
+          thisCouponDiscount = Math.min(couponDetails.discountValue, applicableSubtotal, remainingPayable);
         } else if (couponDetails.discountType === 'rate') {
-          thisCouponDiscount = Math.floor(totalProductPrice * (couponDetails.discountValue / 100));
+          thisCouponDiscount = Math.floor(applicableSubtotal * (couponDetails.discountValue / 100));
           if (couponDetails.maxDiscountAmount && thisCouponDiscount > couponDetails.maxDiscountAmount) {
             thisCouponDiscount = couponDetails.maxDiscountAmount;
           }
+          thisCouponDiscount = Math.min(thisCouponDiscount, remainingPayable);
         } else if (couponDetails.discountType === 'shipping') {
           if (!shippingDiscountApplied) {
             thisCouponDiscount = shippingAmount;
