@@ -141,6 +141,7 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 - 사용자 로그인 시 관리자 세션에 영향 없음
 
 ### Core Features
+- **온보딩 가이드**: 앱 최초 실행 시 3장의 가이드 슬라이드 표시 (3→2→1 순서). Swiper.js 기반 스와이프, 커스텀 페이지네이션 점, 건너뛰기/시작하기 버튼. localStorage에 `bongkru_onboarding_completed` 플래그 저장하여 1회만 표시.
 - **홈 화면**: Feature-first 레이아웃, 자체 AppBar/BottomNav, Swiper.js 기반 HeroBanner.
 - **이벤트**: HOME_EVENT 배너 위치를 이벤트로 활용. 별도 events 테이블 대신 banners 테이블의 HOME_EVENT 포지션 사용. Banner 엔티티에 description, startedAt, endedAt 필드로 이벤트 정보 저장. `/api/events` 엔드포인트가 HOME_EVENT 배너를 EventDto로 변환하여 반환.
 - **상품 상세**: "상품정보", "후기 N", "문의" 탭 네비게이션. ReviewService 주입을 통한 리뷰 통계 제공.
