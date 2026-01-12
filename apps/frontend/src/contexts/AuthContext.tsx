@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { mergeGuestDataToServer } from '../utils/guestDataMerge';
 
 interface User {
@@ -24,6 +25,7 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -72,6 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
       
       const data = await response.json();
+      queryClient.clear();
       setUser(data.user);
       localStorage.setItem('user_token', data.token);
       
@@ -79,19 +82,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [queryClient]);
 
   const loginWithToken = useCallback((token: string, userData: User) => {
+    queryClient.clear();
     localStorage.setItem('user_token', token);
     setUser(userData);
     
     mergeGuestDataToServer().catch(console.error);
-  }, []);
+  }, [queryClient]);
 
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('user_token');
-  }, []);
+    queryClient.clear();
+  }, [queryClient]);
 
   const register = useCallback(async (email: string, password: string, name: string) => {
     setIsLoading(true);
@@ -107,6 +112,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
       
       const data = await response.json();
+      queryClient.clear();
       setUser(data.user);
       localStorage.setItem('user_token', data.token);
       
@@ -114,7 +120,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [queryClient]);
 
   const value: AuthContextType = {
     user,
