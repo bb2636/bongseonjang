@@ -1,8 +1,9 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import { ProtectedRoute, ProtectedAdminRoute, SplashScreen } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
+import { OnboardingScreen, isOnboardingCompleted } from "./components/OnboardingScreen/OnboardingScreen";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
@@ -233,10 +234,19 @@ function PageLoader() {
 }
 
 export default function App() {
+  const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingCompleted());
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+  };
+
   return (
     <SplashScreen duration={2500}>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
+      {showOnboarding ? (
+        <OnboardingScreen onComplete={handleOnboardingComplete} />
+      ) : (
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
         <Route path="/" element={
           <Suspense fallback={<HomePageSkeleton />}>
             <HomePage />
@@ -438,7 +448,8 @@ export default function App() {
           }
         />
         </Routes>
-      </Suspense>
+        </Suspense>
+      )}
     </SplashScreen>
   );
 }
