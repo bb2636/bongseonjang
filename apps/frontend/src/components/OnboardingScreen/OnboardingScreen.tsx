@@ -14,9 +14,9 @@ interface OnboardingScreenProps {
 }
 
 const slides = [
-  { id: 1, image: onboarding3, isLast: false },
+  { id: 1, image: onboarding1, isLast: false },
   { id: 2, image: onboarding2, isLast: false },
-  { id: 3, image: onboarding1, isLast: true },
+  { id: 3, image: onboarding3, isLast: true },
 ];
 
 export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
