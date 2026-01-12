@@ -26,3 +26,4 @@ export { CustomDropdown } from './CustomDropdown';
 export type { DropdownOption } from './CustomDropdown';
 export { PlatformInit } from './PlatformInit';
 export { default as ScrollToTop } from './ScrollToTop/ScrollToTop';
+export { SplashScreen } from './SplashScreen';

@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "./layouts";
-import { ProtectedRoute, ProtectedAdminRoute } from "./components";
+import { ProtectedRoute, ProtectedAdminRoute, SplashScreen } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
@@ -234,8 +234,9 @@ function PageLoader() {
 
 export default function App() {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
+    <SplashScreen duration={2500}>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
         <Route path="/" element={
           <Suspense fallback={<HomePageSkeleton />}>
             <HomePage />
@@ -436,7 +437,8 @@ export default function App() {
             </MainLayout>
           }
         />
-      </Routes>
-    </Suspense>
+        </Routes>
+      </Suspense>
+    </SplashScreen>
   );
 }

@@ -1,0 +1,23 @@
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #3B9BD5;
+  transition: opacity 0.5s ease-out;
+}
+
+.splash-screen--fade-out {
+  opacity: 0;
+}
+
+.splash-screen__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
