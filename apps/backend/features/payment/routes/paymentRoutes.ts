@@ -280,7 +280,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
           if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
             const targetBrandExposureNames = await getBrandExposureNamesForTargetCategories(targetCategoryIds);
             
-            let matchingItemsSubtotal = 0;
+            let highestLineTotal = 0;
             for (const item of cartItems) {
               if (!item.product) continue;
               const matches = await checkProductMatchesTargetCategories(
@@ -294,17 +294,20 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
                 const productBasePrice = item.product.basePrice ?? 0;
                 const additionalPrice = item.productOption?.price ?? 0;
                 const unitPrice = productBasePrice + additionalPrice;
-                matchingItemsSubtotal += unitPrice * item.quantity;
+                const lineTotal = unitPrice * item.quantity;
+                if (lineTotal > highestLineTotal) {
+                  highestLineTotal = lineTotal;
+                }
               }
             }
             
-            if (matchingItemsSubtotal === 0) {
+            if (highestLineTotal === 0) {
               return res.status(400).json({ 
                 error: '해당 쿠폰은 지정된 카테고리 상품에만 적용됩니다. 적용 가능한 상품이 없습니다.' 
               });
             }
             
-            applicableSubtotal = matchingItemsSubtotal;
+            applicableSubtotal = highestLineTotal;
           }
         }
         
