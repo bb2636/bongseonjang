@@ -1,9 +1,9 @@
-import { lazy, Suspense, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { lazy, Suspense, useState, useEffect } from "react";
+import { Routes, Route, Navigate, useSearchParams } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import { ProtectedRoute, ProtectedAdminRoute, SplashScreen } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
-import { OnboardingScreen, isOnboardingCompleted } from "./components/OnboardingScreen/OnboardingScreen";
+import { OnboardingScreen, isOnboardingCompleted, resetOnboarding } from "./components/OnboardingScreen/OnboardingScreen";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
@@ -233,8 +233,18 @@ function PageLoader() {
   );
 }
 
-export default function App() {
+function AppContent() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingCompleted());
+
+  useEffect(() => {
+    if (searchParams.get('reset_onboarding') === 'true') {
+      resetOnboarding();
+      setShowOnboarding(true);
+      searchParams.delete('reset_onboarding');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
@@ -452,4 +462,8 @@ export default function App() {
       )}
     </SplashScreen>
   );
+}
+
+export default function App() {
+  return <AppContent />;
 }
