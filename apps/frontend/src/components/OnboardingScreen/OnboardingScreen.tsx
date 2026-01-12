@@ -14,9 +14,9 @@ interface OnboardingScreenProps {
 }
 
 const slides = [
-  { id: 1, image: onboarding1, isLast: false },
-  { id: 2, image: onboarding2, isLast: false },
-  { id: 3, image: onboarding3, isLast: true },
+  { id: 1, image: onboarding1 },
+  { id: 2, image: onboarding2 },
+  { id: 3, image: onboarding3 },
 ];
 
 export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
@@ -68,33 +68,37 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
       </Swiper>
 
       <div className="onboarding-screen__controls">
-        <div className="onboarding-screen__pagination">
-          {slides.map((_, index) => (
+        <div className="onboarding-screen__top-row">
+          {!isLastSlide && (
             <button
-              key={index}
               type="button"
-              className={`onboarding-screen__dot ${activeIndex === index ? 'onboarding-screen__dot--active' : ''}`}
-              onClick={() => handleDotClick(index)}
-              aria-label={`슬라이드 ${index + 1}로 이동`}
-            />
-          ))}
+              className="onboarding-screen__skip-button"
+              onClick={handleSkip}
+            >
+              건너뛰기
+            </button>
+          )}
+          <div className="onboarding-screen__pagination">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                className={`onboarding-screen__dot ${activeIndex === index ? 'onboarding-screen__dot--active' : ''}`}
+                onClick={() => handleDotClick(index)}
+                aria-label={`슬라이드 ${index + 1}로 이동`}
+              />
+            ))}
+          </div>
+          {!isLastSlide && <div className="onboarding-screen__spacer" />}
         </div>
 
-        {isLastSlide ? (
+        {isLastSlide && (
           <button
             type="button"
             className="onboarding-screen__start-button"
             onClick={handleStart}
           >
             봉선장 시작하기
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="onboarding-screen__skip-button"
-            onClick={handleSkip}
-          >
-            건너뛰기
           </button>
         )}
       </div>

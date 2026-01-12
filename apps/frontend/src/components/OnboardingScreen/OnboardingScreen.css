@@ -29,18 +29,25 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: center top;
+  object-position: center;
 }
 
 .onboarding-screen__controls {
   flex-shrink: 0;
-  padding: 20px;
-  padding-bottom: calc(40px + var(--safe-area-bottom, 0px));
+  padding: 16px 20px;
+  padding-bottom: calc(24px + var(--safe-area-bottom, 0px));
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  background: linear-gradient(to top, #3B9BD5 60%, transparent);
+  background-color: #3B9BD5;
+}
+
+.onboarding-screen__top-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .onboarding-screen__pagination {
@@ -48,6 +55,7 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
+  flex: 1;
 }
 
 .onboarding-screen__dot {
@@ -74,12 +82,16 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  padding: 8px 16px;
+  padding: 8px 0;
+  white-space: nowrap;
+}
+
+.onboarding-screen__spacer {
+  width: 56px;
 }
 
 .onboarding-screen__start-button {
   width: 100%;
-  max-width: 320px;
   padding: 16px 24px;
   background-color: #ffffff;
   border: none;
