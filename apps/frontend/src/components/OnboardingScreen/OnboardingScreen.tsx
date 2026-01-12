@@ -103,7 +103,12 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
 }
 
 export function isOnboardingCompleted(): boolean {
-  return localStorage.getItem(ONBOARDING_COMPLETED_KEY) === 'true';
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(ONBOARDING_COMPLETED_KEY) === 'true';
+  } catch {
+    return false;
+  }
 }
 
 export function resetOnboarding(): void {
