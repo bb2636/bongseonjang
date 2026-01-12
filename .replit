@@ -11,6 +11,7 @@ entrypoint = "src/App.tsx"
 
 [nix]
 channel = "stable-24_05"
+packages = ["imagemagick"]
 
 [unitTest]
 language = "nodejs"
