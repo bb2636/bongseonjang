@@ -101,7 +101,8 @@ export class CouponRepository {
     const applyAllProducts = await this.applyAllProductsRepo.findOne({ where: { couponId: coupon.id } });
     if (!applyAllProducts) {
       const applyCategories = await this.applyCategoryRepo.find({ where: { couponId: coupon.id } });
-      if (applyCategories.length > 0) {
+      const applyExposureCategories = await this.applyExposureCategoryRepo.find({ where: { couponId: coupon.id } });
+      if (applyCategories.length > 0 || applyExposureCategories.length > 0) {
         targetType = 'category';
       }
     }
