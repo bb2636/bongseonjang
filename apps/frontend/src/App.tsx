@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from "react";
-import { Routes, Route, Navigate, useSearchParams } from "react-router-dom";
+import { Routes, Route, Navigate, useSearchParams, useLocation } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import { ProtectedRoute, ProtectedAdminRoute, SplashScreen } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
@@ -234,8 +234,11 @@ function PageLoader() {
 }
 
 function AppContent() {
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingCompleted());
+
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   useEffect(() => {
     if (searchParams.get('reset_onboarding') === 'true') {
@@ -250,13 +253,9 @@ function AppContent() {
     setShowOnboarding(false);
   };
 
-  return (
-    <SplashScreen duration={2500}>
-      {showOnboarding ? (
-        <OnboardingScreen onComplete={handleOnboardingComplete} />
-      ) : (
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
+  const renderContent = () => (
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
         <Route path="/" element={
           <Suspense fallback={<HomePageSkeleton />}>
             <HomePage />
@@ -457,8 +456,20 @@ function AppContent() {
             </MainLayout>
           }
         />
-        </Routes>
-        </Suspense>
+      </Routes>
+    </Suspense>
+  );
+
+  if (isAdminRoute) {
+    return renderContent();
+  }
+
+  return (
+    <SplashScreen duration={2500}>
+      {showOnboarding ? (
+        <OnboardingScreen onComplete={handleOnboardingComplete} />
+      ) : (
+        renderContent()
       )}
     </SplashScreen>
   );
