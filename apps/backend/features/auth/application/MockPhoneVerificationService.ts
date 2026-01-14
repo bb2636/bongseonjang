@@ -1,4 +1,4 @@
-import type { PhoneVerificationService, SendCodeResult, VerifyCodeResult } from '../domain/PhoneVerificationService';
+import type { PhoneVerificationService, SendCodeResult, VerifyCodeResult } from '../domain/PhoneVerificationService.js';
 
 interface StoredCode {
   code: string;
