@@ -17,6 +17,7 @@ export { BongseonjangTv } from './BongseonjangTv';
 export { Event } from './Event';
 export { Review } from './Review';
 export { SearchTerm } from './SearchTerm';
+export { UserSearchHistory } from './UserSearchHistory';
 
 export { Cart } from './Cart';
 export { CartItem } from './CartItem';

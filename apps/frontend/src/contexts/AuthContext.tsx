@@ -95,6 +95,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem('user_token');
+    localStorage.removeItem('recentSearches');
     queryClient.clear();
   }, [queryClient]);
 

@@ -2,52 +2,84 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { ProductCardData } from '@/components/ProductCard';
 import type { SortBy } from '../types/SortTypes';
-
-const RECENT_SEARCHES_KEY = 'recentSearches';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface PopularSearchTerm {
   term: string;
   searchCount: number;
 }
 
-function loadRecentSearches(): string[] {
-  try {
-    const saved = localStorage.getItem(RECENT_SEARCHES_KEY);
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
+function getAuthHeaders(): HeadersInit {
+  const token = localStorage.getItem('user_token');
+  if (token) {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
   }
+  return { 'Content-Type': 'application/json' };
 }
 
-function saveRecentSearches(searches: string[]) {
+async function fetchUserSearchHistory(limit: number = 10): Promise<string[]> {
   try {
-    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
-  } catch {
-    console.error('Failed to save recent searches');
+    const response = await fetch(`/api/search/history?limit=${limit}`, {
+      headers: getAuthHeaders(),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return data.map((h: { term: string }) => h.term);
+    }
+  } catch (error) {
+    console.error('Failed to fetch user search history:', error);
   }
+  return [];
 }
 
-async function recordSearchToServer(term: string) {
+async function addUserSearchHistoryToServer(term: string): Promise<void> {
   try {
-    await fetch('/api/search/record', {
+    await fetch('/api/search/history', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ term }),
     });
   } catch (error) {
-    console.error('Failed to record search:', error);
+    console.error('Failed to add search history:', error);
+  }
+}
+
+async function deleteUserSearchHistoryFromServer(term: string): Promise<void> {
+  try {
+    await fetch('/api/search/history', {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ term }),
+    });
+  } catch (error) {
+    console.error('Failed to delete search history:', error);
+  }
+}
+
+async function clearUserSearchHistoryFromServer(): Promise<void> {
+  try {
+    await fetch('/api/search/history/all', {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+  } catch (error) {
+    console.error('Failed to clear search history:', error);
   }
 }
 
 export function useSearchPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { isAuthenticated } = useAuth();
   
   const urlQuery = searchParams.get('q') || '';
   const urlSort = (searchParams.get('sortBy') as SortBy) || 'default';
   
   const [searchQuery, setSearchQuery] = useState(urlQuery);
-  const [recentSearches, setRecentSearches] = useState<string[]>(loadRecentSearches);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [popularSearches, setPopularSearches] = useState<PopularSearchTerm[]>([]);
   const [searchResults, setSearchResults] = useState<ProductCardData[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -57,8 +89,12 @@ export function useSearchPage() {
   const initialSearchDone = useRef(false);
 
   useEffect(() => {
-    saveRecentSearches(recentSearches);
-  }, [recentSearches]);
+    if (isAuthenticated) {
+      fetchUserSearchHistory(10).then(setRecentSearches);
+    } else {
+      setRecentSearches([]);
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     async function fetchPopularSearches() {
@@ -127,17 +163,17 @@ export function useSearchPage() {
     }
     setSearchParams(newParams, { replace: true });
 
-    if (isNewSearch) {
+    if (isNewSearch && isAuthenticated) {
+      await addUserSearchHistoryToServer(term);
       const updatedRecent = [
         term,
         ...recentSearches.filter(s => s !== term)
       ].slice(0, 10);
       setRecentSearches(updatedRecent);
-      recordSearchToServer(term);
     }
 
     await executeSearch(term, sort);
-  }, [recentSearches, sortBy, setSearchParams, executeSearch]);
+  }, [recentSearches, sortBy, setSearchParams, executeSearch, isAuthenticated]);
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
@@ -170,13 +206,19 @@ export function useSearchPage() {
     }
   }, [currentSearchTerm, performSearch]);
 
-  const handleRecentSearchDelete = useCallback((term: string) => {
+  const handleRecentSearchDelete = useCallback(async (term: string) => {
+    if (isAuthenticated) {
+      await deleteUserSearchHistoryFromServer(term);
+    }
     setRecentSearches(prev => prev.filter(s => s !== term));
-  }, []);
+  }, [isAuthenticated]);
 
-  const handleClearAllRecent = useCallback(() => {
+  const handleClearAllRecent = useCallback(async () => {
+    if (isAuthenticated) {
+      await clearUserSearchHistoryFromServer();
+    }
     setRecentSearches([]);
-  }, []);
+  }, [isAuthenticated]);
 
   const handleProductClick = useCallback((productId: string) => {
     navigate(`/product/${productId}`);
