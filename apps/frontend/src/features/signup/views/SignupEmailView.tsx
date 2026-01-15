@@ -143,6 +143,7 @@ interface SignupEmailViewProps {
   emailStep: EmailStepProps;
   passwordStep: PasswordStepProps;
   profileStep: ProfileStepProps;
+  isSocialSignup?: boolean;
   onBack: () => void;
 }
 
@@ -151,6 +152,7 @@ export default function SignupEmailView({
   emailStep,
   passwordStep,
   profileStep,
+  isSocialSignup = false,
   onBack,
 }: SignupEmailViewProps) {
   const getSubmitButtonClass = () => {
@@ -190,19 +192,22 @@ export default function SignupEmailView({
       />
 
       <header className="signup-header">
-        <button className="signup-back-button" onClick={onBack} aria-label="뒤로가기">
-          <span className="signup-back-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M15 18L9 12L15 6"
-                stroke="#101112"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-        </button>
+        {!isSocialSignup && (
+          <button className="signup-back-button" onClick={onBack} aria-label="뒤로가기">
+            <span className="signup-back-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke="#101112"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        )}
+        {isSocialSignup && <div className="signup-header-spacer" />}
         <h1 className="signup-header-title">이메일로 회원가입</h1>
         <div className="signup-header-spacer" />
       </header>

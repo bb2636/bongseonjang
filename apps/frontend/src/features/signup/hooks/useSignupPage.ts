@@ -13,6 +13,8 @@ export function useSignupPage() {
   const passwordStep = useSignupPasswordStep();
   const profileStep = useSignupProfileStep();
 
+  const isSocialSignup = !!formData.socialProvider;
+
   const currentStep: 'email' | 'password' | 'profile' = formData.isPasswordSet 
     ? 'profile' 
     : formData.isEmailVerified 
@@ -45,6 +47,7 @@ export function useSignupPage() {
       emailStep,
       passwordStep,
       profileStep,
+      isSocialSignup,
     },
     actions: {
       onBack,

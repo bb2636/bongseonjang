@@ -11,6 +11,7 @@ function SignupEmailPageContent() {
       emailStep={state.emailStep}
       passwordStep={state.passwordStep}
       profileStep={state.profileStep}
+      isSocialSignup={state.isSocialSignup}
       onBack={actions.onBack}
     />
   );
