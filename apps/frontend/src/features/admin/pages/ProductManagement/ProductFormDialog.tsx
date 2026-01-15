@@ -69,7 +69,6 @@ export function ProductFormDialog({
     handleExpirationInfoChange,
     handleWeightChange,
     handleOriginChange,
-    handleStorageMethodChange,
     handleShippingMethodChange,
     handleStockQuantityChange,
     handleUseOptionsChange,
