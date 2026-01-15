@@ -70,6 +70,7 @@ export function ProductFormDialog({
     handleWeightChange,
     handleOriginChange,
     handleShippingMethodChange,
+    handleStockQuantityChange,
     handleUseOptionsChange,
     handleOptionGroupNameChange,
     handleOptionChange,
@@ -379,6 +380,44 @@ export function ProductFormDialog({
                   <span className="product-form-dialog__unit">%</span>
                 </div>
               </div>
+              {!formData.useOptions && (
+                <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
+                  <label className="product-form-dialog__label">재고 수량</label>
+                  <div className="product-form-dialog__stock-input-wrapper">
+                    <button
+                      type="button"
+                      className="product-form-dialog__stock-button product-form-dialog__stock-button--minus"
+                      onClick={() => handleStockQuantityChange(formData.stockQuantity - 1)}
+                      disabled={formData.stockQuantity <= 0}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      className="product-form-dialog__input product-form-dialog__input--stock"
+                      placeholder="0"
+                      min={0}
+                      value={formData.stockQuantity || ''}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '');
+                        handleStockQuantityChange(Number(value) || 0);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '.') {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="product-form-dialog__stock-button product-form-dialog__stock-button--plus"
+                      onClick={() => handleStockQuantityChange(formData.stockQuantity + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="product-form-dialog__form-row">

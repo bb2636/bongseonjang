@@ -446,7 +446,8 @@ router.put('/:productId', async (req: Request, res: Response) => {
       await productRepository.update(productId, { stockQuantity: totalStock });
     } else {
       await optionRepository.delete({ productId });
-      await productRepository.update(productId, { stockQuantity: 0 });
+      const directStockQuantity = req.body.stockQuantity ?? 0;
+      await productRepository.update(productId, { stockQuantity: directStockQuantity });
     }
 
     await productExposureCategoryRepository.delete({ productId });
@@ -573,6 +574,9 @@ router.post('/', async (req: Request, res: Response) => {
         totalStock += opt.stock || 0;
       }
       await productRepository.update(savedProduct.id, { stockQuantity: totalStock });
+    } else {
+      const directStockQuantity = req.body.stockQuantity ?? 0;
+      await productRepository.update(savedProduct.id, { stockQuantity: directStockQuantity });
     }
 
     for (const catId of exposureCategoryIds) {

@@ -59,6 +59,7 @@ export interface ProductFormData {
   weight: string;
   origin: string;
   shippingMethod: string;
+  stockQuantity: number;
 }
 
 const SHIPPING_LABELS = {
@@ -136,6 +137,7 @@ function createInitialFormData(): ProductFormData {
     weight: '',
     origin: '',
     shippingMethod: '',
+    stockQuantity: 0,
   };
 }
 
@@ -288,6 +290,11 @@ export function useProductForm() {
 
   const handleShippingMethodChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, shippingMethod: value }));
+  }, []);
+
+  const handleStockQuantityChange = useCallback((value: number) => {
+    const validValue = Math.max(0, Math.floor(value));
+    setFormData(prev => ({ ...prev, stockQuantity: validValue }));
   }, []);
 
   const handleUseOptionsChange = useCallback((useOptions: boolean) => {
@@ -560,6 +567,7 @@ export function useProductForm() {
         weight: data.weight || '',
         origin: data.origin || '',
         shippingMethod: data.shippingMethod || '',
+        stockQuantity: data.stockQuantity || 0,
       });
 
       return true;
@@ -739,6 +747,7 @@ export function useProductForm() {
         weight: formData.weight,
         origin: formData.origin,
         shippingMethod: formData.shippingMethod,
+        stockQuantity: formData.useOptions ? 0 : formData.stockQuantity,
       };
 
       const url = isUpdate
@@ -805,6 +814,7 @@ export function useProductForm() {
     handleWeightChange,
     handleOriginChange,
     handleShippingMethodChange,
+    handleStockQuantityChange,
     handleUseOptionsChange,
     handleOptionGroupNameChange,
     handleOptionChange,
