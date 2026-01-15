@@ -2,29 +2,37 @@ import { useState, useEffect } from 'react';
 import splashImage from '../../assets/splash.png';
 import './SplashScreen.css';
 
+const SPLASH_SHOWN_KEY = 'bongkru_splash_shown';
+
 interface SplashScreenProps {
   children: React.ReactNode;
   duration?: number;
 }
 
 export function SplashScreen({ children, duration = 2500 }: SplashScreenProps) {
-  const [showSplash, setShowSplash] = useState(true);
+  const alreadyShown = sessionStorage.getItem(SPLASH_SHOWN_KEY) === 'true';
+  const [showSplash, setShowSplash] = useState(!alreadyShown);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
+    if (alreadyShown) {
+      return;
+    }
+
     const fadeTimer = setTimeout(() => {
       setFadeOut(true);
     }, duration);
 
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
+      sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
     }, duration + 500);
 
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
     };
-  }, [duration]);
+  }, [duration, alreadyShown]);
 
   if (!showSplash) {
     return <>{children}</>;
