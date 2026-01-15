@@ -380,9 +380,18 @@ export function ProductFormDialog({
                   <span className="product-form-dialog__unit">%</span>
                 </div>
               </div>
-              {!formData.useOptions && (
-                <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
-                  <label className="product-form-dialog__label">재고 수량</label>
+              <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
+                <label className="product-form-dialog__label">
+                  {formData.useOptions ? '전체 재고' : '재고 수량'}
+                </label>
+                {formData.useOptions ? (
+                  <input
+                    type="text"
+                    className="product-form-dialog__input product-form-dialog__input--readonly"
+                    value={formData.options.reduce((sum, opt) => sum + (opt.stock || 0), 0).toLocaleString()}
+                    readOnly
+                  />
+                ) : (
                   <input
                     type="text"
                     inputMode="numeric"
@@ -406,8 +415,8 @@ export function ProductFormDialog({
                       }
                     }}
                   />
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             <div className="product-form-dialog__form-row">
