@@ -37,7 +37,7 @@ export class SolapiPhoneVerificationService implements PhoneVerificationService 
       await this.messageService.send({
         to: normalizedPhone,
         from: this.senderPhone,
-        text: `[봉선장] 인증번호 [${code}]를 입력해주세요.`,
+        text: `[봉선장]\n인증번호는 ${code}입니다.\n타인에게 절대 공유하지 마세요.`,
       });
 
       this.codes.set(normalizedPhone, { code, expiresAt, attempts: 0 });
