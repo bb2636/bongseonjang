@@ -383,39 +383,29 @@ export function ProductFormDialog({
               {!formData.useOptions && (
                 <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
                   <label className="product-form-dialog__label">재고 수량</label>
-                  <div className="product-form-dialog__stock-input-wrapper">
-                    <button
-                      type="button"
-                      className="product-form-dialog__stock-button product-form-dialog__stock-button--minus"
-                      onClick={() => handleStockQuantityChange(formData.stockQuantity - 1)}
-                      disabled={formData.stockQuantity <= 0}
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      className="product-form-dialog__input product-form-dialog__input--stock"
-                      placeholder="0"
-                      min={0}
-                      value={formData.stockQuantity || ''}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9]/g, '');
-                        handleStockQuantityChange(Number(value) || 0);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '.') {
-                          e.preventDefault();
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className="product-form-dialog__stock-button product-form-dialog__stock-button--plus"
-                      onClick={() => handleStockQuantityChange(formData.stockQuantity + 1)}
-                    >
-                      +
-                    </button>
-                  </div>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    className="product-form-dialog__input"
+                    placeholder="0"
+                    value={formData.stockQuantity ? formData.stockQuantity.toLocaleString() : ''}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      const numValue = Math.max(0, Number(value) || 0);
+                      handleStockQuantityChange(numValue);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '.') {
+                        e.preventDefault();
+                      }
+                    }}
+                    onPaste={(e) => {
+                      const pastedText = e.clipboardData.getData('text');
+                      if (!/^\d+$/.test(pastedText.replace(/,/g, ''))) {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
                 </div>
               )}
             </div>

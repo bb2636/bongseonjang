@@ -152,7 +152,7 @@ export function ProductManagementView({
                     <span
                       className={`product-table__exposure-status ${product.isExposed ? 'product-table__exposure-status--active' : 'product-table__exposure-status--inactive'}`}
                     >
-                      {product.isExposed ? getExposureLabel(product) : '노출'}
+                      {product.isExposed ? getExposureLabel(product) : '비노출'}
                     </span>
                   </div>
                   <div className="product-table__cell product-table__cell--actions">
