@@ -307,6 +307,43 @@ export function ProductFormDialog({
               </div>
               <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
                 <label className="product-form-dialog__label">
+                  {formData.useOptions ? '전체 재고' : '재고 수량'}
+                </label>
+                {formData.useOptions ? (
+                  <input
+                    type="text"
+                    className="product-form-dialog__input product-form-dialog__input--readonly"
+                    value={formData.options.reduce((sum, opt) => sum + (opt.stock || 0), 0).toLocaleString()}
+                    readOnly
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    className="product-form-dialog__input"
+                    placeholder="0"
+                    value={formData.stockQuantity ? formData.stockQuantity.toLocaleString() : ''}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      const numValue = Math.max(0, Number(value) || 0);
+                      handleStockQuantityChange(numValue);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '.') {
+                        e.preventDefault();
+                      }
+                    }}
+                    onPaste={(e) => {
+                      const pastedText = e.clipboardData.getData('text');
+                      if (!/^\d+$/.test(pastedText.replace(/,/g, ''))) {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
+                )}
+              </div>
+              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
+                <label className="product-form-dialog__label">
                   상품 카테고리 <span className="product-form-dialog__required">*</span>
                 </label>
                 <Select
@@ -322,25 +359,6 @@ export function ProductFormDialog({
                 />
                 {hasError('categoryId') && (
                   <span className="product-form-dialog__error-message">{getErrorMessage('categoryId')}</span>
-                )}
-              </div>
-              <div className="product-form-dialog__form-field product-form-dialog__form-field--half">
-                <label className="product-form-dialog__label">
-                  노출 카테고리 <span className="product-form-dialog__required">*</span>
-                </label>
-                <MultiSelect
-                  options={exposureCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
-                  values={formData.exposureCategoryIds}
-                  onChange={(vals) => {
-                    handleExposureCategoryChange(vals);
-                    clearFieldError('exposureCategoryIds');
-                  }}
-                  placeholder="선택 (복수 선택 가능)"
-                  width={250}
-                  hasError={!!hasError('exposureCategoryIds')}
-                />
-                {hasError('exposureCategoryIds') && (
-                  <span className="product-form-dialog__error-message">{getErrorMessage('exposureCategoryIds')}</span>
                 )}
               </div>
             </div>
@@ -382,39 +400,21 @@ export function ProductFormDialog({
               </div>
               <div className="product-form-dialog__form-field product-form-dialog__form-field--third">
                 <label className="product-form-dialog__label">
-                  {formData.useOptions ? '전체 재고' : '재고 수량'}
+                  노출 카테고리 <span className="product-form-dialog__required">*</span>
                 </label>
-                {formData.useOptions ? (
-                  <input
-                    type="text"
-                    className="product-form-dialog__input product-form-dialog__input--readonly"
-                    value={formData.options.reduce((sum, opt) => sum + (opt.stock || 0), 0).toLocaleString()}
-                    readOnly
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    className="product-form-dialog__input"
-                    placeholder="0"
-                    value={formData.stockQuantity ? formData.stockQuantity.toLocaleString() : ''}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/[^0-9]/g, '');
-                      const numValue = Math.max(0, Number(value) || 0);
-                      handleStockQuantityChange(numValue);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '.') {
-                        e.preventDefault();
-                      }
-                    }}
-                    onPaste={(e) => {
-                      const pastedText = e.clipboardData.getData('text');
-                      if (!/^\d+$/.test(pastedText.replace(/,/g, ''))) {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
+                <MultiSelect
+                  options={exposureCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
+                  values={formData.exposureCategoryIds}
+                  onChange={(vals) => {
+                    handleExposureCategoryChange(vals);
+                    clearFieldError('exposureCategoryIds');
+                  }}
+                  placeholder="선택 (복수 선택 가능)"
+                  width={250}
+                  hasError={!!hasError('exposureCategoryIds')}
+                />
+                {hasError('exposureCategoryIds') && (
+                  <span className="product-form-dialog__error-message">{getErrorMessage('exposureCategoryIds')}</span>
                 )}
               </div>
             </div>
