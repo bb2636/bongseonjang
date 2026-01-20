@@ -55,6 +55,11 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
         onSlideChange={handleSlideChange}
         slidesPerView={1}
         className="onboarding-screen__swiper"
+        simulateTouch={true}
+        touchRatio={1}
+        threshold={5}
+        touchStartPreventDefault={false}
+        allowTouchMove={true}
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id} className="onboarding-screen__slide">

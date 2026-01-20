@@ -464,13 +464,20 @@ function AppContent() {
     return renderContent();
   }
 
+  // TODO: 온보딩 임시 비활성화 - 나중에 다시 활성화할 것
+  // return (
+  //   <SplashScreen duration={2500}>
+  //     {showOnboarding ? (
+  //       <OnboardingScreen onComplete={handleOnboardingComplete} />
+  //     ) : (
+  //       renderContent()
+  //     )}
+  //   </SplashScreen>
+  // );
+  
   return (
     <SplashScreen duration={2500}>
-      {showOnboarding ? (
-        <OnboardingScreen onComplete={handleOnboardingComplete} />
-      ) : (
-        renderContent()
-      )}
+      {renderContent()}
     </SplashScreen>
   );
 }
