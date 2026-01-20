@@ -1,0 +1,88 @@
+C:\Users\ok\Desktop\bongseonjang\bongseonjang>npm install @capacitor/core @capacitor/cli
+npm warn Unknown project config "auto-install-peers". This will stop working in the next major version of npm.
+npm warn Unknown project config "shamefully-hoist". This will stop working in the next major version of npm.
+npm notice Access token expired or revoked. Please try logging in again.
+npm warn ERESOLVE overriding peer dependency
+npm warn ERESOLVE overriding peer dependency
+npm warn ERESOLVE overriding peer dependency
+npm warn ERESOLVE overriding peer dependency
+npm warn ERESOLVE overriding peer dependency
+npm warn ERESOLVE overriding peer dependency
+npm warn ERESOLVE overriding peer dependency
+npm warn ERESOLVE overriding peer dependency
+npm notice Access token expired or revoked. Please try logging in again.
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: agent-base@6.0.2
+npm warn Found: peer eslint-plugin-react@"^7.11.0" from eslint-config-airbnb@17.1.0
+npm warn node_modules/.pnpm/agent-base@6.0.2/node_modules/agent-base/node_modules/eslint-config-airbnb
+npm warn   dev eslint-config-airbnb@"17.1.0" from agent-base@6.0.2
+npm warn   node_modules/.pnpm/agent-base@6.0.2/node_modules/agent-base
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer eslint-plugin-react@"^7.11.0" from eslint-config-airbnb@17.1.0
+npm warn node_modules/.pnpm/agent-base@6.0.2/node_modules/agent-base/node_modules/eslint-config-airbnb
+npm warn   dev eslint-config-airbnb@"17.1.0" from agent-base@6.0.2
+npm warn   node_modules/.pnpm/agent-base@6.0.2/node_modules/agent-base
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: agent-base@6.0.2
+npm warn Found: peer eslint-plugin-jsx-a11y@"^6.1.1" from eslint-config-airbnb@17.1.0
+npm warn node_modules/.pnpm/agent-base@6.0.2/node_modules/agent-base/node_modules/eslint-config-airbnb
+npm warn   dev eslint-config-airbnb@"17.1.0" from agent-base@6.0.2
+npm warn   node_modules/.pnpm/agent-base@6.0.2/node_modules/agent-base
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer eslint-plugin-jsx-a11y@"^6.1.1" from eslint-config-airbnb@17.1.0
+npm warn node_modules/.pnpm/agent-base@6.0.2/node_modules/agent-base/node_modules/eslint-config-airbnb
+npm warn   dev eslint-config-airbnb@"17.1.0" from agent-base@6.0.2
+npm warn   node_modules/.pnpm/agent-base@6.0.2/node_modules/agent-base
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: async-retry@1.3.3
+npm warn Found: peer eslint-plugin-react@"^7.21.5" from eslint-config-airbnb@18.2.1
+npm warn node_modules/.pnpm/async-retry@1.3.3/node_modules/async-retry/node_modules/eslint-config-airbnb
+npm warn   dev eslint-config-airbnb@"18.2.1" from async-retry@1.3.3
+npm warn   node_modules/.pnpm/async-retry@1.3.3/node_modules/async-retry
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer eslint-plugin-react@"^7.21.5" from eslint-config-airbnb@18.2.1
+npm warn node_modules/.pnpm/async-retry@1.3.3/node_modules/async-retry/node_modules/eslint-config-airbnb
+npm warn   dev eslint-config-airbnb@"18.2.1" from async-retry@1.3.3
+npm warn   node_modules/.pnpm/async-retry@1.3.3/node_modules/async-retry
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: async-retry@1.3.3
+npm warn Found: peer eslint-plugin-jsx-a11y@"^6.4.1" from eslint-config-airbnb@18.2.1
+npm warn node_modules/.pnpm/async-retry@1.3.3/node_modules/async-retry/node_modules/eslint-config-airbnb
+npm warn   dev eslint-config-airbnb@"18.2.1" from async-retry@1.3.3
+npm warn   node_modules/.pnpm/async-retry@1.3.3/node_modules/async-retry
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer eslint-plugin-jsx-a11y@"^6.4.1" from eslint-config-airbnb@18.2.1
+npm warn node_modules/.pnpm/async-retry@1.3.3/node_modules/async-retry/node_modules/eslint-config-airbnb
+npm warn   dev eslint-config-airbnb@"18.2.1" from async-retry@1.3.3
+npm warn   node_modules/.pnpm/async-retry@1.3.3/node_modules/async-retry
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: babel-eslint@11.0.0-beta.2
+npm warn Found: eslint@5.16.0
+npm warn node_modules/.pnpm/cross-spawn@7.0.6/node_modules/eslint
+npm warn   dev eslint@"^5.16.0" from cross-spawn@7.0.6
+npm warn   node_modules/.pnpm/cross-spawn@7.0.6/node_modules/cross-spawn
+npm warn     cross-spawn@7.0.6
+npm warn     node_modules/cross-spawn
+npm warn     cross-spawn@7.0.6
+npm warn     node_modules/.pnpm/foreground-child@3.3.1/node_modules/cross-spawn
+npm warn     cross-spawn@7.0.6
+npm warn     node_modules/.pnpm/@ionic+utils-subprocess@3.0.1/node_modules/cross-spawn
+npm warn   3 more (eslint-config-moxy, eslint-plugin-jest, eslint-plugin-jsdoc)
+npm warn
+npm warn Could not resolve dependency:
+npm warn peer eslint@">= 6.0.0" from babel-eslint@11.0.0-beta.2
+npm warn node_modules/.pnpm/cross-spawn@7.0.6/node_modules/babel-eslint
+npm warn   babel-eslint@"^11.0.0-beta.0" from eslint-config-moxy@7.1.0
+npm warn   node_modules/.pnpm/cross-spawn@7.0.6/node_modules/eslint-config-moxy
+npm error Cannot read properties of null (reading 'matches')
+npm error A complete log of this run can be found in: C:\Users\ok\AppData\Local\npm-cache\_logs\2026-01-20T02_42_31_222Z-debug-0.log
+
+C:\Users\ok\Desktop\bongseonjang\bongseonjang>npx cap init
+npm warn Unknown project config "auto-install-peers". This will stop working in the next major version of npm.
+npm warn Unknown project config "shamefully-hoist". This will stop working in the next major version of npm.
+[error] Cannot run init for a project using a non-JSON configuration file.
+        Delete capacitor.config.ts and try agai

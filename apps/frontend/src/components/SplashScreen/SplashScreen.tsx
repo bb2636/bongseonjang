@@ -35,20 +35,18 @@ export function SplashScreen({ children, duration = 2500 }: SplashScreenProps) {
     };
   }, [duration, alreadyShown]);
 
-  if (!showSplash) {
-    return <>{children}</>;
-  }
-
   return (
     <>
-      <div className={`splash-screen ${fadeOut ? 'splash-screen--fade-out' : ''}`}>
-        <img 
-          src={splashImage} 
-          alt="봉선장" 
-          className="splash-screen__image"
-        />
-      </div>
-      <div style={{ display: 'none' }}>{children}</div>
+      {showSplash && (
+        <div className={`splash-screen ${fadeOut ? 'splash-screen--fade-out' : ''}`}>
+          <img 
+            src={splashImage} 
+            alt="봉선장" 
+            className="splash-screen__image"
+          />
+        </div>
+      )}
+      {children}
     </>
   );
 }
