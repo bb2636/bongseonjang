@@ -19,13 +19,14 @@ export function SplashScreen({ children, duration = 2500 }: SplashScreenProps) {
       return;
     }
 
+    sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
+
     const fadeTimer = setTimeout(() => {
       setFadeOut(true);
     }, duration);
 
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
-      sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
     }, duration + 500);
 
     return () => {
