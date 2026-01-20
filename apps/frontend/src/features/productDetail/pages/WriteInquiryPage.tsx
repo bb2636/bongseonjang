@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
 import { useToast } from '../../../contexts/ToastContext';
+import { useAuth } from '../../../contexts/AuthContext';
+import { AlertModal } from '@components';
 import {
   createProductInquiry,
   fetchProductDetail,
@@ -62,9 +64,17 @@ function CloseIcon() {
 export default function WriteInquiryPage() {
   const { productId } = useParams<{ productId: string }>();
   const goBack = useGoBack();
+  const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const { isAuthenticated } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(!isAuthenticated);
+
+  const handleLoginConfirm = () => {
+    setShowLoginModal(false);
+    navigate('/login', { state: { from: location.pathname } });
+  };
 
   const productFromState: ProductSummary | undefined = location.state?.product;
 
@@ -165,6 +175,11 @@ export default function WriteInquiryPage() {
 
   return (
     <div className="write-inquiry-page">
+      <AlertModal
+        isOpen={showLoginModal}
+        title="로그인 후 이용해주세요"
+        onConfirm={handleLoginConfirm}
+      />
       <header className="write-inquiry-page__header">
         <button className="write-inquiry-page__header-button" type="button" onClick={goBack}>
           <CloseIcon />

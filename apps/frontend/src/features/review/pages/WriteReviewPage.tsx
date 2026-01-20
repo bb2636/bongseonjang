@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
 import { useGoBack } from '../../../hooks/useGoBack';
+import { useAuth } from '../../../contexts/AuthContext';
+import { AlertModal } from '@components';
 import './WriteReviewPage.css';
 
 interface ProductInfo {
@@ -84,8 +86,16 @@ const MAX_IMAGES = 10;
 export default function WriteReviewPage() {
   const { productId } = useParams<{ productId: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const goBack = useGoBack();
+  const { isAuthenticated } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(!isAuthenticated);
+
+  const handleLoginConfirm = () => {
+    setShowLoginModal(false);
+    navigate('/login', { state: { from: location.pathname } });
+  };
 
   const stateProduct: ProductInfo | undefined = location.state?.product;
   const stateOrderItemId: string | undefined = location.state?.orderItemId;
@@ -158,6 +168,11 @@ export default function WriteReviewPage() {
   if (productLoading) {
     return (
       <div className="write-review-page">
+        <AlertModal
+          isOpen={showLoginModal}
+          title="로그인 후 이용해주세요"
+          onConfirm={handleLoginConfirm}
+        />
         <header className="write-review-page__header">
           <div className="write-review-page__header-spacer" />
           <h1 className="write-review-page__title">리뷰 작성하기</h1>
@@ -178,6 +193,11 @@ export default function WriteReviewPage() {
 
   return (
     <div className="write-review-page">
+      <AlertModal
+        isOpen={showLoginModal}
+        title="로그인 후 이용해주세요"
+        onConfirm={handleLoginConfirm}
+      />
       <header className="write-review-page__header">
         <div className="write-review-page__header-spacer" />
         <h1 className="write-review-page__title">리뷰 작성하기</h1>
