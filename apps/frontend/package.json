@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "build:capacitor": "vite build --mode capacitor",
+    "cap:build": "vite build --mode capacitor && npx cap sync android",
+    "cap:open": "npx cap open android",
     "preview": "vite preview"
   },
   "dependencies": {
