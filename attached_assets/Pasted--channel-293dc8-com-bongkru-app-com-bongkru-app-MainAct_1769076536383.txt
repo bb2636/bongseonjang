@@ -1,0 +1,168 @@
+ channel '293dc8 com.bongkru.app/com.bongkru.app.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2026-01-22 19:08:19.156  4671-4671  Zygote                  com.bongkru.app                      I  Process 4671 created for com.bongkru.app
+2026-01-22 19:08:19.157  4671-4671  com.bongkru.app         com.bongkru.app                      I  Late-enabling -Xcheck:jni
+2026-01-22 19:08:19.478  4671-4671  com.bongkru.app         com.bongkru.app                      I  Using CollectorTypeCMC GC.
+2026-01-22 19:08:19.489  4671-4671  com.bongkru.app         com.bongkru.app                      W  Unexpected CPU variant for x86: x86_64.
+                                                                                                    Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+2026-01-22 19:08:19.620  4671-4671  nativeloader            com.bongkru.app                      D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2026-01-22 19:08:19.762  4671-4671  nativeloader            com.bongkru.app                      D  Load /data/user/0/com.bongkru.app/code_cache/startup_agents/5b4f70e9-agent.so using system ns (caller=<unknown>): ok
+2026-01-22 19:08:19.760  4671-4671  re-initialized>         com.bongkru.app                      W  type=1400 audit(0.0:188): avc:  granted  { execute } for  path="/data/data/com.bongkru.app/code_cache/startup_agents/5b4f70e9-agent.so" dev="dm-56" ino=370208 scontext=u:r:untrusted_app:s0:c226,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c226,c256,c512,c768 tclass=file app=com.bongkru.app
+2026-01-22 19:08:19.773  4671-4671  com.bongkru.app         com.bongkru.app                      W  hiddenapi: DexFile /data/data/com.bongkru.app/code_cache/.studio/instruments-25d868d4.jar is in boot class path but is not in a known location
+2026-01-22 19:08:20.035  4671-4671  com.bongkru.app         com.bongkru.app                      W  Redefining intrinsic method java.lang.Thread java.lang.Thread.currentThread(). This may cause the unexpected use of the original definition of java.lang.Thread java.lang.Thread.currentThread()in methods that have already been compiled.
+2026-01-22 19:08:20.035  4671-4671  com.bongkru.app         com.bongkru.app                      W  Redefining intrinsic method boolean java.lang.Thread.interrupted(). This may cause the unexpected use of the original definition of boolean java.lang.Thread.interrupted()in methods that have already been compiled.
+2026-01-22 19:08:20.615  4671-4671  nativeloader            com.bongkru.app                      D  Configuring clns-9 for other apk /data/app/~~Fcgc9fQMQmuoB2_6H3u9zQ==/com.bongkru.app-8NVuu6mWd9AJ6_gZWqNw8A==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~Fcgc9fQMQmuoB2_6H3u9zQ==/com.bongkru.app-8NVuu6mWd9AJ6_gZWqNw8A==/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.bongkru.app
+2026-01-22 19:08:20.634  4671-4671  CompatChangeReporter    com.bongkru.app                      D  Compat change id reported: 202956589; UID 10226; state: ENABLED
+2026-01-22 19:08:20.693  4671-4671  GraphicsEnvironment     com.bongkru.app                      V  Currently set values for:
+2026-01-22 19:08:20.693  4671-4671  GraphicsEnvironment     com.bongkru.app                      V    angle_gl_driver_selection_pkgs=[]
+2026-01-22 19:08:20.694  4671-4671  GraphicsEnvironment     com.bongkru.app                      V    angle_gl_driver_selection_values=[]
+2026-01-22 19:08:20.694  4671-4671  GraphicsEnvironment     com.bongkru.app                      V  com.bongkru.app is not listed in per-application setting
+2026-01-22 19:08:20.694  4671-4671  GraphicsEnvironment     com.bongkru.app                      V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+2026-01-22 19:08:20.694  4671-4671  GraphicsEnvironment     com.bongkru.app                      V  No special selections for ANGLE, returning default driver choice
+2026-01-22 19:08:20.694  4671-4671  GraphicsEnvironment     com.bongkru.app                      V  Neither updatable production driver nor prerelease driver is supported.
+2026-01-22 19:08:20.827  4671-4687  DisplayManager          com.bongkru.app                      I  Choreographer implicitly registered for the refresh rate.
+2026-01-22 19:08:20.942  4671-4671  DesktopExperienceFlags  com.bongkru.app                      D  Toggle override initialized to: false
+2026-01-22 19:08:20.979  4671-4671  AppCompatDelegate       com.bongkru.app                      D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
+2026-01-22 19:08:20.999  4671-4687  GFXSTREAM               com.bongkru.app                      I  [eglDisplay.cpp(297)] Opening libGLESv1_CM_emulation.so
+2026-01-22 19:08:21.003  4671-4687  GFXSTREAM               com.bongkru.app                      I  [eglDisplay.cpp(297)] Opening libGLESv2_emulation.so
+2026-01-22 19:08:21.011  4671-4671  ashmem                  com.bongkru.app                      E  Pinning is deprecated since Android Q. Please use trim or other methods.
+2026-01-22 19:08:21.171  4671-4671  CompatChangeReporter    com.bongkru.app                      D  Compat change id reported: 309578419; UID 10226; state: ENABLED
+2026-01-22 19:08:21.171  4671-4671  DesktopModeFlags        com.bongkru.app                      D  Toggle override initialized to: OVERRIDE_UNSET
+2026-01-22 19:08:21.198  4671-4687  HWUI                    com.bongkru.app                      W  Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+2026-01-22 19:08:21.199  4671-4687  HWUI                    com.bongkru.app                      W  Failed to initialize 101010-2 format, error = EGL_SUCCESS
+2026-01-22 19:08:21.259  4671-4671  com.bongkru.app         com.bongkru.app                      I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app, TargetSdkVersion=35) using reflection: allowed
+2026-01-22 19:08:21.313  4671-4671  WebViewFactory          com.bongkru.app                      I  Loading com.google.android.webview version 143.0.7499.192 (code 749919238)
+2026-01-22 19:08:21.341  4671-4671  ResourcesManager        com.bongkru.app                      V  The following library key has been added: ResourcesKey{ mHash=901591f1 mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/base.apk,/data/app/~~S7T7RhnV5rxvdh18b9Od0Q==/com.google.android.trichromelibrary_749919238-_5FyGdYyyhT3aIkwBBOiFw==/base.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
+2026-01-22 19:08:21.363  4671-4671  com.bongkru.app         com.bongkru.app                      W  Failed to find entry 'classes.dex': Entry not found
+2026-01-22 19:08:21.366  4671-4671  nativeloader            com.bongkru.app                      D  Configuring clns-10 for other apk /data/app/~~S7T7RhnV5rxvdh18b9Od0Q==/com.google.android.trichromelibrary_749919238-_5FyGdYyyhT3aIkwBBOiFw==/base.apk. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/lib/x86_64:/data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/base.apk!/lib/x86_64:/data/app/~~S7T7RhnV5rxvdh18b9Od0Q==/com.google.android.trichromelibrary_749919238-_5FyGdYyyhT3aIkwBBOiFw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+2026-01-22 19:08:21.373  4671-4671  ApplicationLoaders      com.bongkru.app                      D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2026-01-22 19:08:21.389  4671-4671  com.bongkru.app         com.bongkru.app                      W  Loading /data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/oat/x86_64/base.odex non-executable as it requires an image which we failed to load
+2026-01-22 19:08:21.395  4671-4671  nativeloader            com.bongkru.app                      D  Configuring clns-11 for other apk /data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/lib/x86_64:/data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/base.apk!/lib/x86_64:/data/app/~~S7T7RhnV5rxvdh18b9Od0Q==/com.google.android.trichromelibrary_749919238-_5FyGdYyyhT3aIkwBBOiFw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+2026-01-22 19:08:22.164  4671-4671  cr_WVCFactoryProvider   com.bongkru.app                      I  version=143.0.7499.192 (749919238) minSdkVersion=29 multiprocess=true packageId=2 splits=<none>
+2026-01-22 19:08:22.217  4671-4671  nativeloader            com.bongkru.app                      D  Load /data/app/~~S7T7RhnV5rxvdh18b9Od0Q==/com.google.android.trichromelibrary_749919238-_5FyGdYyyhT3aIkwBBOiFw==/base.apk!/lib/x86_64/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/base.apk): ok
+2026-01-22 19:08:22.242  4671-4671  nativeloader            com.bongkru.app                      D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~XdbVwBfDV89ShHRJbxrdKg==/com.google.android.webview-xSln4jOVav3cKcBBHQo8Ug==/base.apk): ok
+2026-01-22 19:08:22.309  4671-4699  chromium                com.bongkru.app                      E  [0122/100822.300478:ERROR:android_webview/browser/variations/variations_seed_loader.cc:39] Seed missing signature.
+2026-01-22 19:08:22.319  4671-4699  chromium                com.bongkru.app                      I  [0122/100822.317172:INFO:android_webview/browser/variations/variations_seed_loader.cc:67] Failed to open file for reading.: No such file or directory (2)
+2026-01-22 19:08:22.459  4671-4671  cr_LibraryLoader        com.bongkru.app                      I  Successfully loaded native library
+2026-01-22 19:08:22.504  4671-4671  cr_CachingUmaRecorder   com.bongkru.app                      I  Flushed 20 samples from 20 histograms, 0 samples were dropped.
+2026-01-22 19:08:22.590  4671-4671  cr_CombinedPProvider    com.bongkru.app                      I  #registerProvider() provider:WV.jk@37c3bc9 isPolicyCacheEnabled:false policyProvidersSize:0
+2026-01-22 19:08:22.591  4671-4671  cr_PolicyProvider       com.bongkru.app                      I  #setManagerAndSource() 0
+2026-01-22 19:08:22.600  4671-4671  cr_DisplayManager       com.bongkru.app                      I  Is Display Topology available: false
+2026-01-22 19:08:23.123  4671-4671  cr_CombinedPProvider    com.bongkru.app                      I  #linkNativeInternal() 1
+2026-01-22 19:08:23.132  4671-4671  cr_AppResProvider       com.bongkru.app                      I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+2026-01-22 19:08:23.132  4671-4671  cr_PolicyProvider       com.bongkru.app                      I  #notifySettingsAvailable() 0
+2026-01-22 19:08:23.132  4671-4671  cr_CombinedPProvider    com.bongkru.app                      I  #onSettingsAvailable() 0
+2026-01-22 19:08:23.132  4671-4671  cr_CombinedPProvider    com.bongkru.app                      I  #flushPolicies()
+2026-01-22 19:08:23.551  4671-4725  chromium                com.bongkru.app                      W  [WARNING:net/dns/dns_config_service_android.cc:69] Failed to read DnsConfig.
+2026-01-22 19:08:23.705  4671-4671  chromium                com.bongkru.app                      W  [WARNING:android_webview/browser/network_service/net_helpers.cc:143] HTTP Cache size is: 20971520
+2026-01-22 19:08:23.993  4671-4671  Capacitor               com.bongkru.app                      D  Starting BridgeActivity
+2026-01-22 19:08:24.038  4671-4671  Capacitor               com.bongkru.app                      D  Registering plugin instance: CapacitorCookies
+2026-01-22 19:08:24.045  4671-4671  Capacitor               com.bongkru.app                      D  Registering plugin instance: WebView
+2026-01-22 19:08:24.046  4671-4671  Capacitor               com.bongkru.app                      D  Registering plugin instance: CapacitorHttp
+2026-01-22 19:08:24.072  4671-4671  Capacitor               com.bongkru.app                      W  Unable to read file at path public/plugins
+2026-01-22 19:08:24.079  4671-4671  Capacitor               com.bongkru.app                      D  Loading app at https://localhost
+2026-01-22 19:08:24.115  4671-4724  cr_media                com.bongkru.app                      W  BLUETOOTH_CONNECT permission is missing.
+2026-01-22 19:08:24.118  4671-4724  cr_media                com.bongkru.app                      W  getBluetoothAdapter() requires BLUETOOTH permission
+2026-01-22 19:08:24.118  4671-4724  cr_media                com.bongkru.app                      W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+2026-01-22 19:08:24.141  4671-4743  libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.log"
+2026-01-22 19:08:24.141  4671-4743  libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.log.file"
+2026-01-22 19:08:24.141  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.141  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.152  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.152  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.153  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.153  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.155  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.155  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.155  4671-4743  libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
+2026-01-22 19:08:24.155  4671-4743  libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.gallium.print.optio"
+2026-01-22 19:08:24.155  4671-4743  libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.vk.trace.frame"
+2026-01-22 19:08:24.156  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/
+2026-01-22 19:08:24.166  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.166  4671-4743  libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
+2026-01-22 19:08:24.167  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.167  4671-4743  MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 19:08:24.191  4671-4671  Capacitor               com.bongkru.app                      D  App started
+2026-01-22 19:08:24.193  4671-4671  Capacitor               com.bongkru.app                      D  App resumed
+2026-01-22 19:08:24.233  4671-4671  CompatChangeReporter    com.bongkru.app                      D  Compat change id reported: 349153669; UID 10226; state: ENABLED
+2026-01-22 19:08:24.237  4671-4671  HWUI                    com.bongkru.app                      W  Unknown dataspace 0
+2026-01-22 19:08:24.324  4671-4756  CameraManagerGlobal     com.bongkru.app                      I  Connecting to camera service
+2026-01-22 19:08:24.334  4671-4671  Choreographer           com.bongkru.app                      I  Skipped 211 frames!  The application may be doing too much work on its main thread.
+2026-01-22 19:08:24.343  4671-4671  VRI[MainActivity]       com.bongkru.app                      D  WindowInsets changed: 1080x2400 statusBars:[0,63,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,63,0,84] 
+2026-01-22 19:08:24.351  4671-4671  WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@49f32c9
+2026-01-22 19:08:24.545  4671-4683  HWUI                    com.bongkru.app                      I  Davey! duration=3707ms; Flags=1, FrameTimelineVsyncId=12548, IntendedVsync=786533251062, Vsync=790049917588, InputEventId=0, HandleInputStart=790051049600, AnimationStart=790051110500, PerformTraversalsStart=790055125400, DrawStart=790140095900, FrameDeadline=786549917728, FrameStartTime=790050217900, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=790151662700, SyncStart=790161217500, IssueDrawCommandsStart=790161597900, SwapBuffers=790237654500, FrameCompleted=790250711600, DequeueBufferDuration=27300, QueueBufferDuration=693100, GpuCompleted=790250711600, SwapBuffersCompleted=790240484500, DisplayPresentTime=0, CommandSubmissionCompleted=790237654500, 
+2026-01-22 19:08:24.573  4671-4671  InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-22 19:08:24.574  4671-4671  ImeTracker              com.bongkru.app                      I  com.bongkru.app:f8bfc7b3: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-22 19:08:24.584  4671-4676  com.bongkru.app         com.bongkru.app                      I  Compiler allocated 5087KB to compile void android.view.ViewRootImpl.performTraversals()
+2026-01-22 19:08:24.751  4671-4767  HWUI                    com.bongkru.app                      I  Using FreeType backend (prop=Auto)
+2026-01-22 19:08:25.071  4671-4725  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-gpDq7XlW.js
+2026-01-22 19:08:25.094  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-pFJNKuGF.css
+2026-01-22 19:08:25.908  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/HomePage-DlYJ8evr.js
+2026-01-22 19:08:25.912  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/AppBar-DA4XcQRH.js
+2026-01-22 19:08:25.914  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useGoBack-DBMrtIIy.js
+2026-01-22 19:08:25.915  4671-4725  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/swiper-IofaVhy6.js
+2026-01-22 19:08:25.916  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useQuery-CzuexdVU.js
+2026-01-22 19:08:25.916  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/swiper-C8ec8cn4.css
+2026-01-22 19:08:25.917  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/homeDataApi-CJZOnz2Y.js
+2026-01-22 19:08:25.922  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/apiConfig-tz_OfR1L.js
+2026-01-22 19:08:25.925  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useProductListCache-eXHpO9If.js
+2026-01-22 19:08:25.925  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useProductListCache-TMyePU6E.css
+2026-01-22 19:08:25.932  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProductGridContent-DWj68IWp.js
+2026-01-22 19:08:25.934  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useProductCategories-CTx_39XX.js
+2026-01-22 19:08:25.937  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/apiClient-DelPg3UR.js
+2026-01-22 19:08:25.937  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/HomePage-C3brr9im.css
+2026-01-22 19:08:25.956  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/favicon.svg
+2026-01-22 19:08:25.967  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/favicon.svg
+2026-01-22 19:08:26.105  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/api/home/above-fold
+2026-01-22 19:08:26.401  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/seasonal-seafood-eE7VFYKt.svg
+2026-01-22 19:08:26.408  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/prepared-seafood-CeRVZzZC.svg
+2026-01-22 19:08:26.411  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/express-seafood-CNp8bfSS.svg
+2026-01-22 19:08:26.417  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/pickled-seafood-Bmp7x-y4.svg
+2026-01-22 19:08:26.486  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/api/home/below-fold
+2026-01-22 19:08:27.426  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/api/home/above-fold
+2026-01-22 19:08:27.505  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/api/home/below-fold
+2026-01-22 19:08:27.576  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-Ce8FiavK.js
+2026-01-22 19:08:27.577  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-s7KJtzNR.css
+2026-01-22 19:08:27.578  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-DLNnTcKE.js
+2026-01-22 19:08:27.581  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/productDetailApi-DoPFpFVW.js
+2026-01-22 19:08:27.583  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/Skeleton-DI1Gegco.js
+2026-01-22 19:08:27.588  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/Skeleton-CEg4JMYC.css
+2026-01-22 19:08:27.592  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ConfirmModal-3iQU6Jvv.js
+2026-01-22 19:08:27.595  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/reviewApi-Bdznm_JM.js
+2026-01-22 19:08:27.596  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-FEO6z6oo.css
+2026-01-22 19:08:27.597  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-CUewKLLZ.js
+2026-01-22 19:08:27.598  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-CFf9TFG9.css
+2026-01-22 19:08:27.600  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useMutation-Bl7BYSl7.js
+2026-01-22 19:08:27.600  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CartPage-BQ0x4joS.js
+2026-01-22 19:08:27.602  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/addressApi-BFYHBfi0.js
+2026-01-22 19:08:27.602  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CartPage-DGzSqF1R.css
+2026-01-22 19:08:27.761  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-uuIckLVG.js
+2026-01-22 19:08:27.766  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useSignupFormState-C7IDo4bE.js
+2026-01-22 19:08:27.767  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-DjLq30-1.css
+2026-01-22 19:08:27.767  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-Fa6ybtXr.js
+2026-01-22 19:08:27.767  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfilePage-DE03WJJA.js
+2026-01-22 19:08:27.768  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/profileApi-Do4WZnrm.js
+2026-01-22 19:08:27.769  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfilePasswordVerifyPage-tHaJSHNK.js
+2026-01-22 19:08:27.770  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfilePage-Dn8gvI31.css
+2026-01-22 19:08:27.770  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfileEditPage-B_eDjbnt.js
+2026-01-22 19:08:27.770  4671-4725  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfileWithdrawPage-9x4-cMX7.js
+2026-01-22 19:08:27.771  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfilePasswordVerifyPage-C_UKdKNm.css
+2026-01-22 19:08:27.771  4671-4726  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfileEditPage-B7w-Zz-O.css
+2026-01-22 19:08:27.772  4671-4733  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfileWithdrawPage-COIMnVmU.css
+2026-01-22 19:08:27.772  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-CXFyYsNw.js
+2026-01-22 19:08:27.772  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-DezT_tvO.css
+2026-01-22 19:08:27.773  4671-4721  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/OrderHistoryPage-CWxmaEcx.js
+2026-01-22 19:08:27.774  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/OrderHistoryView-6Ew82iK5.css
+2026-01-22 19:08:27.774  4671-4725  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/OrderHistoryView-CUUr5flG.js
+2026-01-22 19:08:27.774  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/OrderHistoryPage-DIgHaajS.css
+2026-01-22 19:08:27.774  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CheckoutPage-CQGpsyAl.js
+2026-01-22 19:08:27.775  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/paymentApi-DMqQ-g_s.js
+2026-01-22 19:08:27.776  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CheckoutPage-Cz8gDdkc.js
+2026-01-22 19:08:27.776  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CheckoutPage-D9uRz5YC.css
+2026-01-22 19:08:27.776  4671-4725  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CheckoutPage-DCcr-GLb.css
+2026-01-22 19:08:27.777  4671-4720  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-BguNzo62.js
+2026-01-22 19:08:27.778  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-DrxNjgYM.css
+2026-01-22 19:08:27.779  4671-4725  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-Drn114Xr.js
+2026-01-22 19:08:27.779  4671-4719  Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-Cw7DTvnu.css
+2026-01-22 19:08:29.522  4671-4828  ProfileInstaller        com.bongkru.app                      D  Installing profile for com.bongkru.app
+2026-01-22 19:08:29.732  4671-4677  com.bongkru.app         com.bongkru.app                      W  userfaultfd: MOVE ioctl seems unsupported: Connection timed out
+2026-01-22 19:08:29.801  4671-4677  com.bongkru.app         com.bongkru.app                      I  Background concurrent mark compact GC freed 5620KB AllocSpace bytes, 33(1260KB) LOS objects, 49% free, 4139KB/8279KB, paused 8.109ms,2.644ms total 285.113ms

@@ -2,13 +2,20 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-export default defineConfig({
-  plugins: [react()],
-  define: {
-    'import.meta.env.VITE_KAKAO_JS_KEY': JSON.stringify(process.env.VITE_KAKAO_JS_KEY),
-    'import.meta.env.VITE_NAVER_CLIENT_ID': JSON.stringify(process.env.NAVER_CLIENT_ID),
-    'import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL': JSON.stringify(process.env.VITE_SOCIAL_REDIRECT_BASE_URL || process.env.SOCIAL_REDIRECT_BASE_URL),
-  },
+const PRODUCTION_API_URL = 'https://bongseonjang--tkfkdgowjdakfas.replit.app/api';
+
+export default defineConfig(({ mode }) => {
+  const isProduction = mode === 'production' || mode === 'capacitor';
+  const apiUrl = process.env.VITE_API_URL || (isProduction ? PRODUCTION_API_URL : '/api');
+  
+  return {
+    plugins: [react()],
+    define: {
+      'import.meta.env.VITE_KAKAO_JS_KEY': JSON.stringify(process.env.VITE_KAKAO_JS_KEY),
+      'import.meta.env.VITE_NAVER_CLIENT_ID': JSON.stringify(process.env.NAVER_CLIENT_ID),
+      'import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL': JSON.stringify(process.env.VITE_SOCIAL_REDIRECT_BASE_URL || process.env.SOCIAL_REDIRECT_BASE_URL),
+      'import.meta.env.VITE_API_URL': JSON.stringify(apiUrl),
+    },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -47,4 +54,5 @@ export default defineConfig({
       },
     },
   },
+  };
 });

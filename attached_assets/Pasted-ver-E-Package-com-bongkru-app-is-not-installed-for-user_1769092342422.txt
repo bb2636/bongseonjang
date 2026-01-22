@@ -1,0 +1,73 @@
+ver                        E  Package com.bongkru.app is not installed for user 0
+2026-01-22 23:25:15.415   758-793   AppHibernationService   system_server                        E  Package com.bongkru.app is not installed for any user
+2026-01-22 23:25:15.415   758-793   AppHibernationService   system_server                        E  Package com.bongkru.app is not installed for user 0
+2026-01-22 23:25:15.415   758-793   AppHibernationService   system_server                        E  Package com.bongkru.app is not installed for any user
+2026-01-22 23:25:34.154   758-3510  ActivityManager         system_server                        E  ANR in com.google.android.cellbroadcastreceiver
+                                                                                                    PID: 1831
+                                                                                                    Reason: Broadcast of Intent { act=android.telephony.action.CARRIER_CONFIG_CHANGED flg=0x15000010 xflg=0x4 cmp=com.google.android.cellbroadcastreceiver/com.android.cellbroadcastreceiver.CellBroadcastReceiver (has extras) }
+                                                                                                    ErrorId: 8a5d2402-f8e7-4fd5-8cab-59cbb319f00e
+                                                                                                    Frozen: false
+                                                                                                    Load: 0.0 / 0.0 / 0.0
+                                                                                                    ----- Output from /proc/pressure/memory -----
+                                                                                                    some avg10=15.49 avg60=5.79 avg300=1.40 total=4668729
+                                                                                                    full avg10=4.67 avg60=1.86 avg300=0.45 total=1639621
+                                                                                                    ----- End output from /proc/pressure/memory -----
+                                                                                                    ----- Output from /proc/pressure/cpu -----
+                                                                                                    some avg10=76.87 avg60=40.89 avg300=11.52 total=37853382
+                                                                                                    full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+                                                                                                    ----- End output from /proc/pressure/cpu -----
+                                                                                                    ----- Output from /proc/pressure/io -----
+                                                                                                    some avg10=18.55 avg60=15.08 avg300=5.14 total=17938316
+                                                                                                    full avg10=1.18 avg60=5.13 avg300=2.38 total=9099345
+                                                                                                    ----- End output from /proc/pressure/io -----
+                                                                                                    
+                                                                                                    CPU usage from 15252ms to -1ms ago (2026-01-22 14:25:17.682 to 2026-01-22 14:25:32.935):
+                                                                                                      54% 758/system_server: 25% user + 29% kernel / faults: 20884 minor 2337 major
+                                                                                                      50% 2597/com.bongkru.app: 17% user + 33% kernel / faults: 23006 minor 2137 major
+                                                                                                      24% 2740/com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0: 11% user + 13% kernel / faults: 58452 minor 1991 major
+                                                                                                      23% 1592/com.google.android.gms.persistent: 10% user + 13% kernel / faults: 23635 minor 1251 major
+                                                                                                      21% 66/kswapd0: 0% user + 21% kernel
+                                                                                                      12% 2083/com.google.android.as: 6.1% user + 6.2% kernel / faults: 20724 minor 4239 major
+                                                                                                      11% 598/surfaceflinger: 2.7% user + 8.5% kernel / faults: 24 minor 316 major
+                                                                                                      11% 1785/com.google.android.gms: 5% user + 6.1% kernel / faults: 8875 minor 1390 major
+                                                                                                      11% 1574/com.google.android.apps.nexuslauncher: 5.4% user + 5.6% kernel / faults: 35724 minor 1084 major
+                                                                                                      8.3% 2633/com.google.android.apps.wallpaper: 6.4% user + 1.8% kernel / faults: 16449 minor 1493 major
+                                                                                                    98% TOTAL: 36% user + 57% kernel + 0.8% iowait + 3.1% softirq
+                                                                                                    CPU usage from 104023ms to 104023ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-01-22 23:25:37.007   758-3569  ActivityManager         system_server                        E  ANR in com.google.android.gms
+                                                                                                    PID: 1785
+                                                                                                    Reason: Broadcast of Intent { act=com.google.android.libraries.storage.protostore.SIGNAL_ACTION dat=android://com.google.android.gms/... flg=0x10000010 xflg=0x4 pkg=com.google.android.gms cmp=com.google.android.gms/frbc }
+                                                                                                    ErrorId: 1d71b829-4a71-475d-b3ab-22f7aa9091f2
+                                                                                                    Frozen: false
+                                                                                                    Load: 0.0 / 0.0 / 0.0
+                                                                                                    ----- Output from /proc/pressure/memory -----
+                                                                                                    some avg10=17.57 avg60=6.49 avg300=1.58 total=5767271
+                                                                                                    full avg10=4.91 avg60=2.00 avg300=0.49 total=2219908
+                                                                                                    ----- End output from /proc/pressure/memory -----
+                                                                                                    ----- Output from /proc/pressure/cpu -----
+                                                                                                    some avg10=77.26 avg60=42.14 avg300=11.98 total=39405845
+                                                                                                    full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+                                                                                                    ----- End output from /proc/pressure/cpu -----
+                                                                                                    ----- Output from /proc/pressure/io -----
+                                                                                                    some avg10=18.99 avg60=15.28 avg300=5.25 total=19269463
+                                                                                                    full avg10=0.96 avg60=4.96 avg300=2.36 total=9745415
+                                                                                                    ----- End output from /proc/pressure/io -----
+                                                                                                    
+                                                                                                    CPU usage from 18410ms to 3157ms ago (2026-01-22 14:25:17.682 to 2026-01-22 14:25:32.935):
+                                                                                                      54% 758/system_server: 25% user + 29% kernel / faults: 20884 minor 2337 major
+                                                                                                      50% 2597/com.bongkru.app: 17% user + 33% kernel / faults: 23006 minor 2137 major
+                                                                                                      24% 2740/com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0: 11% user + 13% kernel / faults: 58452 minor 1991 major
+                                                                                                      23% 1592/com.google.android.gms.persistent: 10% user + 13% kernel / faults: 23635 minor 1251 major
+                                                                                                      21% 66/kswapd0: 0% user + 21% kernel
+                                                                                                      12% 2083/com.google.android.as: 6.1% user + 6.2% kernel / faults: 20724 minor 4239 major
+                                                                                                      11% 598/surfaceflinger: 2.7% user + 8.5% kernel / faults: 24 minor 316 major
+                                                                                                      11% 1785/com.google.android.gms: 5% user + 6.1% kernel / faults: 8875 minor 1390 major
+                                                                                                      11% 1574/com.google.android.apps.nexuslauncher: 5.4% user + 5.6% kernel / faults: 35724 minor 1084 major
+                                                                                                      8.3% 2633/com.google.android.apps.wallpaper: 6.4% user + 1.8% kernel / faults: 16449 minor 1493 major
+                                                                                                    98% TOTAL: 36% user + 57% kernel + 0.8% iowait + 3.1% softirq
+                                                                                                    CPU usage from 107181ms to 107181ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-01-22 23:26:50.767  2417-3291  Finsky                  com.android.vending                  E  [53] ItemStore: getItems RPC failed for item com.bongkru.app
+2026-01-22 23:27:18.641   758-922   InputDispatcher         system_server                        E  channel '56c1ae com.bongkru.app/com.bongkru.app.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2026-01-22 23:28:42.676   758-922   InputDispatcher         system_server                        E  channel 'a94e325 com.bongkru.app/com.bongkru.app.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
