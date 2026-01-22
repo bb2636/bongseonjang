@@ -26,11 +26,30 @@ bongkru/
 ```
 
 ### Commands
-- `pnpm install` - 모든 의존성 설치
-- `pnpm dev` - 개발 서버 실행 (프론트엔드 + 백엔드)
-- `pnpm build` - 프로덕션 빌드
-- `pnpm --filter @bongkru/frontend dev` - 프론트엔드만 실행
-- `pnpm --filter @bongkru/backend dev` - 백엔드만 실행
+- `npm install` - 모든 의존성 설치
+- `npm run dev` - 개발 서버 실행 (프론트엔드 + 백엔드)
+- `npm run build` - 프로덕션 빌드
+- `npm run dev:frontend` - 프론트엔드만 실행
+- `npm run dev:backend` - 백엔드만 실행
+
+### Capacitor API Configuration
+모든 프론트엔드 fetch 호출은 `API_BASE_URL`을 사용합니다:
+```typescript
+import { API_BASE_URL } from '@/shared/config/apiConfig';
+
+fetch(`${API_BASE_URL}/endpoint`, {...})
+```
+
+**빌드 모드별 API URL:**
+- 개발 환경: `/api` (Vite 프록시 사용)
+- 프로덕션/Capacitor: 배포된 백엔드 URL (vite.config.ts의 PRODUCTION_API_URL)
+
+**Capacitor 빌드 방법:**
+```bash
+# 로컬에서 빌드 후 Android Studio에서 실행
+npm run build
+npx cap sync android
+```
 
 ### Shared Types (@bongkru/contract)
 프론트엔드와 백엔드에서 공용으로 사용하는 타입 정의:
