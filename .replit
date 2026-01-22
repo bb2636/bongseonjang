@@ -17,9 +17,9 @@ packages = ["imagemagick"]
 language = "nodejs"
 
 [deployment]
-deploymentTarget = "autoscale"
-build = ["sh", "-c", "bash -c \"pnpm install && pnpm run build\""]
-run = ["sh", "-c", "bash -c \"cd apps/backend && pnpm run start\""]
+deploymentTarget = "vm"
+build = ["bash", "-c", "pnpm install && pnpm build"]
+run = ["bash", "-c", "cd apps/backend && pnpm run start"]
 
 [[ports]]
 localPort = 3001
