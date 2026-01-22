@@ -11,6 +11,8 @@ export interface CouponDto {
   validTo: string | null;
   isIssued: boolean;
   allowMultipleUse: boolean;
+  targetCategoryIds?: number[];
+  targetExposureCategoryIds?: number[];
 }
 
 interface PreparePaymentRequest {

@@ -13,6 +13,8 @@ export interface CartItemDto {
   stockQuantity?: number;
   shippingFee?: number;
   freeShippingThreshold?: number | null;
+  productCategoryId?: number | null;
+  exposureCategoryIds?: number[];
 }
 
 export interface CartDto {

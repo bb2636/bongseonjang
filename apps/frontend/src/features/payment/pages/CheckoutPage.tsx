@@ -28,6 +28,9 @@ interface DisplayItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  productCategoryId?: number | null;
+  exposureCategoryIds?: number[];
+  couponDiscount?: number;
 }
 
 declare global {
@@ -227,6 +230,8 @@ export function CheckoutPage() {
           quantity: item.quantity,
           unitPrice,
           totalPrice: unitPrice * item.quantity,
+          productCategoryId: directProduct.productCategoryId,
+          exposureCategoryIds: directProduct.exposureCategoryIds || [],
         };
       });
     } else {
@@ -246,6 +251,8 @@ export function CheckoutPage() {
         quantity: item.quantity,
         unitPrice: item.totalPrice / item.quantity,
         totalPrice: item.totalPrice,
+        productCategoryId: (item as { productCategoryId?: number | null }).productCategoryId,
+        exposureCategoryIds: (item as { exposureCategoryIds?: number[] }).exposureCategoryIds || [],
       }));
     }
     
@@ -277,28 +284,67 @@ export function CheckoutPage() {
     return baseFee + extraFee;
   }, [productAmount, currentAddress, shippingConfig]);
 
-  const couponDiscount = useMemo(() => {
-    if (selectedCoupons.length === 0) return 0;
-    if (hasInvalidMultipleCouponSelection) return 0;
+  const { couponDiscount, itemDiscounts } = useMemo(() => {
+    const discountMap = new Map<string, number>();
+    
+    if (selectedCoupons.length === 0 || hasInvalidMultipleCouponSelection) {
+      return { couponDiscount: 0, itemDiscounts: discountMap };
+    }
     
     let totalDiscount = 0;
+    
     for (const coupon of selectedCoupons) {
       if (productAmount < coupon.minOrderAmount) continue;
       if (coupon.discountType === 'shipping') continue;
       
+      let applicableItems = displayItems;
+      
+      if (coupon.targetType === 'category') {
+        const targetCategoryIds = coupon.targetCategoryIds || [];
+        const targetExposureCategoryIds = coupon.targetExposureCategoryIds || [];
+        
+        if (targetCategoryIds.length > 0 || targetExposureCategoryIds.length > 0) {
+          applicableItems = displayItems.filter(item => {
+            if (targetCategoryIds.length > 0 && item.productCategoryId) {
+              if (targetCategoryIds.includes(item.productCategoryId)) {
+                return true;
+              }
+            }
+            if (targetExposureCategoryIds.length > 0 && item.exposureCategoryIds) {
+              if (item.exposureCategoryIds.some(id => targetExposureCategoryIds.includes(id))) {
+                return true;
+              }
+            }
+            return false;
+          });
+        }
+      }
+      
+      if (applicableItems.length === 0) continue;
+      
+      const highestItem = applicableItems.reduce((max, item) => 
+        item.totalPrice > max.totalPrice ? item : max, applicableItems[0]);
+      
+      const applicableSubtotal = highestItem.totalPrice;
+      
       let discount = 0;
       if (coupon.discountType === 'fixed') {
-        discount = coupon.discountValue;
+        discount = Math.min(coupon.discountValue, applicableSubtotal);
       } else if (coupon.discountType === 'rate') {
-        discount = Math.floor(productAmount * coupon.discountValue / 100);
+        discount = Math.floor(applicableSubtotal * coupon.discountValue / 100);
         if (coupon.maxDiscountAmount && discount > coupon.maxDiscountAmount) {
           discount = coupon.maxDiscountAmount;
         }
       }
+      
+      const existingDiscount = discountMap.get(highestItem.id) || 0;
+      discountMap.set(highestItem.id, existingDiscount + discount);
+      
       totalDiscount += discount;
     }
-    return Math.min(totalDiscount, productAmount);
-  }, [selectedCoupons, productAmount, hasInvalidMultipleCouponSelection]);
+    
+    return { couponDiscount: Math.min(totalDiscount, productAmount), itemDiscounts: discountMap };
+  }, [selectedCoupons, productAmount, hasInvalidMultipleCouponSelection, displayItems]);
 
   const shippingCouponDiscount = useMemo(() => {
     if (selectedCoupons.length === 0) return 0;
@@ -619,19 +665,34 @@ export function CheckoutPage() {
           </div>
           {isProductsExpanded && (
             <div className="checkout-items">
-              {displayItems.map(item => (
-                <div key={item.id} className="checkout-item">
-                  <img src={item.productImageUrl} alt={item.productName} className="checkout-item-image" />
-                  <div className="checkout-item-info">
-                    <p className="checkout-item-name">{item.productName}</p>
-                    {item.optionName && (
-                      <p className="checkout-item-option">{item.optionName}</p>
-                    )}
-                    <p className="checkout-item-quantity">수량 : {item.quantity}개</p>
-                    <p className="checkout-item-price">{item.totalPrice.toLocaleString()}원</p>
+              {displayItems.map(item => {
+                const itemDiscount = itemDiscounts.get(item.id) || 0;
+                return (
+                  <div key={item.id} className="checkout-item">
+                    <img src={item.productImageUrl} alt={item.productName} className="checkout-item-image" />
+                    <div className="checkout-item-info">
+                      <p className="checkout-item-name">{item.productName}</p>
+                      {item.optionName && (
+                        <p className="checkout-item-option">{item.optionName}</p>
+                      )}
+                      <p className="checkout-item-quantity">수량 : {item.quantity}개</p>
+                      <div className="checkout-item-price-row">
+                        <p className={`checkout-item-price ${itemDiscount > 0 ? 'checkout-item-price--original' : ''}`}>
+                          {item.totalPrice.toLocaleString()}원
+                        </p>
+                        {itemDiscount > 0 && (
+                          <p className="checkout-item-discount">-{itemDiscount.toLocaleString()}원</p>
+                        )}
+                      </div>
+                      {itemDiscount > 0 && (
+                        <p className="checkout-item-final-price">
+                          {(item.totalPrice - itemDiscount).toLocaleString()}원
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>

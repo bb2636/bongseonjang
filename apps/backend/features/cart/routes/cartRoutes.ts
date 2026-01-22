@@ -4,6 +4,7 @@ import { Cart } from '../../../entity/Cart';
 import { CartItem } from '../../../entity/CartItem';
 import { ProductImage } from '../../../entity/ProductImage';
 import { ProductOption } from '../../../entity/ProductOption';
+import { ProductExposureCategory } from '../../../entity/ProductExposureCategory';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { In } from 'typeorm';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
@@ -59,6 +60,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 
     const productIds = validItems.map(item => item.productId);
     const thumbnailMap = new Map<string, string>();
+    const exposureCategoryMap = new Map<string, number[]>();
     
     if (productIds.length > 0) {
       const thumbnails = await imageRepository.find({
@@ -66,6 +68,16 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       });
       for (const img of thumbnails) {
         thumbnailMap.set(img.productId, img.imageUrl);
+      }
+      
+      const productExposureCategoryRepository = AppDataSource.getRepository(ProductExposureCategory);
+      const exposureCategories = await productExposureCategoryRepository.find({
+        where: { productId: In(productIds) },
+      });
+      for (const ec of exposureCategories) {
+        const existing = exposureCategoryMap.get(ec.productId) || [];
+        existing.push(Number(ec.exposureCategoryId));
+        exposureCategoryMap.set(ec.productId, existing);
       }
     }
 
@@ -108,6 +120,8 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         totalPrice,
         shippingFee: shippingInfo.shippingFee,
         freeShippingThreshold: shippingInfo.freeShippingThreshold,
+        productCategoryId: item.product?.productCategoryId ?? null,
+        exposureCategoryIds: exposureCategoryMap.get(item.productId) || [],
       };
     });
 

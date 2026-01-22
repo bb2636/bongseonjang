@@ -2,6 +2,8 @@ import type { Product } from '../../../entity/Product';
 import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, TimeDealProductDto, MainOptionDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
+import { AppDataSource } from '../../../config/database.js';
+import { ProductExposureCategory } from '../../../entity/ProductExposureCategory.js';
 
 export interface ReviewStats {
   reviewCount: number;
@@ -52,7 +54,11 @@ export class ProductService {
       ? await this.reviewStatsProvider.getReviewStatsByProductId(id)
       : { reviewCount: 0, averageRating: 0 };
 
-    return this.toDetailDto(product, reviewStats);
+    const exposureCategoryRepo = AppDataSource.getRepository(ProductExposureCategory);
+    const exposureCategories = await exposureCategoryRepo.find({ where: { productId: id } });
+    const exposureCategoryIds = exposureCategories.map(ec => Number(ec.exposureCategoryId));
+
+    return this.toDetailDto(product, reviewStats, exposureCategoryIds);
   }
 
   async getRelatedProducts(productId: string, limit: number = 4): Promise<ProductDto[]> {
@@ -144,7 +150,7 @@ export class ProductService {
     };
   }
 
-  private toDetailDto(product: Product, reviewStats: ReviewStats): ProductDetailDto {
+  private toDetailDto(product: Product, reviewStats: ReviewStats, exposureCategoryIds: number[] = []): ProductDetailDto {
     const options: ProductOptionDto[] = (product.options || []).map((option) => ({
       id: String(option.id),
       name: option.optionValue,
@@ -231,6 +237,8 @@ export class ProductService {
       reviewCount: reviewStats.reviewCount,
       averageRating: reviewStats.averageRating,
       stockQuantity: product.stockQuantity ?? 0,
+      productCategoryId: product.productCategoryId ? Number(product.productCategoryId) : null,
+      exposureCategoryIds,
     };
   }
 }

@@ -75,4 +75,6 @@ export interface ProductDetail {
   reviewCount: number;
   averageRating: number;
   stockQuantity?: number;
+  productCategoryId?: number | null;
+  exposureCategoryIds?: number[];
 }

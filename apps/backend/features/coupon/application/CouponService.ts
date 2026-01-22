@@ -30,6 +30,8 @@ interface CouponDto {
   validTo: Date | null;
   isIssued: boolean;
   allowMultipleUse: boolean;
+  targetCategoryIds?: number[];
+  targetExposureCategoryIds?: number[];
 }
 
 interface CouponListResponse {
@@ -106,6 +108,15 @@ export class CouponService {
 
       if (validTo && validTo < new Date()) continue;
 
+      let targetCategoryIds: number[] = [];
+      let targetExposureCategoryIds: number[] = [];
+      
+      if (couponDetails.targetType === 'category') {
+        const categoryStrings = await this.repository.getCouponTargetCategories(userCoupon.couponId);
+        targetCategoryIds = categoryStrings.map(id => Number(id)).filter(id => !isNaN(id));
+        targetExposureCategoryIds = await this.repository.getCouponTargetExposureCategories(userCoupon.couponId);
+      }
+
       result.push({
         id: userCoupon.id,
         name: couponDetails.name,
@@ -119,6 +130,8 @@ export class CouponService {
         validTo,
         isIssued: true,
         allowMultipleUse: couponDetails.allowMultipleUse,
+        targetCategoryIds,
+        targetExposureCategoryIds,
       });
     }
 

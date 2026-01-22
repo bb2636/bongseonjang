@@ -323,12 +323,41 @@
   margin: 0;
 }
 
+.checkout-item-price-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .checkout-item-price {
   font-family: 'Pretendard', sans-serif;
   font-weight: 600;
   font-size: 14px;
   color: #0C0C0C;
   margin: 0;
+}
+
+.checkout-item-price--original {
+  font-weight: 400;
+  font-size: 13px;
+  color: rgba(12, 12, 12, 0.4);
+  text-decoration: line-through;
+}
+
+.checkout-item-discount {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: #E25050;
+  margin: 0;
+}
+
+.checkout-item-final-price {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0C0C0C;
+  margin: 2px 0 0 0;
 }
 
 .checkout-point-section {
