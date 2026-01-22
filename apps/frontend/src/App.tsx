@@ -1,9 +1,8 @@
-import { lazy, Suspense, useState, useEffect } from "react";
-import { Routes, Route, Navigate, useSearchParams, useLocation } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import { ProtectedRoute, ProtectedAdminRoute, SplashScreen } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
-import { OnboardingScreen, isOnboardingCompleted, resetOnboarding } from "./components/OnboardingScreen/OnboardingScreen";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
@@ -235,23 +234,7 @@ function PageLoader() {
 
 function AppContent() {
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingCompleted());
-
   const isAdminRoute = location.pathname.startsWith('/admin');
-
-  useEffect(() => {
-    if (searchParams.get('reset_onboarding') === 'true') {
-      resetOnboarding();
-      setShowOnboarding(true);
-      searchParams.delete('reset_onboarding');
-      setSearchParams(searchParams, { replace: true });
-    }
-  }, [searchParams, setSearchParams]);
-
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
-  };
 
   const renderContent = () => (
     <Suspense fallback={<PageLoader />}>
@@ -464,17 +447,6 @@ function AppContent() {
     return renderContent();
   }
 
-  // TODO: 온보딩 임시 비활성화 - 나중에 다시 활성화할 것
-  // return (
-  //   <SplashScreen duration={2500}>
-  //     {showOnboarding ? (
-  //       <OnboardingScreen onComplete={handleOnboardingComplete} />
-  //     ) : (
-  //       renderContent()
-  //     )}
-  //   </SplashScreen>
-  // );
-  
   return (
     <SplashScreen duration={2500}>
       {renderContent()}
