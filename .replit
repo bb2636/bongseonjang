@@ -17,7 +17,7 @@ packages = ["imagemagick"]
 language = "nodejs"
 
 [deployment]
-deploymentTarget = "vm"
+deploymentTarget = "autoscale"
 build = ["sh", "-c", "npm run build"]
 run = ["sh", "-c", "cd apps/backend && npm run start"]
 
