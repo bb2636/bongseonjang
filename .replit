@@ -18,8 +18,8 @@ language = "nodejs"
 
 [deployment]
 deploymentTarget = "vm"
-build = ["bash", "-c", "pnpm install && pnpm build"]
-run = ["bash", "-c", "cd apps/backend && pnpm run start"]
+build = ["bash", "-c", "npm install && npm run build"]
+run = ["bash", "-c", "cd apps/backend && npm run start"]
 
 [[ports]]
 localPort = 3001
