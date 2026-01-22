@@ -112,16 +112,16 @@ app.use((req, res, next) => {
 });
 
 async function startServer(): Promise<void> {
+  app.listen(config.port, "0.0.0.0", () => {
+    console.log(`Server is running on port ${config.port}`);
+  });
+
   try {
     await initializeDatabase();
-
     await runProductionSeed();
-
-    app.listen(config.port, "0.0.0.0", () => {
-      console.log(`Server is running on port ${config.port}`);
-    });
+    console.log("Database ready");
   } catch (error) {
-    console.error("Failed to start server:", error);
+    console.error("Failed to initialize database:", error);
     process.exit(1);
   }
 }
