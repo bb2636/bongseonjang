@@ -8,7 +8,7 @@
     "start": "tsx --tsconfig tsconfig.json index.ts"
   },
   "dependencies": {
-    "@bongkru/contract": "workspace:*",
+    "@bongkru/contract": "*",
     "@replit/object-storage": "^1.0.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
