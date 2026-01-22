@@ -28,6 +28,7 @@ export default function OrderCard({
 }: OrderCardProps) {
   const statusLabel = STATUS_LABELS[order.status];
   const isDelivered = order.status === 'delivered';
+  const hasAvailableItemsForReorder = order.items.some(item => item.isAvailableForReorder === true);
 
   return (
     <article className="order-card">
@@ -81,13 +82,15 @@ export default function OrderCard({
         >
           반품 접수
         </button>
-        <button
-          type="button"
-          className="order-card__action-button"
-          onClick={() => onReorderClick(order.id)}
-        >
-          재주문
-        </button>
+        {hasAvailableItemsForReorder && (
+          <button
+            type="button"
+            className="order-card__action-button"
+            onClick={() => onReorderClick(order.id)}
+          >
+            재주문
+          </button>
+        )}
       </div>
     </article>
   );

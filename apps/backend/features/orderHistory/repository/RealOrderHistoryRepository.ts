@@ -12,6 +12,7 @@ import { Order, OrderStatus } from '../../../entity/Order';
 import { Payment, PaymentMethod } from '../../../entity/Payment';
 import { In } from 'typeorm';
 import { Shipment, ShipmentStatus } from '../../../entity/Shipment';
+import { Product } from '../../../entity/Product';
 
 const STATUS_FILTER_MAP: Record<OrderStatusFilter, OrderStatus[]> = {
   all: ['pending', 'paid', 'preparing', 'shipping', 'delivered', 'cancelled', 'refund_requested', 'refunded'],
@@ -54,6 +55,7 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
   async getOrderHistory(userId: string, statusFilter: OrderStatusFilter): Promise<OrderHistoryEntry[]> {
     const orderRepository = AppDataSource.getRepository(Order);
     const shipmentRepository = AppDataSource.getRepository(Shipment);
+    const productRepository = AppDataSource.getRepository(Product);
 
     const statuses = STATUS_FILTER_MAP[statusFilter];
 
@@ -68,6 +70,43 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
 
     if (orders.length === 0) {
       return [];
+    }
+
+    const allProductIds = orders
+      .flatMap(order => order.items)
+      .map(item => item.productId)
+      .filter((id): id is string => id !== null);
+
+    const uniqueProductIds = [...new Set(allProductIds)];
+    
+    const productAvailabilityMap = new Map<string, boolean>();
+    
+    if (uniqueProductIds.length > 0) {
+      const products = await productRepository.find({
+        where: { id: In(uniqueProductIds) },
+        select: ['id', 'saleEndDate', 'stockQuantity'],
+      });
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (const product of products) {
+        let isAvailable = true;
+        
+        if (product.saleEndDate) {
+          const saleEndDate = new Date(product.saleEndDate);
+          saleEndDate.setHours(23, 59, 59, 999);
+          if (saleEndDate < today) {
+            isAvailable = false;
+          }
+        }
+        
+        if (product.stockQuantity === 0) {
+          isAvailable = false;
+        }
+        
+        productAvailabilityMap.set(product.id, isAvailable);
+      }
     }
 
     const shipments = await shipmentRepository.find({
@@ -93,6 +132,7 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         totalPrice: item.totalPrice,
+        isAvailableForReorder: item.productId ? (productAvailabilityMap.get(item.productId) ?? false) : false,
       })),
       totalAmount: order.finalAmount,
       shipment: this.getLatestShipment(shipmentMap.get(order.id)),
@@ -160,6 +200,7 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
     const orderRepository = AppDataSource.getRepository(Order);
     const paymentRepository = AppDataSource.getRepository(Payment);
     const shipmentRepository = AppDataSource.getRepository(Shipment);
+    const productRepository = AppDataSource.getRepository(Product);
 
     const order = await orderRepository.findOne({
       where: { id: orderId, userId },
@@ -168,6 +209,40 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
 
     if (!order) {
       return null;
+    }
+
+    const productIds = order.items
+      .map(item => item.productId)
+      .filter((id): id is string => id !== null);
+
+    const productAvailabilityMap = new Map<string, boolean>();
+
+    if (productIds.length > 0) {
+      const products = await productRepository.find({
+        where: { id: In(productIds) },
+        select: ['id', 'saleEndDate', 'stockQuantity'],
+      });
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (const product of products) {
+        let isAvailable = true;
+
+        if (product.saleEndDate) {
+          const saleEndDate = new Date(product.saleEndDate);
+          saleEndDate.setHours(23, 59, 59, 999);
+          if (saleEndDate < today) {
+            isAvailable = false;
+          }
+        }
+
+        if (product.stockQuantity === 0) {
+          isAvailable = false;
+        }
+
+        productAvailabilityMap.set(product.id, isAvailable);
+      }
     }
 
     const payment = await paymentRepository.findOne({
@@ -223,6 +298,7 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         totalPrice: item.totalPrice,
+        isAvailableForReorder: item.productId ? (productAvailabilityMap.get(item.productId) ?? false) : false,
       })),
       totalProductPrice: order.totalProductPrice,
       usedPoints: order.usedPoints,

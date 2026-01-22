@@ -8,6 +8,8 @@ import { WishlistItem } from '../../../entity/WishlistItem';
 import { OrderItem } from '../../../entity/OrderItem';
 import { Order as OrderEntity } from '../../../entity/Order';
 import { Review } from '../../../entity/Review';
+import { Product } from '../../../entity/Product';
+import { In } from 'typeorm';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 const GRADE_DISPLAY_MAP: Record<MembershipGrade, string> = {
@@ -88,6 +90,7 @@ export class RealProfileRepository implements ProfileRepository {
 
   async getRecentOrders(userId: string, limit: number, onlyInProgress: boolean = false): Promise<Order[]> {
     const orderRepository = AppDataSource.getRepository(OrderEntity);
+    const productRepository = AppDataSource.getRepository(Product);
     
     const inProgressStatuses = ['pending', 'paid', 'confirmed', 'preparing', 'shipping'];
     
@@ -105,6 +108,42 @@ export class RealProfileRepository implements ProfileRepository {
       .take(limit)
       .getMany();
 
+    const allProductIds = orders
+      .flatMap(order => order.items)
+      .map(item => item.productId)
+      .filter((id): id is string => id !== null);
+
+    const uniqueProductIds = [...new Set(allProductIds)];
+    const productAvailabilityMap = new Map<string, boolean>();
+
+    if (uniqueProductIds.length > 0) {
+      const products = await productRepository.find({
+        where: { id: In(uniqueProductIds) },
+        select: ['id', 'saleEndDate', 'stockQuantity'],
+      });
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (const product of products) {
+        let isAvailable = true;
+
+        if (product.saleEndDate) {
+          const saleEndDate = new Date(product.saleEndDate);
+          saleEndDate.setHours(23, 59, 59, 999);
+          if (saleEndDate < today) {
+            isAvailable = false;
+          }
+        }
+
+        if (product.stockQuantity === 0) {
+          isAvailable = false;
+        }
+
+        productAvailabilityMap.set(product.id, isAvailable);
+      }
+    }
+
     return orders.map(order => ({
       id: order.id,
       orderNumber: order.orderNumber,
@@ -118,6 +157,7 @@ export class RealProfileRepository implements ProfileRepository {
         imageUrl: toAbsoluteImageUrl(item.productImageUrl) || 'https://placehold.co/62x62/f5f5f5/999999?text=Product',
         quantity: item.quantity,
         price: item.unitPrice,
+        isAvailableForReorder: item.productId ? (productAvailabilityMap.get(item.productId) ?? false) : false,
       })),
     }));
   }

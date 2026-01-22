@@ -34,7 +34,30 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       order: { createdAt: 'DESC' },
     });
 
-    const productIds = items.map(item => item.productId);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const validItems = items.filter(item => {
+      if (!item.product) return false;
+      if (item.product.saleEndDate) {
+        const saleEndDate = new Date(item.product.saleEndDate);
+        saleEndDate.setHours(23, 59, 59, 999);
+        if (saleEndDate < today) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    const expiredItemIds = items
+      .filter(item => !validItems.includes(item))
+      .map(item => item.id);
+    
+    if (expiredItemIds.length > 0) {
+      await cartItemRepository.delete({ id: In(expiredItemIds) });
+    }
+
+    const productIds = validItems.map(item => item.productId);
     const thumbnailMap = new Map<string, string>();
     
     if (productIds.length > 0) {
@@ -46,7 +69,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       }
     }
 
-    const cartItems = items.map(item => {
+    const cartItems = validItems.map(item => {
       const productBasePrice = item.product?.basePrice ?? 0;
       const additionalPrice = item.productOption?.price ?? 0;
       const unitPrice = productBasePrice + additionalPrice;

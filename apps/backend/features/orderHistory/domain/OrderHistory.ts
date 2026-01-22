@@ -11,6 +11,7 @@ export interface OrderHistoryItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  isAvailableForReorder: boolean;
 }
 
 export interface ShipmentSummary {
@@ -48,6 +49,7 @@ export interface OrderDetailItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  isAvailableForReorder: boolean;
 }
 
 export interface PaymentInfo {
