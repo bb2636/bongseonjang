@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.26.1",
   "scripts": {
     "dev": "concurrently \"pnpm --filter @bongkru/frontend dev\" \"pnpm --filter @bongkru/backend dev\"",
     "dev:frontend": "pnpm --filter @bongkru/frontend dev",
