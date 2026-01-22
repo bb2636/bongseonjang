@@ -148,7 +148,9 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 - **카테고리 페이지**: 바텀 네비게이션에서 접근. CategoryAppBar, CategoryList를 포함하며, 카테고리 클릭 시 해당 탭으로 이동.
 - **브랜드 상품 페이지**: `/brand/:brandId` 라우트. 4개 브랜드(바담은, 오바다, 포시즌, 봉쿡) 탭 네비게이션. 브랜드 ID를 exposure category 태그명으로 매핑(badameun → "바담은 제품" 등).
 - **프로필/마이페이지**: ProfileAppBar, ProfileHeader, SummaryCard, RecentOrders, MenuList로 구성.
-- **소셜 로그인**: 카카오, 네이버 지원. `users` (기본), `user_social_accounts` (연동) 듀얼 테이블 구조. 이메일 필수 정책.
+- **소셜 로그인**: 카카오, 네이버, 구글, 애플 지원. `users` (기본), `user_social_accounts` (연동) 듀얼 테이블 구조. 이메일 필수 정책.
+  - **Apple OAuth 특이사항**: `response_mode=form_post`로 인해 백엔드 `/api/auth/apple/callback`에서 POST 수신 후 프론트엔드로 리다이렉트. Apple id_token은 JWKS로 검증 (jose 라이브러리).
+  - **환경 변수**: `SOCIAL_REDIRECT_BASE_URL` (서버용), `VITE_SOCIAL_REDIRECT_BASE_URL` (프론트엔드용) 사용.
 - **장바구니/주문**: `carts`, `cart_items`, `orders`, `order_items`, `order_status_history` 테이블로 관리. 주문 시 상품 가격/옵션 스냅샷 저장.
 - **배송**: `shipping_addresses`, `shipments`, `shipment_events` 테이블.
 - **결제**: `payments`, `payment_refunds` 테이블. NicePayments v1 API 연동. 장바구니 항목 ID 스냅샷(`cartItemIdsSnapshot`)을 통해 결제 완료 후 선택된 항목만 삭제.

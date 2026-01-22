@@ -336,4 +336,37 @@ export class AuthController {
       res.status(500).json({ success: false, message: '인증번호 확인에 실패했습니다' });
     }
   }
+
+  async appleCallback(req: Request, res: Response): Promise<void> {
+    try {
+      const { code, id_token, state, user } = req.body;
+      const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+
+      let userName: string | undefined;
+      if (user) {
+        try {
+          const userJson = typeof user === 'string' ? JSON.parse(user) : user;
+          if (userJson.name) {
+            const firstName = userJson.name.firstName || '';
+            const lastName = userJson.name.lastName || '';
+            userName = `${lastName}${firstName}`.trim() || undefined;
+          }
+        } catch {
+          console.error('Failed to parse Apple user data');
+        }
+      }
+
+      const params = new URLSearchParams();
+      if (code) params.set('code', code);
+      if (id_token) params.set('id_token', id_token);
+      if (state) params.set('state', state);
+      if (userName) params.set('user_name', userName);
+
+      res.redirect(`${baseUrl}/oauth/apple/callback?${params.toString()}`);
+    } catch (error) {
+      console.error('Apple callback error:', error);
+      const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+      res.redirect(`${baseUrl}/oauth/apple/callback?error=callback_failed`);
+    }
+  }
 }

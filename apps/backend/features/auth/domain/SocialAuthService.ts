@@ -1,5 +1,6 @@
 import { SocialProvider } from '../../../entity/UserSocialAccount';
 import jwt from 'jsonwebtoken';
+import * as jose from 'jose';
 
 interface KakaoTokenResponse {
   access_token: string;
@@ -201,11 +202,15 @@ export class SocialAuthService {
   async getGoogleUserInfo(code: string): Promise<SocialUserInfo> {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const baseUrl = process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
+    const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
     const redirectUri = `${baseUrl}/oauth/google/callback`;
 
     if (!clientId || !clientSecret) {
       throw new Error('Google OAuth configuration is missing');
+    }
+
+    if (!baseUrl) {
+      throw new Error('SOCIAL_REDIRECT_BASE_URL is not configured');
     }
 
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
@@ -256,11 +261,15 @@ export class SocialAuthService {
     const teamId = process.env.APPLE_TEAM_ID;
     const keyId = process.env.APPLE_KEY_ID;
     const privateKey = process.env.APPLE_PRIVATE_KEY;
-    const baseUrl = process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
-    const redirectUri = `${baseUrl}/oauth/apple/callback`;
+    const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
+    const redirectUri = `${baseUrl}/api/auth/apple/callback`;
 
     if (!clientId || !teamId || !keyId || !privateKey) {
       throw new Error('Apple OAuth configuration is missing');
+    }
+
+    if (!baseUrl) {
+      throw new Error('SOCIAL_REDIRECT_BASE_URL is not configured');
     }
 
     const clientSecret = this.generateAppleClientSecret(clientId, teamId, keyId, privateKey);
@@ -287,19 +296,43 @@ export class SocialAuthService {
 
     const tokenData = await tokenResponse.json() as AppleTokenResponse;
     
-    const decodedToken = jwt.decode(tokenData.id_token) as AppleIdTokenPayload;
-    
-    if (!decodedToken) {
-      throw new Error('Failed to decode Apple ID token');
-    }
+    const verifiedPayload = await this.verifyAppleIdToken(tokenData.id_token, clientId);
 
     return {
       provider: 'apple',
-      providerUserId: decodedToken.sub,
-      email: decodedToken.email || null,
+      providerUserId: verifiedPayload.sub,
+      email: verifiedPayload.email || null,
       name: userName || '애플 사용자',
       profileImage: null,
     };
+  }
+
+  private async verifyAppleIdToken(idToken: string, clientId: string): Promise<AppleIdTokenPayload> {
+    const JWKS = jose.createRemoteJWKSet(new URL('https://appleid.apple.com/auth/keys'));
+
+    try {
+      const { payload } = await jose.jwtVerify(idToken, JWKS, {
+        issuer: 'https://appleid.apple.com',
+        audience: clientId,
+      });
+
+      if (!payload.sub) {
+        throw new Error('Apple ID token missing sub claim');
+      }
+
+      return {
+        sub: payload.sub,
+        email: payload.email as string | undefined,
+        email_verified: payload.email_verified as boolean | undefined,
+        iss: payload.iss as string,
+        aud: payload.aud as string,
+        exp: payload.exp as number,
+        iat: payload.iat as number,
+      };
+    } catch (error) {
+      console.error('Apple ID token verification failed:', error);
+      throw new Error('Failed to verify Apple ID token');
+    }
   }
 
   private generateAppleClientSecret(clientId: string, teamId: string, keyId: string, privateKey: string): string {

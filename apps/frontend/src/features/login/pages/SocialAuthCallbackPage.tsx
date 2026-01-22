@@ -26,6 +26,7 @@ export default function SocialAuthCallbackPage() {
       const state = searchParams.get('state');
       const errorParam = searchParams.get('error');
       const idToken = searchParams.get('id_token');
+      const userName = searchParams.get('user_name');
 
       if (errorParam) {
         setError('로그인이 취소되었습니다.');
@@ -77,7 +78,7 @@ export default function SocialAuthCallbackPage() {
       }
 
       try {
-        const appleParams = provider === 'apple' ? { idToken: idToken || undefined } : undefined;
+        const appleParams = provider === 'apple' ? { idToken: idToken || undefined, userName: userName || undefined } : undefined;
         const result = await socialLogin(provider as SocialProvider, code, state || undefined, appleParams);
 
         if (isRequiresEmailResponse(result)) {

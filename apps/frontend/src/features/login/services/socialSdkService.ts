@@ -166,7 +166,7 @@ export async function appleAuthorize(): Promise<void> {
     throw new Error('VITE_APPLE_CLIENT_ID is not configured');
   }
 
-  const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/apple/callback`;
+  const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/api/auth/apple/callback`;
   const state = generateRandomState();
   sessionStorage.setItem('apple_oauth_state', state);
 
