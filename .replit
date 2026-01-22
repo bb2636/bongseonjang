@@ -18,7 +18,7 @@ language = "nodejs"
 
 [deployment]
 deploymentTarget = "vm"
-build = ["bash", "-c", "corepack enable && pnpm install && pnpm build"]
+build = ["bash", "-c", "npm install -g pnpm && pnpm install && pnpm build"]
 run = ["bash", "-c", "cd apps/backend && pnpm run start"]
 
 [[ports]]
