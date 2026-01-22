@@ -18,8 +18,8 @@ language = "nodejs"
 
 [deployment]
 deploymentTarget = "autoscale"
-build = ["npm", "run", "build"]
-run = ["npm", "run", "start"]
+build = ["bash", "-c", "pnpm install && pnpm build"]
+run = ["node", "--import", "tsx", "apps/backend/index.ts"]
 
 [[ports]]
 localPort = 3001
