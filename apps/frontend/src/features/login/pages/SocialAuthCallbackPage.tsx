@@ -2,12 +2,12 @@ import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../contexts/AuthContext';
-import { socialLogin, isRequiresEmailResponse, AccountSuspendedError } from '../api/socialAuthApi';
+import { socialLogin, isRequiresEmailResponse, AccountSuspendedError, SocialProvider } from '../api/socialAuthApi';
 import { fetchHomeData } from '../../home/api/homeDataApi';
 import './SocialAuthCallbackPage.css';
 
 export default function SocialAuthCallbackPage() {
-  const { provider } = useParams<{ provider: 'kakao' | 'naver' }>();
+  const { provider } = useParams<{ provider: SocialProvider }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -25,6 +25,7 @@ export default function SocialAuthCallbackPage() {
       const code = searchParams.get('code');
       const state = searchParams.get('state');
       const errorParam = searchParams.get('error');
+      const idToken = searchParams.get('id_token');
 
       if (errorParam) {
         setError('로그인이 취소되었습니다.');
@@ -34,6 +35,13 @@ export default function SocialAuthCallbackPage() {
 
       if (!code || !provider) {
         setError('인증 정보가 올바르지 않습니다.');
+        setIsLoading(false);
+        return;
+      }
+
+      const validProviders: SocialProvider[] = ['kakao', 'naver', 'google', 'apple'];
+      if (!validProviders.includes(provider as SocialProvider)) {
+        setError('지원하지 않는 로그인 방식입니다.');
         setIsLoading(false);
         return;
       }
@@ -48,8 +56,29 @@ export default function SocialAuthCallbackPage() {
         sessionStorage.removeItem('naver_oauth_state');
       }
 
+      if (provider === 'google') {
+        const savedState = sessionStorage.getItem('google_oauth_state');
+        if (state !== savedState) {
+          setError('보안 검증에 실패했습니다.');
+          setIsLoading(false);
+          return;
+        }
+        sessionStorage.removeItem('google_oauth_state');
+      }
+
+      if (provider === 'apple') {
+        const savedState = sessionStorage.getItem('apple_oauth_state');
+        if (state !== savedState) {
+          setError('보안 검증에 실패했습니다.');
+          setIsLoading(false);
+          return;
+        }
+        sessionStorage.removeItem('apple_oauth_state');
+      }
+
       try {
-        const result = await socialLogin(provider, code, state || undefined);
+        const appleParams = provider === 'apple' ? { idToken: idToken || undefined } : undefined;
+        const result = await socialLogin(provider as SocialProvider, code, state || undefined, appleParams);
 
         if (isRequiresEmailResponse(result)) {
           navigate('/login/social/email', {

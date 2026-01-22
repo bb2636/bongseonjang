@@ -1,5 +1,7 @@
 import { API_BASE_URL } from '../../../shared/config/apiConfig';
 
+export type SocialProvider = 'kakao' | 'naver' | 'google' | 'apple';
+
 export class AccountSuspendedError extends Error {
   code: string;
   constructor(message: string) {
@@ -29,7 +31,7 @@ interface SocialLoginRequiresEmailResponse {
   success: false;
   requiresEmail: true;
   tempData: {
-    provider: 'kakao' | 'naver';
+    provider: SocialProvider;
     providerUserId: string;
     name: string;
     profileImage: string | null;
@@ -38,17 +40,31 @@ interface SocialLoginRequiresEmailResponse {
 
 type SocialLoginResult = SocialLoginResponse | SocialLoginRequiresEmailResponse;
 
+interface AppleLoginParams {
+  code: string;
+  idToken?: string;
+  userName?: string;
+}
+
 export async function socialLogin(
-  provider: 'kakao' | 'naver',
+  provider: SocialProvider,
   code: string,
-  state?: string
+  state?: string,
+  appleParams?: Omit<AppleLoginParams, 'code'>
 ): Promise<SocialLoginResult> {
+  const body: Record<string, string | undefined> = { code, state };
+  
+  if (provider === 'apple' && appleParams) {
+    body.idToken = appleParams.idToken;
+    body.userName = appleParams.userName;
+  }
+
   const response = await fetch(`${API_BASE_URL}/auth/social/${provider}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ code, state }),
+    body: JSON.stringify(body),
   });
 
   const data = await response.json();
@@ -64,7 +80,7 @@ export async function socialLogin(
 }
 
 export async function completeSocialLogin(
-  provider: 'kakao' | 'naver',
+  provider: SocialProvider,
   providerUserId: string,
   email: string,
   name: string,

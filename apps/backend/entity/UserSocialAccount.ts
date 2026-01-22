@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, Unique, Index } from 'typeorm';
 import { User } from './User';
 
-export type SocialProvider = 'kakao' | 'naver';
+export type SocialProvider = 'kakao' | 'naver' | 'google' | 'apple';
 
 @Entity('user_social_accounts')
 @Unique(['provider', 'providerUserId'])

@@ -1,5 +1,7 @@
 const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
 const NAVER_CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const APPLE_CLIENT_ID = import.meta.env.VITE_APPLE_CLIENT_ID;
 const SOCIAL_REDIRECT_BASE_URL = import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL;
 
 let kakaoInitialized = false;
@@ -137,6 +139,49 @@ export async function naverAuthorize(): Promise<void> {
   window.location.href = urlWithState;
 }
 
+export async function googleAuthorize(): Promise<void> {
+  if (!GOOGLE_CLIENT_ID) {
+    throw new Error('VITE_GOOGLE_CLIENT_ID is not configured');
+  }
+
+  const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/google/callback`;
+  const state = generateRandomState();
+  sessionStorage.setItem('google_oauth_state', state);
+
+  const params = new URLSearchParams({
+    client_id: GOOGLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope: 'openid email profile',
+    state,
+    access_type: 'offline',
+    prompt: 'consent',
+  });
+
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+}
+
+export async function appleAuthorize(): Promise<void> {
+  if (!APPLE_CLIENT_ID) {
+    throw new Error('VITE_APPLE_CLIENT_ID is not configured');
+  }
+
+  const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/apple/callback`;
+  const state = generateRandomState();
+  sessionStorage.setItem('apple_oauth_state', state);
+
+  const params = new URLSearchParams({
+    client_id: APPLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'code id_token',
+    scope: 'name email',
+    state,
+    response_mode: 'form_post',
+  });
+
+  window.location.href = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
+}
+
 function generateRandomState(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
@@ -147,4 +192,12 @@ export function getKakaoRedirectUri(): string {
 
 export function getNaverRedirectUri(): string {
   return `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
+}
+
+export function getGoogleRedirectUri(): string {
+  return `${SOCIAL_REDIRECT_BASE_URL}/oauth/google/callback`;
+}
+
+export function getAppleRedirectUri(): string {
+  return `${SOCIAL_REDIRECT_BASE_URL}/oauth/apple/callback`;
 }

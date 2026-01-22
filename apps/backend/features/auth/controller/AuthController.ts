@@ -111,7 +111,8 @@ export class AuthController {
         return;
       }
 
-      if (provider !== 'kakao' && provider !== 'naver') {
+      const validProviders = ['kakao', 'naver', 'google', 'apple'];
+      if (!validProviders.includes(provider)) {
         res.status(400).json({ message: 'Invalid provider' });
         return;
       }
@@ -124,12 +125,20 @@ export class AuthController {
         console.log('Getting Kakao user info...');
         socialUserInfo = await socialAuthService.getKakaoUserInfo(code);
         console.log('Kakao user info received:', JSON.stringify(socialUserInfo));
-      } else {
+      } else if (provider === 'naver') {
         if (!state) {
           res.status(400).json({ message: 'State is required for Naver login' });
           return;
         }
         socialUserInfo = await socialAuthService.getNaverUserInfo(code, state);
+      } else if (provider === 'google') {
+        socialUserInfo = await socialAuthService.getGoogleUserInfo(code);
+      } else if (provider === 'apple') {
+        const { idToken, userName } = req.body;
+        socialUserInfo = await socialAuthService.getAppleUserInfo(code, idToken, userName);
+      } else {
+        res.status(400).json({ message: 'Invalid provider' });
+        return;
       }
 
       if (!socialUserInfo.email) {
@@ -176,7 +185,8 @@ export class AuthController {
         return;
       }
 
-      if (provider !== 'kakao' && provider !== 'naver') {
+      const validProviders = ['kakao', 'naver', 'google', 'apple'];
+      if (!validProviders.includes(provider)) {
         res.status(400).json({ message: 'Invalid provider' });
         return;
       }
@@ -243,7 +253,8 @@ export class AuthController {
 
       const { provider } = req.params;
 
-      if (provider !== 'kakao' && provider !== 'naver') {
+      const validProviders = ['kakao', 'naver', 'google', 'apple'];
+      if (!validProviders.includes(provider)) {
         res.status(400).json({ message: 'Invalid provider' });
         return;
       }

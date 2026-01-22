@@ -1,4 +1,5 @@
 import { SocialProvider } from '../../../entity/UserSocialAccount';
+import jwt from 'jsonwebtoken';
 
 interface KakaoTokenResponse {
   access_token: string;
@@ -34,6 +35,36 @@ interface NaverUserResponse {
     nickname?: string;
     profile_image?: string;
   };
+}
+
+interface GoogleTokenResponse {
+  access_token: string;
+  refresh_token?: string;
+  token_type: string;
+  expires_in: number;
+  id_token: string;
+}
+
+interface GoogleUserResponse {
+  sub: string;
+  email?: string;
+  email_verified?: boolean;
+  name?: string;
+  picture?: string;
+}
+
+interface AppleTokenResponse {
+  access_token: string;
+  refresh_token?: string;
+  token_type: string;
+  expires_in: number;
+  id_token: string;
+}
+
+interface AppleIdTokenPayload {
+  sub: string;
+  email?: string;
+  email_verified?: string | boolean;
 }
 
 export interface SocialUserInfo {
@@ -165,5 +196,133 @@ export class SocialAuthService {
       name: userData.response.name || userData.response.nickname || '네이버 사용자',
       profileImage: userData.response.profile_image || null,
     };
+  }
+
+  async getGoogleUserInfo(code: string): Promise<SocialUserInfo> {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const baseUrl = process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
+    const redirectUri = `${baseUrl}/oauth/google/callback`;
+
+    if (!clientId || !clientSecret) {
+      throw new Error('Google OAuth configuration is missing');
+    }
+
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        code,
+      }),
+    });
+
+    if (!tokenResponse.ok) {
+      const errorData = await tokenResponse.text();
+      console.error('Google token error:', tokenResponse.status, errorData);
+      throw new Error(`Failed to get Google access token: ${errorData}`);
+    }
+
+    const tokenData = await tokenResponse.json() as GoogleTokenResponse;
+
+    const userResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`,
+      },
+    });
+
+    if (!userResponse.ok) {
+      throw new Error('Failed to get Google user info');
+    }
+
+    const userData = await userResponse.json() as GoogleUserResponse;
+
+    return {
+      provider: 'google',
+      providerUserId: userData.sub,
+      email: userData.email || null,
+      name: userData.name || '구글 사용자',
+      profileImage: userData.picture || null,
+    };
+  }
+
+  async getAppleUserInfo(code: string, idToken?: string, userName?: string): Promise<SocialUserInfo> {
+    const clientId = process.env.APPLE_CLIENT_ID;
+    const teamId = process.env.APPLE_TEAM_ID;
+    const keyId = process.env.APPLE_KEY_ID;
+    const privateKey = process.env.APPLE_PRIVATE_KEY;
+    const baseUrl = process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
+    const redirectUri = `${baseUrl}/oauth/apple/callback`;
+
+    if (!clientId || !teamId || !keyId || !privateKey) {
+      throw new Error('Apple OAuth configuration is missing');
+    }
+
+    const clientSecret = this.generateAppleClientSecret(clientId, teamId, keyId, privateKey);
+
+    const tokenResponse = await fetch('https://appleid.apple.com/auth/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        code,
+      }),
+    });
+
+    if (!tokenResponse.ok) {
+      const errorData = await tokenResponse.text();
+      console.error('Apple token error:', tokenResponse.status, errorData);
+      throw new Error(`Failed to get Apple access token: ${errorData}`);
+    }
+
+    const tokenData = await tokenResponse.json() as AppleTokenResponse;
+    
+    const decodedToken = jwt.decode(tokenData.id_token) as AppleIdTokenPayload;
+    
+    if (!decodedToken) {
+      throw new Error('Failed to decode Apple ID token');
+    }
+
+    return {
+      provider: 'apple',
+      providerUserId: decodedToken.sub,
+      email: decodedToken.email || null,
+      name: userName || '애플 사용자',
+      profileImage: null,
+    };
+  }
+
+  private generateAppleClientSecret(clientId: string, teamId: string, keyId: string, privateKey: string): string {
+    const now = Math.floor(Date.now() / 1000);
+    const expiry = now + 86400 * 180;
+
+    const formattedPrivateKey = privateKey.replace(/\\n/g, '\n');
+
+    const token = jwt.sign(
+      {
+        iss: teamId,
+        iat: now,
+        exp: expiry,
+        aud: 'https://appleid.apple.com',
+        sub: clientId,
+      },
+      formattedPrivateKey,
+      {
+        algorithm: 'ES256',
+        keyid: keyId,
+      }
+    );
+
+    return token;
   }
 }
