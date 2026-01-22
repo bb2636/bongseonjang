@@ -5,6 +5,7 @@ import { useImageUploader } from '../../../hooks/useImageUploader';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useAuth } from '../../../contexts/AuthContext';
 import { AlertModal } from '@components';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './WriteReviewPage.css';
 
 interface ProductInfo {
@@ -14,7 +15,7 @@ interface ProductInfo {
 }
 
 async function fetchProductInfo(productId: string): Promise<ProductInfo> {
-  const response = await fetch(`/api/products/${productId}`);
+  const response = await fetch(`${API_BASE_URL}/products/${productId}`);
   if (!response.ok) {
     throw new Error('상품 정보를 불러올 수 없습니다.');
   }
@@ -63,7 +64,7 @@ async function createReview(data: {
   orderItemId?: string;
 }) {
   const token = localStorage.getItem('user_token');
-  const response = await fetch('/api/reviews', {
+  const response = await fetch(`${API_BASE_URL}/reviews`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

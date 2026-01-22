@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '@/shared/config/apiConfig';
+
 export type OrderStatus =
   | 'ALL'
   | 'PAYMENT_PENDING'
@@ -59,7 +61,7 @@ export async function fetchAdminOrders(params: FetchAdminOrdersParams = {}): Pro
     queryParams.set('limit', params.limit.toString());
   }
 
-  const url = `/api/admin/orders${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+  const url = `${API_BASE_URL}/admin/orders${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   
   const token = sessionStorage.getItem('admin_token');
   const response = await fetch(url, {
@@ -85,7 +87,7 @@ export type BackendOrderStatus = 'pending' | 'payment_failed' | 'paid' | 'confir
 
 export async function updateOrderStatus(orderId: string, status: BackendOrderStatus): Promise<void> {
   const token = sessionStorage.getItem('admin_token');
-  const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+  const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/status`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -102,7 +104,7 @@ export async function updateOrderStatus(orderId: string, status: BackendOrderSta
 
 export async function updateShippingInfo(orderId: string, params: UpdateShippingInfoParams): Promise<void> {
   const token = sessionStorage.getItem('admin_token');
-  const response = await fetch(`/api/admin/orders/${orderId}/shipping`, {
+  const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/shipping`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

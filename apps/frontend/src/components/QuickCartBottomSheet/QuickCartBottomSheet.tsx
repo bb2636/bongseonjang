@@ -5,6 +5,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { guestCartStorage } from '@/utils/guestStorage';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './QuickCartBottomSheet.css';
 
 interface SelectedItem {
@@ -153,7 +154,7 @@ export default function QuickCartBottomSheet() {
           quantity: item.quantity,
         }));
 
-        const response = await fetch('/api/cart/items', {
+        const response = await fetch(`${API_BASE_URL}/cart/items`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

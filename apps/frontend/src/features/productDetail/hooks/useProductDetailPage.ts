@@ -9,6 +9,7 @@ import { guestWishlistStorage } from '../../../utils/guestStorage';
 import type { ProductOption } from '../types/productDetail';
 import type { TabType } from '../components/ProductDetailTabs';
 import { useProductInquiries } from './useProductInquiries';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export function useProductDetailPage(productId: string) {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export function useProductDetailPage(productId: string) {
         if (!token) return;
         
         try {
-          const response = await fetch(`/api/wishlist/check/${productId}`, {
+          const response = await fetch(`${API_BASE_URL}/wishlist/check/${productId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (response.ok) {
@@ -71,7 +72,7 @@ export function useProductDetailPage(productId: string) {
         }
 
         if (isWishlisted) {
-          const response = await fetch(`/api/wishlist/items/${productId}`, {
+          const response = await fetch(`${API_BASE_URL}/wishlist/items/${productId}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -83,7 +84,7 @@ export function useProductDetailPage(productId: string) {
             showToast(result.error || '찜 삭제에 실패했습니다', 'error');
           }
         } else {
-          const response = await fetch('/api/wishlist/items', {
+          const response = await fetch(`${API_BASE_URL}/wishlist/items`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

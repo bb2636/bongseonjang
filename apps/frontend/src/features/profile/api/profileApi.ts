@@ -1,4 +1,5 @@
 import { UserProfile, Order } from '../types/profile';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 function getAuthHeaders(): HeadersInit {
   const token = localStorage.getItem('user_token');
@@ -9,7 +10,7 @@ function getAuthHeaders(): HeadersInit {
 }
 
 export async function fetchUserProfile(): Promise<UserProfile> {
-  const response = await fetch('/api/profile', {
+  const response = await fetch(`${API_BASE_URL}/profile`, {
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
@@ -25,7 +26,7 @@ export async function fetchRecentOrders(onlyInProgress: boolean = false): Promis
     params.set('status', 'in_progress');
   }
   
-  const response = await fetch(`/api/profile/orders?${params.toString()}`, {
+  const response = await fetch(`${API_BASE_URL}/profile/orders?${params.toString()}`, {
     headers: getAuthHeaders(),
   });
   if (!response.ok) {
@@ -40,7 +41,7 @@ interface VerifyPasswordResponse {
 }
 
 export async function verifyPassword(password: string): Promise<VerifyPasswordResponse> {
-  const response = await fetch('/api/profile/verify-password', {
+  const response = await fetch(`${API_BASE_URL}/profile/verify-password`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify({ password }),
@@ -71,7 +72,7 @@ interface UpdateProfileResponse {
 }
 
 export async function updateProfile(data: UpdateProfileData): Promise<UpdateProfileResponse> {
-  const response = await fetch('/api/profile', {
+  const response = await fetch(`${API_BASE_URL}/profile`, {
     method: 'PUT',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),

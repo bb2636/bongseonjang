@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { LOGIN_ROUTES } from '../constants';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 interface PasswordResetConfirmResponse {
   success: boolean;
@@ -10,7 +11,7 @@ interface PasswordResetConfirmResponse {
 }
 
 async function confirmPasswordReset(data: { token: string; newPassword: string }): Promise<PasswordResetConfirmResponse> {
-  const response = await fetch('/api/auth/password-reset/confirm', {
+  const response = await fetch(`${API_BASE_URL}/auth/password-reset/confirm`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),

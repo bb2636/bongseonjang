@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CustomDropdown } from '../../../../components';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './InvestmentInfoDetailPanel.css';
 
 interface InvestmentInfoTypeOption {
@@ -49,7 +50,7 @@ export function InvestmentInfoDetailPanel({ investmentInfoId, investmentInfoType
     setIsLoading(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/investment-infos/${investmentInfoId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/investment-infos/${investmentInfoId}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -92,7 +93,7 @@ export function InvestmentInfoDetailPanel({ investmentInfoId, investmentInfoType
     setIsSaving(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/investment-infos/${investmentInfoId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/investment-infos/${investmentInfoId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +127,7 @@ export function InvestmentInfoDetailPanel({ investmentInfoId, investmentInfoType
 
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/investment-infos/${investmentInfoId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/investment-infos/${investmentInfoId}`, {
         method: 'DELETE',
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

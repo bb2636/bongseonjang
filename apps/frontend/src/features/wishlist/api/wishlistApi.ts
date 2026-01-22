@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '@/shared/config/apiConfig';
+
 export interface WishlistItem {
   id: string;
   productId: string;
@@ -23,7 +25,7 @@ function getAuthHeaders(): HeadersInit {
 }
 
 export async function fetchWishlist(): Promise<WishlistResponse> {
-  const response = await fetch('/api/wishlist', {
+  const response = await fetch(`${API_BASE_URL}/wishlist`, {
     headers: getAuthHeaders(),
   });
   
@@ -35,7 +37,7 @@ export async function fetchWishlist(): Promise<WishlistResponse> {
 }
 
 export async function addToWishlist(productId: string): Promise<{ success: boolean; isWishlisted: boolean }> {
-  const response = await fetch('/api/wishlist/items', {
+  const response = await fetch(`${API_BASE_URL}/wishlist/items`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify({ productId }),
@@ -45,7 +47,7 @@ export async function addToWishlist(productId: string): Promise<{ success: boole
 }
 
 export async function removeFromWishlist(productId: string): Promise<{ success: boolean; isWishlisted: boolean }> {
-  const response = await fetch(`/api/wishlist/items/${productId}`, {
+  const response = await fetch(`${API_BASE_URL}/wishlist/items/${productId}`, {
     method: 'DELETE',
     headers: getAuthHeaders(),
   });
@@ -54,7 +56,7 @@ export async function removeFromWishlist(productId: string): Promise<{ success: 
 }
 
 export async function checkWishlistStatus(productId: string): Promise<{ isWishlisted: boolean }> {
-  const response = await fetch(`/api/wishlist/check/${productId}`, {
+  const response = await fetch(`${API_BASE_URL}/wishlist/check/${productId}`, {
     headers: getAuthHeaders(),
   });
   
@@ -66,7 +68,7 @@ export async function checkWishlistStatus(productId: string): Promise<{ isWishli
 }
 
 export async function getWishlistCount(): Promise<{ count: number }> {
-  const response = await fetch('/api/wishlist/count', {
+  const response = await fetch(`${API_BASE_URL}/wishlist/count`, {
     headers: getAuthHeaders(),
   });
   

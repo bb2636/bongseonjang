@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export interface AdminProduct {
   id: string;
@@ -47,7 +48,7 @@ export function useProductManagement() {
       }
 
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/products?${params.toString()}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/products?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -116,7 +117,7 @@ export function useProductManagement() {
   const deleteProduct = async (productId: string): Promise<boolean> => {
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/products/${productId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

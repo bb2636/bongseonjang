@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './UserDetailPanel.css';
 
 interface UserDetail {
@@ -72,7 +73,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
     setIsLoading(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -92,7 +93,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
     setOrdersLoading(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/users/${userId}/orders`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/orders`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -112,7 +113,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
     setInquiriesLoading(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/users/${userId}/inquiries`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/inquiries`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -187,7 +188,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
     try {
       const token = sessionStorage.getItem('admin_token');
       const newSuspendedStatus = !user?.isSuspended;
-      const response = await fetch(`/api/admin/users/${userId}/suspend`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/suspend`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

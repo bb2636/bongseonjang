@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 const ADMIN_TOKEN_KEY = 'admin_token';
 const LAST_ACTIVITY_KEY = 'admin_last_activity';
@@ -37,7 +38,7 @@ export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
 
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me', {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export interface AdminUser {
   id: string;
@@ -45,7 +46,7 @@ export function useUserManagement() {
       }
 
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/users?${params.toString()}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/users?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },

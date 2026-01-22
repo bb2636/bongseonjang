@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export type DiscountType = 'fixed' | 'rate' | 'shipping';
 export type DiscountFilter = 'all' | 'fixed' | 'rate' | 'shipping';
@@ -62,7 +63,7 @@ export function useCouponManagement() {
       if (discountFilter !== 'all') params.append('discountType', discountFilter);
       
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/coupons?${params.toString()}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/coupons?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -127,7 +128,7 @@ export function useCouponManagement() {
   const handleToggleStatus = useCallback(async (couponId: number) => {
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/coupons/${couponId}/toggle-status`, {
+      const response = await fetch(`${API_BASE_URL}/admin/coupons/${couponId}/toggle-status`, {
         method: 'PATCH',
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -156,7 +157,7 @@ export function useCouponManagement() {
     if (!deletingCouponId) return;
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/coupons/${deletingCouponId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/coupons/${deletingCouponId}`, {
         method: 'DELETE',
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

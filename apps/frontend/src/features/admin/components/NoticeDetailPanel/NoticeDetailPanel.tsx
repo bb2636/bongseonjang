@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CustomDropdown } from '../../../../components';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './NoticeDetailPanel.css';
 
 interface NoticeTypeOption {
@@ -49,7 +50,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
     setIsLoading(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/notices/${noticeId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/notices/${noticeId}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -92,7 +93,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
     setIsSaving(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/notices/${noticeId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/notices/${noticeId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +127,7 @@ export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSa
 
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/notices/${noticeId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/notices/${noticeId}`, {
         method: 'DELETE',
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

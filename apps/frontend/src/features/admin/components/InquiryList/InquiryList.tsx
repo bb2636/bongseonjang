@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './InquiryList.css';
 
 type InquiryType = 'product' | 'shipping' | 'exchange_return' | 'refund' | 'other';
@@ -70,7 +71,7 @@ export function InquiryList({ onView, refreshTrigger }: InquiryListProps) {
         params.append('status', selectedStatus);
       }
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/inquiries?${params.toString()}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/inquiries?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },

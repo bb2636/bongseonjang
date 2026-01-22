@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '@/shared/config/apiConfig';
+
 export interface CouponDto {
   id: number;
   name: string;
@@ -59,13 +61,13 @@ interface PreparePaymentResponse {
 }
 
 function getCallbackUrl(): string {
-  return `${window.location.origin}/api/payment/callback`;
+  return `${API_BASE_URL}/payment/callback`;
 }
 
 export async function fetchMyCoupons(): Promise<CouponDto[]> {
   const token = localStorage.getItem('user_token');
   
-  const response = await fetch('/api/coupons/my', {
+  const response = await fetch(`${API_BASE_URL}/coupons/my`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -84,7 +86,7 @@ export async function fetchMyCoupons(): Promise<CouponDto[]> {
 export async function fetchAvailableCoupons(productIds: string[]): Promise<CouponDto[]> {
   const token = localStorage.getItem('user_token');
   
-  const response = await fetch('/api/coupons/available', {
+  const response = await fetch(`${API_BASE_URL}/coupons/available`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -105,7 +107,7 @@ export async function prepareDirectPayment(data: PrepareDirectPaymentRequest): P
   const token = localStorage.getItem('user_token');
   const returnUrl = getCallbackUrl();
   
-  const response = await fetch('/api/payment/prepare-direct', {
+  const response = await fetch(`${API_BASE_URL}/payment/prepare-direct`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -126,7 +128,7 @@ export async function preparePayment(data: PreparePaymentRequest): Promise<Prepa
   const token = localStorage.getItem('user_token');
   const returnUrl = getCallbackUrl();
   
-  const response = await fetch('/api/payment/prepare', {
+  const response = await fetch(`${API_BASE_URL}/payment/prepare`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -146,7 +148,7 @@ export async function preparePayment(data: PreparePaymentRequest): Promise<Prepa
 export async function getPaymentResult(orderId: string): Promise<{ success: boolean; order?: { orderNumber: string; status: string } }> {
   const token = localStorage.getItem('user_token');
   
-  const response = await fetch(`/api/payment/order/${orderId}`, {
+  const response = await fetch(`${API_BASE_URL}/payment/order/${orderId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -191,7 +193,7 @@ export interface PrepareGuestPaymentRequest {
 export async function prepareGuestPayment(data: PrepareGuestPaymentRequest): Promise<PreparePaymentResponse> {
   const returnUrl = getCallbackUrl();
   
-  const response = await fetch('/api/payment/prepare-guest', {
+  const response = await fetch(`${API_BASE_URL}/payment/prepare-guest`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -245,7 +247,7 @@ export interface GuestOrder {
 }
 
 export async function lookupGuestOrder(data: GuestOrderLookupRequest): Promise<{ order: GuestOrder }> {
-  const response = await fetch('/api/payment/guest/lookup', {
+  const response = await fetch(`${API_BASE_URL}/payment/guest/lookup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -279,7 +281,7 @@ export interface GuestOrderDetail {
 }
 
 export async function fetchGuestOrderDetail(orderId: string): Promise<GuestOrderDetail> {
-  const response = await fetch(`/api/payment/guest/order/${orderId}`);
+  const response = await fetch(`${API_BASE_URL}/payment/guest/order/${orderId}`);
 
   if (!response.ok) {
     const error = await response.json();

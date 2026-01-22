@@ -1,4 +1,5 @@
 import type { MyInquiriesResponse, InquiryType, SortOrder } from '../types/myInquiry';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 interface FetchMyInquiriesParams {
   page?: number;
@@ -21,7 +22,7 @@ export async function fetchMyInquiries(params: FetchMyInquiriesParams = {}): Pro
   }
 
   const token = localStorage.getItem('user_token');
-  const response = await fetch(`/api/users/me/inquiries?${queryParams.toString()}`, {
+  const response = await fetch(`${API_BASE_URL}/users/me/inquiries?${queryParams.toString()}`, {
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

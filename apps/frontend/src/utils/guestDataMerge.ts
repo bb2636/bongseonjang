@@ -1,5 +1,6 @@
 import { guestCartStorage, guestWishlistStorage } from './guestStorage';
 import { mergeGuestCart, MergeCartItem } from '../features/cart/api/cartApi';
+import { API_BASE_URL } from '../shared/config/apiConfig';
 
 export interface MergeWishlistItem {
   productId: string;
@@ -8,7 +9,7 @@ export interface MergeWishlistItem {
 async function mergeGuestWishlist(items: MergeWishlistItem[]): Promise<{ mergedCount: number }> {
   const token = localStorage.getItem('user_token');
   
-  const response = await fetch('/api/wishlist/merge', {
+  const response = await fetch(`${API_BASE_URL}/wishlist/merge`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

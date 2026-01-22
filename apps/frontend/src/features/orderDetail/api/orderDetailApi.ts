@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '@/shared/config/apiConfig';
+
 export type OrderStatus = 'pending' | 'confirmed' | 'shipping' | 'delivered' | 'cancelled';
 
 export interface OrderDetailItem {
@@ -56,7 +58,7 @@ export interface OrderDetail {
 export async function fetchOrderDetail(orderId: string): Promise<OrderDetail> {
   const token = localStorage.getItem('user_token');
   
-  const response = await fetch(`/api/orders/${orderId}`, {
+  const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -1,0 +1,46 @@
+C:\Users\user\Desktop\bongseonjang\apps\frontend>npm run build
+
+> @bongkru/frontend@1.0.0 build
+> vite build
+
+X [ERROR] Multiple exports with the same name "default"
+
+    vite.config.ts:19:7:
+      19 │ export default defineConfig({
+         ╵        ~~~~~~~
+
+  The name "default" was originally exported here:
+
+    vite.config.ts:6:7:
+      6 │ export default defineConfig(({ mode }) => {
+        ╵        ~~~~~~~
+
+failed to load config from C:\Users\user\Desktop\bongseonjang\apps\frontend\vite.config.ts
+error during build:
+Error: Build failed with 1 error:
+vite.config.ts:19:7: ERROR: Multiple exports with the same name "default"
+    at failureErrorWithLog (C:\Users\user\Desktop\bongseonjang\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\user\Desktop\bongseonjang\node_modules\esbuild\lib\main.js:926:25
+    at runOnEndCallbacks (C:\Users\user\Desktop\bongseonjang\node_modules\esbuild\lib\main.js:1307:45)
+    at buildResponseToResult (C:\Users\user\Desktop\bongseonjang\node_modules\esbuild\lib\main.js:924:7)
+    at C:\Users\user\Desktop\bongseonjang\node_modules\esbuild\lib\main.js:951:16
+    at responseCallbacks.<computed> (C:\Users\user\Desktop\bongseonjang\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\user\Desktop\bongseonjang\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\user\Desktop\bongseonjang\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:559:12)
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\user\Desktop\bongseonjang\apps\frontend
+npm error workspace @bongkru/frontend@1.0.0
+npm error location C:\Users\user\Desktop\bongseonjang\apps\frontend
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vite build
+
+C:\Users\user\Desktop\bongseonjang\apps\frontend>npx cap sync android
+√ Copying web assets from dist to android\app\src\main\assets\public in 320.85ms
+√ Creating capacitor.config.json in android\app\src\main\assets in 985.60μs
+√ copy android in 352.97ms
+√ Updating Android plugins in 8.64ms
+√ update android in 109.97ms
+[info] Sync finished in 0.502s

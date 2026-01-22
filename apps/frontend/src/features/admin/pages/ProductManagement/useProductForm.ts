@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export interface ProductOption {
   id: string;
@@ -180,7 +181,7 @@ export function useProductForm() {
   const fetchCategories = useCallback(async () => {
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch('/api/admin/products/categories', {
+      const response = await fetch(`${API_BASE_URL}/admin/products/categories`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -209,7 +210,7 @@ export function useProductForm() {
   const fetchExposureCategories = useCallback(async () => {
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch('/api/admin/products/exposure-categories', {
+      const response = await fetch(`${API_BASE_URL}/admin/products/exposure-categories`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -467,7 +468,7 @@ export function useProductForm() {
 
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/products/${productId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -652,7 +653,7 @@ export function useProductForm() {
     formDataUpload.append('purpose', purpose);
 
     const token = sessionStorage.getItem('admin_token');
-    const response = await fetch('/api/upload', {
+    const response = await fetch(`${API_BASE_URL}/upload`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

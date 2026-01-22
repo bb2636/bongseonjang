@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { BannerPosition, Banner } from './useBannerManagement';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export type LinkType = 'internal' | 'external' | 'none';
 
@@ -162,7 +163,7 @@ export function useBannerForm(
         formDataUpload.append('image', selectedFile);
         formDataUpload.append('purpose', 'banner');
         
-        const uploadResponse = await fetch('/api/upload', {
+        const uploadResponse = await fetch(`${API_BASE_URL}/upload`, {
           method: 'POST',
           body: formDataUpload,
         });
@@ -177,8 +178,8 @@ export function useBannerForm(
 
       const isEditing = !!editingBanner;
       const url = isEditing 
-        ? `/api/admin/banners/${editingBanner.id}` 
-        : '/api/admin/banners';
+        ? `${API_BASE_URL}/admin/banners/${editingBanner.id}` 
+        : `${API_BASE_URL}/admin/banners`;
       const method = isEditing ? 'PUT' : 'POST';
 
       const token = sessionStorage.getItem('admin_token');

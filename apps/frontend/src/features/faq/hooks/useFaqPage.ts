@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaqCategory, FaqItem } from '../types/faq';
 import { useGoBack } from '../../../hooks/useGoBack';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export function useFaqPage() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export function useFaqPage() {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const response = await fetch('/api/faqs/categories');
+      const response = await fetch(`${API_BASE_URL}/faqs/categories`);
       if (response.ok) {
         const data = await response.json();
         setCategories(data);
@@ -36,7 +37,7 @@ export function useFaqPage() {
       const params = new URLSearchParams();
       params.append('categoryId', categoryId.toString());
       
-      const response = await fetch(`/api/faqs?${params.toString()}`);
+      const response = await fetch(`${API_BASE_URL}/faqs?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         setFaqs(data.faqs);

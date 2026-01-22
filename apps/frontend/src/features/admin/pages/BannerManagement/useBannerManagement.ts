@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export interface BannerPosition {
   id: number;
@@ -53,7 +54,7 @@ export function useBannerManagement() {
   const fetchPositions = useCallback(async () => {
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch('/api/admin/banner-positions', {
+      const response = await fetch(`${API_BASE_URL}/admin/banner-positions`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -73,7 +74,7 @@ export function useBannerManagement() {
     setError(null);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/banners?position=${positionCode}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/banners?position=${positionCode}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -147,7 +148,7 @@ export function useBannerManagement() {
 
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch('/api/admin/banners/reorder', {
+      const response = await fetch(`${API_BASE_URL}/admin/banners/reorder`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +164,7 @@ export function useBannerManagement() {
       console.error('Failed to reorder banners:', err);
       try {
         const refetchToken = sessionStorage.getItem('admin_token');
-        const response = await fetch(`/api/admin/banners?position=${activeTab}`, {
+        const response = await fetch(`${API_BASE_URL}/admin/banners?position=${activeTab}`, {
           headers: {
             ...(refetchToken ? { Authorization: `Bearer ${refetchToken}` } : {}),
           },

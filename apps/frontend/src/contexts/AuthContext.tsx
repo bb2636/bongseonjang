@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { mergeGuestDataToServer } from '../utils/guestDataMerge';
+import { API_BASE_URL } from '../shared/config/apiConfig';
 
 interface User {
   id: string;
@@ -38,7 +39,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       try {
-        const response = await fetch('/api/auth/me', {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -63,7 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -102,7 +103,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const register = useCallback(async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name }),

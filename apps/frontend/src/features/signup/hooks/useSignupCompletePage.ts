@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 async function completeSocialProfile(token: string, profileData: {
   name: string;
@@ -13,7 +14,7 @@ async function completeSocialProfile(token: string, profileData: {
   address?: string;
   addressDetail?: string;
 }): Promise<void> {
-  const response = await fetch('/api/auth/social/complete-profile', {
+  const response = await fetch(`${API_BASE_URL}/auth/social/complete-profile`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

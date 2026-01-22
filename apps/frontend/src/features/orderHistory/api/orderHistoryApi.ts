@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '@/shared/config/apiConfig';
+
 export type OrderStatus = 'pending' | 'confirmed' | 'shipping' | 'delivered' | 'cancelled';
 
 export type OrderStatusFilter = 'all' | 'shipping' | 'delivered' | 'cancelled';
@@ -44,7 +46,7 @@ export interface OrderHistoryResponse {
 export async function fetchOrderHistory(statusFilter: OrderStatusFilter): Promise<OrderHistoryResponse> {
   const token = localStorage.getItem('user_token');
   
-  const response = await fetch(`/api/orders?status=${statusFilter}`, {
+  const response = await fetch(`${API_BASE_URL}/orders?status=${statusFilter}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -68,7 +70,7 @@ export async function checkPurchase(productId: string): Promise<CheckPurchaseRes
     return { hasPurchased: false };
   }
   
-  const response = await fetch(`/api/orders/check-purchase/${productId}`, {
+  const response = await fetch(`${API_BASE_URL}/orders/check-purchase/${productId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

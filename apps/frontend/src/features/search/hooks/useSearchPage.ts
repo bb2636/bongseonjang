@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { ProductCardData } from '@/components/ProductCard';
 import type { SortBy } from '../types/SortTypes';
 import { useAuth } from '@/contexts/AuthContext';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 interface PopularSearchTerm {
   term: string;
@@ -22,7 +23,7 @@ function getAuthHeaders(): HeadersInit {
 
 async function fetchUserSearchHistory(limit: number = 10): Promise<string[]> {
   try {
-    const response = await fetch(`/api/search/history?limit=${limit}`, {
+    const response = await fetch(`${API_BASE_URL}/search/history?limit=${limit}`, {
       headers: getAuthHeaders(),
     });
     if (response.ok) {
@@ -37,7 +38,7 @@ async function fetchUserSearchHistory(limit: number = 10): Promise<string[]> {
 
 async function addUserSearchHistoryToServer(term: string): Promise<void> {
   try {
-    await fetch('/api/search/history', {
+    await fetch(`${API_BASE_URL}/search/history`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ term }),
@@ -49,7 +50,7 @@ async function addUserSearchHistoryToServer(term: string): Promise<void> {
 
 async function deleteUserSearchHistoryFromServer(term: string): Promise<void> {
   try {
-    await fetch('/api/search/history', {
+    await fetch(`${API_BASE_URL}/search/history`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
       body: JSON.stringify({ term }),
@@ -61,7 +62,7 @@ async function deleteUserSearchHistoryFromServer(term: string): Promise<void> {
 
 async function clearUserSearchHistoryFromServer(): Promise<void> {
   try {
-    await fetch('/api/search/history/all', {
+    await fetch(`${API_BASE_URL}/search/history/all`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
@@ -99,7 +100,7 @@ export function useSearchPage() {
   useEffect(() => {
     async function fetchPopularSearches() {
       try {
-        const response = await fetch('/api/search/popular?limit=10');
+        const response = await fetch(`${API_BASE_URL}/search/popular?limit=10`);
         if (response.ok) {
           const data = await response.json();
           setPopularSearches(data);
@@ -121,7 +122,7 @@ export function useSearchPage() {
       params.set('search', term);
       params.set('sortBy', sort);
       
-      const response = await fetch(`/api/products?${params.toString()}`);
+      const response = await fetch(`${API_BASE_URL}/products?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.map((p: any) => ({

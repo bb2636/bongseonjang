@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
 import { useGoBack } from '../../../hooks/useGoBack';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 export function useProfileWithdraw() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export function useProfileWithdraw() {
 
     try {
       const token = localStorage.getItem('user_token');
-      const response = await fetch('/api/profile/withdraw', {
+      const response = await fetch(`${API_BASE_URL}/profile/withdraw`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

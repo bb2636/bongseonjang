@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './FaqList.css';
 
 interface FaqItem {
@@ -37,7 +38,7 @@ export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: F
   const fetchCategories = useCallback(async () => {
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch('/api/admin/faqs/categories', {
+      const response = await fetch(`${API_BASE_URL}/admin/faqs/categories`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -62,7 +63,7 @@ export function FaqList({ onAdd, onView, onCategoriesLoaded, refreshTrigger }: F
         params.append('categoryId', categoryId.toString());
       }
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/faqs?${params.toString()}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/faqs?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },

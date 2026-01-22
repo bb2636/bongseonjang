@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import type { Review } from '../types/productDetail';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 async function fetchProductReviews(productId: string): Promise<Review[]> {
-  const response = await fetch(`/api/reviews/product/${productId}`);
+  const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch reviews');
   }

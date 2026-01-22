@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ConfirmDialog } from '../ConfirmDialog';
 import { CustomDropdown } from '../../../../components';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './FaqDetailPanel.css';
 
 interface FaqCategoryOption {
@@ -53,7 +54,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
     setIsLoading(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/faqs/${faqId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/faqs/${faqId}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -100,7 +101,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
     setIsSaving(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/faqs/${faqId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/faqs/${faqId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +138,7 @@ export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved,
     setShowDeleteConfirm(false);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/faqs/${faqId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/faqs/${faqId}`, {
         method: 'DELETE',
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

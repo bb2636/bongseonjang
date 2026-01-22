@@ -1,5 +1,6 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './AdminLoginPage.css';
 
 export function AdminLoginPage() {
@@ -79,7 +80,7 @@ export function AdminLoginPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/admin/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

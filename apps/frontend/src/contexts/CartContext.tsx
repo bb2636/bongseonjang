@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { guestCartStorage } from '../utils/guestStorage';
+import { API_BASE_URL } from '../shared/config/apiConfig';
 
 interface CartContextType {
   cartCount: number;
@@ -30,7 +31,7 @@ export function CartProvider({ children }: CartProviderProps) {
       }
 
       try {
-        const response = await fetch('/api/cart/count', {
+        const response = await fetch(`${API_BASE_URL}/cart/count`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

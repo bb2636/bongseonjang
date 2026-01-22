@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { AdminLayout } from '../layouts';
 import { NoticeList, NoticeItem, NoticeDetailPanel, ConfirmDialog, Snackbar, FaqList, FaqDetailPanel, InquiryList, InquiryDetailPanel } from '../components';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './AdminSupportPage.css';
 
 type SupportTab = 'faq' | 'inquiry' | 'notice';
@@ -59,7 +60,7 @@ export function AdminSupportPage() {
   const fetchNoticeTypes = async () => {
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch('/api/admin/notices/types', {
+      const response = await fetch(`${API_BASE_URL}/admin/notices/types`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -81,7 +82,7 @@ export function AdminSupportPage() {
         params.append('keyword', keyword);
       }
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch(`/api/admin/notices?${params.toString()}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/notices?${params.toString()}`, {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -456,7 +457,7 @@ function NoticeAddForm({ noticeTypes, onClose, onSuccess }: NoticeAddFormProps) 
     setIsSaving(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch('/api/admin/notices', {
+      const response = await fetch(`${API_BASE_URL}/admin/notices`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -707,7 +708,7 @@ function FaqAddForm({ faqCategories, onClose, onSuccess }: FaqAddFormProps) {
     setIsSaving(true);
     try {
       const token = sessionStorage.getItem('admin_token');
-      const response = await fetch('/api/admin/faqs', {
+      const response = await fetch(`${API_BASE_URL}/admin/faqs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

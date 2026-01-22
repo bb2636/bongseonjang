@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { API_BASE_URL } from '../shared/config/apiConfig';
 
 interface QuickCartProduct {
   id: string;
@@ -53,7 +54,7 @@ export function QuickCartProvider({ children }: QuickCartProviderProps) {
     setProduct(null);
 
     try {
-      const response = await fetch(`/api/products/${productId}`);
+      const response = await fetch(`${API_BASE_URL}/products/${productId}`);
       if (!response.ok) {
         throw new Error('상품 정보를 불러올 수 없습니다');
       }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ConfirmDialog } from '../ConfirmDialog';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './InquiryDetailPanel.css';
 
 type InquiryType = 'product' | 'shipping' | 'exchange_return' | 'refund' | 'other';
@@ -63,7 +64,7 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
   const fetchInquiry = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/admin/inquiries/${inquiryId}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/inquiries/${inquiryId}`, {
         headers: {
           ...getAuthHeaders(),
         },
@@ -103,7 +104,7 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
     setShowSaveConfirm(false);
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/admin/inquiries/${inquiryId}/answer`, {
+      const response = await fetch(`${API_BASE_URL}/admin/inquiries/${inquiryId}/answer`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

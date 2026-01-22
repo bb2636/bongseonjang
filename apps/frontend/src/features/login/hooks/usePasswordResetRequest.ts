@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/contexts/ToastContext';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
 type Step = 'email' | 'emailVerified' | 'codeSent' | 'codeVerified';
 
@@ -19,7 +20,7 @@ interface ApiResponse {
 }
 
 async function checkEmailApi(email: string): Promise<CheckEmailResponse> {
-  const response = await fetch('/api/auth/password-reset/check-email', {
+  const response = await fetch(`${API_BASE_URL}/auth/password-reset/check-email`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
@@ -28,7 +29,7 @@ async function checkEmailApi(email: string): Promise<CheckEmailResponse> {
 }
 
 async function sendCodeApi(email: string): Promise<ApiResponse> {
-  const response = await fetch('/api/auth/password-reset/send-code', {
+  const response = await fetch(`${API_BASE_URL}/auth/password-reset/send-code`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
@@ -37,7 +38,7 @@ async function sendCodeApi(email: string): Promise<ApiResponse> {
 }
 
 async function verifyCodeApi(email: string, code: string): Promise<ApiResponse> {
-  const response = await fetch('/api/auth/password-reset/verify-code', {
+  const response = await fetch(`${API_BASE_URL}/auth/password-reset/verify-code`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, code }),
@@ -51,7 +52,7 @@ async function changePasswordApi(
   newPassword: string,
   confirmPassword: string
 ): Promise<ApiResponse> {
-  const response = await fetch('/api/auth/password-reset/change-password', {
+  const response = await fetch(`${API_BASE_URL}/auth/password-reset/change-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, code, newPassword, confirmPassword }),

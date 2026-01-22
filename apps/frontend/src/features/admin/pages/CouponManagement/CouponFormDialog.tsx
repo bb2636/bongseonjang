@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AdminCoupon, DiscountType } from './useCouponManagement';
 import { DateRangePicker } from '../../../../components/DateRangePicker';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './CouponFormDialog.css';
 
 interface CouponFormDialogProps {
@@ -99,7 +100,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
   useEffect(() => {
     if (isOpen) {
       setIsCategoriesLoading(true);
-      fetch('/api/products/categories')
+      fetch(`${API_BASE_URL}/products/categories`)
         .then((res) => res.json())
         .then((data) => {
           setCategories(data);
@@ -230,7 +231,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
         isActive: formData.isActive,
       };
 
-      const url = isEditing ? `/api/admin/coupons/${coupon.id}` : '/api/admin/coupons';
+      const url = isEditing ? `${API_BASE_URL}/admin/coupons/${coupon.id}` : `${API_BASE_URL}/admin/coupons`;
       const method = isEditing ? 'PUT' : 'POST';
 
       const token = sessionStorage.getItem('admin_token');
