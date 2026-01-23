@@ -96,14 +96,17 @@
   align-items: flex-start;
   gap: 8px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .profile-edit__address-input {
   flex: 1;
+  min-width: 0;
 }
 
 .profile-edit__address-button {
-  width: 100px;
+  min-width: 80px;
+  max-width: 100px;
   height: 48px;
   background: #3B9BD5;
   border-radius: 4px;
@@ -116,6 +119,8 @@
   color: #FFFFFF;
   cursor: pointer;
   flex-shrink: 0;
+  white-space: nowrap;
+  padding: 0 12px;
 }
 
 .profile-edit__address-button:hover {
@@ -229,15 +234,17 @@
   align-items: flex-end;
   gap: 8px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .profile-edit__phone-field > div {
   flex: 1;
+  min-width: 0;
 }
 
 .profile-edit__phone-verify-button {
   flex-shrink: 0;
-  padding: 12px 16px;
+  padding: 12px 14px;
   background: #3B9BD5;
   border: none;
   border-radius: 8px;
@@ -249,6 +256,8 @@
   cursor: pointer;
   white-space: nowrap;
   margin-bottom: 2px;
+  min-width: fit-content;
+  max-width: 100px;
 }
 
 .profile-edit__phone-verify-button:hover {
