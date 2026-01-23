@@ -2,6 +2,9 @@
   width: 100%;
   border-bottom: 1px solid rgba(12, 12, 12, 0.06);
   background-color: #fff;
+  position: sticky;
+  top: calc(48px + var(--safe-area-top, 0px));
+  z-index: 10;
 }
 
 .category-tabs__container {
