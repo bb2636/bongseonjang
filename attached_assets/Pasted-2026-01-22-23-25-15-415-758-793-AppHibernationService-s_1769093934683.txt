@@ -1,0 +1,276 @@
+2026-01-22 23:25:15.415   758-793   AppHibernationService   system_server                        E  Package com.bongkru.app is not installed for user 0
+2026-01-22 23:25:15.415   758-793   AppHibernationService   system_server                        E  Package com.bongkru.app is not installed for any user
+2026-01-22 23:25:15.415   758-793   AppHibernationService   system_server                        E  Package com.bongkru.app is not installed for user 0
+2026-01-22 23:25:15.415   758-793   AppHibernationService   system_server                        E  Package com.bongkru.app is not installed for any user
+2026-01-22 23:25:34.154   758-3510  ActivityManager         system_server                        E  ANR in com.google.android.cellbroadcastreceiver
+                                                                                                    PID: 1831
+                                                                                                    Reason: Broadcast of Intent { act=android.telephony.action.CARRIER_CONFIG_CHANGED flg=0x15000010 xflg=0x4 cmp=com.google.android.cellbroadcastreceiver/com.android.cellbroadcastreceiver.CellBroadcastReceiver (has extras) }
+                                                                                                    ErrorId: 8a5d2402-f8e7-4fd5-8cab-59cbb319f00e
+                                                                                                    Frozen: false
+                                                                                                    Load: 0.0 / 0.0 / 0.0
+                                                                                                    ----- Output from /proc/pressure/memory -----
+                                                                                                    some avg10=15.49 avg60=5.79 avg300=1.40 total=4668729
+                                                                                                    full avg10=4.67 avg60=1.86 avg300=0.45 total=1639621
+                                                                                                    ----- End output from /proc/pressure/memory -----
+                                                                                                    ----- Output from /proc/pressure/cpu -----
+                                                                                                    some avg10=76.87 avg60=40.89 avg300=11.52 total=37853382
+                                                                                                    full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+                                                                                                    ----- End output from /proc/pressure/cpu -----
+                                                                                                    ----- Output from /proc/pressure/io -----
+                                                                                                    some avg10=18.55 avg60=15.08 avg300=5.14 total=17938316
+                                                                                                    full avg10=1.18 avg60=5.13 avg300=2.38 total=9099345
+                                                                                                    ----- End output from /proc/pressure/io -----
+                                                                                                    
+                                                                                                    CPU usage from 15252ms to -1ms ago (2026-01-22 14:25:17.682 to 2026-01-22 14:25:32.935):
+                                                                                                      54% 758/system_server: 25% user + 29% kernel / faults: 20884 minor 2337 major
+                                                                                                      50% 2597/com.bongkru.app: 17% user + 33% kernel / faults: 23006 minor 2137 major
+                                                                                                      24% 2740/com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0: 11% user + 13% kernel / faults: 58452 minor 1991 major
+                                                                                                      23% 1592/com.google.android.gms.persistent: 10% user + 13% kernel / faults: 23635 minor 1251 major
+                                                                                                      21% 66/kswapd0: 0% user + 21% kernel
+                                                                                                      12% 2083/com.google.android.as: 6.1% user + 6.2% kernel / faults: 20724 minor 4239 major
+                                                                                                      11% 598/surfaceflinger: 2.7% user + 8.5% kernel / faults: 24 minor 316 major
+                                                                                                      11% 1785/com.google.android.gms: 5% user + 6.1% kernel / faults: 8875 minor 1390 major
+                                                                                                      11% 1574/com.google.android.apps.nexuslauncher: 5.4% user + 5.6% kernel / faults: 35724 minor 1084 major
+                                                                                                      8.3% 2633/com.google.android.apps.wallpaper: 6.4% user + 1.8% kernel / faults: 16449 minor 1493 major
+                                                                                                    98% TOTAL: 36% user + 57% kernel + 0.8% iowait + 3.1% softirq
+                                                                                                    CPU usage from 104023ms to 104023ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-01-22 23:25:37.007   758-3569  ActivityManager         system_server                        E  ANR in com.google.android.gms
+                                                                                                    PID: 1785
+                                                                                                    Reason: Broadcast of Intent { act=com.google.android.libraries.storage.protostore.SIGNAL_ACTION dat=android://com.google.android.gms/... flg=0x10000010 xflg=0x4 pkg=com.google.android.gms cmp=com.google.android.gms/frbc }
+                                                                                                    ErrorId: 1d71b829-4a71-475d-b3ab-22f7aa9091f2
+                                                                                                    Frozen: false
+                                                                                                    Load: 0.0 / 0.0 / 0.0
+                                                                                                    ----- Output from /proc/pressure/memory -----
+                                                                                                    some avg10=17.57 avg60=6.49 avg300=1.58 total=5767271
+                                                                                                    full avg10=4.91 avg60=2.00 avg300=0.49 total=2219908
+                                                                                                    ----- End output from /proc/pressure/memory -----
+                                                                                                    ----- Output from /proc/pressure/cpu -----
+                                                                                                    some avg10=77.26 avg60=42.14 avg300=11.98 total=39405845
+                                                                                                    full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+                                                                                                    ----- End output from /proc/pressure/cpu -----
+                                                                                                    ----- Output from /proc/pressure/io -----
+                                                                                                    some avg10=18.99 avg60=15.28 avg300=5.25 total=19269463
+                                                                                                    full avg10=0.96 avg60=4.96 avg300=2.36 total=9745415
+                                                                                                    ----- End output from /proc/pressure/io -----
+                                                                                                    
+                                                                                                    CPU usage from 18410ms to 3157ms ago (2026-01-22 14:25:17.682 to 2026-01-22 14:25:32.935):
+                                                                                                      54% 758/system_server: 25% user + 29% kernel / faults: 20884 minor 2337 major
+                                                                                                      50% 2597/com.bongkru.app: 17% user + 33% kernel / faults: 23006 minor 2137 major
+                                                                                                      24% 2740/com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0: 11% user + 13% kernel / faults: 58452 minor 1991 major
+                                                                                                      23% 1592/com.google.android.gms.persistent: 10% user + 13% kernel / faults: 23635 minor 1251 major
+                                                                                                      21% 66/kswapd0: 0% user + 21% kernel
+                                                                                                      12% 2083/com.google.android.as: 6.1% user + 6.2% kernel / faults: 20724 minor 4239 major
+                                                                                                      11% 598/surfaceflinger: 2.7% user + 8.5% kernel / faults: 24 minor 316 major
+                                                                                                      11% 1785/com.google.android.gms: 5% user + 6.1% kernel / faults: 8875 minor 1390 major
+                                                                                                      11% 1574/com.google.android.apps.nexuslauncher: 5.4% user + 5.6% kernel / faults: 35724 minor 1084 major
+                                                                                                      8.3% 2633/com.google.android.apps.wallpaper: 6.4% user + 1.8% kernel / faults: 16449 minor 1493 major
+                                                                                                    98% TOTAL: 36% user + 57% kernel + 0.8% iowait + 3.1% softirq
+                                                                                                    CPU usage from 107181ms to 107181ms ago (1970-01-01 00:00:00.000 to 1970-01-01 00:00:00.000) with 0% awake:
+                                                                                                    0% TOTAL: 0% user + 0% kernel
+2026-01-22 23:26:50.767  2417-3291  Finsky                  pid-2417                             E  [53] ItemStore: getItems RPC failed for item com.bongkru.app
+2026-01-22 23:27:18.641   758-922   InputDispatcher         system_server                        E  channel '56c1ae com.bongkru.app/com.bongkru.app.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2026-01-22 23:28:42.676   758-922   InputDispatcher         system_server                        E  channel 'a94e325 com.bongkru.app/com.bongkru.app.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2026-01-22 23:34:59.727   758-922   InputDispatcher         system_server                        E  channel '8abefe2 com.bongkru.app/com.bongkru.app.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2026-01-22 23:43:51.111   758-922   InputDispatcher         system_server                        E  channel '85aed60 com.bongkru.app/com.bongkru.app.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2026-01-22 23:46:35.229  8005-8084  Finsky                  pid-8005                             E  [62] ItemStore: getItems RPC failed for item com.bongkru.app
+2026-01-22 23:46:36.094  8684-8734  chromium                pid-8684                             E  [ERROR:simple_file_enumerator.cc(43)] readdir /data/user/0/com.bongkru.app/cache/WebView/Default/HTTP Cache/Code Cache/js: No such file or directory (2)
+2026-01-22 23:55:31.198 10183-10223 chromium                pid-10183                            E  [ERROR:simple_backend_impl.cc(758)] Simple Cache Backend: cache directory inaccessible right after creation; path: /data/user/0/com.bongkru.app/cache/WebView/Default/HTTP Cache/Code Cache/wasm
+2026-01-22 23:55:58.538  8905-9032  WorkSourceUtil          com.google.android.gms               E  Could not find package: com.bongkru.app
+2026-01-22 23:56:10.705 10782-10843 chromium                pid-10782                            E  [ERROR:simple_file_enumerator.cc(21)] opendir /data/user/0/com.bongkru.app/cache/WebView/Default/HTTP Cache/Code Cache/wasm: No such file or directory (2)
+2026-01-22 23:56:19.663   758-922   InputDispatcher         system_server                        E  channel '2d60293 com.bongkru.app/com.bongkru.app.MainActivity' ~ Channel is unrecoverably broken and will be disposed!
+2026-01-22 23:56:33.834 10415-10415 ackageinstaller         com.google.android.packageinstaller  E  Failed to open APK '/data/app/~~Bun233uTNtOWTfhKaVjJJw==/com.bongkru.app-oFd9mlGrL_DgdtKnC6twFQ==/base.apk': I/O error
+2026-01-22 23:56:33.838 10415-10415 ackageinstaller         com.google.android.packageinstaller  E  Failed to open APK '/data/app/~~Bun233uTNtOWTfhKaVjJJw==/com.bongkru.app-oFd9mlGrL_DgdtKnC6twFQ==/base.apk': I/O error
+2026-01-22 23:56:33.838 10415-10415 ResourcesManager        com.google.android.packageinstaller  E  failed to add asset path '/data/app/~~Bun233uTNtOWTfhKaVjJJw==/com.bongkru.app-oFd9mlGrL_DgdtKnC6twFQ==/base.apk'
+                                                                                                    java.io.IOException: Failed to load asset path /data/app/~~Bun233uTNtOWTfhKaVjJJw==/com.bongkru.app-oFd9mlGrL_DgdtKnC6twFQ==/base.apk
+                                                                                                    	at android.content.res.ApkAssets.nativeLoad(Native Method)
+                                                                                                    	at android.content.res.ApkAssets.<init>(ApkAssets.java:321)
+                                                                                                    	at android.content.res.ApkAssets.loadFromPath(ApkAssets.java:170)
+                                                                                                    	at android.app.ResourcesManager.loadApkAssets(ResourcesManager.java:596)
+                                                                                                    	at android.app.ResourcesManager$ApkAssetsSupplier.load(ResourcesManager.java:262)
+                                                                                                    	at android.app.ResourcesManager.createAssetManager(ResourcesManager.java:692)
+                                                                                                    	at android.app.ResourcesManager.createResourcesImpl(ResourcesManager.java:766)
+                                                                                                    	at android.app.ResourcesManager.findOrCreateResourcesImplPairForKeyLocked(ResourcesManager.java:847)
+                                                                                                    	at android.app.ResourcesManager.findOrCreateResourcesImplForKeyLocked(ResourcesManager.java:832)
+                                                                                                    	at android.app.ResourcesManager.createResources(ResourcesManager.java:1200)
+                                                                                                    	at android.app.ResourcesManager.getResources(ResourcesManager.java:1303)
+                                                                                                    	at android.app.ActivityThread.getTopLevelResources(ActivityThread.java:3153)
+                                                                                                    	at android.app.ApplicationPackageManager.getResourcesForApplication(ApplicationPackageManager.java:2188)
+                                                                                                    	at android.app.ApplicationPackageManager.getResourcesForApplication(ApplicationPackageManager.java:2171)
+                                                                                                    	at android.app.ApplicationPackageManager.getText(ApplicationPackageManager.java:2514)
+                                                                                                    	at android.content.pm.PackageItemInfo.loadUnsafeLabel(PackageItemInfo.java:237)
+                                                                                                    	at android.content.pm.PackageItemInfo.loadSafeLabel(PackageItemInfo.java:273)
+                                                                                                    	at android.content.pm.PackageItemInfo.loadSafeLabel(PackageItemInfo.java:256)
+                                                                                                    	at com.android.packageinstaller.v2.ui.UninstallLaunch$onCreate$1.onChanged(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:104)
+                                                                                                    	at androidx.lifecycle.MutableLiveData.considerNotify(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:30)
+                                                                                                    	at androidx.lifecycle.MutableLiveData.dispatchingValue(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:63)
+                                                                                                    	at androidx.lifecycle.MutableLiveData.setValue(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:15)
+                                                                                                    	at com.android.packageinstaller.v2.viewmodel.UninstallViewModel$initiateUninstall$1.onChanged(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:9)
+                                                                                                    	at androidx.lifecycle.MediatorLiveData$Source.onChanged(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:13)
+                                                                                                    	at androidx.lifecycle.MutableLiveData.considerNotify(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:30)
+                                                                                                    	at androidx.lifecycle.MutableLiveData.dispatchingValue(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:63)
+                                                                                                    	at androidx.lifecycle.MutableLiveData.setValue(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:15)
+                                                                                                    	at com.android.packageinstaller.v2.model.UninstallRepository.handleUninstallResult$default(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:76)
+                                                                                                    	at com.android.packageinstaller.v2.model.UninstallRepository$initiateUninstall$1.onResult(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:3)
+                                                                                                    	at com.android.packageinstaller.common.EventResultPersister.onEventReceived(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:144)
+                                                                                                    	at com.android.packageinstaller.common.UninstallEventReceiver.onReceive(go/retraceme 0c832715e423de7fd59596384e74cd406eacb3d9ea8972ada3c24f5397f86cea:5)
+                                                                                                    	at android.app.ActivityThread.handleReceiver(ActivityThread.java:5301)
+                                                                                                    	at android.app.ActivityThread.-$$Nest$mhandleReceiver(Unknown Source:0)
+                                                                                                    	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2715)
+                                                                                                    	at android.os.Handler.dispatchMessage(Handler.java:132)
+                                                                                                    	at android.os.Looper.dispatchMessage(Looper.java:333)
+2026-01-22 23:58:25.468 11218-11218 Zygote                  com.bongkru.app                      I  Process 11218 created for com.bongkru.app
+2026-01-22 23:58:25.468 11218-11218 com.bongkru.app         com.bongkru.app                      I  Late-enabling -Xcheck:jni
+2026-01-22 23:58:25.552 11218-11218 com.bongkru.app         com.bongkru.app                      I  Using CollectorTypeCMC GC.
+2026-01-22 23:58:25.560 11218-11218 com.bongkru.app         com.bongkru.app                      W  Unexpected CPU variant for x86: x86_64.
+                                                                                                    Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+2026-01-22 23:58:25.839 11218-11218 nativeloader            com.bongkru.app                      D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2026-01-22 23:58:26.067 11218-11218 nativeloader            com.bongkru.app                      D  Configuring clns-9 for other apk /data/app/~~Io9NBdgXUinBauWKg1XYPA==/com.bongkru.app-62UAs5pYbANGCBAblLwLMA==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~Io9NBdgXUinBauWKg1XYPA==/com.bongkru.app-62UAs5pYbANGCBAblLwLMA==/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.bongkru.app
+2026-01-22 23:58:26.072 11218-11218 CompatChangeReporter    com.bongkru.app                      D  Compat change id reported: 202956589; UID 10229; state: ENABLED
+2026-01-22 23:58:26.092 11218-11218 GraphicsEnvironment     com.bongkru.app                      V  Currently set values for:
+2026-01-22 23:58:26.092 11218-11218 GraphicsEnvironment     com.bongkru.app                      V    angle_gl_driver_selection_pkgs=[]
+2026-01-22 23:58:26.092 11218-11218 GraphicsEnvironment     com.bongkru.app                      V    angle_gl_driver_selection_values=[]
+2026-01-22 23:58:26.092 11218-11218 GraphicsEnvironment     com.bongkru.app                      V  com.bongkru.app is not listed in per-application setting
+2026-01-22 23:58:26.092 11218-11218 GraphicsEnvironment     com.bongkru.app                      V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+2026-01-22 23:58:26.092 11218-11218 GraphicsEnvironment     com.bongkru.app                      V  No special selections for ANGLE, returning default driver choice
+2026-01-22 23:58:26.092 11218-11218 GraphicsEnvironment     com.bongkru.app                      V  Neither updatable production driver nor prerelease driver is supported.
+2026-01-22 23:58:26.152 11218-11238 DisplayManager          com.bongkru.app                      I  Choreographer implicitly registered for the refresh rate.
+2026-01-22 23:58:26.207 11218-11218 DesktopExperienceFlags  com.bongkru.app                      D  Toggle override initialized to: false
+2026-01-22 23:58:26.224 11218-11238 GFXSTREAM               com.bongkru.app                      I  [eglDisplay.cpp(297)] Opening libGLESv1_CM_emulation.so
+2026-01-22 23:58:26.225 11218-11238 GFXSTREAM               com.bongkru.app                      I  [eglDisplay.cpp(297)] Opening libGLESv2_emulation.so
+2026-01-22 23:58:26.234 11218-11238 HWUI                    com.bongkru.app                      W  Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+2026-01-22 23:58:26.235 11218-11238 HWUI                    com.bongkru.app                      W  Failed to initialize 101010-2 format, error = EGL_SUCCESS
+2026-01-22 23:58:26.236 11218-11218 AppCompatDelegate       com.bongkru.app                      D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
+2026-01-22 23:58:26.252 11218-11218 ashmem                  com.bongkru.app                      E  Pinning is deprecated since Android Q. Please use trim or other methods.
+2026-01-22 23:58:26.337 11218-11218 CompatChangeReporter    com.bongkru.app                      D  Compat change id reported: 309578419; UID 10229; state: ENABLED
+2026-01-22 23:58:26.337 11218-11218 DesktopModeFlags        com.bongkru.app                      D  Toggle override initialized to: OVERRIDE_UNSET
+2026-01-22 23:58:26.370 11218-11218 com.bongkru.app         com.bongkru.app                      I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app, TargetSdkVersion=35) using reflection: allowed
+2026-01-22 23:58:26.386 11218-11218 WebViewFactory          com.bongkru.app                      I  Loading com.google.android.webview version 134.0.6998.135 (code 699813538)
+2026-01-22 23:58:26.391 11218-11218 ResourcesManager        com.bongkru.app                      V  The following library key has been added: ResourcesKey{ mHash=7a19570d mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~Ijiz09UI15mivNRowp2m6g==/com.google.android.webview-WPHjYnLHrkQHcFYTjb58gw==/WebViewGoogle.apk,/data/app/~~AVOKyNcddWERoNdfT9fnAA==/com.google.android.trichromelibrary_699813538-xghKEHCRXSCBXenWfLycMQ==/TrichromeLibrary.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
+2026-01-22 23:58:26.393 11218-11218 com.bongkru.app         com.bongkru.app                      W  Failed to find entry 'classes.dex': Entry not found
+2026-01-22 23:58:26.394 11218-11218 nativeloader            com.bongkru.app                      D  Configuring clns-10 for other apk /data/app/~~AVOKyNcddWERoNdfT9fnAA==/com.google.android.trichromelibrary_699813538-xghKEHCRXSCBXenWfLycMQ==/TrichromeLibrary.apk. target_sdk_version=35, uses_libraries=ALL, library_path=/data/app/~~Ijiz09UI15mivNRowp2m6g==/com.google.android.webview-WPHjYnLHrkQHcFYTjb58gw==/lib/x86_64:/data/app/~~Ijiz09UI15mivNRowp2m6g==/com.google.android.webview-WPHjYnLHrkQHcFYTjb58gw==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~AVOKyNcddWERoNdfT9fnAA==/com.google.android.trichromelibrary_699813538-xghKEHCRXSCBXenWfLycMQ==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+2026-01-22 23:58:26.396 11218-11218 ApplicationLoaders      com.bongkru.app                      D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2026-01-22 23:58:26.401 11218-11218 nativeloader            com.bongkru.app                      D  Configuring clns-11 for other apk /data/app/~~Ijiz09UI15mivNRowp2m6g==/com.google.android.webview-WPHjYnLHrkQHcFYTjb58gw==/WebViewGoogle.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~Ijiz09UI15mivNRowp2m6g==/com.google.android.webview-WPHjYnLHrkQHcFYTjb58gw==/lib/x86_64:/data/app/~~Ijiz09UI15mivNRowp2m6g==/com.google.android.webview-WPHjYnLHrkQHcFYTjb58gw==/WebViewGoogle.apk!/lib/x86_64:/data/app/~~AVOKyNcddWERoNdfT9fnAA==/com.google.android.trichromelibrary_699813538-xghKEHCRXSCBXenWfLycMQ==/TrichromeLibrary.apk!/lib/x86_64, permitted_path=/data:/mnt/expand
+2026-01-22 23:58:26.452 11218-11218 cr_WVCFactoryProvider   com.bongkru.app                      I  version=134.0.6998.135 (699813538) minSdkVersion=29 isBundle=false multiprocess=true packageId=2
+2026-01-22 23:58:26.471 11218-11218 nativeloader            com.bongkru.app                      D  Load /data/app/~~AVOKyNcddWERoNdfT9fnAA==/com.google.android.trichromelibrary_699813538-xghKEHCRXSCBXenWfLycMQ==/TrichromeLibrary.apk!/lib/x86_64/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~Ijiz09UI15mivNRowp2m6g==/com.google.android.webview-WPHjYnLHrkQHcFYTjb58gw==/WebViewGoogle.apk): ok
+2026-01-22 23:58:26.476 11218-11218 nativeloader            com.bongkru.app                      D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~Ijiz09UI15mivNRowp2m6g==/com.google.android.webview-WPHjYnLHrkQHcFYTjb58gw==/WebViewGoogle.apk): ok
+2026-01-22 23:58:26.495 11218-11244 chromium                com.bongkru.app                      I  [0122/145826.486114:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
+2026-01-22 23:58:26.496 11218-11244 chromium                com.bongkru.app                      I  [INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
+2026-01-22 23:58:26.498 11218-11218 cr_LibraryLoader        com.bongkru.app                      I  Successfully loaded native library
+2026-01-22 23:58:26.499 11218-11218 cr_CachingUmaRecorder   com.bongkru.app                      I  Flushed 6 samples from 6 histograms, 0 samples were dropped.
+2026-01-22 23:58:26.507 11218-11218 cr_CombinedPProvider    com.bongkru.app                      I  #registerProvider() provider:WV.I8@16b8894 isPolicyCacheEnabled:false policyProvidersSize:0
+2026-01-22 23:58:26.509 11218-11218 cr_PolicyProvider       com.bongkru.app                      I  #setManagerAndSource() 0
+2026-01-22 23:58:26.577 11218-11218 cr_CombinedPProvider    com.bongkru.app                      I  #linkNativeInternal() 1
+2026-01-22 23:58:26.578 11218-11218 cr_AppResProvider       com.bongkru.app                      I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+2026-01-22 23:58:26.578 11218-11218 cr_PolicyProvider       com.bongkru.app                      I  #notifySettingsAvailable() 0
+2026-01-22 23:58:26.578 11218-11218 cr_CombinedPProvider    com.bongkru.app                      I  #onSettingsAvailable() 0
+2026-01-22 23:58:26.578 11218-11218 cr_CombinedPProvider    com.bongkru.app                      I  #flushPolicies()
+2026-01-22 23:58:26.630 11218-11259 chromium                com.bongkru.app                      W  [WARNING:dns_config_service_android.cc(81)] Failed to read DnsConfig.
+2026-01-22 23:58:26.700 11218-11269 chromium                com.bongkru.app                      E  [ERROR:simple_index_file.cc(304)] Could not create a directory to hold the index file
+2026-01-22 23:58:26.778 11218-11218 Capacitor               com.bongkru.app                      D  Starting BridgeActivity
+2026-01-22 23:58:26.822 11218-11218 Capacitor               com.bongkru.app                      D  Registering plugin instance: CapacitorCookies
+2026-01-22 23:58:26.829 11218-11218 Capacitor               com.bongkru.app                      D  Registering plugin instance: WebView
+2026-01-22 23:58:26.831 11218-11218 Capacitor               com.bongkru.app                      D  Registering plugin instance: CapacitorHttp
+2026-01-22 23:58:26.855 11218-11218 Capacitor               com.bongkru.app                      W  Unable to read file at path public/plugins
+2026-01-22 23:58:26.861 11218-11218 Capacitor               com.bongkru.app                      D  Loading app at https://localhost
+2026-01-22 23:58:26.901 11218-11266 cr_media                com.bongkru.app                      W  BLUETOOTH_CONNECT permission is missing.
+2026-01-22 23:58:26.901 11218-11266 cr_media                com.bongkru.app                      W  getBluetoothAdapter() requires BLUETOOTH permission
+2026-01-22 23:58:26.901 11218-11266 cr_media                com.bongkru.app                      W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+2026-01-22 23:58:26.942 11218-11281 libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.log"
+2026-01-22 23:58:26.943 11218-11281 libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.log.file"
+2026-01-22 23:58:26.943 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.943 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.961 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.961 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.963 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.964 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.965 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.965 11218-11218 Capacitor               com.bongkru.app                      D  App started
+2026-01-22 23:58:26.965 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.967 11218-11218 Capacitor               com.bongkru.app                      D  App resumed
+2026-01-22 23:58:26.967 11218-11281 libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
+2026-01-22 23:58:26.967 11218-11281 libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.gallium.print.optio"
+2026-01-22 23:58:26.967 11218-11281 libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.vk.trace.frame"
+2026-01-22 23:58:26.982 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.984 11218-11281 libc                    com.bongkru.app                      W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
+2026-01-22 23:58:26.984 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:26.984 11218-11281 MESA                    com.bongkru.app                      E  Failed to open rendernode: No such file or directory
+2026-01-22 23:58:27.011 11218-11218 CompatChangeReporter    com.bongkru.app                      D  Compat change id reported: 349153669; UID 10229; state: ENABLED
+2026-01-22 23:58:27.015 11218-11218 HWUI                    com.bongkru.app                      W  Unknown dataspace 0
+2026-01-22 23:58:27.102 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/
+2026-01-22 23:58:27.131 11218-11281 chromium                com.bongkru.app                      W  [WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+2026-01-22 23:58:27.157 11218-11297 CameraManagerGlobal     com.bongkru.app                      I  Connecting to camera service
+2026-01-22 23:58:27.224 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-BWmK4Btc.js
+2026-01-22 23:58:27.231 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-pFJNKuGF.css
+2026-01-22 23:58:27.288 11218-11218 VRI[MainActivity]       com.bongkru.app                      D  WindowInsets changed: 1080x2400 statusBars:[0,63,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,63,0,84] 
+2026-01-22 23:58:27.308 11218-11218 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@2fcf7cf
+2026-01-22 23:58:27.558 11218-11319 HWUI                    com.bongkru.app                      I  Using FreeType backend (prop=Auto)
+2026-01-22 23:58:27.573 11218-11218 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-22 23:58:27.573 11218-11218 ImeTracker              com.bongkru.app                      I  com.bongkru.app:fe5517fa: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-22 23:58:27.944 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/AppBar-BlCF2CjV.js
+2026-01-22 23:58:27.945 11218-11269 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useGoBack-DPZ8fRpL.js
+2026-01-22 23:58:27.947 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/swiper-C8ec8cn4.css
+2026-01-22 23:58:27.947 11218-11271 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/swiper-6QuoxxA2.js
+2026-01-22 23:58:27.947 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/homeDataApi-Dejf0-oc.js
+2026-01-22 23:58:27.948 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/HomePage-CuG9EwQM.js
+2026-01-22 23:58:27.948 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useQuery-Dey9Z5ex.js
+2026-01-22 23:58:27.949 11218-11271 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProductGridContent-BJG4wV5O.js
+2026-01-22 23:58:27.950 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useProductListCache-Xy9JWdE_.js
+2026-01-22 23:58:27.950 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useProductCategories-Bl9shZlO.js
+2026-01-22 23:58:27.954 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/apiConfig-F8kvr33_.js
+2026-01-22 23:58:27.956 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/apiClient-CgUsjsOW.js
+2026-01-22 23:58:27.964 11218-11271 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/HomePage-C3brr9im.css
+2026-01-22 23:58:27.964 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useProductListCache-TMyePU6E.css
+2026-01-22 23:58:27.998 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/favicon.svg
+2026-01-22 23:58:28.013 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/favicon.svg
+2026-01-22 23:58:28.185 11218-11226 com.bongkru.app         com.bongkru.app                      I  Compiler allocated 5087KB to compile void android.view.ViewRootImpl.performTraversals()
+2026-01-22 23:58:28.261 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/seasonal-seafood-eE7VFYKt.svg
+2026-01-22 23:58:28.268 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/prepared-seafood-CeRVZzZC.svg
+2026-01-22 23:58:28.268 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/express-seafood-CNp8bfSS.svg
+2026-01-22 23:58:28.272 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/pickled-seafood-Bmp7x-y4.svg
+2026-01-22 23:58:28.553 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-CL0xqV2o.js
+2026-01-22 23:58:28.555 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-s7KJtzNR.css
+2026-01-22 23:58:28.563 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/Skeleton-CEg4JMYC.css
+2026-01-22 23:58:28.573 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-FEO6z6oo.css
+2026-01-22 23:58:28.574 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-BuB_rXT-.js
+2026-01-22 23:58:28.574 11218-11269 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-C-UEbXLL.js
+2026-01-22 23:58:28.575 11218-11269 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-CFf9TFG9.css
+2026-01-22 23:58:28.575 11218-11271 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ConfirmModal-CBrbh-6-.js
+2026-01-22 23:58:28.575 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/reviewApi-CZ-x7pw7.js
+2026-01-22 23:58:28.576 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/productDetailApi-Dd3QiIkO.js
+2026-01-22 23:58:28.576 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/Skeleton-CCMrJvVy.js
+2026-01-22 23:58:28.603 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CartPage-DKYBH9xw.js
+2026-01-22 23:58:28.610 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useMutation-BM_eRMR0.js
+2026-01-22 23:58:28.618 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/addressApi-BqHKfNkS.js
+2026-01-22 23:58:28.618 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CartPage-DGzSqF1R.css
+2026-01-22 23:58:28.619 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-C89wB0a_.js
+2026-01-22 23:58:28.625 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/useSignupFormState-CIEVIiJ8.js
+2026-01-22 23:58:28.635 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-DjLq30-1.css
+2026-01-22 23:58:28.638 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-CLdecr8g.js
+2026-01-22 23:58:28.645 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfilePasswordVerifyPage-Cnd_hefp.js
+2026-01-22 23:58:28.646 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfileEditPage-B7w-Zz-O.css
+2026-01-22 23:58:28.647 11218-11271 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfilePage-Dn8gvI31.css
+2026-01-22 23:58:28.647 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfilePasswordVerifyPage-C_UKdKNm.css
+2026-01-22 23:58:28.647 11218-11269 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfileEditPage-BeecyTfs.js
+2026-01-22 23:58:28.648 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfilePage-lxEUhEe4.js
+2026-01-22 23:58:28.648 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/profileApi-Do4WZnrm.js
+2026-01-22 23:58:28.658 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfileWithdrawPage-DJLg-w3v.js
+2026-01-22 23:58:28.661 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/ProfileWithdrawPage-COIMnVmU.css
+2026-01-22 23:58:31.081 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index--0p8NK8D.js
+2026-01-22 23:58:31.082 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-DezT_tvO.css
+2026-01-22 23:58:31.084 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/OrderHistoryPage-CRHO33Ln.js
+2026-01-22 23:58:31.084 11218-11260 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/OrderHistoryView-6Ew82iK5.css
+2026-01-22 23:58:31.084 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/OrderHistoryView-KgNIBQe6.js
+2026-01-22 23:58:31.086 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/OrderHistoryPage-DIgHaajS.css
+2026-01-22 23:58:31.086 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CheckoutPage-BM9a33yY.js
+2026-01-22 23:58:31.086 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/paymentApi-DMqQ-g_s.js
+2026-01-22 23:58:31.088 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CheckoutPage-DCcr-GLb.css
+2026-01-22 23:58:31.089 11218-11259 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CheckoutPage-D9uRz5YC.css
+2026-01-22 23:58:31.090 11218-11271 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-C-VSxo16.js
+2026-01-22 23:58:31.090 11218-11271 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-DrxNjgYM.css
+2026-01-22 23:58:31.091 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/CheckoutPage-CqUOijYG.js
+2026-01-22 23:58:31.094 11218-11258 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-qkq8dgnI.js
+2026-01-22 23:58:31.095 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/index-Cw7DTvnu.css
+2026-01-22 23:58:31.566 11218-11331 ProfileInstaller        com.bongkru.app                      D  Installing profile for com.bongkru.app
+2026-01-22 23:58:35.496 11218-11257 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/api/products/a0000001-0001-0001-0001-000000000001
+2026-01-22 23:58:35.509 11218-11218 Capacitor/Console       com.bongkru.app                      E  File: https://localhost/assets/index-BWmK4Btc.js - Line 11 - Msg: Failed to open quick cart: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
