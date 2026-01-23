@@ -1,8 +1,10 @@
-import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { App as CapacitorApp, URLOpenListenerEvent } from '@capacitor/app';
 import { MainLayout } from "./layouts";
 import { ProtectedRoute, ProtectedAdminRoute, SplashScreen } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
+import { IS_CAPACITOR, CAPACITOR_APP_SCHEME } from "./shared/config/apiConfig";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
@@ -234,7 +236,51 @@ function PageLoader() {
 
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  useEffect(() => {
+    if (!IS_CAPACITOR) return;
+
+    const handleAppUrlOpen = (event: URLOpenListenerEvent) => {
+      const url = event.url;
+      console.log('[DeepLink] Received URL:', url);
+      
+      try {
+        let path = '';
+        let queryString = '';
+        
+        const schemePrefix = `${CAPACITOR_APP_SCHEME}://`;
+        if (url.startsWith(schemePrefix)) {
+          const afterScheme = url.substring(schemePrefix.length);
+          const queryIndex = afterScheme.indexOf('?');
+          if (queryIndex > -1) {
+            path = '/' + afterScheme.substring(0, queryIndex);
+            queryString = afterScheme.substring(queryIndex);
+          } else {
+            path = '/' + afterScheme;
+          }
+        } else if (url.startsWith('https://') || url.startsWith('http://')) {
+          const urlObj = new URL(url);
+          path = urlObj.pathname;
+          queryString = urlObj.search;
+        }
+        
+        if (path) {
+          console.log('[DeepLink] Navigating to:', path + queryString);
+          navigate(path + queryString, { replace: true });
+        }
+      } catch (error) {
+        console.error('[DeepLink] Error parsing URL:', error);
+      }
+    };
+
+    const listener = CapacitorApp.addListener('appUrlOpen', handleAppUrlOpen);
+
+    return () => {
+      listener.then(l => l.remove());
+    };
+  }, [navigate]);
 
   const renderContent = () => (
     <Suspense fallback={<PageLoader />}>

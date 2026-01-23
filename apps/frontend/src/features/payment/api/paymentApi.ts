@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '@/shared/config/apiConfig';
+import { API_BASE_URL, IS_CAPACITOR, CAPACITOR_APP_SCHEME } from '@/shared/config/apiConfig';
 
 export interface CouponDto {
   id: number;
@@ -61,7 +61,11 @@ interface PreparePaymentResponse {
 }
 
 function getCallbackUrl(): string {
-  return `${API_BASE_URL}/payment/callback`;
+  const baseCallbackUrl = `${API_BASE_URL}/payment/callback`;
+  if (IS_CAPACITOR) {
+    return `${baseCallbackUrl}?appScheme=${CAPACITOR_APP_SCHEME}`;
+  }
+  return baseCallbackUrl;
 }
 
 export async function fetchMyCoupons(): Promise<CouponDto[]> {

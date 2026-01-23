@@ -51,3 +51,7 @@ function getApiBaseUrl(): string {
 }
 
 export const API_BASE_URL = getApiBaseUrl();
+
+export const IS_CAPACITOR = isCapacitorEnvironment();
+
+export const CAPACITOR_APP_SCHEME = 'bongseonjang';
