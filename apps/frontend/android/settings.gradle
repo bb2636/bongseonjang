@@ -5,4 +5,8 @@ project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor
 include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('./capacitor-android')
 
-// apply from: 'capacitor.settings.gradle' // This line is commented out or removed.
+include ':capacitor-app'
+project(':capacitor-app').projectDir = new File('./capacitor-app')
+
+include ':capacitor-browser'
+project(':capacitor-browser').projectDir = new File('./capacitor-browser')
