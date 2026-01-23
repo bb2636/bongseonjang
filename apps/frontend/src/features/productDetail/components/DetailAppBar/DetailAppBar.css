@@ -10,6 +10,10 @@
   background: #ffffff;
   z-index: 100;
   border-bottom: 1px solid #f0f0f0;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .detail-app-bar__back,
