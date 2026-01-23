@@ -44,21 +44,21 @@ export default function SearchView({ state, actions }: SearchViewProps) {
                 전체 삭제
               </button>
             </div>
-            <div className="search-view__recent-list">
+            <div className="search-view__recent-chips">
               {state.recentSearches.map((term) => (
-                <div key={term} className="search-view__recent-item">
+                <div key={term} className="search-view__recent-chip">
                   <button 
-                    className="search-view__recent-term"
+                    className="search-view__recent-chip-term"
                     onClick={() => actions.onRecentSearchClick(term)}
                   >
                     {term}
                   </button>
                   <button 
-                    className="search-view__recent-delete"
+                    className="search-view__recent-chip-delete"
                     onClick={() => actions.onRecentSearchDelete(term)}
                   >
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M4 4L12 12M12 4L4 12" stroke="rgba(12, 12, 12, 0.5)" strokeWidth="1.5" strokeLinecap="round"/>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M3 3L9 9M9 3L3 9" stroke="rgba(12, 12, 12, 0.5)" strokeWidth="1.5" strokeLinecap="round"/>
                     </svg>
                   </button>
                 </div>
