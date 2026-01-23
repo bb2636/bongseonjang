@@ -1,13 +1,14 @@
 import type { EventDto } from '../domain/Event.js';
 import { bannerRepository } from '../../banner/repository/bannerRepository.js';
 import type { Banner } from '../../../entity/Banner.js';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 function transformBannerToEventDto(banner: Banner): EventDto {
   return {
     id: String(banner.id),
     title: banner.title ?? '',
     description: banner.description ?? undefined,
-    imageUrl: banner.imageUrl,
+    imageUrl: toAbsoluteImageUrl(banner.imageUrl),
     linkUrl: banner.linkUrl ?? undefined,
     startDate: banner.startedAt?.toISOString() ?? undefined,
     endDate: banner.endedAt?.toISOString() ?? undefined,
