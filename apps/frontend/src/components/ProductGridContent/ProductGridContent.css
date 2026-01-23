@@ -5,8 +5,8 @@
 .product-grid-content__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  padding: 16px;
+  gap: 10px;
+  padding: 12px;
 }
 
 .product-grid-content__loading {
