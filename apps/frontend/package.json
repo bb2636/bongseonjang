@@ -8,12 +8,15 @@
     "build": "vite build",
     "build:capacitor": "vite build --mode capacitor",
     "cap:build": "vite build --mode capacitor && npx cap sync android && node scripts/fix-capacitor-paths.js",
+    "cap:build:ios": "vite build --mode capacitor && npx cap sync ios",
     "cap:open": "npx cap open android",
+    "cap:open:ios": "npx cap open ios",
     "preview": "vite preview"
   },
   "dependencies": {
     "@bongkru/contract": "*",
     "@capacitor/android": "^7.4.4",
+    "@capacitor/ios": "^7.4.4",
     "@capacitor/app": "^7.0.1",
     "@capacitor/browser": "^7.0.1",
     "@capacitor/cli": "^7.4.4",
