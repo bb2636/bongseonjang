@@ -125,6 +125,16 @@ export default function BottomNav({ onHomeClick }: BottomNavProps) {
     if (navItem) {
       if (activeItem === item && location.pathname === navItem.path) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        const root = document.getElementById('root');
+        if (root) {
+          root.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        const mainContent = document.querySelector('.main-layout__content');
+        if (mainContent) {
+          mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       } else {
         navigate(navItem.path);
       }

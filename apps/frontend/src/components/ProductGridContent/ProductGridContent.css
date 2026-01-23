@@ -10,13 +10,13 @@
 }
 
 .product-grid-content__loading {
-  padding: 16px;
+  padding: 12px;
 }
 
 .product-grid-content__skeleton-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 10px;
 }
 
 .product-grid-content__skeleton-card {
