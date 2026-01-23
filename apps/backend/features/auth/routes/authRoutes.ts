@@ -14,6 +14,7 @@ router.get('/me', authMiddleware, (req, res) => authController.me(req, res));
 router.post('/social/:provider', (req, res) => authController.socialLogin(req, res));
 router.post('/social/complete', (req, res) => authController.completeSocialLogin(req, res));
 router.post('/apple/callback', (req, res) => authController.appleCallback(req, res));
+router.get('/oauth/:provider/callback', (req, res) => authController.oauthCallback(req, res));
 router.post('/social/complete-profile', authMiddleware, (req, res) => authController.completeSocialProfile(req, res));
 
 router.get('/social/accounts', authMiddleware, (req, res) => authController.getLinkedAccounts(req, res));

@@ -341,6 +341,7 @@ export class AuthController {
     try {
       const { code, id_token, state, user } = req.body;
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+      const appScheme = (req.query.appScheme as string) || (req.body.appScheme as string);
 
       let userName: string | undefined;
       if (user) {
@@ -362,11 +363,53 @@ export class AuthController {
       if (state) params.set('state', state);
       if (userName) params.set('user_name', userName);
 
-      res.redirect(`${baseUrl}/oauth/apple/callback?${params.toString()}`);
+      if (appScheme) {
+        res.redirect(`${appScheme}://oauth/apple/callback?${params.toString()}`);
+      } else {
+        res.redirect(`${baseUrl}/oauth/apple/callback?${params.toString()}`);
+      }
     } catch (error) {
       console.error('Apple callback error:', error);
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
-      res.redirect(`${baseUrl}/oauth/apple/callback?error=callback_failed`);
+      const appScheme = (req.query.appScheme as string) || (req.body.appScheme as string);
+      if (appScheme) {
+        res.redirect(`${appScheme}://oauth/apple/callback?error=callback_failed`);
+      } else {
+        res.redirect(`${baseUrl}/oauth/apple/callback?error=callback_failed`);
+      }
+    }
+  }
+
+  async oauthCallback(req: Request, res: Response): Promise<void> {
+    try {
+      const provider = req.params.provider as string;
+      const { code, state, error: oauthError } = req.query;
+      const appScheme = req.query.appScheme as string;
+      const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+
+      const params = new URLSearchParams();
+      if (code) params.set('code', code as string);
+      if (state) params.set('state', state as string);
+      if (oauthError) params.set('error', oauthError as string);
+
+      const callbackPath = `/oauth/${provider}/callback`;
+      
+      if (appScheme) {
+        res.redirect(`${appScheme}:/${callbackPath}?${params.toString()}`);
+      } else {
+        res.redirect(`${baseUrl}${callbackPath}?${params.toString()}`);
+      }
+    } catch (error) {
+      console.error('OAuth callback error:', error);
+      const provider = req.params.provider || 'unknown';
+      const appScheme = req.query.appScheme as string;
+      const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+      
+      if (appScheme) {
+        res.redirect(`${appScheme}://oauth/${provider}/callback?error=callback_failed`);
+      } else {
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=callback_failed`);
+      }
     }
   }
 }
