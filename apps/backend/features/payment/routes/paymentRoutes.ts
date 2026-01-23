@@ -16,6 +16,7 @@ import { ProductExposureCategory } from '../../../entity/ProductExposureCategory
 import { ProductCategory } from '../../../entity/ProductCategory';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl';
 
 const BRAND_CATEGORY_MAPPING: Record<string, string> = {
   '바담은': '바담은 제품',
@@ -383,7 +384,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
         orderId: order.id,
         productId: item.productId,
         productName: item.product?.name ?? '',
-        productImageUrl: thumbnailMap.get(item.productId) || null,
+        productImageUrl: toAbsoluteImageUrl(thumbnailMap.get(item.productId)) || null,
         optionName: optionDisplay,
         productOptionId: item.productOptionId || null,
         quantity: item.quantity,
@@ -801,7 +802,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
     const thumbnail = await productImageRepository.findOne({
       where: { productId, isThumbnail: true },
     });
-    const productImageUrl = thumbnail?.imageUrl || null;
+    const productImageUrl = toAbsoluteImageUrl(thumbnail?.imageUrl) || null;
 
     let totalProductPrice = 0;
     const orderItemsData: Array<{
@@ -1139,7 +1140,7 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
         orderId: order.id,
         productId: item.productId,
         productName: item.productName,
-        productImageUrl: item.thumbnailUrl || null,
+        productImageUrl: toAbsoluteImageUrl(item.thumbnailUrl) || null,
         optionName: item.optionName,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
@@ -1254,7 +1255,7 @@ router.post('/guest/lookup', async (req: Request, res: Response) => {
       items: order.items.map(item => ({
         productId: item.productId,
         productName: item.productName,
-        productImageUrl: item.productImageUrl,
+        productImageUrl: toAbsoluteImageUrl(item.productImageUrl),
         optionName: item.optionName,
         quantity: item.quantity,
         unitPrice: item.unitPrice,

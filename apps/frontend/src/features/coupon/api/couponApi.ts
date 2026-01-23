@@ -1,6 +1,7 @@
 import { CouponListResponse } from '../types/coupon';
+import { API_BASE_URL } from '@/shared/config/apiConfig';
 
-const API_BASE = '/api/coupons';
+const API_BASE = `${API_BASE_URL}/coupons`;
 
 function getAuthHeaders(): HeadersInit {
   const token = localStorage.getItem('user_token');

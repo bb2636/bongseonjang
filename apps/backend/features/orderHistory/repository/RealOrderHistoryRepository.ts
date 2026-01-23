@@ -13,6 +13,7 @@ import { Payment, PaymentMethod } from '../../../entity/Payment';
 import { In } from 'typeorm';
 import { Shipment, ShipmentStatus } from '../../../entity/Shipment';
 import { Product } from '../../../entity/Product';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl';
 
 const STATUS_FILTER_MAP: Record<OrderStatusFilter, OrderStatus[]> = {
   all: ['pending', 'paid', 'preparing', 'shipping', 'delivered', 'cancelled', 'refund_requested', 'refunded'],
@@ -127,7 +128,7 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
         id: item.id,
         productId: item.productId,
         productName: item.productName,
-        productImageUrl: item.productImageUrl || 'https://placehold.co/62x62/f5f5f5/999999?text=Product',
+        productImageUrl: toAbsoluteImageUrl(item.productImageUrl) || 'https://placehold.co/62x62/f5f5f5/999999?text=Product',
         optionName: item.optionName,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
@@ -293,7 +294,7 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
         id: item.id,
         productId: item.productId,
         productName: item.productName,
-        productImageUrl: item.productImageUrl || 'https://placehold.co/62x62/f5f5f5/999999?text=Product',
+        productImageUrl: toAbsoluteImageUrl(item.productImageUrl) || 'https://placehold.co/62x62/f5f5f5/999999?text=Product',
         optionName: item.optionName,
         quantity: item.quantity,
         unitPrice: item.unitPrice,

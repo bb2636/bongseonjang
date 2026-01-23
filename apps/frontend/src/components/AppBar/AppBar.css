@@ -3,9 +3,9 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: calc(16px + var(--safe-area-top, 0)) 8px 8px 16px;
+  padding: calc(8px + var(--safe-area-top, 0)) 8px 4px 12px;
   width: 100%;
-  min-height: 64px;
+  min-height: 48px;
   background: #FFFFFF;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -33,10 +33,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   padding: 0;
   background: transparent;
   border: none;
@@ -75,10 +75,10 @@
   justify-content: center;
   align-items: center;
   padding: 10px;
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  min-height: 42px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -125,7 +125,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: calc(4px + var(--safe-area-top, 0px)) 8px 4px 8px;
+  padding: calc(4px + var(--safe-area-top, 0px)) 8px 2px 8px;
   position: fixed;
   top: 0;
   left: 0;
@@ -136,12 +136,12 @@
 }
 
 .app-bar-spacer {
-  height: calc(88px + var(--safe-area-top, 0px));
+  height: calc(60px + var(--safe-area-top, 0px));
   flex-shrink: 0;
 }
 
 .app-bar-spacer--subpage {
-  height: calc(50px + var(--safe-area-top, 0px));
+  height: calc(44px + var(--safe-area-top, 0px));
   flex-shrink: 0;
 }
 
@@ -159,9 +159,9 @@
 }
 
 .app-bar__placeholder {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  min-height: 42px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   flex-shrink: 0;
 }
