@@ -17,10 +17,10 @@ export default function LoginView({ login }: LoginViewProps) {
   return (
     <div className="login-container">
       <header className="login-header">
-        <div className="login-header-spacer" />
         <button className="login-browse-button" onClick={login.onBrowse}>
           둘러보기
         </button>
+        <div className="login-header-spacer" />
       </header>
 
       <main className="login-content">
