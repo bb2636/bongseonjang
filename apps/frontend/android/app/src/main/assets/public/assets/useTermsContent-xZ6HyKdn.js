@@ -1,0 +1,1 @@
+import{r as a}from"./index-Dn-Cl19j.js";import{f as o}from"./termsApi-CRjuAW1r.js";function u(s="SERVICE"){const[n,r]=a.useState({terms:null,isLoading:!0});return a.useEffect(()=>{let e=!0;return o(s).then(t=>{e&&r({terms:t,isLoading:!1})}).catch(t=>{e&&r({terms:null,isLoading:!1,error:t.message||"약관을 불러오지 못했습니다."})}),()=>{e=!1}},[s]),n}export{u};
