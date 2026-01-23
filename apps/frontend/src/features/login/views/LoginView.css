@@ -4,6 +4,7 @@
   min-height: 100vh;
   background: #ffffff;
   font-family: var(--font-family-base);
+  padding-top: var(--safe-area-top, env(safe-area-inset-top, 0px));
 }
 
 .login-header {

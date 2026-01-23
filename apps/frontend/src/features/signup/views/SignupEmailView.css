@@ -16,6 +16,7 @@
   background: #ffffff;
   font-family: var(--font-family-base);
   position: relative;
+  padding-top: var(--safe-area-top, env(safe-area-inset-top, 0px));
 }
 
 .signup-snackbar {
