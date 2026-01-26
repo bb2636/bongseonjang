@@ -1,6 +1,5 @@
-import { Browser } from '@capacitor/browser';
 import { InAppBrowser } from '@capgo/inappbrowser';
-import { IS_CAPACITOR, CAPACITOR_APP_SCHEME, API_BASE_URL, IS_IOS } from '@/shared/config/apiConfig';
+import { IS_CAPACITOR, CAPACITOR_APP_SCHEME, API_BASE_URL } from '@/shared/config/apiConfig';
 
 const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
 const KAKAO_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
@@ -195,22 +194,8 @@ export async function kakaoAuthorize(): Promise<OAuthResult | void> {
 
     const authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
     
-    if (IS_IOS) {
-      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/kakao/callback', 'kakao', state);
-      return result;
-    } else {
-      const androidRedirectUri = `${backendUrl}/api/auth/oauth/kakao/callback?appScheme=${CAPACITOR_APP_SCHEME}`;
-      const androidParams = new URLSearchParams({
-        client_id: KAKAO_REST_API_KEY || '',
-        redirect_uri: androidRedirectUri,
-        response_type: 'code',
-        scope: 'profile_nickname,profile_image,account_email',
-        state,
-      });
-      const androidAuthUrl = `https://kauth.kakao.com/oauth/authorize?${androidParams.toString()}`;
-      await Browser.open({ url: androidAuthUrl });
-      return;
-    }
+    const result = await openInAppBrowserForOAuth(authUrl, '/oauth/kakao/callback', 'kakao', state);
+    return result;
   }
 
   if (!initKakaoSdk()) {
@@ -307,21 +292,8 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
 
     const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
     
-    if (IS_IOS) {
-      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/naver/callback', 'naver', state);
-      return result;
-    } else {
-      const androidRedirectUri = `${backendUrl}/api/auth/oauth/naver/callback?appScheme=${CAPACITOR_APP_SCHEME}`;
-      const androidParams = new URLSearchParams({
-        client_id: NAVER_CLIENT_ID,
-        redirect_uri: androidRedirectUri,
-        response_type: 'code',
-        state,
-      });
-      const androidAuthUrl = `https://nid.naver.com/oauth2.0/authorize?${androidParams.toString()}`;
-      await Browser.open({ url: androidAuthUrl });
-      return;
-    }
+    const result = await openInAppBrowserForOAuth(authUrl, '/oauth/naver/callback', 'naver', state);
+    return result;
   }
 
   const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
@@ -370,24 +342,8 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
 
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
     
-    if (IS_IOS) {
-      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/google/callback', 'google', state);
-      return result;
-    } else {
-      const androidRedirectUri = `${backendUrl}/api/auth/oauth/google/callback?appScheme=${CAPACITOR_APP_SCHEME}`;
-      const androidParams = new URLSearchParams({
-        client_id: GOOGLE_CLIENT_ID,
-        redirect_uri: androidRedirectUri,
-        response_type: 'code',
-        scope: 'openid email profile',
-        state,
-        access_type: 'offline',
-        prompt: 'consent',
-      });
-      const androidAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?${androidParams.toString()}`;
-      await Browser.open({ url: androidAuthUrl });
-      return;
-    }
+    const result = await openInAppBrowserForOAuth(authUrl, '/oauth/google/callback', 'google', state);
+    return result;
   }
 
   const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/google/callback`;
@@ -415,34 +371,18 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
 
   if (IS_CAPACITOR) {
     const backendUrl = getBackendBaseUrl();
-    
-    if (IS_IOS) {
-      const redirectUri = `${backendUrl}/api/auth/apple/callback`;
-      const params = new URLSearchParams({
-        client_id: APPLE_CLIENT_ID,
-        redirect_uri: redirectUri,
-        response_type: 'code id_token',
-        scope: 'name email',
-        state,
-        response_mode: 'form_post',
-      });
-      const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
-      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/apple', 'apple', state);
-      return result;
-    } else {
-      const redirectUri = `${backendUrl}/api/auth/apple/callback?appScheme=${CAPACITOR_APP_SCHEME}`;
-      const params = new URLSearchParams({
-        client_id: APPLE_CLIENT_ID,
-        redirect_uri: redirectUri,
-        response_type: 'code id_token',
-        scope: 'name email',
-        state,
-        response_mode: 'form_post',
-      });
-      const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
-      await Browser.open({ url: authUrl });
-      return;
-    }
+    const redirectUri = `${backendUrl}/api/auth/apple/callback`;
+    const params = new URLSearchParams({
+      client_id: APPLE_CLIENT_ID,
+      redirect_uri: redirectUri,
+      response_type: 'code id_token',
+      scope: 'name email',
+      state,
+      response_mode: 'form_post',
+    });
+    const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
+    const result = await openInAppBrowserForOAuth(authUrl, '/oauth/apple', 'apple', state);
+    return result;
   }
 
   const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/api/auth/apple/callback`;
