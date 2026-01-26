@@ -57,21 +57,25 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
+  background-color: #ffffff;
+  overscroll-behavior: none;
 }
 
 body {
   font-family: var(--font-family-base);
   color: var(--color-text-primary);
-  background-color: var(--color-background);
+  background-color: #ffffff;
   line-height: 1.5;
   height: 100%;
   margin: 0;
   padding: 0;
+  overscroll-behavior: none;
 }
 
 #root {
   height: 100%;
   position: relative;
+  background-color: #ffffff;
 }
 
 a {

@@ -57,8 +57,9 @@ export default function GuestOrderLookupView({ guestOrderLookup }: GuestOrderLoo
           </span>
         </button>
         <h1 className="guest-order-header-title">비회원 주문 조회하기</h1>
-        <div className="guest-order-header-spacer" />
+        <div className="guest-order-header-placeholder" />
       </header>
+      <div className="guest-order-header-spacer" />
 
       <main className="guest-order-content">
         <div className="guest-order-form">
