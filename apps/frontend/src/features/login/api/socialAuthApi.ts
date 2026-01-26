@@ -166,7 +166,7 @@ export interface UserProfile {
 }
 
 export async function fetchUserProfile(token: string): Promise<UserProfile> {
-  const response = await fetch(`${API_BASE_URL}/user/profile`, {
+  const response = await fetch(`${API_BASE_URL}/profile`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

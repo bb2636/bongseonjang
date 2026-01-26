@@ -25,17 +25,68 @@ export interface OAuthResult {
   providerId?: string;
 }
 
+function storeOAuthState(provider: string, state: string): void {
+  try {
+    localStorage.setItem(`ios_oauth_state_${provider}`, state);
+  } catch (e) {
+    console.warn('Failed to store OAuth state:', e);
+  }
+}
+
+function validateAndClearOAuthState(provider: string, returnedState: string | null): boolean {
+  try {
+    const storedState = localStorage.getItem(`ios_oauth_state_${provider}`);
+    localStorage.removeItem(`ios_oauth_state_${provider}`);
+    
+    if (!storedState || !returnedState) {
+      console.warn('OAuth state validation: missing state');
+      return false;
+    }
+    
+    return storedState === returnedState;
+  } catch (e) {
+    console.warn('Failed to validate OAuth state:', e);
+    return false;
+  }
+}
+
+function isValidCallbackUrl(url: string, callbackPathPattern: string): boolean {
+  try {
+    const backendUrl = getBackendBaseUrl();
+    const allowedOrigins = [
+      new URL(backendUrl).origin,
+      SOCIAL_REDIRECT_BASE_URL ? new URL(SOCIAL_REDIRECT_BASE_URL).origin : null,
+    ].filter(Boolean);
+    
+    if (url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
+      return true;
+    }
+    
+    const urlObj = new URL(url);
+    const isAllowedOrigin = allowedOrigins.some(origin => urlObj.origin === origin);
+    const hasCallbackPath = urlObj.pathname.includes(callbackPathPattern);
+    
+    return isAllowedOrigin && hasCallbackPath;
+  } catch {
+    return false;
+  }
+}
+
 async function openInAppBrowserForOAuth(
   authUrl: string,
-  callbackPathPattern: string
+  callbackPathPattern: string,
+  provider: string,
+  expectedState: string
 ): Promise<OAuthResult> {
+  storeOAuthState(provider, expectedState);
+  
   return new Promise((resolve, reject) => {
     let resolved = false;
 
     const handleUrlChange = (event: { url: string }) => {
       const url = event.url;
       
-      if (url.includes(callbackPathPattern) || url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
+      if (isValidCallbackUrl(url, callbackPathPattern)) {
         if (resolved) return;
         resolved = true;
         
@@ -48,7 +99,14 @@ async function openInAppBrowserForOAuth(
           
           const error = params.get('error');
           if (error) {
+            localStorage.removeItem(`ios_oauth_state_${provider}`);
             resolve({ error });
+            return;
+          }
+          
+          const returnedState = params.get('state');
+          if (!validateAndClearOAuthState(provider, returnedState)) {
+            resolve({ error: 'state_mismatch' });
             return;
           }
           
@@ -64,6 +122,7 @@ async function openInAppBrowserForOAuth(
           
           resolve(result);
         } catch (e) {
+          localStorage.removeItem(`ios_oauth_state_${provider}`);
           reject(new Error('OAuth 응답 파싱 실패'));
         }
       }
@@ -73,6 +132,7 @@ async function openInAppBrowserForOAuth(
       if (!resolved) {
         resolved = true;
         InAppBrowser.removeAllListeners();
+        localStorage.removeItem(`ios_oauth_state_${provider}`);
         resolve({ error: 'cancelled' });
       }
     };
@@ -86,6 +146,7 @@ async function openInAppBrowserForOAuth(
       isPresentAfterPageLoad: true,
     }).catch((err) => {
       InAppBrowser.removeAllListeners();
+      localStorage.removeItem(`ios_oauth_state_${provider}`);
       reject(err);
     });
   });
@@ -135,7 +196,7 @@ export async function kakaoAuthorize(): Promise<OAuthResult | void> {
     const authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
     
     if (IS_IOS) {
-      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/kakao/callback');
+      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/kakao/callback', 'kakao', state);
       return result;
     } else {
       const androidRedirectUri = `${backendUrl}/api/auth/oauth/kakao/callback?appScheme=${CAPACITOR_APP_SCHEME}`;
@@ -247,7 +308,7 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
     const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
     
     if (IS_IOS) {
-      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/naver/callback');
+      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/naver/callback', 'naver', state);
       return result;
     } else {
       const androidRedirectUri = `${backendUrl}/api/auth/oauth/naver/callback?appScheme=${CAPACITOR_APP_SCHEME}`;
@@ -314,7 +375,7 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
     
     if (IS_IOS) {
-      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/google/callback');
+      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/google/callback', 'google', state);
       return result;
     } else {
       const androidRedirectUri = `${backendUrl}/api/auth/oauth/google/callback?appScheme=${CAPACITOR_APP_SCHEME}`;
@@ -370,7 +431,7 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
         response_mode: 'form_post',
       });
       const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
-      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/apple');
+      const result = await openInAppBrowserForOAuth(authUrl, '/oauth/apple', 'apple', state);
       return result;
     } else {
       const redirectUri = `${backendUrl}/api/auth/apple/callback?appScheme=${CAPACITOR_APP_SCHEME}`;

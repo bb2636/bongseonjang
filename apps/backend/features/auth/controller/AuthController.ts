@@ -390,6 +390,7 @@ export class AuthController {
       if (oauthError) {
         const params = new URLSearchParams();
         params.set('error', oauthError as string);
+        if (state) params.set('state', state as string);
         const callbackPath = `/oauth/${provider}/callback`;
         
         if (appScheme) {
@@ -410,13 +411,19 @@ export class AuthController {
       }
 
       if (!code) {
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=no_code`);
+        const params = new URLSearchParams();
+        params.set('error', 'no_code');
+        if (state) params.set('state', state as string);
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
         return;
       }
 
       const validProviders = ['kakao', 'naver', 'google'];
       if (!validProviders.includes(provider)) {
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=invalid_provider`);
+        const params = new URLSearchParams();
+        params.set('error', 'invalid_provider');
+        if (state) params.set('state', state as string);
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
         return;
       }
 
@@ -431,12 +438,18 @@ export class AuthController {
         }
       } catch (tokenError) {
         console.error('Token exchange error:', tokenError);
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=token_exchange_failed`);
+        const tokenErrorParams = new URLSearchParams();
+        tokenErrorParams.set('error', 'token_exchange_failed');
+        if (state) tokenErrorParams.set('state', state as string);
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?${tokenErrorParams.toString()}`);
         return;
       }
 
       if (!socialUserInfo) {
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=user_info_failed`);
+        const userInfoErrorParams = new URLSearchParams();
+        userInfoErrorParams.set('error', 'user_info_failed');
+        if (state) userInfoErrorParams.set('state', state as string);
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?${userInfoErrorParams.toString()}`);
         return;
       }
 
@@ -447,6 +460,7 @@ export class AuthController {
         params.set('provider', socialUserInfo.provider);
         params.set('providerId', socialUserInfo.providerUserId);
         if (socialUserInfo.name) params.set('name', socialUserInfo.name);
+        if (state) params.set('state', state as string);
         res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
         return;
       }
@@ -462,6 +476,7 @@ export class AuthController {
 
         params.set('token', result.token);
         params.set('isNewUser', result.isNewUser ? 'true' : 'false');
+        if (state) params.set('state', state as string);
         
         res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
       } catch (loginError) {
