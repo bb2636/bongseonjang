@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { apiClient } from '../../../../services/apiClient';
 import './CategoryTabs.css';
 
@@ -27,6 +27,8 @@ interface CategoryTabsProps {
 
 export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsProps) {
   const [dynamicCategories, setDynamicCategories] = useState<CategoryTab[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -51,6 +53,18 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   const allTabs = [...STATIC_TABS, ...dynamicCategories];
   const staticSlugs = ['all', 'best', 'new'];
 
+  useEffect(() => {
+    const activeTab = tabRefs.current.get(activeSlug);
+    if (activeTab && containerRef.current) {
+      const container = containerRef.current;
+      const tabLeft = activeTab.offsetLeft;
+      const tabWidth = activeTab.offsetWidth;
+      const containerWidth = container.offsetWidth;
+      const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
+      container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    }
+  }, [activeSlug, dynamicCategories]);
+
   const handleTabClick = (tab: CategoryTab) => {
     if (!staticSlugs.includes(tab.slug)) {
       onTabChange(tab.slug, tab.id);
@@ -59,12 +73,21 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
     }
   };
 
+  const setTabRef = (slug: string) => (el: HTMLButtonElement | null) => {
+    if (el) {
+      tabRefs.current.set(slug, el);
+    } else {
+      tabRefs.current.delete(slug);
+    }
+  };
+
   return (
     <div className="category-tabs">
-      <div className="category-tabs__container">
+      <div className="category-tabs__container" ref={containerRef}>
         {allTabs.map((tab) => (
           <button
             key={tab.slug}
+            ref={setTabRef(tab.slug)}
             type="button"
             className={`category-tabs__item ${activeSlug === tab.slug ? 'category-tabs__item--active' : ''}`}
             onClick={() => handleTabClick(tab)}
