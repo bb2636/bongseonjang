@@ -28,7 +28,7 @@
   left: 0;
   right: 0;
   height: var(--safe-area-top, 0px);
-  background: #FFFFFF;
+  background: inherit;
 }
 
 .app-bar__left {
@@ -161,7 +161,7 @@
   left: 0;
   right: 0;
   height: var(--safe-area-top, 0px);
-  background: #FFFFFF;
+  background: inherit;
 }
 
 .app-bar-spacer {
