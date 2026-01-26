@@ -1,0 +1,80 @@
+
+김민서
+03:59 PM
+`UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future.
+
+Failed to resolve host network app id to config: bundleID: com.apple.WebKit.Networking instance ID: Optional([_EXExtensionInstanceIdentifier: 0BC2FD9C-22A8-4426-827B-4E74B55CBDDB])
+
+⚡️  Loading app at capacitor://localhost...
+
+Result accumulator timeout: 0.250000, exceeded.
+
+Attempted to update accumulator from source type: 0, after completion has already been called for token:[E140B212]. This is an error and will be ignored.
+
+Networking process (0x114084190) took 5.245564 seconds to launch
+
+WebContent process (0x11410c100) took 5.121888 seconds to launch
+
+GPU process (0x1141401e0) took 5.221311 seconds to launch
+
+Unable to simultaneously satisfy constraints.
+
+	Probably at least one of the constraints in the following list is one you don't want.
+
+	Try this:
+
+		(1) look at each constraint and try to figure out which you don't expect;
+
+		(2) find the code that added the unwanted constraint or constraints and fix it.
+
+(
+
+    "<NSLayoutConstraint:0x60000211a8a0 V:|-(7)-[TUIKeyboardContentView:0x103c09420]   (active, names: '|':TUIKeyplaneView:0x103e051c0 )>",
+
+    "<NSLayoutConstraint:0x60000211a710 V:[TUIKeyboardContentView:0x103c09420]-(12)-|   (active, names: '|':TUIKeyplaneView:0x103e051c0 )>",
+
+    "<NSLayoutConstraint:0x600002112350 V:|-(0)-[TUIKeyplaneView:0x103e051c0]   (active, names: UIKeyboardLayoutStar Prev...:0x104052200, '|':UIKeyboardLayoutStar Prev...:0x104052200 )>",
+
+    "<NSLayoutConstraint:0x6000021123a0 V:[TUIKeyplaneView:0x103e051c0]-(0)-|   (active, names: UIKeyboardLayoutStar Prev...:0x104052200, '|':UIKeyboardLayoutStar Prev...:0x104052200 )>",
+
+    "<NSLayoutConstraint:0x600002112440 V:|-(0)-[UIKeyboardLayoutStar Prev...]   (active, names: UIKeyboardLayoutStar Prev...:0x104052200, '|':UIKeyboardImpl:0x103b17fb0 )>",
+
+    "<NSLayoutConstraint:0x6000021124e0 V:[UIKeyboardLayoutStar Prev...]-(0)-|   (active, names: UIKeyboardLayoutStar Prev...:0x104052200, '|':UIKeyboardImpl:0x103b17fb0 )>",
+
+    "<NSLayoutConstraint:0x600002116e90 '_UITemporaryLayoutHeight' UIKeyboardImpl:0x103b17fb0.height == 241   (active)>",
+
+    "<NSLayoutConstraint:0x600002112580 'TUIKeyplane.height' TUIKeyboardContentView:0x103c09420.height == 224   (active)>"
+
+)
+
+Will attempt to recover by breaking constraint
+
+<NSLayoutConstraint:0x600002112580 'TUIKeyplane.height' TUIKeyboardContentView:0x103c09420.height == 224   (active)>
+
+Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.
+
+The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in <UIKitCore/UIView.h> may also be helpful.
+
+Failed to request storage access quirks from WebPrivacy.
+
+Failed to request storage access user agent string quirks from WebPrivacy.
+
+Failed to request query parameters from WebPrivacy.
+
+Failed to request known fingerprinting scripts from WebPrivacy: Error Domain=WebPrivacyErrorDomain Code=1001 "List data not found" UserInfo={NSLocalizedDescription=List data not found}
+
+WebContent[40627] Unable to filter tracking query parameters (missing data)
+
+Failed to request restricted opener domains from WebPrivacy
+
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 4106FC9B-7B22-4A9E-AE0E-227264C93A0F
+
+WebContent[40627] Unable to hide query parameters from script (missing data)
+
+-[RTIInputSystemClient remoteTextInputSessionWithID:textSuggestionsChanged:]  Can only set suggestions for an active session. sessionID = 4106FC9B-7B22-4A9E-AE0E-227264C93A0F
+
+Failed to request allowed query parameters from WebPrivacy.
+
+⚡️  To Native ->  App addListener 35525955
+
+⚡️  WebView loaded
