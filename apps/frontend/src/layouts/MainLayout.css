@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   background-color: #FDFDFD;
-  padding-top: var(--safe-area-top, env(safe-area-inset-top, 0px));
 }
 
 .main-layout__content {
