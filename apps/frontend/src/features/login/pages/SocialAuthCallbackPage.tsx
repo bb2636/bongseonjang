@@ -32,7 +32,20 @@ export default function SocialAuthCallbackPage() {
       const requiresEmailFromUrl = searchParams.get('requiresEmail') === 'true';
       const providerIdFromUrl = searchParams.get('providerId');
 
+      console.log('[OAuth Callback] === Debug Info ===');
+      console.log('[OAuth Callback] provider:', provider);
+      console.log('[OAuth Callback] code:', code ? `${code.substring(0, 10)}...` : 'NULL');
+      console.log('[OAuth Callback] state from URL:', state);
+      console.log('[OAuth Callback] error:', errorParam);
+      console.log('[OAuth Callback] Full URL:', window.location.href);
+      
+      if (provider === 'naver') {
+        const savedState = sessionStorage.getItem('naver_oauth_state');
+        console.log('[OAuth Callback] savedState from sessionStorage:', savedState);
+      }
+
       if (errorParam) {
+        console.log('[OAuth Callback] Error param detected:', errorParam);
         setError('로그인이 취소되었습니다.');
         setIsLoading(false);
         return;
@@ -113,6 +126,7 @@ export default function SocialAuthCallbackPage() {
       }
 
       if (!code || !provider) {
+        console.log('[OAuth Callback] FAIL: Missing code or provider');
         setError('인증 정보가 올바르지 않습니다.');
         setIsLoading(false);
         return;
@@ -120,6 +134,7 @@ export default function SocialAuthCallbackPage() {
 
       const validProviders: SocialProvider[] = ['kakao', 'naver', 'google', 'apple'];
       if (!validProviders.includes(provider as SocialProvider)) {
+        console.log('[OAuth Callback] FAIL: Invalid provider:', provider);
         setError('지원하지 않는 로그인 방식입니다.');
         setIsLoading(false);
         return;
@@ -127,12 +142,15 @@ export default function SocialAuthCallbackPage() {
 
       if (provider === 'naver') {
         const savedState = sessionStorage.getItem('naver_oauth_state');
+        console.log('[OAuth Callback] Naver state check - URL state:', state, 'Saved state:', savedState);
         if (state !== savedState) {
+          console.log('[OAuth Callback] FAIL: Naver state mismatch!');
           setError('보안 검증에 실패했습니다.');
           setIsLoading(false);
           return;
         }
         sessionStorage.removeItem('naver_oauth_state');
+        console.log('[OAuth Callback] Naver state validation passed');
       }
 
       if (provider === 'google') {
@@ -156,8 +174,10 @@ export default function SocialAuthCallbackPage() {
       }
 
       try {
+        console.log('[OAuth Callback] Calling socialLogin API...');
         const appleParams = provider === 'apple' ? { idToken: idToken || undefined, userName: userName || undefined } : undefined;
         const result = await socialLogin(provider as SocialProvider, code, state || undefined, appleParams);
+        console.log('[OAuth Callback] socialLogin result:', result);
 
         if (isRequiresEmailResponse(result)) {
           navigate('/login/social/email', {
