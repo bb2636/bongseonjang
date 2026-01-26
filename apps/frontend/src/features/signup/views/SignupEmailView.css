@@ -16,7 +16,6 @@
   background: #ffffff;
   font-family: var(--font-family-base);
   position: relative;
-  padding-top: var(--safe-area-top, env(safe-area-inset-top, 0px));
 }
 
 .signup-snackbar {
@@ -46,10 +45,26 @@
 
 .signup-header {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  height: 56px;
+  padding: 2px 8px;
+  height: 48px;
+  position: fixed;
+  top: var(--safe-area-top, 0px);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #ffffff;
+}
+
+.signup-header::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--safe-area-top, 0px));
+  left: 0;
+  right: 0;
+  height: var(--safe-area-top, 0px);
   background: #ffffff;
 }
 
@@ -78,8 +93,14 @@
   margin: 0;
 }
 
-.signup-header-spacer {
+.signup-header-placeholder {
   width: 44px;
+  height: 44px;
+}
+
+.signup-header-spacer {
+  height: calc(48px + var(--safe-area-top, 0px));
+  flex-shrink: 0;
 }
 
 .signup-content {

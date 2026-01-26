@@ -20,8 +20,9 @@ export default function LoginView({ login }: LoginViewProps) {
         <button className="login-browse-button" onClick={login.onBrowse}>
           둘러보기
         </button>
-        <div className="login-header-spacer" />
+        <div className="login-header-placeholder" />
       </header>
+      <div className="login-header-spacer" />
 
       <main className="login-content">
         <div className="login-logo-section">

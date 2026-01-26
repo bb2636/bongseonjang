@@ -44,8 +44,9 @@ export default function PasswordResetConfirmView({
             </span>
           </button>
           <h1 className="password-reset-confirm-header-title">새 비밀번호 설정</h1>
-          <div className="password-reset-confirm-header-spacer" />
+          <div className="password-reset-confirm-header-placeholder" />
         </header>
+        <div className="password-reset-confirm-header-spacer" />
 
         <main className="password-reset-confirm-content">
           <div className="password-reset-confirm-error-state">
@@ -70,8 +71,9 @@ export default function PasswordResetConfirmView({
           </span>
         </button>
         <h1 className="password-reset-confirm-header-title">새 비밀번호 설정</h1>
-        <div className="password-reset-confirm-header-spacer" />
+        <div className="password-reset-confirm-header-placeholder" />
       </header>
+      <div className="password-reset-confirm-header-spacer" />
 
       <main className="password-reset-confirm-content">
         <div className="password-reset-confirm-form">

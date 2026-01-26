@@ -207,10 +207,11 @@ export default function SignupEmailView({
             </span>
           </button>
         )}
-        {isSocialSignup && <div className="signup-header-spacer" />}
+        {isSocialSignup && <div className="signup-header-placeholder" />}
         <h1 className="signup-header-title">이메일로 회원가입</h1>
-        <div className="signup-header-spacer" />
+        <div className="signup-header-placeholder" />
       </header>
+      <div className="signup-header-spacer" />
 
       <main className="signup-content">
         <div className="signup-form-section">

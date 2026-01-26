@@ -83,8 +83,9 @@ export default function PasswordResetRequestView({
             </svg>
           </button>
           <h1 className="password-reset-header-title">새 비밀번호 만들기</h1>
-          <div className="password-reset-header-spacer" />
+          <div className="password-reset-header-placeholder" />
         </header>
+        <div className="password-reset-header-spacer" />
 
         <main className="password-reset-content">
           <div className="password-reset-success">
@@ -118,8 +119,9 @@ export default function PasswordResetRequestView({
           </svg>
         </button>
         <h1 className="password-reset-header-title">새 비밀번호 만들기</h1>
-        <div className="password-reset-header-spacer" />
+        <div className="password-reset-header-placeholder" />
       </header>
+      <div className="password-reset-header-spacer" />
 
       <main className="password-reset-content">
         <div className="password-reset-form">

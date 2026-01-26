@@ -70,8 +70,9 @@ export default function ProfileWithdrawView({
           </button>
         </div>
         <div className="profile-withdraw__header-center" />
-        <div className="profile-withdraw__header-right" />
+        <div className="profile-withdraw__header-placeholder" />
       </header>
+      <div className="profile-withdraw__header-spacer" />
 
       <div className="profile-withdraw__content">
         <h1 className="profile-withdraw__title">탈퇴 전 유의사항</h1>

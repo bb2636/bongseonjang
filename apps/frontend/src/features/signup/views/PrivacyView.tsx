@@ -23,7 +23,9 @@ export default function PrivacyView({ actions }: PrivacyViewProps) {
           </svg>
         </button>
         <h1 className="privacy-header-title">개인정보 처리방침</h1>
+        <div className="privacy-header-placeholder" />
       </header>
+      <div className="privacy-header-spacer" />
 
       <div className="privacy-content">
         <div className="privacy-section">

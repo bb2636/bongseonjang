@@ -4,19 +4,40 @@
   min-height: 100vh;
   background: #ffffff;
   font-family: var(--font-family-base);
-  padding-top: var(--safe-area-top, env(safe-area-inset-top, 0px));
 }
 
 .login-header {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  padding: 2px 8px;
   height: 48px;
+  position: fixed;
+  top: var(--safe-area-top, 0px);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #ffffff;
+}
+
+.login-header::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--safe-area-top, 0px));
+  left: 0;
+  right: 0;
+  height: var(--safe-area-top, 0px);
+  background: #ffffff;
+}
+
+.login-header-placeholder {
+  width: 60px;
 }
 
 .login-header-spacer {
-  width: 60px;
+  height: calc(48px + var(--safe-area-top, 0px));
+  flex-shrink: 0;
 }
 
 .login-browse-button {

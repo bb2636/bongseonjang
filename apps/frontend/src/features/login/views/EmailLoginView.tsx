@@ -34,8 +34,9 @@ export default function EmailLoginView({ emailLogin }: EmailLoginViewProps) {
           </span>
         </button>
         <h1 className="email-login-header-title">이메일로 로그인</h1>
-        <div className="email-login-header-spacer" />
+        <div className="email-login-header-placeholder" />
       </header>
+      <div className="email-login-header-spacer" />
 
       <main className="email-login-content">
         <div className="email-login-form">

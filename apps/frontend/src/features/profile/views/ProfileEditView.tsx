@@ -87,8 +87,9 @@ export default function ProfileEditView({
           </button>
         </div>
         <h1 className="profile-edit__title">프로필 수정</h1>
-        <div className="profile-edit__header-right" />
+        <div className="profile-edit__header-placeholder" />
       </header>
+      <div className="profile-edit__header-spacer" />
 
       <div className="profile-edit__content">
         <form className="profile-edit__form" onSubmit={handleSubmit}>

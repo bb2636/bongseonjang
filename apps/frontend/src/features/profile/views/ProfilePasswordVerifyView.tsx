@@ -50,8 +50,9 @@ export default function ProfilePasswordVerifyView({
           </button>
         </div>
         <h1 className="profile-password-verify__title">프로필 수정</h1>
-        <div className="profile-password-verify__header-right" />
+        <div className="profile-password-verify__header-placeholder" />
       </header>
+      <div className="profile-password-verify__header-spacer" />
 
       <section className="profile-password-verify__info">
         <h2 className="profile-password-verify__info-title">비밀번호 재확인</h2>

@@ -44,8 +44,9 @@ export default function GuestOrderDetailView({
             </svg>
           </button>
           <h1 className="guest-order-detail__title">주문 상세</h1>
-          <div className="guest-order-detail__spacer" />
+          <div className="guest-order-detail__header-placeholder" />
         </header>
+        <div className="guest-order-detail__header-spacer" />
         <div className="guest-order-detail__loading">
           <div className="guest-order-detail__skeleton-block" />
           <div className="guest-order-detail__skeleton-block" />
@@ -65,8 +66,9 @@ export default function GuestOrderDetailView({
             </svg>
           </button>
           <h1 className="guest-order-detail__title">주문 상세</h1>
-          <div className="guest-order-detail__spacer" />
+          <div className="guest-order-detail__header-placeholder" />
         </header>
+        <div className="guest-order-detail__header-spacer" />
         <div className="guest-order-detail__error">
           <p>주문 정보를 불러올 수 없습니다.</p>
           <button className="guest-order-detail__error-button" onClick={onBack}>
@@ -86,8 +88,9 @@ export default function GuestOrderDetailView({
           </svg>
         </button>
         <h1 className="guest-order-detail__title">주문 상세</h1>
-        <div className="guest-order-detail__spacer" />
+        <div className="guest-order-detail__header-placeholder" />
       </header>
+      <div className="guest-order-detail__header-spacer" />
 
       <div className="guest-order-detail__content">
         <section className="guest-order-detail__section">
