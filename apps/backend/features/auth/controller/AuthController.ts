@@ -387,17 +387,87 @@ export class AuthController {
       const appScheme = req.query.appScheme as string;
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
 
-      const params = new URLSearchParams();
-      if (code) params.set('code', code as string);
-      if (state) params.set('state', state as string);
-      if (oauthError) params.set('error', oauthError as string);
+      if (oauthError) {
+        const params = new URLSearchParams();
+        params.set('error', oauthError as string);
+        const callbackPath = `/oauth/${provider}/callback`;
+        
+        if (appScheme) {
+          res.redirect(`${appScheme}:/${callbackPath}?${params.toString()}`);
+        } else {
+          res.redirect(`${baseUrl}${callbackPath}?${params.toString()}`);
+        }
+        return;
+      }
 
-      const callbackPath = `/oauth/${provider}/callback`;
-      
       if (appScheme) {
+        const params = new URLSearchParams();
+        if (code) params.set('code', code as string);
+        if (state) params.set('state', state as string);
+        const callbackPath = `/oauth/${provider}/callback`;
         res.redirect(`${appScheme}:/${callbackPath}?${params.toString()}`);
-      } else {
-        res.redirect(`${baseUrl}${callbackPath}?${params.toString()}`);
+        return;
+      }
+
+      if (!code) {
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=no_code`);
+        return;
+      }
+
+      const validProviders = ['kakao', 'naver', 'google'];
+      if (!validProviders.includes(provider)) {
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=invalid_provider`);
+        return;
+      }
+
+      let socialUserInfo;
+      try {
+        if (provider === 'kakao') {
+          socialUserInfo = await socialAuthService.getKakaoUserInfo(code as string);
+        } else if (provider === 'naver') {
+          socialUserInfo = await socialAuthService.getNaverUserInfo(code as string, state as string);
+        } else if (provider === 'google') {
+          socialUserInfo = await socialAuthService.getGoogleUserInfo(code as string);
+        }
+      } catch (tokenError) {
+        console.error('Token exchange error:', tokenError);
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=token_exchange_failed`);
+        return;
+      }
+
+      if (!socialUserInfo) {
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=user_info_failed`);
+        return;
+      }
+
+      const params = new URLSearchParams();
+
+      if (!socialUserInfo.email) {
+        params.set('requiresEmail', 'true');
+        params.set('provider', socialUserInfo.provider);
+        params.set('providerId', socialUserInfo.providerUserId);
+        if (socialUserInfo.name) params.set('name', socialUserInfo.name);
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
+        return;
+      }
+
+      try {
+        const result = await userService.socialLogin({
+          provider: socialUserInfo.provider,
+          providerUserId: socialUserInfo.providerUserId,
+          email: socialUserInfo.email,
+          name: socialUserInfo.name,
+          profileImage: socialUserInfo.profileImage,
+        });
+
+        params.set('token', result.token);
+        params.set('isNewUser', result.isNewUser ? 'true' : 'false');
+        
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
+      } catch (loginError) {
+        console.error('Social login error:', loginError);
+        const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
+        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=${encodeURIComponent(errorMessage)}`);
       }
     } catch (error) {
       console.error('OAuth callback error:', error);

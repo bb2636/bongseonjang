@@ -156,3 +156,27 @@ export function isRequiresEmailResponse(
 ): response is SocialLoginRequiresEmailResponse {
   return 'requiresEmail' in response && response.requiresEmail === true;
 }
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  profileImage?: string | null;
+  phone?: string | null;
+}
+
+export async function fetchUserProfile(token: string): Promise<UserProfile> {
+  const response = await fetch(`${API_BASE_URL}/user/profile`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('사용자 정보를 불러오는데 실패했습니다.');
+  }
+
+  return response.json();
+}

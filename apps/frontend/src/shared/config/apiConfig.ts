@@ -55,3 +55,16 @@ export const API_BASE_URL = getApiBaseUrl();
 export const IS_CAPACITOR = isCapacitorEnvironment();
 
 export const CAPACITOR_APP_SCHEME = 'bongseonjang';
+
+export function getCapacitorPlatform(): 'ios' | 'android' | 'web' {
+  if (typeof window === 'undefined') return 'web';
+  if (window.Capacitor?.getPlatform) {
+    const platform = window.Capacitor.getPlatform();
+    if (platform === 'ios') return 'ios';
+    if (platform === 'android') return 'android';
+  }
+  return 'web';
+}
+
+export const IS_IOS = IS_CAPACITOR && getCapacitorPlatform() === 'ios';
+export const IS_ANDROID = IS_CAPACITOR && getCapacitorPlatform() === 'android';

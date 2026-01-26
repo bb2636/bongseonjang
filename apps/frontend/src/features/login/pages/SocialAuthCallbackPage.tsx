@@ -27,10 +27,88 @@ export default function SocialAuthCallbackPage() {
       const errorParam = searchParams.get('error');
       const idToken = searchParams.get('id_token');
       const userName = searchParams.get('user_name');
+      const tokenFromUrl = searchParams.get('token');
+      const isNewUserFromUrl = searchParams.get('isNewUser') === 'true';
+      const requiresEmailFromUrl = searchParams.get('requiresEmail') === 'true';
+      const providerIdFromUrl = searchParams.get('providerId');
 
       if (errorParam) {
         setError('로그인이 취소되었습니다.');
         setIsLoading(false);
+        return;
+      }
+
+      if (tokenFromUrl && provider) {
+        try {
+          const { fetchUserProfile } = await import('../api/socialAuthApi');
+          const userProfile = await fetchUserProfile(tokenFromUrl);
+          
+          if (isNewUserFromUrl) {
+            const signupFormData = {
+              email: userProfile.email,
+              isEmailVerified: true,
+              isCodeSent: true,
+              verificationCode: '',
+              password: 'SOCIAL_LOGIN_NO_PASSWORD',
+              passwordConfirm: 'SOCIAL_LOGIN_NO_PASSWORD',
+              showPassword: false,
+              showPasswordConfirm: false,
+              isPasswordSet: true,
+              name: userProfile.name || '',
+              phone: '',
+              isPhoneVerified: false,
+              addressName: '',
+              zonecode: '',
+              address: '',
+              addressDetail: '',
+              birthYear: '',
+              birthMonth: '',
+              birthDay: '',
+              gender: '',
+              referralId: '',
+              isReferralIdVerified: false,
+              isOver14: false,
+              termsAgreed: false,
+              privacyAgreed: false,
+              socialProvider: provider,
+            };
+            sessionStorage.setItem('signupFormData', JSON.stringify(signupFormData));
+            sessionStorage.setItem('pendingSocialLogin', JSON.stringify({
+              token: tokenFromUrl,
+              user: userProfile,
+            }));
+            navigate('/signup/email', { replace: true });
+          } else {
+            loginWithToken(tokenFromUrl, {
+              id: userProfile.id,
+              email: userProfile.email,
+              name: userProfile.name,
+            });
+            queryClient.prefetchQuery({
+              queryKey: ['homeData'],
+              queryFn: fetchHomeData,
+            });
+            navigate('/', { replace: true });
+          }
+        } catch (err) {
+          const message = err instanceof Error ? err.message : '로그인에 실패했습니다.';
+          setError(message);
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      if (requiresEmailFromUrl && providerIdFromUrl) {
+        const nameFromUrl = searchParams.get('name') || '';
+        navigate('/login/social/email', {
+          state: {
+            provider: provider,
+            providerUserId: providerIdFromUrl,
+            name: nameFromUrl,
+            profileImage: null,
+          },
+          replace: true,
+        });
         return;
       }
 
