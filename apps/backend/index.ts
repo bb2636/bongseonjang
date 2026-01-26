@@ -86,10 +86,6 @@ app.use("/objects", async (req, res, next) => {
   }
 });
 
-app.get("/", (_, res) => {
-  res.status(200).json({ status: "ok", service: "bongseonjang-api" });
-});
-
 app.use("/api", routes);
 
 app.get("/api/health", (_, res) => {
