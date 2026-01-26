@@ -332,6 +332,11 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
 
   const callbackUrl = `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
 
+  console.log('[Naver OAuth] === Authorize Request ===');
+  console.log('[Naver OAuth] client_id:', NAVER_CLIENT_ID);
+  console.log('[Naver OAuth] callbackUrl:', callbackUrl);
+  console.log('[Naver OAuth] SOCIAL_REDIRECT_BASE_URL:', SOCIAL_REDIRECT_BASE_URL);
+
   const naverLogin = new window.naver.LoginWithNaverId({
     clientId: NAVER_CLIENT_ID,
     callbackUrl,
@@ -347,6 +352,8 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
   const urlWithState = authUrl.includes('?') 
     ? `${authUrl}&state=${state}` 
     : `${authUrl}?state=${state}`;
+  
+  console.log('[Naver OAuth] Final authUrl:', urlWithState);
   
   window.location.href = urlWithState;
 }

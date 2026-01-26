@@ -154,6 +154,12 @@ export class SocialAuthService {
     const clientId = process.env.NAVER_CLIENT_ID;
     const clientSecret = process.env.NAVER_CLIENT_SECRET;
 
+    console.log('[Naver OAuth] === Token Exchange Start ===');
+    console.log('[Naver OAuth] client_id:', clientId ? `${clientId.substring(0, 8)}...` : 'MISSING');
+    console.log('[Naver OAuth] client_secret:', clientSecret ? `${clientSecret.substring(0, 4)}...` : 'MISSING');
+    console.log('[Naver OAuth] code:', code ? `${code.substring(0, 10)}...` : 'MISSING');
+    console.log('[Naver OAuth] state:', state);
+
     if (!clientId || !clientSecret) {
       throw new Error('Naver OAuth configuration is missing');
     }
@@ -172,11 +178,14 @@ export class SocialAuthService {
       }),
     });
 
-    if (!tokenResponse.ok) {
-      throw new Error('Failed to get Naver access token');
-    }
-
     const tokenData = await tokenResponse.json() as NaverTokenResponse;
+    console.log('[Naver OAuth] Token Response Status:', tokenResponse.status);
+    console.log('[Naver OAuth] Token Response:', JSON.stringify(tokenData, null, 2));
+
+    if (!tokenResponse.ok || tokenData.error) {
+      console.error('[Naver OAuth] Token Error:', tokenData.error, tokenData.error_description);
+      throw new Error(`Failed to get Naver access token: ${tokenData.error_description || tokenData.error}`);
+    }
 
     const userResponse = await fetch('https://openapi.naver.com/v1/nid/me', {
       headers: {
