@@ -20,13 +20,13 @@
   justify-content: center;
   align-items: center;
   padding: 10px;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
 }
 
 .profile-edit__back-button {
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
   padding: 0;
@@ -47,8 +47,8 @@
 }
 
 .profile-edit__header-right {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   opacity: 0;
 }
 
