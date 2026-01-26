@@ -337,6 +337,8 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
   console.log('[Naver OAuth] callbackUrl:', callbackUrl);
   console.log('[Naver OAuth] SOCIAL_REDIRECT_BASE_URL:', SOCIAL_REDIRECT_BASE_URL);
 
+  alert(`[DEBUG] 네이버 OAuth 설정값:\n\nclient_id: ${NAVER_CLIENT_ID}\n\ncallbackUrl: ${callbackUrl}\n\n이 값들이 네이버 개발자 콘솔에 등록된 값과 일치하는지 확인하세요.`);
+
   const naverLogin = new window.naver.LoginWithNaverId({
     clientId: NAVER_CLIENT_ID,
     callbackUrl,
