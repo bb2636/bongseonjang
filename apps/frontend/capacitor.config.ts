@@ -11,7 +11,7 @@ const config: CapacitorConfig = {
     // url: 'https://bongseonjang--tkfkdgowjdakfas.replit.app'
   },
   ios: {
-    contentInset: 'automatic',
+    contentInset: 'never',
     allowsLinkPreview: false,
     scrollEnabled: true,
     backgroundColor: '#FFFFFF'

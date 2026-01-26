@@ -93,46 +93,54 @@ export function useLogin() {
   }, [navigate, loginWithToken, queryClient]);
 
   const onKakaoLogin = useCallback(async () => {
+    console.log('[SocialLogin] 카카오 로그인 버튼 클릭');
     try {
       const result = await kakaoAuthorize();
+      console.log('[SocialLogin] 카카오 결과:', result);
       if (result) {
         await handleOAuthResult(result, 'kakao');
       }
     } catch (error) {
-      console.error('카카오 로그인 설정이 올바르지 않습니다.', error);
+      console.error('[SocialLogin] 카카오 로그인 오류:', error);
     }
   }, [handleOAuthResult]);
 
   const onNaverLogin = useCallback(async () => {
+    console.log('[SocialLogin] 네이버 로그인 버튼 클릭');
     try {
       const result = await naverAuthorize();
+      console.log('[SocialLogin] 네이버 결과:', result);
       if (result) {
         await handleOAuthResult(result, 'naver');
       }
     } catch (error) {
-      console.error('네이버 로그인 설정이 올바르지 않습니다.', error);
+      console.error('[SocialLogin] 네이버 로그인 오류:', error);
     }
   }, [handleOAuthResult]);
 
   const onGoogleLogin = useCallback(async () => {
+    console.log('[SocialLogin] 구글 로그인 버튼 클릭');
     try {
       const result = await googleAuthorize();
+      console.log('[SocialLogin] 구글 결과:', result);
       if (result) {
         await handleOAuthResult(result, 'google');
       }
     } catch (error) {
-      console.error('구글 로그인 설정이 올바르지 않습니다.', error);
+      console.error('[SocialLogin] 구글 로그인 오류:', error);
     }
   }, [handleOAuthResult]);
 
   const onAppleLogin = useCallback(async () => {
+    console.log('[SocialLogin] 애플 로그인 버튼 클릭');
     try {
       const result = await appleAuthorize();
+      console.log('[SocialLogin] 애플 결과:', result);
       if (result) {
         await handleOAuthResult(result, 'apple');
       }
     } catch (error) {
-      console.error('애플 로그인 설정이 올바르지 않습니다.', error);
+      console.error('[SocialLogin] 애플 로그인 오류:', error);
     }
   }, [handleOAuthResult]);
 

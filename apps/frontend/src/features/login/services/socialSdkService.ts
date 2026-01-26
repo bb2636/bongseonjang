@@ -77,6 +77,11 @@ async function openInAppBrowserForOAuth(
   provider: string,
   expectedState: string
 ): Promise<OAuthResult> {
+  console.log('[InAppBrowser] === Starting OAuth ===');
+  console.log('[InAppBrowser] provider:', provider);
+  console.log('[InAppBrowser] authUrl:', authUrl);
+  console.log('[InAppBrowser] callbackPathPattern:', callbackPathPattern);
+  
   storeOAuthState(provider, expectedState);
   
   return new Promise((resolve, reject) => {
@@ -84,8 +89,10 @@ async function openInAppBrowserForOAuth(
 
     const handleUrlChange = (event: { url: string }) => {
       const url = event.url;
+      console.log('[InAppBrowser] URL changed:', url);
       
       if (isValidCallbackUrl(url, callbackPathPattern)) {
+        console.log('[InAppBrowser] Valid callback URL detected');
         if (resolved) return;
         resolved = true;
         
@@ -128,6 +135,7 @@ async function openInAppBrowserForOAuth(
     };
 
     const handleClose = () => {
+      console.log('[InAppBrowser] Browser closed');
       if (!resolved) {
         resolved = true;
         InAppBrowser.removeAllListeners();
@@ -136,14 +144,19 @@ async function openInAppBrowserForOAuth(
       }
     };
 
+    console.log('[InAppBrowser] Adding listeners...');
     InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
     InAppBrowser.addListener('closeEvent', handleClose);
 
+    console.log('[InAppBrowser] Opening WebView...');
     InAppBrowser.openWebView({
       url: authUrl,
       headers: {},
       isPresentAfterPageLoad: true,
+    }).then(() => {
+      console.log('[InAppBrowser] WebView opened successfully');
     }).catch((err) => {
+      console.error('[InAppBrowser] Failed to open WebView:', err);
       InAppBrowser.removeAllListeners();
       localStorage.removeItem(`ios_oauth_state_${provider}`);
       reject(err);
@@ -273,13 +286,19 @@ function loadNaverSdk(): Promise<void> {
 }
 
 export async function naverAuthorize(): Promise<OAuthResult | void> {
+  console.log('[NaverOAuth] naverAuthorize called');
+  console.log('[NaverOAuth] NAVER_CLIENT_ID:', NAVER_CLIENT_ID ? 'SET' : 'NOT SET');
+  console.log('[NaverOAuth] IS_CAPACITOR:', IS_CAPACITOR);
+  
   if (!NAVER_CLIENT_ID) {
+    console.error('[NaverOAuth] VITE_NAVER_CLIENT_ID is not configured');
     throw new Error('VITE_NAVER_CLIENT_ID is not configured');
   }
 
   const state = generateRandomState();
 
   if (IS_CAPACITOR) {
+    console.log('[NaverOAuth] Capacitor mode - using InAppBrowser');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/naver/callback`;
     
@@ -291,8 +310,10 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
     });
 
     const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
+    console.log('[NaverOAuth] authUrl:', authUrl);
     
     const result = await openInAppBrowserForOAuth(authUrl, '/oauth/naver/callback', 'naver', state);
+    console.log('[NaverOAuth] InAppBrowser result:', result);
     return result;
   }
 
@@ -320,13 +341,19 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
 }
 
 export async function googleAuthorize(): Promise<OAuthResult | void> {
+  console.log('[GoogleOAuth] googleAuthorize called');
+  console.log('[GoogleOAuth] GOOGLE_CLIENT_ID:', GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET');
+  console.log('[GoogleOAuth] IS_CAPACITOR:', IS_CAPACITOR);
+  
   if (!GOOGLE_CLIENT_ID) {
+    console.error('[GoogleOAuth] VITE_GOOGLE_CLIENT_ID is not configured');
     throw new Error('VITE_GOOGLE_CLIENT_ID is not configured');
   }
 
   const state = generateRandomState();
 
   if (IS_CAPACITOR) {
+    console.log('[GoogleOAuth] Capacitor mode - using InAppBrowser');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/google/callback`;
     
@@ -341,8 +368,10 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
     });
 
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    console.log('[GoogleOAuth] authUrl:', authUrl);
     
     const result = await openInAppBrowserForOAuth(authUrl, '/oauth/google/callback', 'google', state);
+    console.log('[GoogleOAuth] InAppBrowser result:', result);
     return result;
   }
 
