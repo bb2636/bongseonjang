@@ -26,6 +26,8 @@ const allowedOrigins = [
     ? `https://${process.env.REPLIT_DEV_DOMAIN}`
     : "",
   process.env.REPLIT_DEPLOYMENT_URL || "",
+  process.env.SOCIAL_REDIRECT_BASE_URL || "",
+  process.env.VITE_SOCIAL_REDIRECT_BASE_URL || "",
 ].filter(Boolean);
 
 app.use(

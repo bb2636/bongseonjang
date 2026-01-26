@@ -324,40 +324,29 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
     }
   }
 
-  await loadNaverSdk();
+  const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
 
-  if (!window.naver) {
-    throw new Error('네이버 SDK 초기화에 실패했습니다.');
-  }
-
-  const callbackUrl = `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
-
-  console.log('[Naver OAuth] === Authorize Request ===');
+  console.log('[Naver OAuth] === Authorize Request (Direct URL) ===');
   console.log('[Naver OAuth] client_id:', NAVER_CLIENT_ID);
-  console.log('[Naver OAuth] callbackUrl:', callbackUrl);
-  console.log('[Naver OAuth] SOCIAL_REDIRECT_BASE_URL:', SOCIAL_REDIRECT_BASE_URL);
+  console.log('[Naver OAuth] redirect_uri:', redirectUri);
+  console.log('[Naver OAuth] state:', state);
 
-  alert(`[DEBUG] 네이버 OAuth 설정값:\n\nclient_id: ${NAVER_CLIENT_ID}\n\ncallbackUrl: ${callbackUrl}\n\n이 값들이 네이버 개발자 콘솔에 등록된 값과 일치하는지 확인하세요.`);
-
-  const naverLogin = new window.naver.LoginWithNaverId({
-    clientId: NAVER_CLIENT_ID,
-    callbackUrl,
-    isPopup: false,
-    callbackHandle: true,
+  const params = new URLSearchParams({
+    client_id: NAVER_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    state,
   });
 
-  naverLogin.init();
+  const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
+  
+  console.log('[Naver OAuth] Final authUrl:', authUrl);
+  
+  alert(`[DEBUG] 네이버 OAuth 설정값:\n\nclient_id: ${NAVER_CLIENT_ID}\n\nredirect_uri: ${redirectUri}\n\nFull URL: ${authUrl}\n\n이 값들이 네이버 개발자 콘솔에 등록된 값과 일치하는지 확인하세요.`);
 
   sessionStorage.setItem('naver_oauth_state', state);
-
-  const authUrl = naverLogin.generateAuthorizeUrl();
-  const urlWithState = authUrl.includes('?') 
-    ? `${authUrl}&state=${state}` 
-    : `${authUrl}?state=${state}`;
   
-  console.log('[Naver OAuth] Final authUrl:', urlWithState);
-  
-  window.location.href = urlWithState;
+  window.location.href = authUrl;
 }
 
 export async function googleAuthorize(): Promise<OAuthResult | void> {
