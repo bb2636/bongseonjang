@@ -341,8 +341,6 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
   const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
   
   console.log('[Naver OAuth] Final authUrl:', authUrl);
-  
-  alert(`[DEBUG] 네이버 OAuth 설정값:\n\nclient_id: ${NAVER_CLIENT_ID}\n\nredirect_uri: ${redirectUri}\n\nFull URL: ${authUrl}\n\n이 값들이 네이버 개발자 콘솔에 등록된 값과 일치하는지 확인하세요.`);
 
   sessionStorage.setItem('naver_oauth_state', state);
   
