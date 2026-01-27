@@ -1,5 +1,6 @@
-import { InAppBrowser } from '@capgo/inappbrowser';
-import { checkIsCapacitor, CAPACITOR_APP_SCHEME, getApiBaseUrlDynamic } from '@/shared/config/apiConfig';
+import { Browser } from '@capacitor/browser';
+import { App } from '@capacitor/app';
+import { checkIsCapacitor, CAPACITOR_APP_SCHEME, getApiBaseUrlDynamic, getCapacitorPlatform } from '@/shared/config/apiConfig';
 
 const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
 const KAKAO_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
@@ -26,7 +27,8 @@ export interface OAuthResult {
 
 function storeOAuthState(provider: string, state: string): void {
   try {
-    localStorage.setItem(`ios_oauth_state_${provider}`, state);
+    localStorage.setItem(`oauth_state_${provider}`, state);
+    localStorage.setItem(`oauth_pending_provider`, provider);
   } catch (e) {
     console.warn('Failed to store OAuth state:', e);
   }
@@ -34,8 +36,9 @@ function storeOAuthState(provider: string, state: string): void {
 
 function validateAndClearOAuthState(provider: string, returnedState: string | null): boolean {
   try {
-    const storedState = localStorage.getItem(`ios_oauth_state_${provider}`);
-    localStorage.removeItem(`ios_oauth_state_${provider}`);
+    const storedState = localStorage.getItem(`oauth_state_${provider}`);
+    localStorage.removeItem(`oauth_state_${provider}`);
+    localStorage.removeItem(`oauth_pending_provider`);
     
     if (!storedState || !returnedState) {
       console.warn('OAuth state validation: missing state');
@@ -49,124 +52,139 @@ function validateAndClearOAuthState(provider: string, returnedState: string | nu
   }
 }
 
-function isValidCallbackUrl(url: string, callbackPathPattern: string): boolean {
-  try {
-    const backendUrl = getBackendBaseUrl();
-    const allowedOrigins = [
-      new URL(backendUrl).origin,
-      SOCIAL_REDIRECT_BASE_URL ? new URL(SOCIAL_REDIRECT_BASE_URL).origin : null,
-    ].filter(Boolean);
+let oauthResolve: ((result: OAuthResult) => void) | null = null;
+let deepLinkListenerRegistered = false;
+
+function registerDeepLinkListener(): void {
+  if (deepLinkListenerRegistered) return;
+  deepLinkListenerRegistered = true;
+
+  App.addListener('appUrlOpen', async (event) => {
+    console.log('[DeepLink] App opened with URL:', event.url);
     
-    if (url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
-      return true;
+    const url = event.url;
+    if (!url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
+      return;
     }
-    
-    const urlObj = new URL(url);
-    const isAllowedOrigin = allowedOrigins.some(origin => urlObj.origin === origin);
-    const hasCallbackPath = urlObj.pathname.includes(callbackPathPattern);
-    
-    return isAllowedOrigin && hasCallbackPath;
-  } catch {
-    return false;
-  }
+
+    try {
+      await Browser.close();
+    } catch (e) {
+      console.log('[DeepLink] Browser already closed or error:', e);
+    }
+
+    try {
+      const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
+      const pathname = urlObj.pathname;
+      const params = new URLSearchParams(urlObj.search);
+
+      const providerMatch = pathname.match(/\/oauth\/(\w+)\/callback/);
+      if (!providerMatch) {
+        console.warn('[DeepLink] Unknown callback path:', pathname);
+        return;
+      }
+
+      const provider = providerMatch[1];
+      console.log('[DeepLink] Processing callback for provider:', provider);
+
+      const error = params.get('error');
+      if (error) {
+        localStorage.removeItem(`oauth_state_${provider}`);
+        localStorage.removeItem(`oauth_pending_provider`);
+        if (oauthResolve) {
+          oauthResolve({ error });
+          oauthResolve = null;
+        }
+        return;
+      }
+
+      const returnedState = params.get('state');
+      if (!validateAndClearOAuthState(provider, returnedState)) {
+        if (oauthResolve) {
+          oauthResolve({ error: 'state_mismatch' });
+          oauthResolve = null;
+        }
+        return;
+      }
+
+      const result: OAuthResult = {
+        token: params.get('token') || undefined,
+        refreshToken: params.get('refreshToken') || undefined,
+        isNewUser: params.get('isNewUser') === 'true',
+        requiresEmail: params.get('requiresEmail') === 'true',
+        tempToken: params.get('tempToken') || undefined,
+        provider: params.get('provider') || undefined,
+        providerId: params.get('providerId') || undefined,
+      };
+
+      console.log('[DeepLink] OAuth result:', result);
+      
+      if (oauthResolve) {
+        oauthResolve(result);
+        oauthResolve = null;
+      }
+    } catch (e) {
+      console.error('[DeepLink] Failed to parse callback URL:', e);
+      if (oauthResolve) {
+        oauthResolve({ error: 'parse_failed' });
+        oauthResolve = null;
+      }
+    }
+  });
 }
 
-async function openInAppBrowserForOAuth(
+async function openBrowserForOAuth(
   authUrl: string,
-  callbackPathPattern: string,
   provider: string,
   expectedState: string
 ): Promise<OAuthResult> {
-  console.log('[InAppBrowser] === Starting OAuth ===');
-  console.log('[InAppBrowser] provider:', provider);
-  console.log('[InAppBrowser] authUrl:', authUrl);
-  console.log('[InAppBrowser] callbackPathPattern:', callbackPathPattern);
-  
+  const platform = getCapacitorPlatform();
+  console.log('[OAuth] === Starting OAuth with Browser ===');
+  console.log('[OAuth] provider:', provider);
+  console.log('[OAuth] platform:', platform);
+  console.log('[OAuth] authUrl:', authUrl);
+
+  registerDeepLinkListener();
   storeOAuthState(provider, expectedState);
-  
-  return new Promise((resolve, reject) => {
-    let resolved = false;
 
-    const handleUrlChange = (event: { url: string }) => {
-      const url = event.url;
-      console.log('[InAppBrowser] URL changed:', url);
-      
-      if (isValidCallbackUrl(url, callbackPathPattern)) {
-        console.log('[InAppBrowser] Valid callback URL detected');
-        if (resolved) return;
-        resolved = true;
-        
-        InAppBrowser.removeAllListeners();
-        InAppBrowser.close();
-        
-        try {
-          const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
-          const params = new URLSearchParams(urlObj.search);
-          
-          const error = params.get('error');
-          if (error) {
-            localStorage.removeItem(`ios_oauth_state_${provider}`);
-            resolve({ error });
-            return;
-          }
-          
-          const returnedState = params.get('state');
-          if (!validateAndClearOAuthState(provider, returnedState)) {
-            resolve({ error: 'state_mismatch' });
-            return;
-          }
-          
-          const result: OAuthResult = {
-            token: params.get('token') || undefined,
-            refreshToken: params.get('refreshToken') || undefined,
-            isNewUser: params.get('isNewUser') === 'true',
-            requiresEmail: params.get('requiresEmail') === 'true',
-            tempToken: params.get('tempToken') || undefined,
-            provider: params.get('provider') || undefined,
-            providerId: params.get('providerId') || undefined,
-          };
-          
-          resolve(result);
-        } catch (e) {
-          localStorage.removeItem(`ios_oauth_state_${provider}`);
-          reject(new Error('OAuth 응답 파싱 실패'));
-        }
+  return new Promise(async (resolve) => {
+    oauthResolve = resolve;
+
+    const timeoutId = setTimeout(() => {
+      if (oauthResolve === resolve) {
+        console.log('[OAuth] Timeout reached, assuming user cancelled');
+        localStorage.removeItem(`oauth_state_${provider}`);
+        localStorage.removeItem(`oauth_pending_provider`);
+        oauthResolve = null;
+        resolve({ error: 'timeout' });
       }
+    }, 5 * 60 * 1000);
+
+    const originalResolve = resolve;
+    oauthResolve = (result: OAuthResult) => {
+      clearTimeout(timeoutId);
+      originalResolve(result);
     };
 
-    const handleClose = () => {
-      console.log('[InAppBrowser] Browser closed');
-      if (!resolved) {
-        resolved = true;
-        InAppBrowser.removeAllListeners();
-        localStorage.removeItem(`ios_oauth_state_${provider}`);
-        resolve({ error: 'cancelled' });
-      }
-    };
-
-    console.log('[InAppBrowser] Adding listeners...');
-    InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
-    InAppBrowser.addListener('closeEvent', handleClose);
-
-    console.log('[InAppBrowser] Opening WebView...');
-    InAppBrowser.openWebView({
-      url: authUrl,
-      headers: {},
-      isPresentAfterPageLoad: true,
-    }).then(() => {
-      console.log('[InAppBrowser] WebView opened successfully');
-    }).catch((err) => {
-      console.error('[InAppBrowser] Failed to open WebView:', err);
-      InAppBrowser.removeAllListeners();
-      localStorage.removeItem(`ios_oauth_state_${provider}`);
-      reject(err);
-    });
+    try {
+      await Browser.open({
+        url: authUrl,
+        presentationStyle: 'popover',
+        windowName: '_blank',
+      });
+      console.log('[OAuth] Browser opened successfully');
+    } catch (err) {
+      console.error('[OAuth] Failed to open browser:', err);
+      clearTimeout(timeoutId);
+      localStorage.removeItem(`oauth_state_${provider}`);
+      localStorage.removeItem(`oauth_pending_provider`);
+      oauthResolve = null;
+      resolve({ error: 'browser_open_failed' });
+    }
   });
 }
 
 let kakaoInitialized = false;
-let naverSdkLoaded = false;
-let naverSdkLoading = false;
 
 export function initKakaoSdk(): boolean {
   if (kakaoInitialized) {
@@ -209,10 +227,10 @@ export async function kakaoAuthorize(): Promise<OAuthResult | void> {
       state,
     });
 
-    const authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
+    const authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}&appScheme=${CAPACITOR_APP_SCHEME}`;
     console.log('[KakaoOAuth] authUrl:', authUrl);
     
-    const result = await openInAppBrowserForOAuth(authUrl, '/oauth/kakao/callback', 'kakao', state);
+    const result = await openBrowserForOAuth(authUrl, 'kakao', state);
     return result;
   }
 
@@ -229,67 +247,6 @@ export async function kakaoAuthorize(): Promise<OAuthResult | void> {
   });
 }
 
-function waitForNaverSdk(timeout = 5000): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const startTime = Date.now();
-    
-    const checkSdk = () => {
-      if (window.naver?.LoginWithNaverId) {
-        naverSdkLoaded = true;
-        naverSdkLoading = false;
-        resolve();
-        return;
-      }
-      
-      if (Date.now() - startTime > timeout) {
-        naverSdkLoading = false;
-        reject(new Error('네이버 SDK 초기화 시간이 초과되었습니다.'));
-        return;
-      }
-      
-      setTimeout(checkSdk, 50);
-    };
-    
-    checkSdk();
-  });
-}
-
-function loadNaverSdk(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (naverSdkLoaded && window.naver?.LoginWithNaverId) {
-      resolve();
-      return;
-    }
-
-    if (naverSdkLoading) {
-      waitForNaverSdk()
-        .then(resolve)
-        .catch(reject);
-      return;
-    }
-
-    naverSdkLoading = true;
-
-    const script = document.createElement('script');
-    script.src = 'https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js';
-    script.charset = 'utf-8';
-    script.async = true;
-
-    script.onload = () => {
-      waitForNaverSdk()
-        .then(resolve)
-        .catch(reject);
-    };
-
-    script.onerror = () => {
-      naverSdkLoading = false;
-      reject(new Error('네이버 SDK 로드에 실패했습니다.'));
-    };
-
-    document.body.appendChild(script);
-  });
-}
-
 export async function naverAuthorize(): Promise<OAuthResult | void> {
   const isCapacitor = checkIsCapacitor();
   console.log('[NaverOAuth] naverAuthorize called');
@@ -298,13 +255,13 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
   
   if (!NAVER_CLIENT_ID) {
     console.error('[NaverOAuth] VITE_NAVER_CLIENT_ID is not configured');
-    throw new Error('VITE_NAVER_CLIENT_ID is not configured');
+    throw new Error('네이버 로그인 설정이 올바르지 않습니다.');
   }
 
   const state = generateRandomState();
 
   if (isCapacitor) {
-    console.log('[NaverOAuth] Capacitor mode - using InAppBrowser');
+    console.log('[NaverOAuth] Capacitor mode - using SFSafariViewController');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/naver/callback`;
     
@@ -315,11 +272,11 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
       state,
     });
 
-    const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
+    const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}&appScheme=${CAPACITOR_APP_SCHEME}`;
     console.log('[NaverOAuth] authUrl:', authUrl);
     
-    const result = await openInAppBrowserForOAuth(authUrl, '/oauth/naver/callback', 'naver', state);
-    console.log('[NaverOAuth] InAppBrowser result:', result);
+    const result = await openBrowserForOAuth(authUrl, 'naver', state);
+    console.log('[NaverOAuth] Browser result:', result);
     return result;
   }
 
@@ -354,13 +311,13 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
   
   if (!GOOGLE_CLIENT_ID) {
     console.error('[GoogleOAuth] VITE_GOOGLE_CLIENT_ID is not configured');
-    throw new Error('VITE_GOOGLE_CLIENT_ID is not configured');
+    throw new Error('구글 로그인 설정이 올바르지 않습니다.');
   }
 
   const state = generateRandomState();
 
   if (isCapacitor) {
-    console.log('[GoogleOAuth] Capacitor mode - using InAppBrowser');
+    console.log('[GoogleOAuth] Capacitor mode - using SFSafariViewController');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/google/callback`;
     
@@ -374,11 +331,11 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
       prompt: 'consent',
     });
 
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}&appScheme=${CAPACITOR_APP_SCHEME}`;
     console.log('[GoogleOAuth] authUrl:', authUrl);
     
-    const result = await openInAppBrowserForOAuth(authUrl, '/oauth/google/callback', 'google', state);
-    console.log('[GoogleOAuth] InAppBrowser result:', result);
+    const result = await openBrowserForOAuth(authUrl, 'google', state);
+    console.log('[GoogleOAuth] Browser result:', result);
     return result;
   }
 
@@ -418,8 +375,8 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
       state,
       response_mode: 'form_post',
     });
-    const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
-    const result = await openInAppBrowserForOAuth(authUrl, '/oauth/apple', 'apple', state);
+    const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}&appScheme=${CAPACITOR_APP_SCHEME}`;
+    const result = await openBrowserForOAuth(authUrl, 'apple', state);
     return result;
   }
 

@@ -387,26 +387,20 @@ export class AuthController {
       const appScheme = req.query.appScheme as string;
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
 
+      const buildRedirectUrl = (path: string, params: URLSearchParams): string => {
+        if (appScheme) {
+          return `${appScheme}:/${path}?${params.toString()}`;
+        }
+        return `${baseUrl}${path}?${params.toString()}`;
+      };
+
+      const callbackPath = `/oauth/${provider}/callback`;
+
       if (oauthError) {
         const params = new URLSearchParams();
         params.set('error', oauthError as string);
         if (state) params.set('state', state as string);
-        const callbackPath = `/oauth/${provider}/callback`;
-        
-        if (appScheme) {
-          res.redirect(`${appScheme}:/${callbackPath}?${params.toString()}`);
-        } else {
-          res.redirect(`${baseUrl}${callbackPath}?${params.toString()}`);
-        }
-        return;
-      }
-
-      if (appScheme) {
-        const params = new URLSearchParams();
-        if (code) params.set('code', code as string);
-        if (state) params.set('state', state as string);
-        const callbackPath = `/oauth/${provider}/callback`;
-        res.redirect(`${appScheme}:/${callbackPath}?${params.toString()}`);
+        res.redirect(buildRedirectUrl(callbackPath, params));
         return;
       }
 
@@ -414,7 +408,7 @@ export class AuthController {
         const params = new URLSearchParams();
         params.set('error', 'no_code');
         if (state) params.set('state', state as string);
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
+        res.redirect(buildRedirectUrl(callbackPath, params));
         return;
       }
 
@@ -423,7 +417,7 @@ export class AuthController {
         const params = new URLSearchParams();
         params.set('error', 'invalid_provider');
         if (state) params.set('state', state as string);
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
+        res.redirect(buildRedirectUrl(callbackPath, params));
         return;
       }
 
@@ -441,7 +435,7 @@ export class AuthController {
         const tokenErrorParams = new URLSearchParams();
         tokenErrorParams.set('error', 'token_exchange_failed');
         if (state) tokenErrorParams.set('state', state as string);
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?${tokenErrorParams.toString()}`);
+        res.redirect(buildRedirectUrl(callbackPath, tokenErrorParams));
         return;
       }
 
@@ -449,7 +443,7 @@ export class AuthController {
         const userInfoErrorParams = new URLSearchParams();
         userInfoErrorParams.set('error', 'user_info_failed');
         if (state) userInfoErrorParams.set('state', state as string);
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?${userInfoErrorParams.toString()}`);
+        res.redirect(buildRedirectUrl(callbackPath, userInfoErrorParams));
         return;
       }
 
@@ -461,7 +455,7 @@ export class AuthController {
         params.set('providerId', socialUserInfo.providerUserId);
         if (socialUserInfo.name) params.set('name', socialUserInfo.name);
         if (state) params.set('state', state as string);
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
+        res.redirect(buildRedirectUrl(callbackPath, params));
         return;
       }
 
@@ -478,22 +472,26 @@ export class AuthController {
         params.set('isNewUser', result.isNewUser ? 'true' : 'false');
         if (state) params.set('state', state as string);
         
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?${params.toString()}`);
+        res.redirect(buildRedirectUrl(callbackPath, params));
       } catch (loginError) {
         console.error('Social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=${encodeURIComponent(errorMessage)}`);
+        const errorParams = new URLSearchParams();
+        errorParams.set('error', errorMessage);
+        if (state) errorParams.set('state', state as string);
+        res.redirect(buildRedirectUrl(callbackPath, errorParams));
       }
     } catch (error) {
       console.error('OAuth callback error:', error);
       const provider = req.params.provider || 'unknown';
       const appScheme = req.query.appScheme as string;
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+      const callbackPath = `/oauth/${provider}/callback`;
       
       if (appScheme) {
-        res.redirect(`${appScheme}://oauth/${provider}/callback?error=callback_failed`);
+        res.redirect(`${appScheme}:/${callbackPath}?error=callback_failed`);
       } else {
-        res.redirect(`${baseUrl}/oauth/${provider}/callback?error=callback_failed`);
+        res.redirect(`${baseUrl}${callbackPath}?error=callback_failed`);
       }
     }
   }
