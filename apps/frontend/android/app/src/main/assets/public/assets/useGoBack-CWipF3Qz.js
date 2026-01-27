@@ -1,1 +1,0 @@
-import{u as t,k as s,r as n}from"./index-RT0oTPnm.js";function c(a="/"){const e=t(),o=s();return n.useCallback(()=>{o==="POP"||window.history.length<=2?e(a,{replace:!0}):e(-1)},[e,o,a])}export{c as u};
