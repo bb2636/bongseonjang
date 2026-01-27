@@ -411,12 +411,20 @@ export default function QuickCartBottomSheet() {
 
             <div className="quick-cart-sheet__button-wrapper">
               {isSoldOut ? (
-                <button
-                  className="quick-cart-sheet__buy-btn quick-cart-sheet__buy-btn--sold-out"
-                  disabled
-                >
-                  품절
-                </button>
+                <>
+                  <button
+                    className="quick-cart-sheet__cart-btn quick-cart-sheet__cart-btn--sold-out"
+                    onClick={() => showToast('품절되었습니다', 'error')}
+                  >
+                    장바구니 담기
+                  </button>
+                  <button
+                    className="quick-cart-sheet__buy-btn quick-cart-sheet__buy-btn--sold-out"
+                    onClick={() => showToast('품절되었습니다', 'error')}
+                  >
+                    구매하기
+                  </button>
+                </>
               ) : (
                 <>
                   <button

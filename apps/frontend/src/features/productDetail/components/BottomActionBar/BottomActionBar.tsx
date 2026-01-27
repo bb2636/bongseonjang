@@ -1,4 +1,5 @@
 import { useQuickCart } from '@/contexts/QuickCartContext';
+import { useToast } from '@/contexts/ToastContext';
 import './BottomActionBar.css';
 
 interface BottomActionBarProps {
@@ -15,9 +16,13 @@ export default function BottomActionBar({
   onToggleWishlist,
 }: BottomActionBarProps) {
   const { openQuickCart } = useQuickCart();
+  const { showToast } = useToast();
 
   const handleBuyClick = () => {
-    if (isSoldOut) return;
+    if (isSoldOut) {
+      showToast('품절되었습니다', 'error');
+      return;
+    }
     openQuickCart(productId);
   };
 
@@ -51,7 +56,6 @@ export default function BottomActionBar({
         <button
           className={`bottom-action-bar__buy-btn ${isSoldOut ? 'bottom-action-bar__buy-btn--sold-out' : ''}`}
           onClick={handleBuyClick}
-          disabled={isSoldOut}
         >
           {isSoldOut ? '품절' : '구매하기'}
         </button>

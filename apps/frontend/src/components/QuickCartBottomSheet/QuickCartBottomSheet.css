@@ -333,6 +333,16 @@
   cursor: not-allowed;
 }
 
+.quick-cart-sheet__cart-btn--sold-out {
+  border-color: #ccc;
+  color: #666;
+  cursor: pointer;
+}
+
+.quick-cart-sheet__cart-btn--sold-out:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 .quick-cart-sheet__buy-btn {
   flex: 1;
   height: 50px;
