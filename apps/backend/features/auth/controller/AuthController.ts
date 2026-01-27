@@ -341,7 +341,17 @@ export class AuthController {
     try {
       const { code, id_token, state, user } = req.body;
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
-      const appScheme = (req.query.appScheme as string) || (req.body.appScheme as string);
+      
+      const extractAppSchemeFromState = (fullState: string | undefined): { originalState: string | undefined; appScheme: string | undefined } => {
+        if (!fullState) return { originalState: undefined, appScheme: undefined };
+        const parts = fullState.split('__scheme__');
+        if (parts.length === 2) {
+          return { originalState: parts[0], appScheme: parts[1] };
+        }
+        return { originalState: fullState, appScheme: undefined };
+      };
+
+      const { originalState, appScheme } = extractAppSchemeFromState(state);
 
       let userName: string | undefined;
       if (user) {
@@ -360,7 +370,7 @@ export class AuthController {
       const params = new URLSearchParams();
       if (code) params.set('code', code);
       if (id_token) params.set('id_token', id_token);
-      if (state) params.set('state', state);
+      if (originalState) params.set('state', originalState);
       if (userName) params.set('user_name', userName);
 
       if (appScheme) {
@@ -371,7 +381,13 @@ export class AuthController {
     } catch (error) {
       console.error('Apple callback error:', error);
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
-      const appScheme = (req.query.appScheme as string) || (req.body.appScheme as string);
+      const { state } = req.body;
+      const extractScheme = (fullState: string | undefined): string | undefined => {
+        if (!fullState) return undefined;
+        const parts = fullState.split('__scheme__');
+        return parts.length === 2 ? parts[1] : undefined;
+      };
+      const appScheme = extractScheme(state);
       if (appScheme) {
         res.redirect(`${appScheme}://oauth/apple/callback?error=callback_failed`);
       } else {
@@ -384,8 +400,18 @@ export class AuthController {
     try {
       const provider = req.params.provider as string;
       const { code, state, error: oauthError } = req.query;
-      const appScheme = req.query.appScheme as string;
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+
+      const extractAppSchemeFromState = (fullState: string | undefined): { originalState: string | undefined; appScheme: string | undefined } => {
+        if (!fullState) return { originalState: undefined, appScheme: undefined };
+        const parts = fullState.split('__scheme__');
+        if (parts.length === 2) {
+          return { originalState: parts[0], appScheme: parts[1] };
+        }
+        return { originalState: fullState, appScheme: undefined };
+      };
+
+      const { originalState, appScheme } = extractAppSchemeFromState(state as string | undefined);
 
       const buildRedirectUrl = (path: string, params: URLSearchParams): string => {
         if (appScheme) {
@@ -399,7 +425,7 @@ export class AuthController {
       if (oauthError) {
         const params = new URLSearchParams();
         params.set('error', oauthError as string);
-        if (state) params.set('state', state as string);
+        if (originalState) params.set('state', originalState);
         res.redirect(buildRedirectUrl(callbackPath, params));
         return;
       }
@@ -407,7 +433,7 @@ export class AuthController {
       if (!code) {
         const params = new URLSearchParams();
         params.set('error', 'no_code');
-        if (state) params.set('state', state as string);
+        if (originalState) params.set('state', originalState);
         res.redirect(buildRedirectUrl(callbackPath, params));
         return;
       }
@@ -416,7 +442,7 @@ export class AuthController {
       if (!validProviders.includes(provider)) {
         const params = new URLSearchParams();
         params.set('error', 'invalid_provider');
-        if (state) params.set('state', state as string);
+        if (originalState) params.set('state', originalState);
         res.redirect(buildRedirectUrl(callbackPath, params));
         return;
       }
@@ -426,7 +452,7 @@ export class AuthController {
         if (provider === 'kakao') {
           socialUserInfo = await socialAuthService.getKakaoUserInfo(code as string);
         } else if (provider === 'naver') {
-          socialUserInfo = await socialAuthService.getNaverUserInfo(code as string, state as string);
+          socialUserInfo = await socialAuthService.getNaverUserInfo(code as string, originalState as string);
         } else if (provider === 'google') {
           socialUserInfo = await socialAuthService.getGoogleUserInfo(code as string);
         }
@@ -434,7 +460,7 @@ export class AuthController {
         console.error('Token exchange error:', tokenError);
         const tokenErrorParams = new URLSearchParams();
         tokenErrorParams.set('error', 'token_exchange_failed');
-        if (state) tokenErrorParams.set('state', state as string);
+        if (originalState) tokenErrorParams.set('state', originalState);
         res.redirect(buildRedirectUrl(callbackPath, tokenErrorParams));
         return;
       }
@@ -442,7 +468,7 @@ export class AuthController {
       if (!socialUserInfo) {
         const userInfoErrorParams = new URLSearchParams();
         userInfoErrorParams.set('error', 'user_info_failed');
-        if (state) userInfoErrorParams.set('state', state as string);
+        if (originalState) userInfoErrorParams.set('state', originalState);
         res.redirect(buildRedirectUrl(callbackPath, userInfoErrorParams));
         return;
       }
@@ -454,7 +480,7 @@ export class AuthController {
         params.set('provider', socialUserInfo.provider);
         params.set('providerId', socialUserInfo.providerUserId);
         if (socialUserInfo.name) params.set('name', socialUserInfo.name);
-        if (state) params.set('state', state as string);
+        if (originalState) params.set('state', originalState);
         res.redirect(buildRedirectUrl(callbackPath, params));
         return;
       }
@@ -470,7 +496,7 @@ export class AuthController {
 
         params.set('token', result.token);
         params.set('isNewUser', result.isNewUser ? 'true' : 'false');
-        if (state) params.set('state', state as string);
+        if (originalState) params.set('state', originalState);
         
         res.redirect(buildRedirectUrl(callbackPath, params));
       } catch (loginError) {
@@ -478,15 +504,22 @@ export class AuthController {
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
         const errorParams = new URLSearchParams();
         errorParams.set('error', errorMessage);
-        if (state) errorParams.set('state', state as string);
+        if (originalState) errorParams.set('state', originalState);
         res.redirect(buildRedirectUrl(callbackPath, errorParams));
       }
     } catch (error) {
       console.error('OAuth callback error:', error);
       const provider = req.params.provider || 'unknown';
-      const appScheme = req.query.appScheme as string;
+      const { state } = req.query;
       const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
       const callbackPath = `/oauth/${provider}/callback`;
+      
+      const extractScheme = (fullState: string | undefined): string | undefined => {
+        if (!fullState) return undefined;
+        const parts = fullState.split('__scheme__');
+        return parts.length === 2 ? parts[1] : undefined;
+      };
+      const appScheme = extractScheme(state as string | undefined);
       
       if (appScheme) {
         res.redirect(`${appScheme}:/${callbackPath}?error=callback_failed`);

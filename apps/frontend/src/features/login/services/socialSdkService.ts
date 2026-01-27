@@ -217,7 +217,8 @@ export async function kakaoAuthorize(): Promise<OAuthResult | void> {
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/kakao/callback`;
     console.log('[KakaoOAuth] Capacitor mode, redirectUri:', redirectUri);
-    const state = generateRandomState();
+    const state = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
+    const stateForValidation = state.split('__scheme__')[0];
     
     const params = new URLSearchParams({
       client_id: KAKAO_REST_API_KEY || '',
@@ -227,10 +228,10 @@ export async function kakaoAuthorize(): Promise<OAuthResult | void> {
       state,
     });
 
-    const authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}&appScheme=${CAPACITOR_APP_SCHEME}`;
+    const authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
     console.log('[KakaoOAuth] authUrl:', authUrl);
     
-    const result = await openBrowserForOAuth(authUrl, 'kakao', state);
+    const result = await openBrowserForOAuth(authUrl, 'kakao', stateForValidation);
     return result;
   }
 
@@ -264,18 +265,20 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
     console.log('[NaverOAuth] Capacitor mode - using SFSafariViewController');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/naver/callback`;
+    const fullState = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
+    const stateForValidation = fullState.split('__scheme__')[0];
     
     const params = new URLSearchParams({
       client_id: NAVER_CLIENT_ID,
       redirect_uri: redirectUri,
       response_type: 'code',
-      state,
+      state: fullState,
     });
 
-    const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}&appScheme=${CAPACITOR_APP_SCHEME}`;
+    const authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
     console.log('[NaverOAuth] authUrl:', authUrl);
     
-    const result = await openBrowserForOAuth(authUrl, 'naver', state);
+    const result = await openBrowserForOAuth(authUrl, 'naver', stateForValidation);
     console.log('[NaverOAuth] Browser result:', result);
     return result;
   }
@@ -320,21 +323,23 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
     console.log('[GoogleOAuth] Capacitor mode - using SFSafariViewController');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/google/callback`;
+    const fullState = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
+    const stateForValidation = fullState.split('__scheme__')[0];
     
     const params = new URLSearchParams({
       client_id: GOOGLE_CLIENT_ID,
       redirect_uri: redirectUri,
       response_type: 'code',
       scope: 'openid email profile',
-      state,
+      state: fullState,
       access_type: 'offline',
       prompt: 'consent',
     });
 
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}&appScheme=${CAPACITOR_APP_SCHEME}`;
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
     console.log('[GoogleOAuth] authUrl:', authUrl);
     
-    const result = await openBrowserForOAuth(authUrl, 'google', state);
+    const result = await openBrowserForOAuth(authUrl, 'google', stateForValidation);
     console.log('[GoogleOAuth] Browser result:', result);
     return result;
   }
@@ -367,16 +372,18 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
   if (isCapacitor) {
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/apple/callback`;
+    const fullState = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
+    const stateForValidation = fullState.split('__scheme__')[0];
     const params = new URLSearchParams({
       client_id: APPLE_CLIENT_ID,
       redirect_uri: redirectUri,
       response_type: 'code id_token',
       scope: 'name email',
-      state,
+      state: fullState,
       response_mode: 'form_post',
     });
-    const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}&appScheme=${CAPACITOR_APP_SCHEME}`;
-    const result = await openBrowserForOAuth(authUrl, 'apple', state);
+    const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
+    const result = await openBrowserForOAuth(authUrl, 'apple', stateForValidation);
     return result;
   }
 
@@ -397,6 +404,22 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
 
 function generateRandomState(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
+}
+
+function generateStateWithAppScheme(appScheme?: string): string {
+  const randomPart = generateRandomState();
+  if (appScheme) {
+    return `${randomPart}__scheme__${appScheme}`;
+  }
+  return randomPart;
+}
+
+function extractStateAndScheme(fullState: string): { state: string; appScheme?: string } {
+  const parts = fullState.split('__scheme__');
+  if (parts.length === 2) {
+    return { state: parts[0], appScheme: parts[1] };
+  }
+  return { state: fullState };
 }
 
 export function getKakaoRedirectUri(): string {
