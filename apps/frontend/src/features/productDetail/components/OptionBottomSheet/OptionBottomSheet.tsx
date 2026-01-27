@@ -171,7 +171,10 @@ export default function OptionBottomSheet({
                   onClick={() => option.stockQty > 0 && handleMainOptionSelect(option)}
                   disabled={option.stockQty <= 0}
                 >
-                  <span className="option-bottom-sheet__option-name">{option.name}</span>
+                  <span className="option-bottom-sheet__option-name">
+                    {option.name}
+                    {option.stockQty <= 0 && <span className="option-bottom-sheet__sold-out-badge">품절</span>}
+                  </span>
                   <span className="option-bottom-sheet__option-price">
                     {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : formatPrice(basePrice)}
                   </span>
@@ -198,7 +201,10 @@ export default function OptionBottomSheet({
                       onClick={() => option.stockQty > 0 && handleSubOptionSelect(option)}
                       disabled={option.stockQty <= 0}
                     >
-                      <span className="option-bottom-sheet__option-name">{option.name}</span>
+                      <span className="option-bottom-sheet__option-name">
+                        {option.name}
+                        {option.stockQty <= 0 && <span className="option-bottom-sheet__sold-out-badge">품절</span>}
+                      </span>
                       <span className="option-bottom-sheet__option-additional">
                         {option.additionalPrice > 0 ? `+${formatPrice(option.additionalPrice)}` : '추가금액 없음'}
                       </span>

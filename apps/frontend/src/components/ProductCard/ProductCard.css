@@ -122,3 +122,33 @@
   letter-spacing: -0.02em;
   color: rgba(12, 12, 12, 0.9);
 }
+
+.product-card__image--sold-out {
+  opacity: 0.6;
+}
+
+.product-card__sold-out-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  background: rgba(12, 12, 12, 0.7);
+  border-radius: 4px;
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 128%;
+  color: #FFFFFF;
+}
+
+.product-card__add-button--sold-out {
+  background: rgba(12, 12, 12, 0.08);
+  border-color: rgba(12, 12, 12, 0.08);
+  color: rgba(12, 12, 12, 0.4);
+  cursor: not-allowed;
+}
+
+.product-card__add-button--sold-out:hover,
+.product-card__add-button--sold-out:active {
+  background: rgba(12, 12, 12, 0.08);
+}

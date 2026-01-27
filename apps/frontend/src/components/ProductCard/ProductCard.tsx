@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuickCart } from '@/contexts/QuickCartContext';
+import { useToast } from '@/contexts/ToastContext';
 import './ProductCard.css';
 
 const FALLBACK_IMAGE = 'https://placehold.co/400x280/f5f5f5/999999?text=No+Image';
@@ -26,6 +27,9 @@ export interface ProductCardData {
   reviewCount?: number;
   averageRating?: number;
   mainOptions?: MainOptionData[];
+  stockQuantity?: number;
+  saleStartAt?: string | null;
+  saleEndAt?: string | null;
 }
 
 interface ProductCardProps {
@@ -44,6 +48,23 @@ export default function ProductCard({
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const { openQuickCart } = useQuickCart();
+  const { showToast } = useToast();
+
+  const isSoldOut = useMemo(() => {
+    const now = new Date();
+    if (product.saleStartAt && new Date(product.saleStartAt) > now) return true;
+    if (product.saleEndAt && new Date(product.saleEndAt) < now) return true;
+    
+    if (product.mainOptions && product.mainOptions.length > 0) {
+      return product.mainOptions.every(option => option.stockQty === 0);
+    }
+    
+    if (product.stockQuantity !== undefined) {
+      return product.stockQuantity === 0;
+    }
+    
+    return false;
+  }, [product]);
 
   const handleImageError = () => {
     setImageError(true);
@@ -56,6 +77,10 @@ export default function ProductCard({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isSoldOut) {
+      showToast('품절된 상품입니다', 'error');
+      return;
+    }
     openQuickCart(product.id);
   };
 
@@ -67,17 +92,20 @@ export default function ProductCard({
         <img
           src={imageError || !product.imageUrl ? FALLBACK_IMAGE : product.imageUrl}
           alt={product.name}
-          className="product-card__image"
+          className={`product-card__image${isSoldOut ? ' product-card__image--sold-out' : ''}`}
           loading="lazy"
           onError={handleImageError}
           onLoad={handleImageLoad}
         />
+        {isSoldOut && (
+          <div className="product-card__sold-out-badge">품절</div>
+        )}
       </div>
 
       <div className="product-card__content">
         <button
           type="button"
-          className="product-card__add-button"
+          className={`product-card__add-button${isSoldOut ? ' product-card__add-button--sold-out' : ''}`}
           onClick={handleAddToCart}
         >
           <svg
@@ -92,7 +120,7 @@ export default function ProductCard({
               fill="currentColor"
             />
           </svg>
-          <span>담기</span>
+          <span>{isSoldOut ? '품절' : '담기'}</span>
         </button>
 
         <div className="product-card__info">
