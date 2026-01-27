@@ -9,6 +9,8 @@ import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
 import { DeliveryRequestBottomSheet } from '../components/DeliveryRequestBottomSheet';
+import { API_BASE_URL, IS_CAPACITOR, CAPACITOR_APP_SCHEME } from '@/shared/config/apiConfig';
+import { Browser } from '@capacitor/browser';
 import './CheckoutPage.css';
 
 interface DirectPurchaseItem {
@@ -337,6 +339,13 @@ export function GuestCheckoutPage() {
       });
 
       setPaymentStep('connecting');
+
+      if (IS_CAPACITOR) {
+        const paymentFormUrl = `${API_BASE_URL}/payment/form/${paymentData.orderId}?appScheme=${CAPACITOR_APP_SCHEME}`;
+        setIsProcessing(false);
+        await Browser.open({ url: paymentFormUrl });
+        return;
+      }
 
       if (!window.AUTHNICE) {
         showToast('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.', 'error');

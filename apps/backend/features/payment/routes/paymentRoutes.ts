@@ -432,6 +432,155 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
+router.get('/form/:orderId', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    const appScheme = req.query.appScheme as string | undefined;
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const paymentRepository = AppDataSource.getRepository(Payment);
+    const orderItemRepository = AppDataSource.getRepository(OrderItem);
+
+    const order = await orderRepository.findOne({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      return res.status(404).send('주문을 찾을 수 없습니다');
+    }
+
+    const payment = await paymentRepository.findOne({
+      where: { orderId },
+    });
+
+    if (!payment) {
+      return res.status(404).send('결제 정보를 찾을 수 없습니다');
+    }
+
+    if (order.status !== 'pending') {
+      return res.status(400).send('이미 처리된 주문입니다');
+    }
+
+    const orderItems = await orderItemRepository.find({
+      where: { orderId },
+    });
+
+    const goodsName = orderItems.length > 1
+      ? `${orderItems[0].productName} 외 ${orderItems.length - 1}건`
+      : orderItems[0]?.productName || '상품';
+
+    const methodMap: Record<string, string> = {
+      'card': 'card',
+      'bank': 'bank',
+      'vbank': 'vbank',
+      'bank_transfer': 'bank',
+      'virtual_account': 'vbank',
+    };
+    const paymentMethod = methodMap[payment.method] || 'card';
+
+    const baseUrl = getFrontendUrl(req);
+    const returnUrl = appScheme 
+      ? `${baseUrl}/api/payment/callback?appScheme=${appScheme}`
+      : `${baseUrl}/api/payment/callback`;
+
+    const html = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>결제 진행중</title>
+  <script src="https://pay.nicepay.co.kr/v1/js/"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .message {
+      color: #666;
+      font-size: 16px;
+    }
+    .error {
+      color: #dc2626;
+      background: #fef2f2;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 300px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <div class="spinner"></div>
+    <p class="message">결제창을 불러오는 중입니다...</p>
+  </div>
+  <div id="error-container"></div>
+  
+  <script>
+    (function() {
+      const paymentConfig = {
+        clientId: '${NICEPAY_CLIENT_KEY}',
+        method: '${paymentMethod}',
+        orderId: '${orderId}',
+        amount: ${order.finalAmount},
+        goodsName: '${goodsName.replace(/'/g, "\\'")}',
+        returnUrl: '${returnUrl}',
+        ${paymentMethod === 'vbank' ? `vbankHolder: '${order.recipientName.replace(/'/g, "\\'")}',` : ''}
+        fnError: function(result) {
+          document.querySelector('.loading').style.display = 'none';
+          document.getElementById('error-container').innerHTML = 
+            '<div class="error">' +
+            '<strong>결제 오류</strong><br>' +
+            (result.errorMsg || '결제를 진행할 수 없습니다') +
+            '</div>';
+        }
+      };
+
+      setTimeout(function() {
+        if (window.AUTHNICE && window.AUTHNICE.requestPay) {
+          window.AUTHNICE.requestPay(paymentConfig);
+        } else {
+          document.querySelector('.loading').style.display = 'none';
+          document.getElementById('error-container').innerHTML = 
+            '<div class="error">결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</div>';
+        }
+      }, 500);
+    })();
+  </script>
+</body>
+</html>`;
+
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return res.send(html);
+  } catch (error) {
+    console.error('Failed to serve payment form:', error);
+    return res.status(500).send('결제 페이지를 불러올 수 없습니다');
+  }
+});
+
 async function handlePaymentCallback(req: Request, res: Response) {
   const fallbackUrl = getFrontendUrl(req);
   
