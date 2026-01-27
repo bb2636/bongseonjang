@@ -58,6 +58,8 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   const staticSlugs = ['all', 'best', 'new'];
 
   useEffect(() => {
+    if (dynamicCategories.length === 0) return;
+    
     const activeTab = tabRefs.current.get(activeSlug);
     if (activeTab && containerRef.current) {
       const container = containerRef.current;
