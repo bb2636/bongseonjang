@@ -12,7 +12,10 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       'import.meta.env.VITE_KAKAO_JS_KEY': JSON.stringify(process.env.VITE_KAKAO_JS_KEY),
-      'import.meta.env.VITE_NAVER_CLIENT_ID': JSON.stringify(process.env.NAVER_CLIENT_ID),
+      'import.meta.env.VITE_KAKAO_REST_API_KEY': JSON.stringify(process.env.VITE_KAKAO_REST_API_KEY),
+      'import.meta.env.VITE_NAVER_CLIENT_ID': JSON.stringify(process.env.VITE_NAVER_CLIENT_ID),
+      'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(process.env.VITE_GOOGLE_CLIENT_ID),
+      'import.meta.env.VITE_APPLE_CLIENT_ID': JSON.stringify(process.env.VITE_APPLE_CLIENT_ID),
       'import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL': JSON.stringify(process.env.VITE_SOCIAL_REDIRECT_BASE_URL || process.env.SOCIAL_REDIRECT_BASE_URL),
       'import.meta.env.VITE_API_URL': JSON.stringify(apiUrl),
     },
