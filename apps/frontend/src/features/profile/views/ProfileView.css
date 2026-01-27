@@ -1,7 +1,7 @@
 .profile-view {
   min-height: 100vh;
   background: #FFFFFF;
-  padding-bottom: 94px;
+  padding-bottom: calc(94px + var(--safe-area-bottom, 0px));
 }
 
 .profile-view__content {
