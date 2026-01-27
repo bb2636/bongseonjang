@@ -1,5 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
+import { Share } from '@capacitor/share';
 import { useProductDetail } from './useProductDetail';
 import { useProductReviews } from './useProductReviews';
 import { useRelatedProducts } from './useRelatedProducts';
@@ -133,7 +135,20 @@ export function useProductDetailPage(productId: string) {
   const handleShare = async () => {
     const shareUrl = window.location.href;
     
-    if (navigator.share) {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await Share.share({
+          title: product?.name || '상품 공유',
+          text: product?.name || '상품을 확인해보세요',
+          url: shareUrl,
+          dialogTitle: '공유하기',
+        });
+      } catch (err) {
+        if ((err as Error).message !== 'Share canceled') {
+          await copyToClipboard(shareUrl);
+        }
+      }
+    } else if (navigator.share) {
       try {
         await navigator.share({
           title: product?.name,
