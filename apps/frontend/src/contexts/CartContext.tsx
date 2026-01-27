@@ -9,6 +9,7 @@ interface CartContextType {
   incrementCart: (amount?: number) => void;
   decrementCart: (amount?: number) => void;
   setCartCount: (count: number) => void;
+  resetToGuestCart: () => void;
   isGuest: boolean;
 }
 
@@ -88,12 +89,18 @@ export function CartProvider({ children }: CartProviderProps) {
     setCartCountState(count);
   }, []);
 
+  const resetToGuestCart = useCallback(() => {
+    const guestCount = guestCartStorage.getCount();
+    setCartCountState(guestCount);
+  }, []);
+
   const value: CartContextType = {
     cartCount,
     refreshCart,
     incrementCart,
     decrementCart,
     setCartCount,
+    resetToGuestCart,
     isGuest: !isAuthenticated,
   };
 

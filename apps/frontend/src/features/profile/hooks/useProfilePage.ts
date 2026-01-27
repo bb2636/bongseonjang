@@ -4,6 +4,8 @@ import { UserProfile, Order, MenuSection } from '../types/profile';
 import { fetchUserProfile, fetchRecentOrders } from '../api/profileApi';
 import { useQuickCart } from '@/contexts/QuickCartContext';
 import { useToast } from '@/contexts/ToastContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 import { bootChannelTalk, shutdownChannelTalk, openChannelTalk } from '@/services/channelTalk';
 
 const MENU_SECTIONS: MenuSection[] = [
@@ -36,6 +38,8 @@ export function useProfilePage() {
   const navigate = useNavigate();
   const { openQuickCart } = useQuickCart();
   const { showToast } = useToast();
+  const { logout } = useAuth();
+  const { resetToGuestCart } = useCart();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -139,10 +143,11 @@ export function useProfilePage() {
   }, []);
 
   const handleLogoutConfirm = useCallback(() => {
-    localStorage.removeItem('user_token');
+    logout();
+    resetToGuestCart();
     setIsLogoutModalOpen(false);
     navigate('/login');
-  }, [navigate]);
+  }, [logout, resetToGuestCart, navigate]);
 
   const handleLogoutCancel = useCallback(() => {
     setIsLogoutModalOpen(false);
