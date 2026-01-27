@@ -64,6 +64,29 @@ export function getApiBaseUrlDynamic(): string {
 
 export const CAPACITOR_APP_SCHEME = 'bongseonjang';
 
+export function getAbsoluteApiUrl(): string {
+  if (import.meta.env.VITE_API_URL) {
+    const url = import.meta.env.VITE_API_URL;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+  }
+  
+  if (import.meta.env.MODE === 'production' || import.meta.env.MODE === 'capacitor') {
+    return PRODUCTION_API_URL;
+  }
+  
+  if (isCapacitorEnvironment()) {
+    return PRODUCTION_API_URL;
+  }
+  
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin}/api`;
+  }
+  
+  return PRODUCTION_API_URL;
+}
+
 export function getCapacitorPlatform(): 'ios' | 'android' | 'web' {
   if (typeof window === 'undefined') return 'web';
   if (window.Capacitor?.getPlatform) {

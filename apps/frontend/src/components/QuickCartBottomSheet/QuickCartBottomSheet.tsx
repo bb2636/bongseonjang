@@ -74,6 +74,12 @@ export default function QuickCartBottomSheet() {
   }, [isOpen]);
 
   const handleOptionSelect = useCallback((option: QuickCartOption) => {
+    if (option.stockQty <= 0) {
+      showToast('품절된 옵션입니다.', 'error');
+      setIsDropdownOpen(false);
+      return;
+    }
+
     const existingIndex = selectedItems.findIndex(
       (item) => item.option?.id === option.id
     );
@@ -81,6 +87,8 @@ export default function QuickCartBottomSheet() {
     if (existingIndex >= 0) {
       const currentQty = selectedItems[existingIndex].quantity;
       if (currentQty >= option.stockQty) {
+        showToast(`재고가 ${option.stockQty}개 남았습니다.`, 'warning');
+        setIsDropdownOpen(false);
         return;
       }
       const newItems = [...selectedItems];
@@ -95,7 +103,7 @@ export default function QuickCartBottomSheet() {
       setSelectedItems([...selectedItems, newItem]);
     }
     setIsDropdownOpen(false);
-  }, [selectedItems]);
+  }, [selectedItems, showToast]);
 
   const updateQuantity = useCallback((itemId: string, delta: number) => {
     setSelectedItems((prev) =>
@@ -106,7 +114,12 @@ export default function QuickCartBottomSheet() {
             if (newQuantity <= 0) {
               return item;
             }
-            if (item.option && newQuantity > item.option.stockQty) {
+            if (item.option && delta > 0 && newQuantity > item.option.stockQty) {
+              showToast(`재고가 ${item.option.stockQty}개 남았습니다.`, 'warning');
+              return item;
+            }
+            if (!item.option && product && delta > 0 && newQuantity > product.stockQuantity) {
+              showToast(`재고가 ${product.stockQuantity}개 남았습니다.`, 'warning');
               return item;
             }
             return { ...item, quantity: newQuantity };
@@ -115,7 +128,7 @@ export default function QuickCartBottomSheet() {
         })
         .filter((item) => item.quantity > 0)
     );
-  }, []);
+  }, [product, showToast]);
 
   const removeItem = useCallback((itemId: string) => {
     setSelectedItems((prev) => prev.filter((item) => item.id !== itemId));
@@ -124,6 +137,10 @@ export default function QuickCartBottomSheet() {
   const handleNoOptionQuantityChange = (delta: number) => {
     const newQuantity = noOptionQuantity + delta;
     if (newQuantity >= 1 && product) {
+      if (delta > 0 && newQuantity > product.stockQuantity) {
+        showToast(`재고가 ${product.stockQuantity}개 남았습니다.`, 'warning');
+        return;
+      }
       setNoOptionQuantity(newQuantity);
       setSelectedItems([{
         id: `product-${product.id}`,
@@ -400,6 +417,7 @@ export default function QuickCartBottomSheet() {
                   <button
                     className="quick-cart-sheet__quantity-btn"
                     onClick={() => handleNoOptionQuantityChange(1)}
+                    disabled={product ? noOptionQuantity >= product.stockQuantity : false}
                   >
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                       <path d="M10 4.583V15.417M4.583 10H15.417" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>

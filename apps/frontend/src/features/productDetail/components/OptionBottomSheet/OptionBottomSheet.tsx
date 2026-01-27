@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { MainOption, SubOption } from '../../types/productDetail';
+import { useToast } from '../../../../contexts/ToastContext';
 import './OptionBottomSheet.css';
 
 interface SelectedItem {
@@ -30,6 +31,7 @@ export default function OptionBottomSheet({
   onAddToCart,
   onBuyNow,
 }: OptionBottomSheetProps) {
+  const { showToast } = useToast();
   const [selectedMainOption, setSelectedMainOption] = useState<MainOption | null>(null);
   const [selectedSubOption, setSelectedSubOption] = useState<SubOption | null>(null);
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
@@ -55,9 +57,20 @@ export default function OptionBottomSheet({
 
   const canAddToList = selectedMainOption !== null;
 
+  const getMaxStockForSelection = useCallback((mainOpt: MainOption, subOpt: SubOption | null): number => {
+    const mainStock = mainOpt.stockQty;
+    const subStock = subOpt?.stockQty;
+    if (subStock !== undefined) {
+      return Math.min(mainStock, subStock);
+    }
+    return mainStock;
+  }, []);
+
   const addToSelectedItems = useCallback(() => {
     if (!selectedMainOption) return;
 
+    const maxStock = getMaxStockForSelection(selectedMainOption, selectedSubOption);
+    
     const existingIndex = selectedItems.findIndex(
       (item) =>
         item.mainOption.id === selectedMainOption.id &&
@@ -65,10 +78,23 @@ export default function OptionBottomSheet({
     );
 
     if (existingIndex >= 0) {
+      const currentQty = selectedItems[existingIndex].quantity;
+      if (currentQty >= maxStock) {
+        showToast(`재고가 ${maxStock}개 남았습니다.`, 'warning');
+        setSelectedMainOption(null);
+        setSelectedSubOption(null);
+        return;
+      }
       const newItems = [...selectedItems];
       newItems[existingIndex].quantity += 1;
       setSelectedItems(newItems);
     } else {
+      if (maxStock <= 0) {
+        showToast('품절된 옵션입니다.', 'error');
+        setSelectedMainOption(null);
+        setSelectedSubOption(null);
+        return;
+      }
       const newItem: SelectedItem = {
         id: `${selectedMainOption.id}-${selectedSubOption?.id || 'none'}-${Date.now()}`,
         mainOption: selectedMainOption,
@@ -80,7 +106,16 @@ export default function OptionBottomSheet({
 
     setSelectedMainOption(null);
     setSelectedSubOption(null);
-  }, [selectedMainOption, selectedSubOption, selectedItems, hasSubOptions]);
+  }, [selectedMainOption, selectedSubOption, selectedItems, getMaxStockForSelection, showToast]);
+
+  const getItemMaxStock = useCallback((item: SelectedItem): number => {
+    const mainStock = item.mainOption.stockQty;
+    const subStock = item.subOption?.stockQty;
+    if (subStock !== undefined) {
+      return Math.min(mainStock, subStock);
+    }
+    return mainStock;
+  }, []);
 
   const updateQuantity = useCallback((itemId: string, delta: number) => {
     setSelectedItems((prev) =>
@@ -88,13 +123,20 @@ export default function OptionBottomSheet({
         .map((item) => {
           if (item.id === itemId) {
             const newQuantity = item.quantity + delta;
+            const maxStock = getItemMaxStock(item);
+            
+            if (delta > 0 && newQuantity > maxStock) {
+              showToast(`재고가 ${maxStock}개 남았습니다.`, 'warning');
+              return item;
+            }
+            
             return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
           }
           return item;
         })
         .filter((item) => item.quantity > 0)
     );
-  }, []);
+  }, [getItemMaxStock, showToast]);
 
   const removeItem = useCallback((itemId: string) => {
     setSelectedItems((prev) => prev.filter((item) => item.id !== itemId));
@@ -265,6 +307,7 @@ export default function OptionBottomSheet({
                         <button
                           className="option-bottom-sheet__quantity-btn"
                           onClick={() => updateQuantity(item.id, 1)}
+                          disabled={item.quantity >= getItemMaxStock(item)}
                         >
                           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
