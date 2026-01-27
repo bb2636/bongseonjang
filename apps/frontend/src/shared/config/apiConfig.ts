@@ -54,6 +54,14 @@ export const API_BASE_URL = getApiBaseUrl();
 
 export const IS_CAPACITOR = isCapacitorEnvironment();
 
+export function checkIsCapacitor(): boolean {
+  return isCapacitorEnvironment();
+}
+
+export function getApiBaseUrlDynamic(): string {
+  return getApiBaseUrl();
+}
+
 export const CAPACITOR_APP_SCHEME = 'bongseonjang';
 
 export function getCapacitorPlatform(): 'ios' | 'android' | 'web' {

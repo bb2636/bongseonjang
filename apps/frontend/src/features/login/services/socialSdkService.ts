@@ -1,5 +1,5 @@
 import { InAppBrowser } from '@capgo/inappbrowser';
-import { IS_CAPACITOR, CAPACITOR_APP_SCHEME, API_BASE_URL } from '@/shared/config/apiConfig';
+import { checkIsCapacitor, CAPACITOR_APP_SCHEME, getApiBaseUrlDynamic } from '@/shared/config/apiConfig';
 
 const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
 const KAKAO_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
@@ -9,7 +9,7 @@ const APPLE_CLIENT_ID = import.meta.env.VITE_APPLE_CLIENT_ID;
 const SOCIAL_REDIRECT_BASE_URL = import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL;
 
 function getBackendBaseUrl(): string {
-  const apiUrl = API_BASE_URL;
+  const apiUrl = getApiBaseUrlDynamic();
   return apiUrl.replace(/\/api$/, '');
 }
 
@@ -192,9 +192,13 @@ export function initKakaoSdk(): boolean {
 }
 
 export async function kakaoAuthorize(): Promise<OAuthResult | void> {
-  if (IS_CAPACITOR) {
+  const isCapacitor = checkIsCapacitor();
+  console.log('[KakaoOAuth] kakaoAuthorize called, isCapacitor:', isCapacitor);
+  
+  if (isCapacitor) {
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/kakao/callback`;
+    console.log('[KakaoOAuth] Capacitor mode, redirectUri:', redirectUri);
     const state = generateRandomState();
     
     const params = new URLSearchParams({
@@ -206,6 +210,7 @@ export async function kakaoAuthorize(): Promise<OAuthResult | void> {
     });
 
     const authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
+    console.log('[KakaoOAuth] authUrl:', authUrl);
     
     const result = await openInAppBrowserForOAuth(authUrl, '/oauth/kakao/callback', 'kakao', state);
     return result;
@@ -286,9 +291,10 @@ function loadNaverSdk(): Promise<void> {
 }
 
 export async function naverAuthorize(): Promise<OAuthResult | void> {
+  const isCapacitor = checkIsCapacitor();
   console.log('[NaverOAuth] naverAuthorize called');
   console.log('[NaverOAuth] NAVER_CLIENT_ID:', NAVER_CLIENT_ID ? 'SET' : 'NOT SET');
-  console.log('[NaverOAuth] IS_CAPACITOR:', IS_CAPACITOR);
+  console.log('[NaverOAuth] isCapacitor:', isCapacitor);
   
   if (!NAVER_CLIENT_ID) {
     console.error('[NaverOAuth] VITE_NAVER_CLIENT_ID is not configured');
@@ -297,7 +303,7 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
 
   const state = generateRandomState();
 
-  if (IS_CAPACITOR) {
+  if (isCapacitor) {
     console.log('[NaverOAuth] Capacitor mode - using InAppBrowser');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/naver/callback`;
@@ -341,9 +347,10 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
 }
 
 export async function googleAuthorize(): Promise<OAuthResult | void> {
+  const isCapacitor = checkIsCapacitor();
   console.log('[GoogleOAuth] googleAuthorize called');
   console.log('[GoogleOAuth] GOOGLE_CLIENT_ID:', GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET');
-  console.log('[GoogleOAuth] IS_CAPACITOR:', IS_CAPACITOR);
+  console.log('[GoogleOAuth] isCapacitor:', isCapacitor);
   
   if (!GOOGLE_CLIENT_ID) {
     console.error('[GoogleOAuth] VITE_GOOGLE_CLIENT_ID is not configured');
@@ -352,7 +359,7 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
 
   const state = generateRandomState();
 
-  if (IS_CAPACITOR) {
+  if (isCapacitor) {
     console.log('[GoogleOAuth] Capacitor mode - using InAppBrowser');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/google/callback`;
@@ -392,13 +399,15 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
 }
 
 export async function appleAuthorize(): Promise<OAuthResult | void> {
+  const isCapacitor = checkIsCapacitor();
+  
   if (!APPLE_CLIENT_ID) {
     throw new Error('VITE_APPLE_CLIENT_ID is not configured');
   }
 
   const state = generateRandomState();
 
-  if (IS_CAPACITOR) {
+  if (isCapacitor) {
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/apple/callback`;
     const params = new URLSearchParams({
