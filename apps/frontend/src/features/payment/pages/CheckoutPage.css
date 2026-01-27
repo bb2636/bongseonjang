@@ -18,11 +18,29 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 8px;
-  padding-top: calc(10px + var(--safe-area-top, 0px));
+  height: 48px;
+  box-sizing: border-box;
   background-color: #fff;
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: var(--safe-area-top, 0px);
+  left: 0;
+  right: 0;
   z-index: 100;
+}
+
+.checkout-header::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--safe-area-top, 0px));
+  left: 0;
+  right: 0;
+  height: var(--safe-area-top, 0px);
+  background: #ffffff;
+}
+
+.checkout-header-spacer {
+  height: calc(48px + var(--safe-area-top, 0px));
+  flex-shrink: 0;
 }
 
 .checkout-back-button {

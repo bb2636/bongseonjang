@@ -395,6 +395,7 @@ export function GuestCheckoutPage() {
         <h1 className="checkout-title">비회원 주문/결제</h1>
         <div style={{ width: 24 }} />
       </header>
+      <div className="checkout-header-spacer" />
 
       <form className="checkout-form" onSubmit={handleSubmit}>
         <section className="checkout-section">

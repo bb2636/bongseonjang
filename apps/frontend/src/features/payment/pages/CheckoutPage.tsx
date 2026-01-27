@@ -570,6 +570,7 @@ export function CheckoutPage() {
         <h1 className="checkout-title">주문/결제</h1>
         <div style={{ width: 24 }} />
       </header>
+      <div className="checkout-header-spacer" />
 
       <form className="checkout-form" onSubmit={handleSubmit}>
         <section className="checkout-address-card">
