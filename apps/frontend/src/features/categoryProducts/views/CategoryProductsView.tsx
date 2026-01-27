@@ -1,5 +1,5 @@
 import { AppBar, AppBarSpacer } from '@/components/AppBar';
-import { CategoryTabs } from '../components/CategoryTabs';
+import { CategoryTabs, CategoryTabsSpacer } from '../components/CategoryTabs';
 import { FilterChips } from '../../home/components/FilterChips';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import BottomNav from '@/components/BottomNav/BottomNav';
@@ -55,6 +55,7 @@ export default function CategoryProductsView({
         activeSlug={activeSlug}
         onTabChange={onTabChange}
       />
+      <CategoryTabsSpacer />
       {showFilterChips && (
         <FilterChips
           chips={subCategories}

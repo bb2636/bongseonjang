@@ -1,1 +1,1 @@
-export { default as CategoryTabs } from './CategoryTabs';
+export { default as CategoryTabs, CategoryTabsSpacer } from './CategoryTabs';

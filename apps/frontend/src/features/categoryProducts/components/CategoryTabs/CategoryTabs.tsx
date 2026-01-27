@@ -25,6 +25,10 @@ interface CategoryTabsProps {
   onTabChange: (slug: string, categoryId?: string) => void;
 }
 
+export function CategoryTabsSpacer() {
+  return <div className="category-tabs-spacer" />;
+}
+
 export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsProps) {
   const [dynamicCategories, setDynamicCategories] = useState<CategoryTab[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
