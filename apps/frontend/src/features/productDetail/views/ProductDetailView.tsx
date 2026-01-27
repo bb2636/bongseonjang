@@ -7,7 +7,7 @@ import RelatedProducts from '../components/RelatedProducts';
 import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
-import ProductDetailTabs from '../components/ProductDetailTabs';
+import ProductDetailTabs, { ProductDetailTabsSpacer } from '../components/ProductDetailTabs';
 import CountdownTimer from '../components/CountdownTimer';
 import { ProductInquirySection } from '../components/ProductInquirySection';
 import type { TabType } from '../components/ProductDetailTabs';
@@ -70,6 +70,7 @@ export default function ProductDetailView({
           reviewCount={product.reviewCount}
           onTabChange={onTabChange}
         />
+        <ProductDetailTabsSpacer />
 
         {activeTab === 'info' && (
           <>

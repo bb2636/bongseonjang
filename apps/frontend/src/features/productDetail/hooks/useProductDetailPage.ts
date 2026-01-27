@@ -130,12 +130,31 @@ export function useProductDetailPage(productId: string) {
     navigate('/cart');
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    
     if (navigator.share) {
-      navigator.share({
-        title: product?.name,
-        url: window.location.href,
-      });
+      try {
+        await navigator.share({
+          title: product?.name,
+          url: shareUrl,
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          await copyToClipboard(shareUrl);
+        }
+      }
+    } else {
+      await copyToClipboard(shareUrl);
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('링크가 복사되었습니다', 'success');
+    } catch {
+      showToast('링크 복사에 실패했습니다', 'error');
     }
   };
 
@@ -147,6 +166,14 @@ export function useProductDetailPage(productId: string) {
 
   const isSoldOut = useMemo(() => {
     if (!product) return false;
+    
+    const now = new Date();
+    if (product.saleStartAt && new Date(product.saleStartAt) > now) {
+      return true;
+    }
+    if (product.saleEndAt && new Date(product.saleEndAt) < now) {
+      return true;
+    }
     
     if (product.options && product.options.length > 0) {
       return product.options.every(option => option.stockQty === 0);

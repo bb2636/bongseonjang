@@ -32,11 +32,19 @@ export default function QuickCartBottomSheet() {
   const hasOptions = productOptions.length > 0;
   const optionGroupName = (product?.mainOptions?.[0] as { groupName?: string })?.groupName || '옵션 선택';
   
-  const isSoldOut = product ? (
-    hasOptions 
-      ? productOptions.every(opt => opt.stockQty === 0)
-      : product.stockQuantity === 0
-  ) : false;
+  const isSoldOut = product ? (() => {
+    const now = new Date();
+    if (product.saleStartAt && new Date(product.saleStartAt) > now) {
+      return true;
+    }
+    if (product.saleEndAt && new Date(product.saleEndAt) < now) {
+      return true;
+    }
+    if (hasOptions) {
+      return productOptions.every(opt => opt.stockQty === 0);
+    }
+    return product.stockQuantity === 0;
+  })() : false;
 
   useEffect(() => {
     if (isOpen && product) {

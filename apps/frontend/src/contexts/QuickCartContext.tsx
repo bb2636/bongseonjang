@@ -9,6 +9,8 @@ interface QuickCartProduct {
   imageUrl?: string;
   isOptionRequired: boolean;
   stockQuantity: number;
+  saleStartAt?: string;
+  saleEndAt?: string;
   options: QuickCartOption[];
   mainOptions: QuickCartOption[];
 }
@@ -78,6 +80,8 @@ export function QuickCartProvider({ children }: QuickCartProviderProps) {
         imageUrl: data.images?.[0]?.imageUrl,
         isOptionRequired: data.isOptionRequired,
         stockQuantity: data.stockQuantity ?? 0,
+        saleStartAt: data.saleStartAt,
+        saleEndAt: data.saleEndAt,
         options: (data.options || []).map((opt: any) => ({
           id: opt.id,
           groupName: '옵션 선택',

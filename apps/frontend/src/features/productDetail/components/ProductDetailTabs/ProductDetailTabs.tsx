@@ -2,6 +2,10 @@ import './ProductDetailTabs.css';
 
 export type TabType = 'info' | 'review' | 'inquiry';
 
+export function ProductDetailTabsSpacer() {
+  return <div className="product-detail-tabs-spacer" />;
+}
+
 interface ProductDetailTabsProps {
   activeTab: TabType;
   reviewCount: number;

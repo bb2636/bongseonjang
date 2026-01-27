@@ -1,4 +1,5 @@
 .product-detail-tabs {
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -6,6 +7,18 @@
   height: 38px;
   border-bottom: 1px solid rgba(12, 12, 12, 0.06);
   background: #FFFFFF;
+  position: fixed;
+  top: calc(48px + var(--safe-area-top, 0px));
+  left: 0;
+  right: 0;
+  z-index: 998;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.product-detail-tabs-spacer {
+  height: 38px;
+  flex-shrink: 0;
 }
 
 .product-detail-tabs__tab {
