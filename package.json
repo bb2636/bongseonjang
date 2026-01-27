@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@capacitor/app": "^8.0.0",
-    "@capgo/inappbrowser": "^8.1.4",
     "@google-cloud/storage": "^7.18.0",
     "google-auth-library": "^10.5.0"
   }
