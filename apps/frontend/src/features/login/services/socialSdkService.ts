@@ -1,6 +1,6 @@
-import { InAppBrowser } from '@capgo/inappbrowser';
+import { Browser } from '@capacitor/browser';
 import { App } from '@capacitor/app';
-import { checkIsCapacitor, CAPACITOR_APP_SCHEME, getApiBaseUrlDynamic, getCapacitorPlatform } from '@/shared/config/apiConfig';
+import { checkIsCapacitor, CAPACITOR_APP_SCHEME, getApiBaseUrlDynamic } from '@/shared/config/apiConfig';
 
 const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
 const KAKAO_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
@@ -24,6 +24,11 @@ export interface OAuthResult {
   provider?: string;
   providerId?: string;
 }
+
+let deepLinkListenerRegistered = false;
+let oauthResolve: ((result: OAuthResult) => void) | null = null;
+let currentOAuthProvider: string | null = null;
+let currentTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 function storeOAuthState(provider: string, state: string): void {
   try {
@@ -105,28 +110,40 @@ function parseOAuthCallbackUrl(url: string): OAuthResult | null {
   }
 }
 
-function isBackendOAuthCallbackUrl(url: string): { isCallback: boolean; provider: string | null; hasCode: boolean; hasError: boolean } {
-  try {
-    const urlObj = new URL(url);
-    const pathname = urlObj.pathname;
-    const params = new URLSearchParams(urlObj.search);
-    
-    const callbackMatch = pathname.match(/\/api\/auth\/oauth\/(\w+)\/callback/) || 
-                          pathname.match(/\/api\/auth\/(\w+)\/callback/);
-    
-    if (callbackMatch) {
-      const provider = callbackMatch[1];
-      const hasCode = params.has('code');
-      const hasError = params.has('error');
-      
-      console.log('[OAuth] Backend callback detected:', { provider, hasCode, hasError, url });
-      return { isCallback: true, provider, hasCode, hasError };
-    }
-  } catch (e) {
-    console.log('[OAuth] Error parsing URL for backend callback check:', e);
-  }
+function registerDeepLinkListener(): void {
+  if (deepLinkListenerRegistered) return;
+  deepLinkListenerRegistered = true;
   
-  return { isCallback: false, provider: null, hasCode: false, hasError: false };
+  App.addListener('appUrlOpen', async (event) => {
+    console.log('[DeepLink] App opened with URL:', event.url);
+    
+    const url = event.url;
+    if (!url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) return;
+    
+    try {
+      await Browser.close();
+      console.log('[DeepLink] Browser closed');
+    } catch (e) {
+      console.log('[DeepLink] Browser close error:', e);
+    }
+    
+    if (oauthResolve) {
+      if (currentTimeoutId) {
+        clearTimeout(currentTimeoutId);
+        currentTimeoutId = null;
+      }
+      
+      const result = parseOAuthCallbackUrl(url);
+      const resolveFunc = oauthResolve;
+      
+      oauthResolve = null;
+      currentOAuthProvider = null;
+      
+      resolveFunc(result || { error: 'parse_failed' });
+    }
+  });
+  
+  console.log('[OAuth] Deep-link listener registered');
 }
 
 async function openBrowserForOAuth(
@@ -134,177 +151,41 @@ async function openBrowserForOAuth(
   provider: string,
   expectedState: string
 ): Promise<OAuthResult> {
-  const platform = getCapacitorPlatform();
-  console.log('[OAuth] === Starting OAuth with InAppBrowser ===');
+  console.log('[OAuth] === Starting OAuth with External Browser ===');
   console.log('[OAuth] provider:', provider);
-  console.log('[OAuth] platform:', platform);
   console.log('[OAuth] authUrl:', authUrl);
 
+  registerDeepLinkListener();
+  
   storeOAuthState(provider, expectedState);
-
+  
   return new Promise(async (resolve) => {
-    let resolved = false;
-    let urlChangeListener: { remove: () => Promise<void> } | null = null;
-    let closeListener: { remove: () => Promise<void> } | null = null;
-    let appUrlOpenListener: { remove: () => Promise<void> } | null = null;
-    let backendCallbackDetected = false;
-
-    const cleanup = async () => {
-      if (urlChangeListener) {
-        try {
-          await urlChangeListener.remove();
-        } catch (e) {
-          console.log('[OAuth] Error removing urlChangeListener:', e);
-        }
-        urlChangeListener = null;
-      }
-      if (closeListener) {
-        try {
-          await closeListener.remove();
-        } catch (e) {
-          console.log('[OAuth] Error removing closeListener:', e);
-        }
-        closeListener = null;
-      }
-      if (appUrlOpenListener) {
-        try {
-          await appUrlOpenListener.remove();
-        } catch (e) {
-          console.log('[OAuth] Error removing appUrlOpenListener:', e);
-        }
-        appUrlOpenListener = null;
-      }
-    };
-
-    const resolveOnce = async (result: OAuthResult) => {
-      if (resolved) return;
-      resolved = true;
-      clearTimeout(timeoutId);
-      await cleanup();
-      resolve(result);
-    };
-
-    const timeoutId = setTimeout(async () => {
-      if (!resolved) {
-        console.log('[OAuth] Timeout reached, assuming user cancelled');
+    oauthResolve = resolve;
+    currentOAuthProvider = provider;
+    
+    const timeoutId = setTimeout(() => {
+      if (oauthResolve === resolve) {
+        console.log('[OAuth] Timeout reached');
         clearOAuthState(provider);
-        try {
-          await InAppBrowser.close();
-        } catch (e) {
-          console.log('[OAuth] Error closing browser on timeout:', e);
-        }
-        await resolveOnce({ error: 'timeout' });
+        oauthResolve = null;
+        currentOAuthProvider = null;
+        currentTimeoutId = null;
+        resolve({ error: 'timeout' });
       }
     }, 5 * 60 * 1000);
-
+    
+    currentTimeoutId = timeoutId;
+    
     try {
-      appUrlOpenListener = await App.addListener('appUrlOpen', async (event) => {
-        console.log('[OAuth] App deep-link received:', event.url);
-        
-        const url = event.url;
-        
-        if (url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
-          console.log('[OAuth] Deep-link detected custom scheme redirect');
-          
-          try {
-            await InAppBrowser.close();
-          } catch (e) {
-            console.log('[OAuth] Browser already closed or error:', e);
-          }
-
-          const result = parseOAuthCallbackUrl(url);
-          if (result) {
-            await resolveOnce(result);
-          } else {
-            await resolveOnce({ error: 'unknown_callback_path' });
-          }
-        }
-      });
-      console.log('[OAuth] App deep-link listener registered');
-
-      urlChangeListener = await InAppBrowser.addListener('urlChangeEvent', async (event) => {
-        console.log('[OAuth] URL changed:', event.url);
-        
-        const url = event.url;
-        
-        if (url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
-          console.log('[OAuth] Detected custom scheme redirect in urlChangeEvent');
-          
-          try {
-            await InAppBrowser.close();
-          } catch (e) {
-            console.log('[OAuth] Browser already closed or error:', e);
-          }
-
-          const result = parseOAuthCallbackUrl(url);
-          if (result) {
-            await resolveOnce(result);
-          } else {
-            await resolveOnce({ error: 'unknown_callback_path' });
-          }
-          return;
-        }
-        
-        const backendCallback = isBackendOAuthCallbackUrl(url);
-        if (backendCallback.isCallback && backendCallback.hasCode && !backendCallbackDetected) {
-          backendCallbackDetected = true;
-          console.log('[OAuth] Backend callback with code detected, waiting for custom scheme redirect...');
-          console.log('[OAuth] Backend will process code and redirect to custom scheme');
-          
-          setTimeout(async () => {
-            if (!resolved) {
-              console.log('[OAuth] Closing browser to allow deep-link to be handled by App');
-              try {
-                await InAppBrowser.close();
-              } catch (e) {
-                console.log('[OAuth] Error closing browser after backend callback:', e);
-              }
-            }
-          }, 2000);
-        }
-        
-        if (backendCallback.isCallback && backendCallback.hasError) {
-          console.log('[OAuth] Backend callback with error detected');
-          try {
-            await InAppBrowser.close();
-          } catch (e) {
-            console.log('[OAuth] Error closing browser:', e);
-          }
-          clearOAuthState(provider);
-          await resolveOnce({ error: 'oauth_error' });
-        }
-      });
-
-      closeListener = await InAppBrowser.addListener('closeEvent', async () => {
-        console.log('[OAuth] Browser closed');
-        if (!resolved) {
-          if (backendCallbackDetected) {
-            console.log('[OAuth] Browser closed after backend callback, waiting for deep-link...');
-            setTimeout(async () => {
-              if (!resolved) {
-                console.log('[OAuth] No deep-link received after browser close, treating as cancelled');
-                clearOAuthState(provider);
-                await resolveOnce({ error: 'user_cancelled' });
-              }
-            }, 3000);
-          } else {
-            console.log('[OAuth] Browser closed by user without backend callback');
-            clearOAuthState(provider);
-            await resolveOnce({ error: 'user_cancelled' });
-          }
-        }
-      });
-
-      await InAppBrowser.openWebView({
-        url: authUrl,
-        title: 'Login',
-      });
-      console.log('[OAuth] InAppBrowser opened successfully');
+      await Browser.open({ url: authUrl });
+      console.log('[OAuth] External browser opened');
     } catch (err) {
-      console.error('[OAuth] Failed to open InAppBrowser:', err);
+      console.error('[OAuth] Failed to open browser:', err);
       clearTimeout(timeoutId);
       clearOAuthState(provider);
-      await cleanup();
+      oauthResolve = null;
+      currentOAuthProvider = null;
+      currentTimeoutId = null;
       resolve({ error: 'browser_open_failed' });
     }
   });
@@ -335,6 +216,15 @@ export function initKakaoSdk(): boolean {
   return kakaoInitialized;
 }
 
+function generateRandomState(): string {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+}
+
+function generateStateWithAppScheme(appScheme: string): string {
+  const randomPart = generateRandomState();
+  return `${randomPart}__scheme__${appScheme}`;
+}
+
 export async function kakaoAuthorize(): Promise<OAuthResult | void> {
   const isCapacitor = checkIsCapacitor();
   console.log('[KakaoOAuth] kakaoAuthorize called, isCapacitor:', isCapacitor);
@@ -343,15 +233,16 @@ export async function kakaoAuthorize(): Promise<OAuthResult | void> {
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/kakao/callback`;
     console.log('[KakaoOAuth] Capacitor mode, redirectUri:', redirectUri);
-    const state = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
-    const stateForValidation = state.split('__scheme__')[0];
+    
+    const fullState = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
+    const stateForValidation = fullState.split('__scheme__')[0];
     
     const params = new URLSearchParams({
       client_id: KAKAO_REST_API_KEY || '',
       redirect_uri: redirectUri,
       response_type: 'code',
       scope: 'profile_nickname,profile_image,account_email',
-      state,
+      state: fullState,
     });
 
     const authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
@@ -385,12 +276,11 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
     throw new Error('네이버 로그인 설정이 올바르지 않습니다.');
   }
 
-  const state = generateRandomState();
-
   if (isCapacitor) {
-    console.log('[NaverOAuth] Capacitor mode - using InAppBrowser');
+    console.log('[NaverOAuth] Capacitor mode - using external browser');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/naver/callback`;
+    
     const fullState = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
     const stateForValidation = fullState.split('__scheme__')[0];
     
@@ -409,6 +299,7 @@ export async function naverAuthorize(): Promise<OAuthResult | void> {
     return result;
   }
 
+  const state = generateRandomState();
   const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/naver/callback`;
 
   console.log('[Naver OAuth] === Authorize Request (Direct URL) ===');
@@ -443,12 +334,11 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
     throw new Error('구글 로그인 설정이 올바르지 않습니다.');
   }
 
-  const state = generateRandomState();
-
   if (isCapacitor) {
-    console.log('[GoogleOAuth] Capacitor mode - using InAppBrowser');
+    console.log('[GoogleOAuth] Capacitor mode - using external browser');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/oauth/google/callback`;
+    
     const fullState = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
     const stateForValidation = fullState.split('__scheme__')[0];
     
@@ -470,6 +360,7 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
     return result;
   }
 
+  const state = generateRandomState();
   const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/oauth/google/callback`;
   sessionStorage.setItem('google_oauth_state', state);
 
@@ -488,18 +379,20 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
 
 export async function appleAuthorize(): Promise<OAuthResult | void> {
   const isCapacitor = checkIsCapacitor();
+  console.log('[AppleOAuth] appleAuthorize called, isCapacitor:', isCapacitor);
   
   if (!APPLE_CLIENT_ID) {
     throw new Error('VITE_APPLE_CLIENT_ID is not configured');
   }
 
-  const state = generateRandomState();
-
   if (isCapacitor) {
+    console.log('[AppleOAuth] Capacitor mode - using external browser');
     const backendUrl = getBackendBaseUrl();
     const redirectUri = `${backendUrl}/api/auth/apple/callback`;
+    
     const fullState = generateStateWithAppScheme(CAPACITOR_APP_SCHEME);
     const stateForValidation = fullState.split('__scheme__')[0];
+    
     const params = new URLSearchParams({
       client_id: APPLE_CLIENT_ID,
       redirect_uri: redirectUri,
@@ -508,11 +401,16 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
       state: fullState,
       response_mode: 'form_post',
     });
+    
     const authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
+    console.log('[AppleOAuth] authUrl:', authUrl);
+    
     const result = await openBrowserForOAuth(authUrl, 'apple', stateForValidation);
+    console.log('[AppleOAuth] Browser result:', result);
     return result;
   }
 
+  const state = generateRandomState();
   const redirectUri = `${SOCIAL_REDIRECT_BASE_URL}/api/auth/apple/callback`;
   sessionStorage.setItem('apple_oauth_state', state);
 
@@ -526,18 +424,6 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
   });
 
   window.location.href = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
-}
-
-function generateRandomState(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-}
-
-function generateStateWithAppScheme(appScheme?: string): string {
-  const randomPart = generateRandomState();
-  if (appScheme) {
-    return `${randomPart}__scheme__${appScheme}`;
-  }
-  return randomPart;
 }
 
 export function getKakaoRedirectUri(): string {
