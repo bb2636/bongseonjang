@@ -1,0 +1,24 @@
+2026-01-27 17:22:14.541 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [SocialLogin] 네이버 로그인 버튼 클릭
+2026-01-27 17:22:14.543 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [NaverOAuth] naverAuthorize called
+2026-01-27 17:22:14.544 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [NaverOAuth] NAVER_CLIENT_ID: SET
+2026-01-27 17:22:14.544 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [NaverOAuth] isCapacitor: true
+2026-01-27 17:22:14.544 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [NaverOAuth] Capacitor mode - using external browser
+2026-01-27 17:22:14.544 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [NaverOAuth] authUrl: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=3fg4zk95liemkwbvtak__scheme__bongseonjang
+2026-01-27 17:22:14.545 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [OAuth] === Starting OAuth with External Browser ===
+2026-01-27 17:22:14.545 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [OAuth] provider: naver
+2026-01-27 17:22:14.545 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [OAuth] authUrl: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=3fg4zk95liemkwbvtak__scheme__bongseonjang
+2026-01-27 17:22:14.546 10048-10048 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 115347251, pluginId: Browser, methodName: open
+2026-01-27 17:22:14.546 10048-10048 Capacitor               com.bongkru.app                      V  callback: 115347251, pluginId: Browser, methodName: open, methodData: {"url":"https:\/\/nid.naver.com\/oauth2.0\/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=3fg4zk95liemkwbvtak__scheme__bongseonjang"}
+2026-01-27 17:22:14.568 10048-10048 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event pause
+2026-01-27 17:22:14.569 10048-10048 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event pause
+2026-01-27 17:22:14.579 10048-10048 Capacitor               com.bongkru.app                      D  App paused
+2026-01-27 17:22:14.638 10048-10048 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-27 17:22:14.639 10048-10048 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [OAuth] External browser opened
+2026-01-27 17:22:14.645 10048-10048 VRI[Browse...rActivity] com.bongkru.app                      D  WindowInsets changed: 1080x2400 statusBars:[0,63,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,63,0,84] 
+2026-01-27 17:22:14.645 10048-10048 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@bcb7a9f
+2026-01-27 17:22:15.501 10048-10048 VRI[MainActivity]       com.bongkru.app                      D  visibilityChanged oldVisibility=true newVisibility=false
+2026-01-27 17:22:15.540 10048-10048 Capacitor/AppPlugin     com.bongkru.app                      D  Firing change: false
+2026-01-27 17:22:15.540 10048-10048 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event appStateChange
+2026-01-27 17:22:15.540 10048-10048 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event appStateChange
+2026-01-27 17:22:15.540 10048-10048 Capacitor               com.bongkru.app                      D  App stopped
+2026-01-27 17:22:15.540 10048-10048 Capacitor               com.bongkru.app                      D  Saving instance state!

@@ -1,0 +1,26 @@
+  hide(ime())
+2026-01-27 17:13:34.128  8930-8930  ImeTracker              com.bongkru.app                      I  com.bongkru.app:91e733af: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-27 17:13:34.574  8930-8930  WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): null
+2026-01-27 17:13:34.576  8930-8930  ViewRootImpl            com.bongkru.app                      D  Skipping stats log for color mode
+2026-01-27 17:13:35.177  8930-8930  Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [SocialLogin] 카카오 로그인 버튼 클릭
+2026-01-27 17:13:35.177  8930-8930  Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [KakaoOAuth] kakaoAuthorize called, isCapacitor: true
+2026-01-27 17:13:35.177  8930-8930  Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [KakaoOAuth] Capacitor mode, redirectUri: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/oauth/kakao/callback
+2026-01-27 17:13:35.177  8930-8930  Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [KakaoOAuth] authUrl: https://kauth.kakao.com/oauth/authorize?client_id=81b4e5f079bb0c995c8f83d897def30f&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fkakao%2Fcallback&response_type=code&scope=profile_nickname%2Cprofile_image%2Caccount_email&state=ukfw8zz7ponmkwbkojs__scheme__bongseonjang
+2026-01-27 17:13:35.177  8930-8930  Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [OAuth] === Starting OAuth with External Browser ===
+2026-01-27 17:13:35.177  8930-8930  Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [OAuth] provider: kakao
+2026-01-27 17:13:35.177  8930-8930  Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [OAuth] authUrl: https://kauth.kakao.com/oauth/authorize?client_id=81b4e5f079bb0c995c8f83d897def30f&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fkakao%2Fcallback&response_type=code&scope=profile_nickname%2Cprofile_image%2Caccount_email&state=ukfw8zz7ponmkwbkojs__scheme__bongseonjang
+2026-01-27 17:13:35.181  8930-8930  Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 112908946, pluginId: Browser, methodName: open
+2026-01-27 17:13:35.181  8930-8930  Capacitor               com.bongkru.app                      V  callback: 112908946, pluginId: Browser, methodName: open, methodData: {"url":"https:\/\/kauth.kakao.com\/oauth\/authorize?client_id=81b4e5f079bb0c995c8f83d897def30f&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fkakao%2Fcallback&response_type=code&scope=profile_nickname%2Cprofile_image%2Caccount_email&state=ukfw8zz7ponmkwbkojs__scheme__bongseonjang"}
+2026-01-27 17:13:35.210  8930-8930  Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event pause
+2026-01-27 17:13:35.210  8930-8930  Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event pause
+2026-01-27 17:13:35.220  8930-8930  Capacitor               com.bongkru.app                      D  App paused
+2026-01-27 17:13:35.260  8930-8930  Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-27 17:13:35.260  8930-8930  Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-D3vLY1CE.js - Line 2 - Msg: [OAuth] External browser opened
+2026-01-27 17:13:35.262  8930-8930  VRI[Browse...rActivity] com.bongkru.app                      D  WindowInsets changed: 1080x2400 statusBars:[0,63,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,63,0,84] 
+2026-01-27 17:13:35.263  8930-8930  WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@209cab4
+2026-01-27 17:13:36.056  8930-8930  VRI[MainActivity]       com.bongkru.app                      D  visibilityChanged oldVisibility=true newVisibility=false
+2026-01-27 17:13:36.094  8930-8930  Capacitor/AppPlugin     com.bongkru.app                      D  Firing change: false
+2026-01-27 17:13:36.094  8930-8930  Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event appStateChange
+2026-01-27 17:13:36.094  8930-8930  Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event appStateChange
+2026-01-27 17:13:36.094  8930-8930  Capacitor               com.bongkru.app                      D  App stopped
+2026-01-27 17:13:36.095  8930-8930  Capacitor               com.bongkru.app                      D  Saving instance state!
