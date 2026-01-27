@@ -3,6 +3,7 @@ import PointAppBar from '../components/PointAppBar/PointAppBar';
 import PointBalanceCard from '../components/PointBalanceCard/PointBalanceCard';
 import PointHistoryList from '../components/PointHistoryList/PointHistoryList';
 import PointSkeleton from '../components/PointSkeleton';
+import { useCart } from '../../../contexts/CartContext';
 import './PointView.css';
 
 interface PointViewProps {
@@ -22,12 +23,15 @@ interface PointViewProps {
 }
 
 export default function PointView({ state, actions }: PointViewProps) {
+  const { cartCount } = useCart();
+
   if (state.isLoading) {
     return (
       <div className="point-view">
         <PointAppBar
           onBackClick={actions.onBackClick}
           onCartClick={actions.onCartClick}
+          cartCount={cartCount}
         />
         <PointSkeleton />
       </div>
@@ -40,6 +44,7 @@ export default function PointView({ state, actions }: PointViewProps) {
         <PointAppBar
           onBackClick={actions.onBackClick}
           onCartClick={actions.onCartClick}
+          cartCount={cartCount}
         />
         <div className="point-view__error">
           <p className="point-view__error-message">{state.error}</p>
@@ -60,7 +65,7 @@ export default function PointView({ state, actions }: PointViewProps) {
       <PointAppBar
         onBackClick={actions.onBackClick}
         onCartClick={actions.onCartClick}
-        cartCount={1}
+        cartCount={cartCount}
       />
       
       <PointBalanceCard balance={state.wallet?.balance || 0} />

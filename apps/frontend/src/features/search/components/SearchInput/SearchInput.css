@@ -48,4 +48,5 @@
   border: none;
   cursor: pointer;
   flex-shrink: 0;
+  touch-action: manipulation;
 }
