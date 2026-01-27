@@ -53,6 +53,14 @@
   position: relative;
 }
 
+.point-app-bar__cart-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  flex-shrink: 0;
+}
+
 .point-app-bar__cart-badge {
   position: absolute;
   right: 2px;
