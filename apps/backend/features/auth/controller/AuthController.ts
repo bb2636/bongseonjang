@@ -18,7 +18,7 @@ interface PendingAuthSession {
   createdAt: number;
 }
 
-const pendingAuthSessions = new Map<string, PendingAuthSession>();
+export const pendingAuthSessions = new Map<string, PendingAuthSession>();
 
 function cleanupPendingAuthSessions(): void {
   const TEN_MINUTES = 10 * 60 * 1000;
@@ -30,12 +30,32 @@ function cleanupPendingAuthSessions(): void {
   }
 }
 
+function validateAndClearPendingAuthState(state: string | undefined): boolean {
+  if (!state) {
+    return false;
+  }
+  
+  const session = pendingAuthSessions.get(state);
+  if (!session) {
+    return false;
+  }
+  
+  pendingAuthSessions.delete(state);
+  return true;
+}
+
 export class AuthController {
   async startOAuth(req: Request, res: Response): Promise<void> {
     const provider = req.params.provider as string;
     const platform = req.query.platform as string | undefined;
     
     const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+    
+    if (!baseUrl) {
+      res.status(500).json({ error: 'Social redirect base URL not configured' });
+      return;
+    }
+    
     const state = crypto.randomBytes(16).toString('hex');
     
     cleanupPendingAuthSessions();
@@ -485,6 +505,13 @@ export class AuthController {
       const { code, id_token, state, user } = req.body;
       const { originalState } = extractAppSchemeFromState(state);
 
+      if (!originalState || !validateAndClearPendingAuthState(originalState)) {
+        console.warn(`[Apple Callback] Invalid or missing state. State: ${originalState}`);
+        const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        return;
+      }
+
       let userName: string | undefined;
       if (user) {
         try {
@@ -576,6 +603,13 @@ export class AuthController {
 
       if (oauthError) {
         const sessionKey = oauthSessionStore.save({ error: oauthError as string, state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        return;
+      }
+
+      if (!originalState || !validateAndClearPendingAuthState(originalState)) {
+        console.warn(`[OAuth Callback] Invalid or missing state. State: ${originalState}, Provider: ${provider}`);
+        const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
         res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
         return;
       }
