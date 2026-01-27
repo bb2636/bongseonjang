@@ -84,6 +84,18 @@ const NICEPAY_CLIENT_KEY = process.env.NICEPAY_CLIENT_KEY || '';
 const NICEPAY_SECRET_KEY = process.env.NICEPAY_SECRET_KEY || '';
 
 function getFrontendUrl(req?: Request): string {
+  if (process.env.SOCIAL_REDIRECT_BASE_URL) {
+    return process.env.SOCIAL_REDIRECT_BASE_URL;
+  }
+  
+  if (process.env.VITE_SOCIAL_REDIRECT_BASE_URL) {
+    return process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
+  }
+  
+  if (process.env.FRONTEND_URL) {
+    return process.env.FRONTEND_URL;
+  }
+  
   if (req) {
     const origin = req.headers.origin;
     if (origin) {
@@ -104,10 +116,6 @@ function getFrontendUrl(req?: Request): string {
     if (host) {
       return `${protocol}://${host}`;
     }
-  }
-  
-  if (process.env.FRONTEND_URL) {
-    return process.env.FRONTEND_URL;
   }
   
   if (process.env.REPLIT_DEV_DOMAIN) {

@@ -14,7 +14,7 @@ import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
 import { DeliveryRequestBottomSheet } from '../components/DeliveryRequestBottomSheet';
 import { AddressSelectBottomSheet } from '../components/AddressSelectBottomSheet';
 import { API_BASE_URL, IS_CAPACITOR, CAPACITOR_APP_SCHEME, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
-import { Browser } from '@capacitor/browser';
+import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
 import './CheckoutPage.css';
 
 interface DirectPurchaseData {
@@ -517,8 +517,82 @@ export function CheckoutPage() {
       if (IS_CAPACITOR) {
         const absoluteApiUrl = getAbsoluteApiUrl();
         const paymentFormUrl = `${absoluteApiUrl}/payment/form/${paymentData.orderId}?appScheme=${CAPACITOR_APP_SCHEME}`;
-        setIsProcessing(false);
-        await Browser.open({ url: paymentFormUrl });
+        
+        let browserClosed = false;
+        let timeoutId: ReturnType<typeof setTimeout> | null = null;
+        
+        const handleUrlChange = async (event: UrlEvent) => {
+          const url = event.url;
+          console.log('[Payment] URL changed:', url);
+          
+          if (url.includes('/payment/success') || url.includes('/payment/fail') || url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
+            browserClosed = true;
+            
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+              timeoutId = null;
+            }
+            
+            await InAppBrowser.removeAllListeners();
+            await InAppBrowser.close();
+            
+            try {
+              const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
+              const orderId = urlObj.searchParams.get('orderId') || paymentData.orderId;
+              
+              if (url.includes('/payment/success') || url.includes('payment-success')) {
+                navigate(`/payment/success?orderId=${orderId}`);
+              } else if (url.includes('/payment/fail') || url.includes('payment-fail')) {
+                const message = urlObj.searchParams.get('message') || '결제에 실패했습니다';
+                navigate(`/payment/fail?message=${encodeURIComponent(message)}`);
+              }
+            } catch {
+              navigate(`/payment/success?orderId=${paymentData.orderId}`);
+            }
+          }
+        };
+        
+        const handleClose = () => {
+          console.log('[Payment] InAppBrowser closed');
+          
+          if (!browserClosed) {
+            browserClosed = true;
+            if (timeoutId) {
+              clearTimeout(timeoutId);
+              timeoutId = null;
+            }
+            InAppBrowser.removeAllListeners();
+            setIsProcessing(false);
+          }
+        };
+        
+        await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
+        await InAppBrowser.addListener('closeEvent', handleClose);
+        
+        timeoutId = setTimeout(async () => {
+          if (!browserClosed) {
+            console.log('[Payment] Timeout reached');
+            browserClosed = true;
+            await InAppBrowser.removeAllListeners();
+            await InAppBrowser.close().catch(() => {});
+            setIsProcessing(false);
+            showToast('결제 시간이 초과되었습니다', 'error');
+          }
+        }, 10 * 60 * 1000);
+        
+        try {
+          await InAppBrowser.openWebView({ url: paymentFormUrl });
+          console.log('[Payment] InAppBrowser opened');
+        } catch (err) {
+          console.error('[Payment] Failed to open InAppBrowser:', err);
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          await InAppBrowser.removeAllListeners();
+          setIsProcessing(false);
+          showToast('결제창을 열 수 없습니다', 'error');
+        }
+        
         return;
       }
 
