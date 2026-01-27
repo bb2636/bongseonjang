@@ -1,4 +1,4 @@
-import { InAppBrowser } from '@capgo/inappbrowser';
+import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
 import { checkIsCapacitor, getApiBaseUrlDynamic } from '@/shared/config/apiConfig';
 
 const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
@@ -53,7 +53,7 @@ async function openInAppBrowserForOAuth(authUrl: string, provider: string): Prom
     let resolved = false;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-    const urlListener = await InAppBrowser.addListener('urlChangeEvent', async (event) => {
+    const handleUrlChange = async (event: UrlEvent) => {
       const url = event.url;
       console.log('[OAuth] URL changed:', url);
 
@@ -71,8 +71,8 @@ async function openInAppBrowserForOAuth(authUrl: string, provider: string): Prom
               timeoutId = null;
             }
 
+            await InAppBrowser.removeAllListeners();
             await InAppBrowser.close();
-            urlListener.remove();
 
             const result = await fetchSessionData(key);
             console.log('[OAuth] Session data:', result);
@@ -82,11 +82,10 @@ async function openInAppBrowserForOAuth(authUrl: string, provider: string): Prom
           console.error('[OAuth] Error parsing callback URL:', e);
         }
       }
-    });
+    };
 
-    const closeListener = await InAppBrowser.addListener('closeEvent', () => {
+    const handleClose = () => {
       console.log('[OAuth] InAppBrowser closed');
-      closeListener.remove();
       
       if (!resolved) {
         resolved = true;
@@ -94,41 +93,33 @@ async function openInAppBrowserForOAuth(authUrl: string, provider: string): Prom
           clearTimeout(timeoutId);
           timeoutId = null;
         }
-        urlListener.remove();
+        InAppBrowser.removeAllListeners();
         resolve({ error: 'cancelled' });
       }
-    });
+    };
 
-    timeoutId = setTimeout(() => {
+    await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
+    await InAppBrowser.addListener('closeEvent', handleClose);
+
+    timeoutId = setTimeout(async () => {
       if (!resolved) {
         console.log('[OAuth] Timeout reached');
         resolved = true;
-        urlListener.remove();
-        closeListener.remove();
-        InAppBrowser.close().catch(() => {});
+        await InAppBrowser.removeAllListeners();
+        await InAppBrowser.close().catch(() => {});
         resolve({ error: 'timeout' });
       }
     }, 5 * 60 * 1000);
 
     try {
-      await InAppBrowser.openWebView({
-        url: authUrl,
-        title: '로그인',
-        options: {
-          showURL: false,
-          showToolbar: true,
-          clearCache: false,
-          clearSessionCache: false,
-        }
-      });
+      await InAppBrowser.openWebView({ url: authUrl });
       console.log('[OAuth] InAppBrowser opened');
     } catch (err) {
       console.error('[OAuth] Failed to open InAppBrowser:', err);
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      urlListener.remove();
-      closeListener.remove();
+      await InAppBrowser.removeAllListeners();
       resolved = true;
       resolve({ error: 'browser_open_failed' });
     }

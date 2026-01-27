@@ -1,0 +1,269 @@
+>> npm install
+>> cd apps\frontend
+>> npm run build:capacitor
+>> npx cap add android
+
+up to date, audited 510 packages in 1s
+
+105 packages are looking for funding
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> @bongkru/frontend@1.0.0 build:capacitor
+> vite build --mode capacitor
+
+vite v7.3.1 building client environment for capacitor...
+✓ 768 modules transformed.
+[plugin vite:reporter]
+(!) C:/Users/ok/Downloads/bongseonjang/bongseonjang/apps/frontend/src/features/login/api/socialAuthApi.ts is dynamically imported by C:/Users/ok/Downloads/bongseonjang/bongseonjang/apps/frontend/src/features/login/pages/SocialAuthCallbackPage.tsx but also statically imported by C:/Users/ok/Downloads/bongseonjang/bongseonjang/apps/frontend/src/features/login/hooks/useLogin.ts, C:/Users/ok/Downloads/bongseonjang/bongseonjang/apps/frontend/src/features/login/pages/SocialAuthCallbackPage.tsx, dynamic import will not move module into another chunk.
+
+dist/index.html                                          8.19 kB │ gzip:  1.53 kB
+dist/assets/sucess-DuNnlxqV.svg                         10.63 kB │ gzip:  4.62 kB
+dist/assets/pickled-seafood-Bmp7x-y4.svg                21.65 kB │ gzip: 15.98 kB
+dist/assets/express-seafood-CNp8bfSS.svg                32.21 kB │ gzip: 23.91 kB
+dist/assets/fourseason-_HI50lAm.webp                    32.40 kB
+dist/assets/seasonal-seafood-eE7VFYKt.svg               32.61 kB │ gzip: 24.20 kB
+dist/assets/prepared-seafood-CeRVZzZC.svg               34.11 kB │ gzip: 25.37 kB
+dist/assets/badameun-C9sTm4ir.webp                      56.23 kB
+dist/assets/bongcook-BASaqTiH.webp                      91.42 kB
+dist/assets/obada-CzsJt84K.webp                        106.30 kB
+dist/assets/Skeleton-CEg4JMYC.css                        0.44 kB │ gzip:  0.24 kB
+dist/assets/OrderHistoryPage-DIgHaajS.css                0.54 kB │ gzip:  0.32 kB
+dist/assets/useProductListCache-CNfCWlJp.css             0.81 kB │ gzip:  0.42 kB
+dist/assets/index-ev4X5o2e.css                           1.06 kB │ gzip:  0.54 kB
+dist/assets/PaymentSuccessMemberDemoPage-C0dJQlfV.css    1.20 kB │ gzip:  0.48 kB
+dist/assets/index-DxHaM9TS.css                           1.30 kB │ gzip:  0.52 kB
+dist/assets/CategoryProductsPage-QMkDvkoL.css            1.70 kB │ gzip:  0.66 kB
+dist/assets/index-CA_HAR-r.css                           1.74 kB │ gzip:  0.66 kB
+dist/assets/ProfilePasswordVerifyPage-zbHcicHt.css       2.32 kB │ gzip:  0.69 kB
+dist/assets/PaymentResultPage-C_DZNW-5.css               2.34 kB │ gzip:  0.81 kB
+dist/assets/index-BszbIXHZ.css                           2.40 kB │ gzip:  0.79 kB
+dist/assets/ProfileWithdrawPage-B5l7RYLI.css             2.74 kB │ gzip:  0.83 kB
+dist/assets/index-Cs41JXxp.css                           2.88 kB │ gzip:  0.85 kB
+dist/assets/index-Cj1TSbXz.css                           2.96 kB │ gzip:  0.92 kB
+dist/assets/index-3T05Hj6p.css                           2.98 kB │ gzip:  0.88 kB
+dist/assets/index-C_33OWzG.css                           3.23 kB │ gzip:  0.89 kB
+dist/assets/index-6H7ApavF.css                           3.31 kB │ gzip:  0.87 kB
+dist/assets/CheckoutPage-DCcr-GLb.css                    3.44 kB │ gzip:  0.92 kB
+dist/assets/WriteInquiryPage-Nb-sUpm4.css                3.46 kB │ gzip:  0.96 kB
+dist/assets/swiper-C8ec8cn4.css                          4.03 kB │ gzip:  1.08 kB
+dist/assets/index-Ce_iaqXj.css                           4.43 kB │ gzip:  1.16 kB
+dist/assets/OrderHistoryView-DJouA1yM.css                4.44 kB │ gzip:  1.00 kB
+dist/assets/index-BYUtR4EZ.css                           5.13 kB │ gzip:  1.19 kB
+dist/assets/index-Db2nyGbV.css                           6.12 kB │ gzip:  1.37 kB
+dist/assets/index-DCXM_rp4.css                           6.20 kB │ gzip:  1.17 kB
+dist/assets/CartPage-KNNqdm1U.css                        6.62 kB │ gzip:  1.33 kB
+dist/assets/index-DrxNjgYM.css                           6.79 kB │ gzip:  1.09 kB
+dist/assets/ProfileEditPage-To1cjNIK.css                 6.82 kB │ gzip:  1.39 kB
+dist/assets/index-raTLVCFr.css                           7.14 kB │ gzip:  1.54 kB
+dist/assets/index-DBxD-2DS.css                           8.67 kB │ gzip:  1.79 kB
+dist/assets/index-DrvAANvw.css                           9.13 kB │ gzip:  1.93 kB
+dist/assets/ProfilePage-B2F_6XTn.css                     9.17 kB │ gzip:  1.75 kB
+dist/assets/index-DKirNSe5.css                          15.23 kB │ gzip:  2.17 kB
+dist/assets/CheckoutPage-C_2uAVty.css                   16.61 kB │ gzip:  2.97 kB
+dist/assets/index-DsJcuiFB.css                          16.67 kB │ gzip:  3.00 kB
+dist/assets/HomePage-BGSQnXaO.css                       22.85 kB │ gzip:  3.42 kB
+dist/assets/index-D_ii4RaA.css                          23.40 kB │ gzip:  3.82 kB
+dist/assets/index-CU9tNr-b.css                          35.03 kB │ gzip:  5.92 kB
+dist/assets/index-BGRykjkN.css                         136.42 kB │ gzip: 14.36 kB
+dist/assets/sucess-BlQgXpiZ.js                           0.05 kB │ gzip:  0.07 kB
+dist/assets/useGoBack-B3VueJia.js                        0.20 kB │ gzip:  0.19 kB
+dist/assets/useTermsContent-bgHhoOqU.js                  0.37 kB │ gzip:  0.31 kB
+dist/assets/web-GaL3jIfF.js                              0.38 kB │ gzip:  0.25 kB
+dist/assets/termsApi-BiK-wBOm.js                         0.43 kB │ gzip:  0.25 kB
+dist/assets/homeDataApi-BjzPVlje.js                      0.48 kB │ gzip:  0.22 kB
+dist/assets/index-B4zzRXRa.js                            0.53 kB │ gzip:  0.27 kB
+dist/assets/addressApi-CV4jfJ6s.js                       0.56 kB │ gzip:  0.29 kB
+dist/assets/web-BP0vii6I.js                              0.62 kB │ gzip:  0.38 kB
+dist/assets/useProductCategories-Bh2Zu_hn.js             0.63 kB │ gzip:  0.45 kB
+dist/assets/Skeleton-CSkdSuhx.js                         0.67 kB │ gzip:  0.41 kB
+dist/assets/ConfirmModal-DjxmKAiu.js                     0.73 kB │ gzip:  0.36 kB
+dist/assets/web-DpBAPwwU.js                              0.76 kB │ gzip:  0.35 kB
+dist/assets/web-CwIMJXmO.js                              0.79 kB │ gzip:  0.34 kB
+dist/assets/reviewApi-KmxZLCwB.js                        0.81 kB │ gzip:  0.35 kB
+dist/assets/PaymentSuccessMemberDemoPage-C25np4sV.js     0.83 kB │ gzip:  0.45 kB
+dist/assets/productDetailApi-DDpbs1JC.js                 1.02 kB │ gzip:  0.50 kB
+dist/assets/profileApi-BmEjd7Qn.js                       1.14 kB │ gzip:  0.60 kB
+dist/assets/useSignupFormState-CTS3iowZ.js               1.32 kB │ gzip:  0.67 kB
+dist/assets/PaymentSuccessDemoPage-D7XlcOGm.js           1.32 kB │ gzip:  0.64 kB
+dist/assets/PaymentFailPage-DDPowu8q.js                  1.35 kB │ gzip:  0.69 kB
+dist/assets/apiClient-B8BcP0tL.js                        1.39 kB │ gzip:  0.77 kB
+dist/assets/PaymentSuccessPage-XItiYIIL.js               1.61 kB │ gzip:  0.80 kB
+dist/assets/useImageUploader-DXGLMZ6W.js                 1.63 kB │ gzip:  0.96 kB
+dist/assets/paymentApi-CqPFCTCN.js                       1.90 kB │ gzip:  0.60 kB
+dist/assets/CheckoutPage-G7-7r5Ze.js                     1.94 kB │ gzip:  0.88 kB
+dist/assets/AddressInputForm-cd-ipuqq.js                 2.07 kB │ gzip:  0.84 kB
+dist/assets/index-DtsGV_zn.js                            2.19 kB │ gzip:  0.86 kB
+dist/assets/useMutation-B7-MfsLk.js                      2.20 kB │ gzip:  0.91 kB
+dist/assets/index-DLJ1miAs.js                            2.35 kB │ gzip:  1.06 kB
+dist/assets/OrderHistoryView-BAqDqcTj.js                 2.51 kB │ gzip:  0.91 kB
+dist/assets/useProductListCache-lfTVJ6Vi.js              2.52 kB │ gzip:  0.99 kB
+dist/assets/ProfilePasswordVerifyPage-dGpsI1kE.js        2.83 kB │ gzip:  1.23 kB
+dist/assets/index-Bi-HS2P8.js                            3.26 kB │ gzip:  1.46 kB
+dist/assets/ProductGridContent-DYCTIQIq.js               3.28 kB │ gzip:  1.40 kB
+dist/assets/AppBar-D1H3o3zI.js                           3.30 kB │ gzip:  0.98 kB
+dist/assets/index-kCye8HKy.js                            3.37 kB │ gzip:  1.31 kB
+dist/assets/CategoryProductsPage-D_VEAux1.js             3.44 kB │ gzip:  1.57 kB
+dist/assets/index--apIya2G.js                            3.77 kB │ gzip:  1.58 kB
+dist/assets/InProgressOrdersPage-sfmJ_sDK.js             3.86 kB │ gzip:  1.50 kB
+dist/assets/ProfileWithdrawPage-Ul5n_xXs.js              4.10 kB │ gzip:  1.75 kB
+dist/assets/index-B6p2UrTF.js                            4.31 kB │ gzip:  1.54 kB
+dist/assets/OrderHistoryPage-BsqipzU7.js                 4.42 kB │ gzip:  1.72 kB
+dist/assets/index-CeW9phrV.js                            4.63 kB │ gzip:  1.55 kB
+dist/assets/index-DuKLQ-bq.js                            4.81 kB │ gzip:  1.85 kB
+dist/assets/index-YEHgpRq3.js                            4.84 kB │ gzip:  2.00 kB
+dist/assets/WriteInquiryPage-D9aZY8va.js                 6.21 kB │ gzip:  2.30 kB
+dist/assets/index-BkjQPSsq.js                            7.45 kB │ gzip:  2.57 kB
+dist/assets/index-DmfNUtET.js                            7.55 kB │ gzip:  2.79 kB
+dist/assets/index-Bl45aYM5.js                            7.65 kB │ gzip:  2.48 kB
+dist/assets/index-BDjF1lLv.js                            8.75 kB │ gzip:  3.01 kB
+dist/assets/useQuery-C5PWzoCT.js                         8.79 kB │ gzip:  3.20 kB
+dist/assets/ProfileEditPage-BwE1rwsl.js                  9.26 kB │ gzip:  2.71 kB
+dist/assets/CartPage-BxvHUMzh.js                        11.13 kB │ gzip:  3.45 kB
+dist/assets/index-B4WSb8nV.js                           11.34 kB │ gzip:  3.56 kB
+dist/assets/index-D7lrhLH0.js                           12.19 kB │ gzip:  2.92 kB
+dist/assets/index-BeOHVxtx.js                           12.20 kB │ gzip:  2.47 kB
+dist/assets/index-CM5lV223.js                           12.58 kB │ gzip:  2.91 kB
+dist/assets/GuestCheckoutPage-DAMDgO3l.js               14.17 kB │ gzip:  4.21 kB
+dist/assets/ProfilePage-C2kKVYbW.js                     17.12 kB │ gzip:  4.82 kB
+dist/assets/CheckoutPage-Dd37vTq2.js                    23.13 kB │ gzip:  6.50 kB
+dist/assets/index-UHq9ioeZ.js                           38.75 kB │ gzip:  9.92 kB
+dist/assets/index-BPXwqOkc.js                           39.28 kB │ gzip: 10.59 kB
+dist/assets/HomePage-CdRerf73.js                        42.12 kB │ gzip: 12.03 kB
+dist/assets/index-lxaCiajW.js                           42.78 kB │ gzip: 12.79 kB
+dist/assets/swiper-DSQTN8pi.js                          81.47 kB │ gzip: 25.14 kB
+dist/assets/index-BrihIbxL.js                          230.22 kB │ gzip: 53.07 kB
+dist/assets/index-B1C9wbXW.js                          261.68 kB │ gzip: 82.11 kB
+✓ built in 2.47s
+[error] android platform already exists.
+        To re-add this platform, first remove .\android, then run this command again.
+        WARNING: Your native project will be completely removed.
+PS C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend> 
+PS C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend> npx cap open android
+[info] Opening Android project at: android.
+PS C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend> cd C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend
+>> Remove-Item -Recurse -Force android
+>> npx cap add android
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex\com\capacitorjs\plugins\browser\Browser$BrowserEventListener.dex 항목을 제거할 수 없습니다. 'Browser$BrowserEventListener.dex'  
+경로의 일부를 찾을 수 없습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (Browser$BrowserEventListener.dex:FileInfo) [Remove-Item], DirectoryNotFoundException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR 
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex\com\capacitorjs\plugins\browser\BrowserControllerActivity.dex 항목을 제거할 수 없습니다. 'BrowserControllerActivity.dex' 경로의 
+ 일부를 찾을 수 없습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (BrowserControllerActivity.dex:FileInfo) [Remove-Item], DirectoryNotFoundException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex\com\capacitorjs\plugins\browser\BrowserControllerListener.dex 항목을 제거할 수 없습니다. 'BrowserControllerListener.dex' 경로의 
+ 일부를 찾을 수 없습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (BrowserControllerListener.dex:FileInfo) [Remove-Item], DirectoryNotFoundException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR 
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex\com\capacitorjs\plugins\browser\EventGroup$EventGroupCompletion.dex 항목을 제거할 수 없습니다. 'EventGroup$EventGroupCompletion 
+.dex' 경로의 일부를 찾을 수 없습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (EventGroup$EventGroupCompletion.dex:FileInfo) [Remove-Item], DirectoryNotFoundException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR 
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex\com\capacitorjs\plugins\browser 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (browser:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR 
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex\com\capacitorjs\plugins 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (plugins:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR 
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex\com\capacitorjs 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (capacitorjs:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR 
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex\com 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (com:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR
+untimeToDirDebug\bundleLibRuntimeToDirDebug_dex 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (bundleLibRuntimeToDirDebug_dex:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed\bundleLibR 
+untimeToDirDebug 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (bundleLibRuntimeToDirDebug:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719\transformed 항목을 제
+거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (transformed:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms\7c129cad15eda7d4edeec0ce26f1b719 항목을 제거할 수 없습  
+니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (7c129cad15eda7d4edeec0ce26f1b719:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build\.transforms 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니
+다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (.transforms:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser\build 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (build:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android\capacitor-browser 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (capacitor-browser:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+Remove-Item : C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend\android 항목을 제거할 수 없습니다. 디렉터리가 비어 있지 않습니다.
+위치 줄:2 문자:1
++ Remove-Item -Recurse -Force android
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (C:\Users\ok\Dow...rontend\android:DirectoryInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemIOError,Microsoft.PowerShell.Commands.RemoveItemCommand
+[error] android platform already exists.
+        To re-add this platform, first remove .\android, then run this command again.
+        WARNING: Your native project will be completely removed.
+PS C:\Users\ok\Downloads\bongseonjang\bongseonjang\apps\frontend> 
