@@ -11,6 +11,7 @@ router.post('/login', (req, res) => authController.login(req, res));
 router.post('/admin/login', (req, res) => authController.adminLogin(req, res));
 router.get('/me', authMiddleware, (req, res) => authController.me(req, res));
 
+router.get('/start/:provider', (req, res) => authController.startOAuth(req, res));
 router.post('/social/:provider', (req, res) => authController.socialLogin(req, res));
 router.post('/social/complete', (req, res) => authController.completeSocialLogin(req, res));
 router.post('/apple/callback', (req, res) => authController.appleCallback(req, res));

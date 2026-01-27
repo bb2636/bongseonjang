@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Request, Response } from 'express';
 import { UserApplicationService } from '../application/UserApplicationService.js';
 import { SocialAuthService } from '../domain/SocialAuthService.js';
@@ -11,7 +12,113 @@ const userService = new UserApplicationService();
 const socialAuthService = new SocialAuthService();
 const phoneVerificationService = getPhoneVerificationService();
 
+interface PendingAuthSession {
+  state: string;
+  platform?: string;
+  createdAt: number;
+}
+
+const pendingAuthSessions = new Map<string, PendingAuthSession>();
+
+function cleanupPendingAuthSessions(): void {
+  const TEN_MINUTES = 10 * 60 * 1000;
+  const now = Date.now();
+  for (const [key, session] of pendingAuthSessions.entries()) {
+    if (now - session.createdAt > TEN_MINUTES) {
+      pendingAuthSessions.delete(key);
+    }
+  }
+}
+
 export class AuthController {
+  async startOAuth(req: Request, res: Response): Promise<void> {
+    const provider = req.params.provider as string;
+    const platform = req.query.platform as string | undefined;
+    
+    const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+    const state = crypto.randomBytes(16).toString('hex');
+    
+    cleanupPendingAuthSessions();
+    pendingAuthSessions.set(state, {
+      state,
+      platform,
+      createdAt: Date.now(),
+    });
+
+    const redirectUri = `${baseUrl}/api/auth/oauth/${provider}/callback`;
+    console.log(`[OAuth Start] Provider: ${provider}, Platform: ${platform}, State: ${state}`);
+    console.log(`[OAuth Start] Redirect URI: ${redirectUri}`);
+
+    let authUrl: string;
+
+    if (provider === 'kakao') {
+      const clientId = process.env.KAKAO_REST_API_KEY;
+      if (!clientId) {
+        res.status(500).json({ error: 'Kakao OAuth not configured' });
+        return;
+      }
+      const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        scope: 'profile_nickname,profile_image,account_email',
+        state,
+      });
+      authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
+    } else if (provider === 'naver') {
+      const clientId = process.env.NAVER_CLIENT_ID;
+      if (!clientId) {
+        res.status(500).json({ error: 'Naver OAuth not configured' });
+        return;
+      }
+      const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        state,
+      });
+      authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
+    } else if (provider === 'google') {
+      const clientId = process.env.GOOGLE_CLIENT_ID;
+      if (!clientId) {
+        res.status(500).json({ error: 'Google OAuth not configured' });
+        return;
+      }
+      const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        scope: 'openid email profile',
+        state,
+        access_type: 'offline',
+        prompt: 'consent',
+      });
+      authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+    } else if (provider === 'apple') {
+      const clientId = process.env.APPLE_CLIENT_ID;
+      if (!clientId) {
+        res.status(500).json({ error: 'Apple OAuth not configured' });
+        return;
+      }
+      const appleRedirectUri = `${baseUrl}/api/auth/apple/callback`;
+      const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: appleRedirectUri,
+        response_type: 'code id_token',
+        scope: 'name email',
+        state,
+        response_mode: 'form_post',
+      });
+      authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
+    } else {
+      res.status(400).json({ error: 'Invalid provider' });
+      return;
+    }
+
+    console.log(`[OAuth Start] Redirecting to: ${authUrl}`);
+    res.redirect(authUrl);
+  }
+
   async register(req: Request, res: Response): Promise<void> {
     try {
       const { email, password, name, phone, birthDate, gender, referralId, zonecode, address, addressDetail } = req.body;
