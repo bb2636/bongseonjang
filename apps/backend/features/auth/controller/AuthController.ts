@@ -5,6 +5,7 @@ import { getPhoneVerificationService } from '../application/phoneVerificationFac
 import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
 import { SocialProvider } from '../../../entity/UserSocialAccount.js';
 import { LoginRequest, SignupRequest } from '@bongkru/contract';
+import { oauthSessionStore, OAuthSessionData } from '../domain/OAuthSessionStore.js';
 
 const userService = new UserApplicationService();
 const socialAuthService = new SocialAuthService();
@@ -338,21 +339,44 @@ export class AuthController {
     }
   }
 
+  async getSession(req: Request, res: Response): Promise<void> {
+    try {
+      const { key } = req.params;
+
+      if (!key) {
+        res.status(400).json({ message: 'Session key is required' });
+        return;
+      }
+
+      const sessionData = oauthSessionStore.get(key);
+
+      if (!sessionData) {
+        res.status(404).json({ message: 'Session not found or expired' });
+        return;
+      }
+
+      res.json(sessionData);
+    } catch (error) {
+      console.error('Get session error:', error);
+      res.status(500).json({ message: 'Failed to get session' });
+    }
+  }
+
   async appleCallback(req: Request, res: Response): Promise<void> {
+    const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+    
+    const extractAppSchemeFromState = (fullState: string | undefined): { originalState: string | undefined; appScheme: string | undefined } => {
+      if (!fullState) return { originalState: undefined, appScheme: undefined };
+      const parts = fullState.split('__scheme__');
+      if (parts.length === 2) {
+        return { originalState: parts[0], appScheme: parts[1] };
+      }
+      return { originalState: fullState, appScheme: undefined };
+    };
+
     try {
       const { code, id_token, state, user } = req.body;
-      const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
-      
-      const extractAppSchemeFromState = (fullState: string | undefined): { originalState: string | undefined; appScheme: string | undefined } => {
-        if (!fullState) return { originalState: undefined, appScheme: undefined };
-        const parts = fullState.split('__scheme__');
-        if (parts.length === 2) {
-          return { originalState: parts[0], appScheme: parts[1] };
-        }
-        return { originalState: fullState, appScheme: undefined };
-      };
-
-      const { originalState, appScheme } = extractAppSchemeFromState(state);
+      const { originalState } = extractAppSchemeFromState(state);
 
       let userName: string | undefined;
       if (user) {
@@ -368,83 +392,97 @@ export class AuthController {
         }
       }
 
-      const params = new URLSearchParams();
-      if (code) params.set('code', code);
-      if (id_token) params.set('id_token', id_token);
-      if (originalState) params.set('state', originalState);
-      if (userName) params.set('user_name', userName);
+      if (!code) {
+        const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        return;
+      }
 
-      if (appScheme) {
-        res.redirect(`${appScheme}://oauth/apple/callback?${params.toString()}`);
-      } else {
-        res.redirect(`${baseUrl}/oauth/apple/callback?${params.toString()}`);
+      let socialUserInfo;
+      try {
+        socialUserInfo = await socialAuthService.getAppleUserInfo(code, id_token, userName);
+      } catch (tokenError) {
+        console.error('Apple token exchange error:', tokenError);
+        const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        return;
+      }
+
+      if (!socialUserInfo.email) {
+        const sessionKey = oauthSessionStore.save({
+          requiresEmail: true,
+          provider: socialUserInfo.provider,
+          providerId: socialUserInfo.providerUserId,
+          name: socialUserInfo.name,
+          state: originalState,
+        });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        return;
+      }
+
+      try {
+        const result = await userService.socialLogin({
+          provider: socialUserInfo.provider,
+          providerUserId: socialUserInfo.providerUserId,
+          email: socialUserInfo.email,
+          name: socialUserInfo.name,
+          profileImage: socialUserInfo.profileImage,
+        });
+
+        const sessionKey = oauthSessionStore.save({
+          token: result.token,
+          isNewUser: result.isNewUser,
+          state: originalState,
+        });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+      } catch (loginError) {
+        console.error('Apple social login error:', loginError);
+        const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
+        const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
       }
     } catch (error) {
       console.error('Apple callback error:', error);
-      const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
       const { state } = req.body;
-      const extractScheme = (fullState: string | undefined): string | undefined => {
-        if (!fullState) return undefined;
-        const parts = fullState.split('__scheme__');
-        return parts.length === 2 ? parts[1] : undefined;
-      };
-      const appScheme = extractScheme(state);
-      if (appScheme) {
-        res.redirect(`${appScheme}://oauth/apple/callback?error=callback_failed`);
-      } else {
-        res.redirect(`${baseUrl}/oauth/apple/callback?error=callback_failed`);
-      }
+      const { originalState } = extractAppSchemeFromState(state);
+      const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: originalState });
+      res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
     }
   }
 
   async oauthCallback(req: Request, res: Response): Promise<void> {
+    const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+
+    const extractAppSchemeFromState = (fullState: string | undefined): { originalState: string | undefined; appScheme: string | undefined } => {
+      if (!fullState) return { originalState: undefined, appScheme: undefined };
+      const parts = fullState.split('__scheme__');
+      if (parts.length === 2) {
+        return { originalState: parts[0], appScheme: parts[1] };
+      }
+      return { originalState: fullState, appScheme: undefined };
+    };
+
     try {
       const provider = req.params.provider as string;
       const { code, state, error: oauthError } = req.query;
-      const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
-
-      const extractAppSchemeFromState = (fullState: string | undefined): { originalState: string | undefined; appScheme: string | undefined } => {
-        if (!fullState) return { originalState: undefined, appScheme: undefined };
-        const parts = fullState.split('__scheme__');
-        if (parts.length === 2) {
-          return { originalState: parts[0], appScheme: parts[1] };
-        }
-        return { originalState: fullState, appScheme: undefined };
-      };
-
-      const { originalState, appScheme } = extractAppSchemeFromState(state as string | undefined);
-
-      const buildRedirectUrl = (path: string, params: URLSearchParams): string => {
-        if (appScheme) {
-          return `${appScheme}:/${path}?${params.toString()}`;
-        }
-        return `${baseUrl}${path}?${params.toString()}`;
-      };
-
-      const callbackPath = `/oauth/${provider}/callback`;
+      const { originalState } = extractAppSchemeFromState(state as string | undefined);
 
       if (oauthError) {
-        const params = new URLSearchParams();
-        params.set('error', oauthError as string);
-        if (originalState) params.set('state', originalState);
-        res.redirect(buildRedirectUrl(callbackPath, params));
+        const sessionKey = oauthSessionStore.save({ error: oauthError as string, state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
         return;
       }
 
       if (!code) {
-        const params = new URLSearchParams();
-        params.set('error', 'no_code');
-        if (originalState) params.set('state', originalState);
-        res.redirect(buildRedirectUrl(callbackPath, params));
+        const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
         return;
       }
 
       const validProviders = ['kakao', 'naver', 'google'];
       if (!validProviders.includes(provider)) {
-        const params = new URLSearchParams();
-        params.set('error', 'invalid_provider');
-        if (originalState) params.set('state', originalState);
-        res.redirect(buildRedirectUrl(callbackPath, params));
+        const sessionKey = oauthSessionStore.save({ error: 'invalid_provider', state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
         return;
       }
 
@@ -459,30 +497,26 @@ export class AuthController {
         }
       } catch (tokenError) {
         console.error('Token exchange error:', tokenError);
-        const tokenErrorParams = new URLSearchParams();
-        tokenErrorParams.set('error', 'token_exchange_failed');
-        if (originalState) tokenErrorParams.set('state', originalState);
-        res.redirect(buildRedirectUrl(callbackPath, tokenErrorParams));
+        const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
         return;
       }
 
       if (!socialUserInfo) {
-        const userInfoErrorParams = new URLSearchParams();
-        userInfoErrorParams.set('error', 'user_info_failed');
-        if (originalState) userInfoErrorParams.set('state', originalState);
-        res.redirect(buildRedirectUrl(callbackPath, userInfoErrorParams));
+        const sessionKey = oauthSessionStore.save({ error: 'user_info_failed', state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
         return;
       }
 
-      const params = new URLSearchParams();
-
       if (!socialUserInfo.email) {
-        params.set('requiresEmail', 'true');
-        params.set('provider', socialUserInfo.provider);
-        params.set('providerId', socialUserInfo.providerUserId);
-        if (socialUserInfo.name) params.set('name', socialUserInfo.name);
-        if (originalState) params.set('state', originalState);
-        res.redirect(buildRedirectUrl(callbackPath, params));
+        const sessionKey = oauthSessionStore.save({
+          requiresEmail: true,
+          provider: socialUserInfo.provider,
+          providerId: socialUserInfo.providerUserId,
+          name: socialUserInfo.name,
+          state: originalState,
+        });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
         return;
       }
 
@@ -495,38 +529,24 @@ export class AuthController {
           profileImage: socialUserInfo.profileImage,
         });
 
-        params.set('token', result.token);
-        params.set('isNewUser', result.isNewUser ? 'true' : 'false');
-        if (originalState) params.set('state', originalState);
-        
-        res.redirect(buildRedirectUrl(callbackPath, params));
+        const sessionKey = oauthSessionStore.save({
+          token: result.token,
+          isNewUser: result.isNewUser,
+          state: originalState,
+        });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
       } catch (loginError) {
         console.error('Social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
-        const errorParams = new URLSearchParams();
-        errorParams.set('error', errorMessage);
-        if (originalState) errorParams.set('state', originalState);
-        res.redirect(buildRedirectUrl(callbackPath, errorParams));
+        const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
+        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
       }
     } catch (error) {
       console.error('OAuth callback error:', error);
-      const provider = req.params.provider || 'unknown';
       const { state } = req.query;
-      const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
-      const callbackPath = `/oauth/${provider}/callback`;
-      
-      const extractScheme = (fullState: string | undefined): string | undefined => {
-        if (!fullState) return undefined;
-        const parts = fullState.split('__scheme__');
-        return parts.length === 2 ? parts[1] : undefined;
-      };
-      const appScheme = extractScheme(state as string | undefined);
-      
-      if (appScheme) {
-        res.redirect(`${appScheme}:/${callbackPath}?error=callback_failed`);
-      } else {
-        res.redirect(`${baseUrl}${callbackPath}?error=callback_failed`);
-      }
+      const { originalState } = extractAppSchemeFromState(state as string | undefined);
+      const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: originalState });
+      res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
     }
   }
 }
