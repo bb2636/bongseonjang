@@ -49,6 +49,7 @@ export default function BongseonjangTvSection({ tvImages, isLoading }: Bongseonj
           loop={tvImages.length > 1}
           className="bongseonjang-tv__swiper"
           style={{ height: TV_BANNER_HEIGHT }}
+          touchReleaseOnEdges={true}
         >
           {tvImages.map((image, index) => (
             <SwiperSlide key={image.id}>

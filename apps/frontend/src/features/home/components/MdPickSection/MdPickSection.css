@@ -18,7 +18,7 @@
 .md-pick-section__swiper {
   width: 100%;
   overflow: visible;
-  touch-action: pan-x;
+  touch-action: pan-y pinch-zoom;
   -webkit-overflow-scrolling: touch;
 }
 

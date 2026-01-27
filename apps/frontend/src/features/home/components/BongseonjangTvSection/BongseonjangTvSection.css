@@ -47,7 +47,7 @@
 .bongseonjang-tv__swiper {
   width: 100%;
   height: 100%;
-  touch-action: pan-x;
+  touch-action: pan-y pinch-zoom;
   -webkit-overflow-scrolling: touch;
 }
 

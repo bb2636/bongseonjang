@@ -37,6 +37,7 @@ export default function BestProductSection({
           slidesPerView="auto"
           spaceBetween={10}
           className="best-product-section__swiper"
+          touchReleaseOnEdges={true}
         >
           {products.map((product) => (
             <SwiperSlide key={product.id} className="best-product-section__slide">

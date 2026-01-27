@@ -35,6 +35,7 @@ export default function MdPickSection({
           slidesPerView="auto"
           spaceBetween={10}
           className="md-pick-section__swiper"
+          touchReleaseOnEdges={true}
         >
           {products.map((product) => (
             <SwiperSlide key={product.id} className="md-pick-section__slide">
