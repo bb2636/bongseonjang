@@ -100,10 +100,11 @@ export class AuthController {
     
     try {
       const { provider } = req.params;
-      const { code, state } = req.body;
+      const { code, state, redirectUri } = req.body;
 
       console.log('Code length:', code?.length);
       console.log('State:', state);
+      console.log('RedirectUri from client:', redirectUri);
 
       if (!code) {
         console.log('ERROR: No code provided');
@@ -123,16 +124,16 @@ export class AuthController {
 
       if (provider === 'kakao') {
         console.log('Getting Kakao user info...');
-        socialUserInfo = await socialAuthService.getKakaoUserInfo(code);
+        socialUserInfo = await socialAuthService.getKakaoUserInfo(code, redirectUri);
         console.log('Kakao user info received:', JSON.stringify(socialUserInfo));
       } else if (provider === 'naver') {
         if (!state) {
           res.status(400).json({ message: 'State is required for Naver login' });
           return;
         }
-        socialUserInfo = await socialAuthService.getNaverUserInfo(code, state);
+        socialUserInfo = await socialAuthService.getNaverUserInfo(code, state, redirectUri);
       } else if (provider === 'google') {
-        socialUserInfo = await socialAuthService.getGoogleUserInfo(code);
+        socialUserInfo = await socialAuthService.getGoogleUserInfo(code, redirectUri);
       } else if (provider === 'apple') {
         const { idToken, userName } = req.body;
         socialUserInfo = await socialAuthService.getAppleUserInfo(code, idToken, userName);

@@ -77,13 +77,13 @@ export interface SocialUserInfo {
 }
 
 export class SocialAuthService {
-  async getKakaoUserInfo(code: string): Promise<SocialUserInfo> {
+  async getKakaoUserInfo(code: string, clientRedirectUri?: string): Promise<SocialUserInfo> {
     console.log('=== getKakaoUserInfo START ===');
     
     const clientId = process.env.KAKAO_REST_API_KEY;
     const clientSecret = process.env.KAKAO_CLIENT_SECRET;
     const baseUrl = process.env.VITE_SOCIAL_REDIRECT_BASE_URL || process.env.SOCIAL_REDIRECT_BASE_URL;
-    const redirectUri = `${baseUrl}/api/auth/oauth/kakao/callback`;
+    const redirectUri = clientRedirectUri || `${baseUrl}/api/auth/oauth/kakao/callback`;
 
     console.log('Environment check:');
     console.log('- KAKAO_REST_API_KEY:', clientId ? `${clientId.substring(0, 8)}...` : 'NOT SET');
@@ -150,7 +150,7 @@ export class SocialAuthService {
     };
   }
 
-  async getNaverUserInfo(code: string, state: string): Promise<SocialUserInfo> {
+  async getNaverUserInfo(code: string, state: string, clientRedirectUri?: string): Promise<SocialUserInfo> {
     const clientId = process.env.NAVER_CLIENT_ID;
     const clientSecret = process.env.NAVER_CLIENT_SECRET;
 
@@ -208,11 +208,11 @@ export class SocialAuthService {
     };
   }
 
-  async getGoogleUserInfo(code: string): Promise<SocialUserInfo> {
+  async getGoogleUserInfo(code: string, clientRedirectUri?: string): Promise<SocialUserInfo> {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
     const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
-    const redirectUri = `${baseUrl}/api/auth/oauth/google/callback`;
+    const redirectUri = clientRedirectUri || `${baseUrl}/api/auth/oauth/google/callback`;
 
     if (!clientId || !clientSecret) {
       throw new Error('Google OAuth configuration is missing');

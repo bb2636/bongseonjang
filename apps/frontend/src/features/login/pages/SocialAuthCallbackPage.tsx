@@ -176,7 +176,10 @@ export default function SocialAuthCallbackPage() {
       try {
         console.log('[OAuth Callback] Calling socialLogin API...');
         const appleParams = provider === 'apple' ? { idToken: idToken || undefined, userName: userName || undefined } : undefined;
-        const result = await socialLogin(provider as SocialProvider, code, state || undefined, appleParams);
+        const baseUrl = import.meta.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+        const webRedirectUri = `${baseUrl}/oauth/${provider}/callback`;
+        console.log('[OAuth Callback] Using redirectUri:', webRedirectUri);
+        const result = await socialLogin(provider as SocialProvider, code, state || undefined, appleParams, webRedirectUri);
         console.log('[OAuth Callback] socialLogin result:', result);
 
         if (isRequiresEmailResponse(result)) {

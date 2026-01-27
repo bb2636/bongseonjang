@@ -50,13 +50,18 @@ export async function socialLogin(
   provider: SocialProvider,
   code: string,
   state?: string,
-  appleParams?: Omit<AppleLoginParams, 'code'>
+  appleParams?: Omit<AppleLoginParams, 'code'>,
+  redirectUri?: string
 ): Promise<SocialLoginResult> {
   const body: Record<string, string | undefined> = { code, state };
   
   if (provider === 'apple' && appleParams) {
     body.idToken = appleParams.idToken;
     body.userName = appleParams.userName;
+  }
+  
+  if (redirectUri) {
+    body.redirectUri = redirectUri;
   }
 
   const response = await fetch(`${API_BASE_URL}/auth/social/${provider}`, {
