@@ -1,0 +1,184 @@
+다른 프로젝트처럼 네이티브 SDK + env.capacitor 방식 안 쓰고, 순수 웹 OAuth + InAppBrowser 방식으로 구현되어 있습니다.
+
+전체 플로우 (카카오 예시)
+
+1단계: 앱에서 로그인 버튼 클릭
+
+// Login.tsx
+const openSocialLoginInApp = async (provider: 'kakao' | 'naver' | 'apple') => {
+
+const authUrl = `${API_BASE}/api/auth/${provider}?platform=app`;
+
+// InAppBrowser로 웹페이지 열기 (네이티브 SDK 아님!)
+
+await InAppBrowser.openWebView({ 
+
+url: authUrl,
+
+toolbarType: ToolBarType.ACTIVITY
+
+});
+
+};
+
+2단계: 서버에서 카카오 OAuth 시작
+
+// server/routes/auth/kakao.js
+router.get('/', (req, res) => {
+
+const state = crypto.randomBytes(16).toString('hex');
+
+const redirectUri = `${baseUrl}/api/auth/kakao/callback`;
+
+// 임시 세션 저장 (Map에 저장, 10분 후 만료)
+
+pendingAuthSessions.set(state, { redirectUri, platform, popup });
+
+// 카카오 로그인 페이지로 리다이렉트
+
+res.redirect(`https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${redirectUri}&state=${state}`);
+
+});
+
+3단계: 카카오 로그인 완료 → 콜백
+
+// server/routes/auth/kakao.js
+router.get('/callback', async (req, res) => {
+
+const { code, state } = req.query;
+
+// 1. 액세스 토큰 발급
+
+const tokenData = await fetch('https://kauth.kakao.com/oauth/token', {
+
+method: 'POST',
+
+body: new URLSearchParams({
+
+grant_type: 'authorization_code',
+
+client_id: KAKAO_REST_API_KEY,
+
+client_secret: KAKAO_CLIENT_SECRET,
+
+redirect_uri: session.redirectUri,
+
+code: code
+
+})
+
+});
+
+// 2. 사용자 프로필 조회
+
+const profileData = await fetch('https://kapi.kakao.com/v2/user/me', {
+
+headers: { 'Authorization': `Bearer ${access_token}` }
+
+});
+
+// 3. 임시 키 생성 후 세션 저장
+
+const socialKey = crypto.randomBytes(16).toString('hex');
+
+storeSocialSession(socialKey, {
+
+provider: 'kakao',
+
+providerId: id,
+
+email, name, phone,
+
+platform: 'app'
+
+});
+
+// 4. /social-callback 페이지로 리다이렉트 (key 전달)
+
+res.redirect(`/social-callback?key=${socialKey}&provider=kakao&platform=app`);
+
+});
+
+4단계: InAppBrowser URL 변경 감지
+
+// Login.tsx - URL 리스너
+urlChangeListenerRef.current = await InAppBrowser.addListener('urlChangeEvent', async (event) => {
+
+const url = event.url;
+
+// /social-callback URL 감지!
+
+if (url.includes('/social-callback')) {
+
+const urlObj = new URL(url);
+
+const key = urlObj.searchParams.get('key');  // 임시 키 추출
+
+// InAppBrowser 닫기
+
+await InAppBrowser.close();
+
+// 키로 사용자 정보 조회
+
+await handleSocialCallback(key, provider);
+
+}
+
+});
+
+5단계: 키로 사용자 정보 조회 후 로그인 처리
+
+// Login.tsx
+const handleSocialCallback = async (key: string, provider: string) => {
+
+// 1. 임시 키로 사용자 정보 조회
+
+const response = await fetch(`/api/auth/${provider}/user/${key}`);
+
+const data = await response.json();
+
+// → { provider: 'kakao', providerId: '12345', email, name, phone }
+
+// 2. 기존 회원인지 체크
+
+const checkResponse = await fetch('/api/auth/register/check-social', {
+
+method: 'POST',
+
+body: JSON.stringify({ provider, providerId, socialKey: key })
+
+});
+
+if (checkData.exists) {
+
+// 기존 회원 → 바로 로그인
+
+setAuth(checkData.user, checkData.accessToken, checkData.refreshToken);
+
+navigate('/home');
+
+} else {
+
+// 신규 회원 → 회원가입 페이지로 이동 (소셜 정보 전달)
+
+navigate('/register', { state: { isSocialLogin: true, socialKey, ... } });
+
+}
+
+};
+
+핵심 포인트
+
+항목이 프로젝트다른 프로젝트SDK웹 OAuth만 사용네이티브 SDK (카카오/네이버 SDK)설정 파일서버 환경변수만env.capacitor, GoogleService-Info.plist 등인증 흐름InAppBrowser + URL 감지네이티브 로그인 창API 키 위치서버 .env앱 번들 내 설정 파일
+
+장점: 앱 빌드 시 설정 파일 안 건드려도 됨, 서버에서 키 관리
+
+단점: InAppBrowser 닫히는 타이밍 잡아야 함, URL 변경 리스너 필요
+
+
+
+
+
+
+
+
