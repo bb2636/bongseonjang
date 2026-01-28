@@ -16,8 +16,8 @@ import { Product } from '../../../entity/Product';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl';
 
 const STATUS_FILTER_MAP: Record<OrderStatusFilter, OrderStatus[]> = {
-  all: ['pending', 'paid', 'preparing', 'shipping', 'delivered', 'cancelled', 'refund_requested', 'refunded'],
-  shipping: ['pending', 'paid', 'preparing', 'shipping'],
+  all: ['paid', 'preparing', 'shipping', 'delivered', 'cancelled', 'refund_requested', 'refunded'],
+  shipping: ['paid', 'preparing', 'shipping'],
   delivered: ['delivered'],
   cancelled: ['cancelled', 'refund_requested', 'refunded'],
 };
