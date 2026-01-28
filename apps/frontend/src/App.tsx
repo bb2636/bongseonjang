@@ -253,7 +253,22 @@ function AppContent() {
           console.log('[DeepLink] Google OAuth callback detected');
           const handled = await handleGoogleOAuthDeepLink(url);
           if (handled) {
-            console.log('[DeepLink] Google OAuth callback handled');
+            console.log('[DeepLink] Google OAuth callback handled by resolver');
+            return;
+          }
+          
+          console.log('[DeepLink] No resolver found, navigating to social-callback page');
+          const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
+          const key = urlObj.searchParams.get('key');
+          const error = urlObj.searchParams.get('error');
+          
+          if (key) {
+            console.log('[DeepLink] Navigating to /social-callback with key:', key);
+            navigate(`/social-callback?key=${key}`, { replace: true });
+            return;
+          } else if (error) {
+            console.log('[DeepLink] OAuth error:', error);
+            navigate(`/social-callback?error=${error}`, { replace: true });
             return;
           }
         }

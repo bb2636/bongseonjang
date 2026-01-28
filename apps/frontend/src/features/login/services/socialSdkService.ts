@@ -106,8 +106,16 @@ export async function handleGoogleOAuthDeepLink(url: string): Promise<boolean> {
   console.log('[GoogleOAuth] handleGoogleOAuthDeepLink called:', url);
   console.log('[GoogleOAuth] googleOAuthResolver exists:', !!googleOAuthResolver);
   
+  try {
+    console.log('[GoogleOAuth] Closing system browser...');
+    await Browser.close();
+    console.log('[GoogleOAuth] Browser closed');
+  } catch (e) {
+    console.log('[GoogleOAuth] Browser close error (non-fatal):', e);
+  }
+  
   if (!googleOAuthResolver) {
-    console.log('[GoogleOAuth] No resolver found, ignoring callback');
+    console.log('[GoogleOAuth] No resolver found, will navigate to social-callback');
     return false;
   }
 
@@ -127,14 +135,6 @@ export async function handleGoogleOAuthDeepLink(url: string): Promise<boolean> {
   }
 
   try {
-    console.log('[GoogleOAuth] Closing system browser...');
-    try {
-      await Browser.close();
-      console.log('[GoogleOAuth] Browser closed successfully');
-    } catch (closeErr) {
-      console.log('[GoogleOAuth] Browser close error (non-fatal):', closeErr);
-    }
-    
     const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
     const key = urlObj.searchParams.get('key');
     const error = urlObj.searchParams.get('error');
