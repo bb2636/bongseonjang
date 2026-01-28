@@ -1,8 +1,8 @@
 import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
-import { checkIsCapacitor, getApiBaseUrlDynamic } from '@/shared/config/apiConfig';
+import { checkIsCapacitor, getApiBaseUrlDynamic, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
 
 function getBackendBaseUrl(): string {
-  const apiUrl = getApiBaseUrlDynamic();
+  const apiUrl = getAbsoluteApiUrl();
   return apiUrl.replace(/\/api$/, '');
 }
 
