@@ -657,7 +657,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
 
     const credentials = Buffer.from(`${NICEPAY_CLIENT_KEY}:${NICEPAY_SECRET_KEY}`).toString('base64');
 
-    const response = await fetch(`https://sandbox-api.nicepay.co.kr/v1/payments/${tid}`, {
+    const response = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -774,7 +774,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
       if (!stockCheckResult.success) {
         console.log('[NicePay Callback] Stock insufficient, cancelling payment:', stockCheckResult.insufficientProducts);
         
-        const cancelResponse = await fetch(`https://sandbox-api.nicepay.co.kr/v1/payments/${tid}/cancel`, {
+        const cancelResponse = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}/cancel`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
