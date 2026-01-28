@@ -5,8 +5,6 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { socialLogin, isRequiresEmailResponse, AccountSuspendedError, SocialProvider } from '../api/socialAuthApi';
 import { fetchHomeData } from '../../home/api/homeDataApi';
 import { getApiBaseUrlDynamic } from '@/shared/config/apiConfig';
-import './SocialAuthCallbackPage.css';
-
 interface SessionData {
   token?: string;
   refreshToken?: string;
@@ -377,26 +375,44 @@ export default function SocialAuthCallbackPage() {
 
   if (error) {
     return (
-      <div className="social-callback-container">
-        <div className="social-callback-error">
-          <p className="social-callback-error-message">{error}</p>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh', 
+        background: '#ffffff', 
+        padding: '16px' 
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          gap: '24px', 
+          textAlign: 'center' 
+        }}>
+          <p style={{ 
+            fontFamily: 'var(--font-family-base)', 
+            fontSize: '16px', 
+            color: 'rgba(12, 12, 12, 0.8)', 
+            lineHeight: '1.5' 
+          }}>{error}</p>
           <button
-            className="social-callback-retry-button"
+            style={{
+              padding: '12px 24px',
+              background: 'var(--color-primary)',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '8px',
+              fontFamily: 'var(--font-family-base)',
+              fontSize: '15px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
             onClick={() => navigate('/login', { replace: true })}
           >
             로그인 화면으로 돌아가기
           </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="social-callback-container">
-        <div className="social-callback-loading">
-          <div className="social-callback-spinner" />
-          <p className="social-callback-loading-text">로그인 중...</p>
         </div>
       </div>
     );

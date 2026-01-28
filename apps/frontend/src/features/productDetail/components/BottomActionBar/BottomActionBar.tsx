@@ -56,6 +56,7 @@ export default function BottomActionBar({
         <button
           className={`bottom-action-bar__buy-btn ${isSoldOut ? 'bottom-action-bar__buy-btn--sold-out' : ''}`}
           onClick={handleBuyClick}
+          disabled={isSoldOut}
         >
           {isSoldOut ? '품절' : '구매하기'}
         </button>
