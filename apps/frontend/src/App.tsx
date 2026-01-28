@@ -5,6 +5,7 @@ import { MainLayout } from "./layouts";
 import { ProtectedRoute, ProtectedAdminRoute, SplashScreen } from "./components";
 import { HomePageSkeleton } from "./components/HomePageSkeleton";
 import { IS_CAPACITOR, CAPACITOR_APP_SCHEME } from "./shared/config/apiConfig";
+import { handleGoogleOAuthDeepLink } from "./features/login/services/socialSdkService";
 import "./components/ProtectedRoute/ProtectedRoute.css";
 
 const HomePage = lazy(() => import("./features/home/pages/HomePage"));
@@ -242,11 +243,21 @@ function AppContent() {
   useEffect(() => {
     if (!IS_CAPACITOR) return;
 
-    const handleAppUrlOpen = (event: URLOpenListenerEvent) => {
+    const handleAppUrlOpen = async (event: URLOpenListenerEvent) => {
       const url = event.url;
       console.log('[DeepLink] Received URL:', url);
       
       try {
+        const googleOAuthPrefix = `${CAPACITOR_APP_SCHEME}://oauth/google/callback`;
+        if (url.startsWith(googleOAuthPrefix)) {
+          console.log('[DeepLink] Google OAuth callback detected');
+          const handled = await handleGoogleOAuthDeepLink(url);
+          if (handled) {
+            console.log('[DeepLink] Google OAuth callback handled');
+            return;
+          }
+        }
+
         let path = '';
         let queryString = '';
         

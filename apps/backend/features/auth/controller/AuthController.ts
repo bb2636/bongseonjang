@@ -586,6 +586,7 @@ export class AuthController {
 
   async oauthCallback(req: Request, res: Response): Promise<void> {
     const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
+    const APP_SCHEME = 'bongseonjang';
 
     const extractAppSchemeFromState = (fullState: string | undefined): { originalState: string | undefined; appScheme: string | undefined } => {
       if (!fullState) return { originalState: undefined, appScheme: undefined };
@@ -596,34 +597,45 @@ export class AuthController {
       return { originalState: fullState, appScheme: undefined };
     };
 
+    const getRedirectUrl = (provider: string, platform: string | undefined, sessionKey: string): string => {
+      if (provider === 'google' && platform === 'app') {
+        return `${APP_SCHEME}://oauth/google/callback?key=${sessionKey}`;
+      }
+      return `${baseUrl}/social-callback?key=${sessionKey}`;
+    };
+
     try {
       const provider = req.params.provider as string;
       const { code, state, error: oauthError } = req.query;
       const { originalState } = extractAppSchemeFromState(state as string | undefined);
 
+      const pendingSession = originalState ? pendingAuthSessions.get(originalState) : undefined;
+      const platform = pendingSession?.platform;
+      console.log(`[OAuth Callback] Provider: ${provider}, Platform: ${platform}, State: ${originalState}`);
+
       if (oauthError) {
         const sessionKey = oauthSessionStore.save({ error: oauthError as string, state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
         return;
       }
 
       if (!originalState || !validateAndClearPendingAuthState(originalState)) {
         console.warn(`[OAuth Callback] Invalid or missing state. State: ${originalState}, Provider: ${provider}`);
         const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
         return;
       }
 
       if (!code) {
         const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
         return;
       }
 
       const validProviders = ['kakao', 'naver', 'google'];
       if (!validProviders.includes(provider)) {
         const sessionKey = oauthSessionStore.save({ error: 'invalid_provider', state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
         return;
       }
 
@@ -639,13 +651,13 @@ export class AuthController {
       } catch (tokenError) {
         console.error('Token exchange error:', tokenError);
         const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
         return;
       }
 
       if (!socialUserInfo) {
         const sessionKey = oauthSessionStore.save({ error: 'user_info_failed', state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
         return;
       }
 
@@ -657,7 +669,7 @@ export class AuthController {
           name: socialUserInfo.name,
           state: originalState,
         });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
         return;
       }
 
@@ -675,19 +687,22 @@ export class AuthController {
           isNewUser: result.isNewUser,
           state: originalState,
         });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        console.log(`[OAuth Callback] Success! Redirecting to: ${getRedirectUrl(provider, platform, sessionKey)}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
       } catch (loginError) {
         console.error('Social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
         const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        res.redirect(getRedirectUrl(provider, platform, sessionKey));
       }
     } catch (error) {
       console.error('OAuth callback error:', error);
+      const provider = req.params.provider as string;
       const { state } = req.query;
       const { originalState } = extractAppSchemeFromState(state as string | undefined);
+      const pendingSession = originalState ? pendingAuthSessions.get(originalState) : undefined;
       const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: originalState });
-      res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+      res.redirect(getRedirectUrl(provider, pendingSession?.platform, sessionKey));
     }
   }
 }

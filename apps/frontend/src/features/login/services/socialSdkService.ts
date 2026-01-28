@@ -1,10 +1,14 @@
 import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
-import { checkIsCapacitor, getApiBaseUrlDynamic, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
+import { Browser } from '@capacitor/browser';
+import { App as CapacitorApp } from '@capacitor/app';
+import { checkIsCapacitor, getApiBaseUrlDynamic, getAbsoluteApiUrl, CAPACITOR_APP_SCHEME } from '@/shared/config/apiConfig';
 
 function getBackendBaseUrl(): string {
   const apiUrl = getAbsoluteApiUrl();
   return apiUrl.replace(/\/api$/, '');
 }
+
+let googleOAuthResolver: ((result: OAuthResult) => void) | null = null;
 
 export interface OAuthResult {
   token?: string;
@@ -34,6 +38,89 @@ async function fetchSessionData(key: string): Promise<OAuthResult> {
   } catch (e) {
     console.error('[OAuth] Failed to fetch session data:', e);
     return { error: 'session_fetch_failed' };
+  }
+}
+
+async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
+  const backendUrl = getBackendBaseUrl();
+  const authUrl = `${backendUrl}/api/auth/start/google?platform=app`;
+  
+  console.log('[GoogleOAuth] === Starting Google OAuth with System Browser ===');
+  console.log('[GoogleOAuth] authUrl:', authUrl);
+
+  return new Promise(async (resolve) => {
+    googleOAuthResolver = resolve;
+    
+    const timeoutId = setTimeout(async () => {
+      if (googleOAuthResolver) {
+        console.log('[GoogleOAuth] Timeout reached');
+        googleOAuthResolver = null;
+        await Browser.close().catch(() => {});
+        resolve({ error: 'timeout' });
+      }
+    }, 5 * 60 * 1000);
+
+    try {
+      await Browser.open({ url: authUrl, windowName: '_blank' });
+      console.log('[GoogleOAuth] System browser opened');
+    } catch (err) {
+      console.error('[GoogleOAuth] Failed to open system browser:', err);
+      clearTimeout(timeoutId);
+      googleOAuthResolver = null;
+      resolve({ error: 'browser_open_failed' });
+    }
+  });
+}
+
+export async function handleGoogleOAuthDeepLink(url: string): Promise<boolean> {
+  console.log('[GoogleOAuth] handleGoogleOAuthDeepLink called:', url);
+  
+  if (!googleOAuthResolver) {
+    console.log('[GoogleOAuth] No resolver found, ignoring');
+    return false;
+  }
+
+  const schemePrefix = `${CAPACITOR_APP_SCHEME}://oauth/google/callback`;
+  if (!url.startsWith(schemePrefix)) {
+    console.log('[GoogleOAuth] URL does not match Google OAuth callback pattern');
+    return false;
+  }
+
+  try {
+    await Browser.close().catch(() => {});
+    
+    const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
+    const key = urlObj.searchParams.get('key');
+    const error = urlObj.searchParams.get('error');
+
+    if (error) {
+      console.log('[GoogleOAuth] OAuth error:', error);
+      googleOAuthResolver({ error });
+      googleOAuthResolver = null;
+      return true;
+    }
+
+    if (key) {
+      console.log('[GoogleOAuth] Got session key:', key);
+      const result = await fetchSessionData(key);
+      console.log('[GoogleOAuth] Session data:', result);
+      googleOAuthResolver(result);
+      googleOAuthResolver = null;
+      return true;
+    }
+
+    if (googleOAuthResolver) {
+      googleOAuthResolver({ error: 'no_key' });
+      googleOAuthResolver = null;
+    }
+    return true;
+  } catch (e) {
+    console.error('[GoogleOAuth] Error handling callback:', e);
+    if (googleOAuthResolver) {
+      googleOAuthResolver({ error: 'callback_parse_failed' });
+      googleOAuthResolver = null;
+    }
+    return true;
   }
 }
 
@@ -156,7 +243,7 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
   console.log('[GoogleOAuth] googleAuthorize called, isCapacitor:', isCapacitor);
   
   if (isCapacitor) {
-    return await openInAppBrowserForOAuth('google');
+    return await openSystemBrowserForGoogleOAuth();
   }
   
   redirectToWebOAuth('google');
