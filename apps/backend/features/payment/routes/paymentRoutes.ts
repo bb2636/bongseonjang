@@ -451,10 +451,19 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
 
     const order = await orderRepository.findOne({
       where: { id: orderId },
+      relations: ['user', 'guestOrderDetail'],
     });
 
     if (!order) {
       return res.status(404).send('주문을 찾을 수 없습니다');
+    }
+
+    const buyerEmail = order.user?.email || order.guestOrderDetail?.guestEmail || `order-${orderId}@bongseonjang.com`;
+    const buyerName = order.recipientName || order.guestOrderDetail?.guestName || '';
+    const buyerTel = order.recipientPhone || '';
+
+    if (!buyerName || !buyerTel) {
+      return res.status(400).send('구매자 정보가 누락되었습니다. 수령인 이름과 전화번호를 확인해주세요.');
     }
 
     const payment = await paymentRepository.findOne({
@@ -554,8 +563,11 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
         orderId: '${orderId}',
         amount: ${order.finalAmount},
         goodsName: '${goodsName.replace(/'/g, "\\'")}',
+        buyerName: '${buyerName.replace(/['"\\]/g, "")}',
+        buyerTel: '${buyerTel.replace(/[^0-9-]/g, "")}',
+        buyerEmail: '${buyerEmail.replace(/['"\\]/g, "")}',
         returnUrl: '${returnUrl}',
-        ${paymentMethod === 'vbank' ? `vbankHolder: '${order.recipientName.replace(/'/g, "\\'")}',` : ''}
+        ${paymentMethod === 'vbank' ? `vbankHolder: '${buyerName.replace(/['"\\]/g, "")}',` : ''}
         fnError: function(result) {
           document.querySelector('.loading').style.display = 'none';
           document.getElementById('error-container').innerHTML = 
