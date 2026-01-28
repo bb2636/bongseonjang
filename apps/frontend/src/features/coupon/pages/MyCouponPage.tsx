@@ -9,7 +9,6 @@ export default function MyCouponPage() {
       coupons={state.coupons}
       totalCount={state.totalCount}
       isLoading={state.isLoading}
-      onBack={actions.onBack}
       onGoToDownload={actions.onGoToDownload}
     />
   );

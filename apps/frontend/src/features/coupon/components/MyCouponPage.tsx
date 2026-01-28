@@ -1,3 +1,4 @@
+import { AppBar, AppBarSpacer } from '@/components/AppBar';
 import { Coupon } from '../types/coupon';
 import './MyCouponPage.css';
 
@@ -5,7 +6,6 @@ interface MyCouponPageProps {
   coupons: Coupon[];
   totalCount: number;
   isLoading: boolean;
-  onBack: () => void;
   onGoToDownload: () => void;
 }
 
@@ -60,28 +60,18 @@ export default function MyCouponPage({
   coupons,
   totalCount,
   isLoading,
-  onBack,
   onGoToDownload,
 }: MyCouponPageProps) {
   return (
     <div className="my-coupon-page">
-      <header className="my-coupon-page-header">
-        <button className="my-coupon-page-back" onClick={onBack} aria-label="뒤로가기">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M15 18L9 12L15 6"
-              stroke="#0C0C0C"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-        <h1 className="my-coupon-page-title">쿠폰</h1>
+      <AppBar />
+      <AppBarSpacer />
+      
+      <div className="my-coupon-page-subheader">
         <button className="my-coupon-page-download-btn" onClick={onGoToDownload}>
           쿠폰 다운로드
         </button>
-      </header>
+      </div>
 
       <div className="my-coupon-page-summary">
         <span className="my-coupon-page-summary-text">전체 {String(totalCount).padStart(3, '0')}장</span>

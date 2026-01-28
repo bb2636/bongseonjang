@@ -89,7 +89,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 
       const DEFAULT_FREE_SHIPPING_THRESHOLD = 30000;
       let shippingInfo = {
-        shippingFee: item.product?.shippingPolicy?.shippingFee ?? 3500,
+        shippingFee: item.product?.shippingPolicy?.shippingFee ?? 0,
         freeShippingThreshold: DEFAULT_FREE_SHIPPING_THRESHOLD as number | null,
       };
       
@@ -97,7 +97,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         try {
           const detailContent = JSON.parse(item.product.detailContent);
           if (detailContent.shippingInfo) {
-            shippingInfo.shippingFee = detailContent.shippingInfo.shippingFee ?? shippingInfo.shippingFee;
+            shippingInfo.shippingFee = detailContent.shippingInfo.shippingFee ?? 0;
             shippingInfo.freeShippingThreshold = detailContent.shippingInfo.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD;
           }
         } catch {

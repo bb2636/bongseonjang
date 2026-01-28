@@ -175,7 +175,7 @@ export class ProductService {
 
     const DEFAULT_FREE_SHIPPING_THRESHOLD = 30000;
     let shippingInfo = {
-      shippingFee: product.shippingPolicy?.shippingFee ?? 3500,
+      shippingFee: product.shippingPolicy?.shippingFee ?? 0,
       freeShippingThreshold: DEFAULT_FREE_SHIPPING_THRESHOLD as number | null,
     };
     
@@ -192,7 +192,7 @@ export class ProductService {
         productInfos = parsedContent.productInfos || [];
         shippingDetails = parsedContent.shippingDetails || [];
         if (parsedContent.shippingInfo) {
-          shippingInfo.shippingFee = parsedContent.shippingInfo.shippingFee ?? shippingInfo.shippingFee;
+          shippingInfo.shippingFee = parsedContent.shippingInfo.shippingFee ?? 0;
           shippingInfo.freeShippingThreshold = parsedContent.shippingInfo.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD;
         }
       } catch {
