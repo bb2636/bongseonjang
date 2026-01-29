@@ -16,6 +16,7 @@ import { ProductExposureCategory } from '../../../entity/ProductExposureCategory
 import { ProductCategory } from '../../../entity/ProductCategory';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
+import { PointRepository } from '../../point/repository/PointRepository';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl';
 
 const BRAND_CATEGORY_MAPPING: Record<string, string> = {
@@ -945,7 +946,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
         }
         
         const errorMessage = `재고 부족: ${stockCheckResult.insufficientProducts.join(', ')}`;
-        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderNumber: order.orderNumber, message: errorMessage }));
+        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: errorMessage }));
       }
       
       order.status = 'paid';
@@ -963,19 +964,43 @@ async function handlePaymentCallback(req: Request, res: Response) {
         await paymentRepository.save(payment);
       }
 
-      if (order.userCouponIdsJson) {
-        const couponRepository = new CouponRepository();
-        const couponIds: number[] = JSON.parse(order.userCouponIdsJson);
-        for (const couponId of couponIds) {
-          await couponRepository.useUserCoupon(couponId, order.id);
+      if (order.userId && order.usedPoints > 0) {
+        try {
+          const pointRepository = new PointRepository();
+          const wallet = await pointRepository.getOrCreateWallet(order.userId);
+          await pointRepository.usePoints(
+            wallet.id,
+            order.usedPoints,
+            `주문 결제 - ${order.orderNumber}`,
+            order.id
+          );
+          console.log('[NicePay Callback] Points deducted:', order.usedPoints);
+        } catch (pointError) {
+          console.error('[NicePay Callback] Failed to deduct points:', pointError);
         }
-      } else if (order.userCouponId) {
-        const couponRepository = new CouponRepository();
-        await couponRepository.useUserCoupon(order.userCouponId, order.id);
       }
 
-      if (order.cartItemIdsSnapshot && order.cartItemIdsSnapshot.length > 0) {
-            await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
+      try {
+        if (order.userCouponIdsJson) {
+          const couponRepository = new CouponRepository();
+          const couponIds: number[] = JSON.parse(order.userCouponIdsJson);
+          for (const couponId of couponIds) {
+            await couponRepository.useUserCoupon(couponId, order.id);
+          }
+        } else if (order.userCouponId) {
+          const couponRepository = new CouponRepository();
+          await couponRepository.useUserCoupon(order.userCouponId, order.id);
+        }
+      } catch (couponError) {
+        console.error('[NicePay Callback] Failed to use coupons:', couponError);
+      }
+
+      try {
+        if (order.cartItemIdsSnapshot && order.cartItemIdsSnapshot.length > 0) {
+          await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
+        }
+      } catch (cartError) {
+        console.error('[NicePay Callback] Failed to delete cart items:', cartError);
       }
 
       const successUrl = buildOrderRedirectUrl(`/payment/complete/${order.id}`);
@@ -995,7 +1020,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
       await paymentRepository.save(payment);
     }
 
-    return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderNumber: order.orderNumber, message: failReason }));
+    return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: failReason }));
   } catch (error) {
     console.error('[NicePay Callback] Error:', error);
     const catchData = { ...req.query, ...req.body };
@@ -1392,6 +1417,39 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
 
     if (!clientReturnUrl) {
       return res.status(400).json({ error: '콜백 URL이 필요합니다' });
+    }
+
+    const productRepository = AppDataSource.getRepository(Product);
+    const productOptionRepository = AppDataSource.getRepository(ProductOption);
+    const insufficientStockItems: string[] = [];
+
+    for (const item of cartItems as GuestCartItem[]) {
+      if (item.optionId) {
+        const option = await productOptionRepository.findOne({
+          where: { id: Number(item.optionId) },
+          relations: ['product'],
+        });
+        if (!option) {
+          insufficientStockItems.push(`${item.productName} - 옵션을 찾을 수 없습니다`);
+        } else if (option.stockQuantity < item.quantity) {
+          insufficientStockItems.push(`${item.productName} (재고: ${option.stockQuantity}개)`);
+        }
+      } else {
+        const product = await productRepository.findOne({
+          where: { id: item.productId },
+        });
+        if (!product) {
+          insufficientStockItems.push(`${item.productName} - 상품을 찾을 수 없습니다`);
+        } else if (product.stockQuantity < item.quantity) {
+          insufficientStockItems.push(`${item.productName} (재고: ${product.stockQuantity}개)`);
+        }
+      }
+    }
+
+    if (insufficientStockItems.length > 0) {
+      return res.status(400).json({ 
+        error: `재고가 부족합니다: ${insufficientStockItems.join(', ')}` 
+      });
     }
 
     const orderRepository = AppDataSource.getRepository(Order);

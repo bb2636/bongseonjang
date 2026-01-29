@@ -91,6 +91,16 @@ export class PointRepository {
     description: string,
     relatedOrderId?: string
   ): Promise<PointTransaction> {
+    if (relatedOrderId) {
+      const existingTransaction = await this.transactionRepository.findOne({
+        where: { relatedOrderId, type: 'use' },
+      });
+      if (existingTransaction) {
+        console.log('[PointRepository] Points already deducted for order:', relatedOrderId);
+        return existingTransaction;
+      }
+    }
+
     const wallet = await this.walletRepository.findOne({ where: { id: walletId } });
     if (!wallet) {
       throw new Error('Wallet not found');
