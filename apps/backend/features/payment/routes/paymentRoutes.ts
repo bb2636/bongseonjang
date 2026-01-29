@@ -749,7 +749,7 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
             errorDetails +
             '</div>';
           
-          // Send error to server for logging
+          // Send error to server for logging and delete pending order
           fetch('/api/payment/log-error', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -758,7 +758,8 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
               method: '${paymentMethod}',
               errorCode: result.errorCode || result.resultCode,
               errorMsg: result.errorMsg || result.resultMsg,
-              fullResult: result
+              fullResult: result,
+              deleteOrder: true
             })
           }).catch(function(e) { console.error('Failed to log error:', e); });
         }
@@ -786,6 +787,46 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
     return res.status(500).send('결제 페이지를 불러올 수 없습니다');
   }
 });
+
+// Helper function to safely delete pending orders within a transaction
+async function deletePendingOrder(orderId: string): Promise<boolean> {
+  const queryRunner = AppDataSource.createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const order = await queryRunner.manager.findOne(Order, { where: { id: orderId } });
+    if (!order) {
+      console.log('[Order Delete] Order not found:', orderId);
+      await queryRunner.rollbackTransaction();
+      return false;
+    }
+
+    // Only delete orders with pending status (not yet paid)
+    const deletableStatuses = ['pending', 'payment_pending'];
+    if (!deletableStatuses.includes(order.status)) {
+      console.log('[Order Delete] Cannot delete order with status:', order.status);
+      await queryRunner.rollbackTransaction();
+      return false;
+    }
+
+    // Delete related records in correct order (child tables first)
+    await queryRunner.manager.delete(OrderStatusHistory, { orderId });
+    await queryRunner.manager.delete(OrderItem, { orderId });
+    await queryRunner.manager.delete(Payment, { orderId });
+    await queryRunner.manager.delete(Order, { id: orderId });
+
+    await queryRunner.commitTransaction();
+    console.log('[Order Delete] Successfully deleted pending order:', orderId);
+    return true;
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    console.error('[Order Delete] Error deleting order:', error);
+    return false;
+  } finally {
+    await queryRunner.release();
+  }
+}
 
 async function handlePaymentCallback(req: Request, res: Response) {
   const fallbackUrl = getFrontendUrl(req);
@@ -815,6 +856,12 @@ async function handlePaymentCallback(req: Request, res: Response) {
     // Check if auth was successful before proceeding
     if (authResultCode && authResultCode !== '0000') {
       console.error('[NicePay Callback] Authentication failed, returning error page');
+      
+      // Delete pending order when payment auth fails (user cancelled or error)
+      if (orderId) {
+        await deletePendingOrder(orderId);
+      }
+      
       const errorMsg = authResultMsg || '결제 인증에 실패했습니다';
       const errorUrl = `${fallbackUrl}/payment/fail?message=${encodeURIComponent(errorMsg)}&code=${authResultCode}`;
       return sendRedirectPage(res, appScheme ? `${appScheme}://payment/fail?message=${encodeURIComponent(errorMsg)}&code=${authResultCode}` : errorUrl, appScheme);
@@ -1162,9 +1209,9 @@ async function handlePaymentCallback(req: Request, res: Response) {
 router.get('/callback', handlePaymentCallback);
 router.post('/callback', handlePaymentCallback);
 
-// Error logging endpoint for NicePay payment errors
-router.post('/log-error', (req: Request, res: Response) => {
-  const { orderId, method, errorCode, errorMsg, fullResult } = req.body;
+// Error logging endpoint for NicePay payment errors (also handles order deletion)
+router.post('/log-error', async (req: Request, res: Response) => {
+  const { orderId, method, errorCode, errorMsg, fullResult, deleteOrder } = req.body;
   console.error('[NicePay Payment Error] ========================');
   console.error('[NicePay Payment Error] OrderId:', orderId);
   console.error('[NicePay Payment Error] Method:', method);
@@ -1172,7 +1219,14 @@ router.post('/log-error', (req: Request, res: Response) => {
   console.error('[NicePay Payment Error] ErrorMsg:', errorMsg);
   console.error('[NicePay Payment Error] Full Result:', JSON.stringify(fullResult, null, 2));
   console.error('[NicePay Payment Error] ========================');
-  res.status(200).json({ logged: true });
+  
+  // Delete pending order if requested (from payment cancellation)
+  let orderDeleted = false;
+  if (deleteOrder && orderId) {
+    orderDeleted = await deletePendingOrder(orderId);
+  }
+  
+  res.status(200).json({ logged: true, orderDeleted });
 });
 
 interface DirectPurchaseItem {
