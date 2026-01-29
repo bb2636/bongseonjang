@@ -5,7 +5,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
-import { AlertModal } from '@components';
+import { AlertModal, AppBar } from '@components';
+import { AppBarSpacer } from '../../../components/AppBar';
 import {
   createProductInquiry,
   fetchProductDetail,
