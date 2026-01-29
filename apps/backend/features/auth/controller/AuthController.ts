@@ -627,9 +627,9 @@ export class AuthController {
       margin: 0;
       background: #f5f5f5;
     }
-    .loading {
+    .container {
       text-align: center;
-      padding: 40px;
+      padding: 40px 20px;
     }
     .spinner {
       width: 40px;
@@ -643,35 +643,78 @@ export class AuthController {
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    p { color: #666; margin: 0; }
+    .message { color: #666; margin: 0 0 24px 0; }
+    .open-app-btn {
+      display: none;
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 16px 48px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 16px;
+    }
+    .open-app-btn:active {
+      background: #1d4ed8;
+    }
+    .hint {
+      color: #999;
+      font-size: 14px;
+      margin-top: 16px;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div class="loading">
-    <div class="spinner"></div>
-    <p>앱으로 이동 중...</p>
+  <div class="container">
+    <div class="spinner" id="spinner"></div>
+    <p class="message" id="message">앱으로 이동 중...</p>
+    <a href="${targetUrl}" class="open-app-btn" id="openAppBtn">앱 열기</a>
+    <p class="hint" id="hint">버튼을 눌러 앱으로 이동해주세요</p>
   </div>
   <script>
     (function() {
       var targetUrl = "${targetUrl}";
-      console.log('[OAuth Redirect] Redirecting to:', targetUrl);
+      var redirectAttempted = false;
       
-      // Try immediate redirect via location
-      window.location.href = targetUrl;
+      console.log('[OAuth Redirect] Target URL:', targetUrl);
       
-      // Fallback: try after a short delay
+      function showButton() {
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('message').textContent = '로그인 완료!';
+        document.getElementById('openAppBtn').style.display = 'inline-block';
+        document.getElementById('hint').style.display = 'block';
+      }
+      
+      function tryRedirect() {
+        if (redirectAttempted) return;
+        redirectAttempted = true;
+        
+        try {
+          window.location.href = targetUrl;
+        } catch (e) {
+          console.log('[OAuth Redirect] location.href failed:', e);
+        }
+      }
+      
+      // Try immediate redirect
+      tryRedirect();
+      
+      // Show button after 1.5 seconds as fallback (for iOS Safari)
       setTimeout(function() {
-        window.location.replace(targetUrl);
-      }, 500);
+        showButton();
+      }, 1500);
       
-      // Last resort: create a hidden link and click it
-      setTimeout(function() {
-        var link = document.createElement('a');
-        link.href = targetUrl;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-      }, 1000);
+      // Handle visibility change (user might have switched to app and back)
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          // User left this page, likely opened the app
+          console.log('[OAuth Redirect] Page hidden, app likely opened');
+        }
+      });
     })();
   </script>
 </body>
