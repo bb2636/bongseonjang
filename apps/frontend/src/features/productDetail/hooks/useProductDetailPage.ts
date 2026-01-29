@@ -194,7 +194,11 @@ export function useProductDetailPage(productId: string) {
       return product.options.every(option => option.stockQty === 0);
     }
     
-    return (product.stockQuantity ?? 0) === 0;
+    if (product.stockQuantity === undefined || product.stockQuantity === null) {
+      return false;
+    }
+    
+    return product.stockQuantity === 0;
   }, [product]);
 
   const handleTabChange = (tab: TabType) => {
