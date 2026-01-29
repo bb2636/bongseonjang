@@ -15,7 +15,7 @@
   background: transparent !important;
 }
 
-.bongseon-story-page__app-bar.app-bar .app-bar__title--subpage {
+.bongseon-story-page__app-bar.app-bar .app-bar__title {
   color: #fdfdfd !important;
 }
 
@@ -33,7 +33,7 @@
 
 .bongseon-story-page__hero {
   position: relative;
-  padding: calc(44px + var(--safe-area-top, 0px) + 24px) 20px 32px;
+  padding: calc(48px + var(--safe-area-top, 0px) + 24px) 20px 32px;
   background: linear-gradient(180deg, #0E61A8 0%, #1976B8 100%);
   color: #fdfdfd;
   overflow: hidden;
@@ -88,8 +88,7 @@
 }
 
 .bongseon-story-page__content {
-  padding: 0 20px 40px;
-  margin-top: -16px;
+  padding: 20px 20px 40px;
   position: relative;
   z-index: 1;
 }
