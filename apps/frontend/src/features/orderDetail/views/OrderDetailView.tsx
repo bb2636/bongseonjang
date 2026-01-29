@@ -1,4 +1,4 @@
-import AppBar, { AppBarSpacer } from '../../../components/AppBar';
+import { AppBar, AppBarSpacer } from '../../../components/AppBar';
 import { OrderDetail } from '../api/orderDetailApi';
 import { OrderInfoCard } from '../components/OrderInfoCard';
 import { ShippingAddressSection } from '../components/ShippingAddressSection';
