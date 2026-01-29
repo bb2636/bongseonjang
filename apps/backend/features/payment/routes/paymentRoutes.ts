@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { AppDataSource } from '../../../config/database';
 import { Order } from '../../../entity/Order';
 import { OrderItem } from '../../../entity/OrderItem';
+import { OrderStatusHistory } from '../../../entity/OrderStatusHistory';
 import { Payment } from '../../../entity/Payment';
 import { Cart } from '../../../entity/Cart';
 import { CartItem } from '../../../entity/CartItem';
@@ -834,15 +835,6 @@ async function deletePendingOrder(orderId: string, userId?: string): Promise<boo
       return false;
     }
 
-    // Security: Only allow deletion of orders created within payment session window
-    const orderAge = Date.now() - new Date(order.createdAt).getTime();
-    const maxAge = PAYMENT_SESSION_TIMEOUT_MINUTES * 60 * 1000;
-    if (orderAge > maxAge) {
-      console.log('[Order Delete] Order too old for deletion. Age:', Math.round(orderAge / 60000), 'minutes');
-      await queryRunner.rollbackTransaction();
-      return false;
-    }
-
     // Delete related records in correct order (child tables first)
     await queryRunner.manager.delete(OrderStatusHistory, { orderId });
     await queryRunner.manager.delete(OrderItem, { orderId });
@@ -870,16 +862,17 @@ async function handlePaymentCallback(req: Request, res: Response) {
     console.log('[NicePay Callback] Query:', req.query);
 
     const data = { ...req.query, ...req.body };
-    const { authResultCode, authResultMsg, tid, orderId, amount, appScheme } = data as {
+    const { authResultCode, authResultMsg, tid, orderId, amount, appScheme, payMethod } = data as {
       authResultCode?: string;
       authResultMsg?: string;
       tid?: string;
       orderId?: string;
       amount?: string;
       appScheme?: string;
+      payMethod?: string;
     };
 
-    console.log('[NicePay Callback] Parsed data:', { authResultCode, authResultMsg, tid, orderId, amount, appScheme });
+    console.log('[NicePay Callback] Parsed data:', { authResultCode, authResultMsg, tid, orderId, amount, appScheme, payMethod });
     
     // Log auth result for debugging (especially for bank transfer failures)
     if (authResultCode && authResultCode !== '0000') {
@@ -890,11 +883,14 @@ async function handlePaymentCallback(req: Request, res: Response) {
     if (authResultCode && authResultCode !== '0000') {
       console.error('[NicePay Callback] Authentication failed, returning error page');
       
-      // Delete pending order when payment auth fails (user cancelled or error)
-      // Security: Callback is from NicePay server, orderId was originally sent by our server.
-      // deletePendingOrder validates: 30-min age limit + pending status only
-      if (orderId) {
+      // Delete pending order only for CARD payments
+      // Bank transfer (BANK) and virtual account (VBANK) orders should remain for later payment
+      // If no payMethod, user cancelled before selecting - delete the order
+      if (orderId && (!payMethod || payMethod === 'CARD')) {
         await deletePendingOrder(orderId);
+        console.log('[NicePay Callback] Deleted pending order for CARD/cancelled:', orderId);
+      } else if (orderId && payMethod) {
+        console.log('[NicePay Callback] Keeping order for non-CARD method:', payMethod);
       }
       
       const errorMsg = authResultMsg || '결제 인증에 실패했습니다';
@@ -1262,10 +1258,10 @@ router.post('/log-error', optionalAuthMiddleware, async (req: Request, res: Resp
   console.error('[NicePay Payment Error] ========================');
   
   // Delete pending order if requested (from payment cancellation)
+  // Only for CARD payments - bank transfer/virtual account orders should remain for later payment
   // Security: Requires valid deletion token OR authenticated user ownership
-  // Also validates order age (within 30 minutes) and status (pending only)
   let orderDeleted = false;
-  if (deleteOrder && orderId) {
+  if (deleteOrder && orderId && method === 'CARD') {
     // Security check: Guest users MUST provide a valid deletion token
     // Authenticated users are verified by userId in deletePendingOrder
     if (!userId) {
@@ -1280,6 +1276,8 @@ router.post('/log-error', optionalAuthMiddleware, async (req: Request, res: Resp
       }
     }
     orderDeleted = await deletePendingOrder(orderId, userId);
+  } else if (deleteOrder && orderId && method !== 'CARD') {
+    console.log('[NicePay Payment Error] Skipping order deletion for non-CARD method:', method);
   }
   
   res.status(200).json({ logged: true, orderDeleted });
