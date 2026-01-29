@@ -1,0 +1,61 @@
+apple@apples-MacBook-Air frontend % npm run build
+
+> @bongkru/frontend@1.0.0 build
+
+> vite build
+
+vite v7.3.1 building client environment for production...
+
+✓ 767 modules transformed.
+
+✗ Build failed in 646ms
+
+error during build:
+
+src/features/orderDetail/views/OrderDetailView.tsx (1:7): "default" is not exported by "src/components/AppBar/index.ts", imported by "src/features/orderDetail/views/OrderDetailView.tsx".
+
+file: /Users/apple/Downloads/bongseonjang-6/apps/frontend/src/features/orderDetail/views/OrderDetailView.tsx:1:7
+
+1: import AppBar, { AppBarSpacer } from '../../../components/AppBar';
+
+          ^
+
+2: import { OrderDetail } from '../api/orderDetailApi';
+
+3: import { OrderInfoCard } from '../components/OrderInfoCard';
+
+    at getRollupError (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/parseAst.js:400:41)
+
+    at error (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/parseAst.js:396:42)
+
+    at Module.error (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/node-entry.js:17036:16)
+
+    at Module.traceVariable (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/node-entry.js:17448:29)
+
+    at ModuleScope.findVariable (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/node-entry.js:15066:39)
+
+    at FunctionScope.findVariable (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+
+    at FunctionBodyScope.findVariable (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+
+    at TrackingScope.findVariable (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+
+    at BlockScope.findVariable (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+
+    at Identifier.bind (file:///Users/apple/Downloads/bongseonjang-6/node_modules/rollup/dist/es/shared/node-entry.js:5447:40)
+
+npm error Lifecycle script `build` failed with error:
+
+npm error code 1
+
+npm error path /Users/apple/Downloads/bongseonjang-6/apps/frontend
+
+npm error workspace @bongkru/frontend@1.0.0
+
+npm error location /Users/apple/Downloads/bongseonjang-6/apps/frontend
+
+npm error command failed
+
+npm error command sh -c vite build
+
+번역보기
