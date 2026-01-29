@@ -1,0 +1,70 @@
+2026-01-29 16:07:03.804 13255-13255 ViewRootImpl            com.bongkru.app                      D  Skipping stats log for color mode
+2026-01-29 16:08:02.820 13255-13281 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/favicon.svg
+2026-01-29 16:08:02.962 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557904, pluginId: App, methodName: addListener
+2026-01-29 16:08:02.963 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557904, pluginId: App, methodName: addListener, methodData: {"eventName":"appUrlOpen"}
+2026-01-29 16:08:02.964 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557905, pluginId: App, methodName: removeListener
+2026-01-29 16:08:02.964 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557905, pluginId: App, methodName: removeListener, methodData: {"eventName":"appUrlOpen","callbackId":"56557897"}
+2026-01-29 16:08:06.650 13255-13255 AutofillManager         com.bongkru.app                      I  showAutofillDialog() return false due to improve fill dialog
+2026-01-29 16:08:06.659 13255-13255 ImeTracker              com.bongkru.app                      I  com.bongkru.app:783010b6: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:08:06.660 13255-13255 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:08:06.660 13255-13255 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:08:06.668 13255-13255 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 2780 bytes, containing 1 windows, 6 views
+2026-01-29 16:08:06.774 13255-13255 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@f0ac687
+2026-01-29 16:08:07.094 13255-13255 ImeTracker              com.bongkru.app                      I  com.bongkru.app:783010b6: onShown
+2026-01-29 16:08:11.195 13255-13255 ImeTracker              com.bongkru.app                      I  com.bongkru.app:1d023524: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:08:11.195 13255-13255 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:08:11.195 13255-13255 ImeTracker              com.bongkru.app                      I  com.bongkru.app:1d023524: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:08:13.914 13255-13255 ImeTracker              com.bongkru.app                      I  com.bongkru.app:519a4590: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:08:13.915 13255-13255 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:08:13.915 13255-13255 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@2d1c5b7
+2026-01-29 16:08:13.916 13255-13255 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:08:13.977 13255-13255 ImeTracker              com.bongkru.app                      I  system_server:c46fdadd: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:08:15.471 13255-13281 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/seasonal-seafood-eE7VFYKt.svg
+2026-01-29 16:08:15.473 13255-13283 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/prepared-seafood-CeRVZzZC.svg
+2026-01-29 16:08:15.473 13255-13286 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/express-seafood-CNp8bfSS.svg
+2026-01-29 16:08:15.474 13255-13282 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/favicon.svg
+2026-01-29 16:08:15.474 13255-13281 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/assets/pickled-seafood-Bmp7x-y4.svg
+2026-01-29 16:08:15.485 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557906, pluginId: App, methodName: addListener
+2026-01-29 16:08:15.485 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557906, pluginId: App, methodName: addListener, methodData: {"eventName":"appUrlOpen"}
+2026-01-29 16:08:15.485 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557907, pluginId: App, methodName: removeListener
+2026-01-29 16:08:15.485 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557907, pluginId: App, methodName: removeListener, methodData: {"eventName":"appUrlOpen","callbackId":"56557904"}
+2026-01-29 16:08:19.113 13255-13281 Capacitor               com.bongkru.app                      D  Handling local request: https://localhost/favicon.svg
+2026-01-29 16:08:19.169 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557908, pluginId: App, methodName: addListener
+2026-01-29 16:08:19.170 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557908, pluginId: App, methodName: addListener, methodData: {"eventName":"appUrlOpen"}
+2026-01-29 16:08:19.171 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557909, pluginId: App, methodName: removeListener
+2026-01-29 16:08:19.171 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557909, pluginId: App, methodName: removeListener, methodData: {"eventName":"appUrlOpen","callbackId":"56557906"}
+2026-01-29 16:08:34.030 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557910, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:08:34.030 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557910, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"urlChangeEvent"}
+2026-01-29 16:08:34.030 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557911, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:08:34.031 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557911, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"closeEvent"}
+2026-01-29 16:08:34.032 13255-13255 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 56557912, pluginId: InAppBrowser, methodName: openWebView
+2026-01-29 16:08:34.032 13255-13255 Capacitor               com.bongkru.app                      V  callback: 56557912, pluginId: InAppBrowser, methodName: openWebView, methodData: {"url":"https:\/\/bongseonjang--tkfkdgowjdakfas.replit.app\/api\/payment\/form\/e559477a-4689-4041-8052-7bcc9dd0509e?appScheme=bongseonjang"}
+2026-01-29 16:08:34.033 13255-13317 InAppBrowserPlugin      com.bongkru.app                      D  No authorized app links provided.
+2026-01-29 16:08:34.033 13255-13317 InAppBrowserPlugin      com.bongkru.app                      D  No blocked hosts provided.
+2026-01-29 16:08:34.104 13255-13255 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:08:34.105 13255-13255 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/CheckoutPage-zlnMMMEr.js - Line 1 - Msg: [Payment] InAppBrowser opened
+2026-01-29 16:08:34.106 13255-13255 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:08:34.115 13255-13255 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@2d6840c
+2026-01-29 16:08:34.204 13255-13255 InAppBrowser            com.bongkru.app                      D  JavaScript interface injected early after URL load
+2026-01-29 16:08:34.252 13255-13255 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:08:34.253 13255-13255 ImeTracker              com.bongkru.app                      I  com.bongkru.app:ebfa8d64: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:08:34.559 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:08:34.564 13255-13255 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/CheckoutPage-zlnMMMEr.js - Line 1 - Msg: [Payment] URL changed: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/payment/form/e559477a-4689-4041-8052-7bcc9dd0509e?appScheme=bongseonjang
+2026-01-29 16:08:34.585 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:08:34.586 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:08:35.162 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:08:35.175 13255-13255 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/CheckoutPage-zlnMMMEr.js - Line 1 - Msg: [Payment] URL changed: https://pay.nicepay.co.kr/v1/pay
+2026-01-29 16:08:35.206 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:08:35.206 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:08:35.296 13255-13255 chromium                com.bongkru.app                      I  [INFO:CONSOLE(22)] "The key "target-densitydpi" is not supported.", source: https://web.nicepay.co.kr/v3/v3Payment.jsp (22)
+2026-01-29 16:08:35.298 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:08:35.313 13255-13255 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/CheckoutPage-zlnMMMEr.js - Line 1 - Msg: [Payment] URL changed: https://web.nicepay.co.kr/v3/v3Payment.jsp
+2026-01-29 16:08:35.334 13255-13255 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://web.nicepay.co.kr/v3/smart/common/error.jsp?errCd=N003&token=NICETOKN8CD2F33E1BE171494A1DC485A772C941&errMsg=%25uacb0%25uc81c%25uc218%25ub2e8%25uc774%2520%25uc720%25ud6a8%25ud558%25uc9c0%2520%25uc54a%25uc2b5%25ub2c8%25ub2e4%252e&errStatus=4&cancelFlag=
+2026-01-29 16:08:35.334 13255-13255 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:08:35.334 13255-13255 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:08:35.338 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:08:35.338 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:08:35.389 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:08:35.405 13255-13255 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/CheckoutPage-zlnMMMEr.js - Line 1 - Msg: [Payment] URL changed: https://web.nicepay.co.kr/v3/smart/common/error.jsp?errCd=N003&token=NICETOKN8CD2F33E1BE171494A1DC485A772C941&errMsg=%25uacb0%25uc81c%25uc218%25ub2e8%25uc774%2520%25uc720%25ud6a8%25ud558%25uc9c0%2520%25uc54a%25uc2b5%25ub2c8%25ub2e4%252e&errStatus=4&cancelFlag=
+2026-01-29 16:08:35.543 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:08:35.544 13255-13255 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
