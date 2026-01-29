@@ -11,7 +11,7 @@ export type { ProductCardData } from './ProductCard';
 export { ProductGridContent } from './ProductGridContent';
 export { ProtectedRoute } from './ProtectedRoute';
 export { ProtectedAdminRoute } from './ProtectedAdminRoute';
-export { default as AppBar } from './AppBar/AppBar';
+export { default as AppBar, AppBarSpacer } from './AppBar/AppBar';
 export { default as QuickCartBottomSheet } from './QuickCartBottomSheet';
 export { PaymentLoadingOverlay } from './PaymentLoadingOverlay';
 export type { PaymentStep } from './PaymentLoadingOverlay';

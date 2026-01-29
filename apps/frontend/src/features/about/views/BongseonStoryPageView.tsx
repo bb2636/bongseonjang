@@ -1,4 +1,4 @@
-import { AppBar } from '../../../components';
+import { AppBar, AppBarSpacer } from '../../../components';
 import { useBongseonStoryPage } from '../hooks/useBongseonStoryPage';
 import './BongseonStoryPageView.css';
 
@@ -13,8 +13,8 @@ export default function BongseonStoryPageView() {
         onBackClick={handleBack}
         showCart
         onCartClick={handleCartClick}
-        className="bongseon-story-page__app-bar"
       />
+      <AppBarSpacer />
       <div className="bongseon-story-page__hero" role="banner">
         <div className="bongseon-story-page__hero-overlay" />
         <div className="bongseon-story-page__hero-content">
