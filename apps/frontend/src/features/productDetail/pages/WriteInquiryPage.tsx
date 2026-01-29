@@ -53,15 +53,6 @@ function AddPhotoIcon() {
   );
 }
 
-function CloseIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5.5 5.5L14.5 14.5" stroke="#101112" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M14.5 5.5L5.5 14.5" stroke="#101112" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export default function WriteInquiryPage() {
   const { productId } = useParams<{ productId: string }>();
   const goBack = useGoBack();
@@ -181,13 +172,13 @@ export default function WriteInquiryPage() {
         title="로그인 후 이용해주세요"
         onConfirm={handleLoginConfirm}
       />
-      <header className="write-inquiry-page__header">
-        <button className="write-inquiry-page__header-button" type="button" onClick={goBack}>
-          <CloseIcon />
-        </button>
-        <h1 className="write-inquiry-page__title">문의하기</h1>
-        <div className="write-inquiry-page__header-button" aria-hidden />
-      </header>
+      <AppBar
+        variant="subpage"
+        title="문의하기"
+        showBackButton
+        onBackClick={goBack}
+      />
+      <AppBarSpacer variant="subpage" />
 
       <main className="write-inquiry-page__main">
         {isProductLoading ? (
@@ -272,7 +263,7 @@ export default function WriteInquiryPage() {
                   onClick={() => removeImage(index)}
                   aria-label="이미지 삭제"
                 >
-                  <CloseIcon />
+                  ×
                 </button>
               </div>
             ))}
