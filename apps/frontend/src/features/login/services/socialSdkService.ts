@@ -57,46 +57,128 @@ async function fetchSessionData(key: string): Promise<OAuthResult> {
 }
 
 let googleOAuthTimeoutId: ReturnType<typeof setTimeout> | null = null;
+let googlePollingIntervalId: ReturnType<typeof setInterval> | null = null;
 
 async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
-  const backendUrl = getBackendBaseUrl();
-  const authUrl = `${backendUrl}/api/auth/start/google?platform=app`;
+  const apiUrl = getApiBaseUrlDynamic();
   
-  console.log('[GoogleOAuth] === Starting Google OAuth with System Browser ===');
-  console.log('[GoogleOAuth] backendUrl:', backendUrl);
-  console.log('[GoogleOAuth] authUrl:', authUrl);
+  console.log('[GoogleOAuth] === Starting Google OAuth with Polling Flow ===');
+  
+  // Step 1: Create polling session
+  let pollingSessionId: string;
+  try {
+    const createResponse = await fetch(`${apiUrl}/auth/polling-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!createResponse.ok) {
+      console.error('[GoogleOAuth] Failed to create polling session');
+      return { error: 'session_create_failed' };
+    }
+    const { sessionId } = await createResponse.json();
+    pollingSessionId = sessionId;
+    console.log('[GoogleOAuth] Created polling session:', pollingSessionId);
+  } catch (e) {
+    console.error('[GoogleOAuth] Error creating polling session:', e);
+    return { error: 'session_create_failed' };
+  }
+  
+  // Step 2: Get auth URL with polling session
+  let authUrl: string;
+  try {
+    const startResponse = await fetch(`${apiUrl}/auth/start-polling/google?pollingSessionId=${encodeURIComponent(pollingSessionId)}`);
+    if (!startResponse.ok) {
+      console.error('[GoogleOAuth] Failed to get auth URL');
+      return { error: 'auth_url_failed' };
+    }
+    const { authUrl: url } = await startResponse.json();
+    authUrl = url;
+    console.log('[GoogleOAuth] Got auth URL');
+  } catch (e) {
+    console.error('[GoogleOAuth] Error getting auth URL:', e);
+    return { error: 'auth_url_failed' };
+  }
 
   return new Promise(async (resolve) => {
     googleOAuthResolver = resolve;
     
+    // Clear any existing timeout/interval
     if (googleOAuthTimeoutId) {
       clearTimeout(googleOAuthTimeoutId);
     }
+    if (googlePollingIntervalId) {
+      clearInterval(googlePollingIntervalId);
+    }
     
-    googleOAuthTimeoutId = setTimeout(async () => {
-      if (googleOAuthResolver) {
-        console.log('[GoogleOAuth] Timeout reached (5 min)');
-        googleOAuthResolver = null;
-        googleOAuthTimeoutId = null;
-        try {
-          await Browser.close();
-        } catch (e) {
-          console.log('[GoogleOAuth] Browser close on timeout error:', e);
+    // Step 3: Start polling for result
+    const pollForResult = async () => {
+      try {
+        const checkResponse = await fetch(`${apiUrl}/auth/polling-session/${pollingSessionId}`);
+        if (!checkResponse.ok) {
+          if (checkResponse.status === 404) {
+            console.log('[GoogleOAuth] Polling session expired');
+            cleanup();
+            resolve({ error: 'session_expired' });
+          }
+          return;
         }
-        resolve({ error: 'timeout' });
+        
+        const data = await checkResponse.json();
+        console.log('[GoogleOAuth] Poll result:', data.status);
+        
+        if (data.status === 'completed') {
+          console.log('[GoogleOAuth] Login successful via polling!');
+          cleanup();
+          resolve({
+            token: data.token,
+            isNewUser: data.isNewUser,
+            user: data.user,
+          });
+        } else if (data.status === 'error') {
+          console.log('[GoogleOAuth] Login error via polling:', data.error);
+          cleanup();
+          resolve({ error: data.error || 'login_failed' });
+        }
+        // status === 'pending' means keep polling
+      } catch (e) {
+        console.error('[GoogleOAuth] Polling error:', e);
       }
-    }, 5 * 60 * 1000);
-
-    try {
-      await Browser.open({ url: authUrl, windowName: '_blank' });
-      console.log('[GoogleOAuth] System browser opened successfully');
-    } catch (err) {
-      console.error('[GoogleOAuth] Failed to open system browser:', err);
+    };
+    
+    const cleanup = async () => {
+      if (googlePollingIntervalId) {
+        clearInterval(googlePollingIntervalId);
+        googlePollingIntervalId = null;
+      }
       if (googleOAuthTimeoutId) {
         clearTimeout(googleOAuthTimeoutId);
         googleOAuthTimeoutId = null;
       }
       googleOAuthResolver = null;
+      try {
+        await Browser.close();
+      } catch (e) {
+        console.log('[GoogleOAuth] Browser close error (may be already closed):', e);
+      }
+    };
+    
+    // Poll every 2 seconds
+    googlePollingIntervalId = setInterval(pollForResult, 2000);
+    
+    // Timeout after 5 minutes
+    googleOAuthTimeoutId = setTimeout(async () => {
+      console.log('[GoogleOAuth] Timeout reached (5 min)');
+      cleanup();
+      resolve({ error: 'timeout' });
+    }, 5 * 60 * 1000);
+
+    // Step 4: Open browser
+    try {
+      await Browser.open({ url: authUrl, windowName: '_blank' });
+      console.log('[GoogleOAuth] System browser opened successfully');
+    } catch (err) {
+      console.error('[GoogleOAuth] Failed to open system browser:', err);
+      cleanup();
       resolve({ error: 'browser_open_failed' });
     }
   });
