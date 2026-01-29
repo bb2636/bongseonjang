@@ -21,6 +21,7 @@ interface AppBarProps {
   onLogoClick?: () => void;
   showCart?: boolean;
   onCartClick?: () => void;
+  rightAction?: React.ReactNode;
 }
 
 export default function AppBar({
@@ -32,6 +33,7 @@ export default function AppBar({
   onLogoClick,
   showCart = true,
   onCartClick,
+  rightAction,
 }: AppBarProps) {
   const navigate = useNavigate();
   const { cartCount } = useCart();
@@ -81,7 +83,9 @@ export default function AppBar({
           </svg>
         </button>
         <span className="app-bar__title app-bar__title--subpage">{title}</span>
-        {showCart ? (
+        {rightAction ? (
+          <div className="app-bar__right-action">{rightAction}</div>
+        ) : showCart ? (
           <button
             type="button"
             className="app-bar__cart-button"

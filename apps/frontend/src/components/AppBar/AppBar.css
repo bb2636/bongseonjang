@@ -194,3 +194,9 @@
   min-height: 36px;
   flex-shrink: 0;
 }
+
+.app-bar__right-action {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}

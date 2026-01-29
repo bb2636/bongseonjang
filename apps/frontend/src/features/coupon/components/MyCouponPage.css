@@ -25,6 +25,18 @@
   cursor: pointer;
 }
 
+.my-coupon-page__download-link {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 128%;
+  color: #3B9BD5;
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+}
+
 .my-coupon-page-summary {
   display: flex;
   align-items: center;

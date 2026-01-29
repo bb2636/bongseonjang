@@ -1,4 +1,5 @@
 import { AppBar, AppBarSpacer } from '@/components/AppBar';
+import { useGoBack } from '../../../hooks/useGoBack';
 import { Coupon } from '../types/coupon';
 import './MyCouponPage.css';
 
@@ -62,16 +63,27 @@ export default function MyCouponPage({
   isLoading,
   onGoToDownload,
 }: MyCouponPageProps) {
+  const goBack = useGoBack();
+
   return (
     <div className="my-coupon-page">
-      <AppBar />
-      <AppBarSpacer />
-      
-      <div className="my-coupon-page-subheader">
-        <button className="my-coupon-page-download-btn" onClick={onGoToDownload}>
-          쿠폰 다운로드
-        </button>
-      </div>
+      <AppBar
+        variant="subpage"
+        title="쿠폰"
+        showBackButton
+        onBackClick={goBack}
+        showCart={false}
+        rightAction={
+          <button
+            type="button"
+            className="my-coupon-page__download-link"
+            onClick={onGoToDownload}
+          >
+            쿠폰 다운로드
+          </button>
+        }
+      />
+      <AppBarSpacer variant="subpage" />
 
       <div className="my-coupon-page-summary">
         <span className="my-coupon-page-summary-text">전체 {String(totalCount).padStart(3, '0')}장</span>
