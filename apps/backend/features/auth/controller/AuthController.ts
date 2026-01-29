@@ -567,6 +567,11 @@ export class AuthController {
           token: result.token,
           isNewUser: result.isNewUser,
           state: originalState,
+          user: {
+            id: result.user.id,
+            email: result.user.email,
+            name: result.user.name,
+          },
         });
         res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
       } catch (loginError) {
@@ -686,6 +691,11 @@ export class AuthController {
           token: result.token,
           isNewUser: result.isNewUser,
           state: originalState,
+          user: {
+            id: result.user.id,
+            email: result.user.email,
+            name: result.user.name,
+          },
         });
         console.log(`[OAuth Callback] Success! Redirecting to: ${getRedirectUrl(provider, platform, sessionKey)}`);
         res.redirect(getRedirectUrl(provider, platform, sessionKey));

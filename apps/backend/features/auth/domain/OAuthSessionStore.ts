@@ -8,9 +8,15 @@ export interface OAuthSessionData {
   provider?: string;
   providerId?: string;
   name?: string;
+  profileImage?: string;
   tempToken?: string;
   error?: string;
   state?: string;
+  user?: {
+    id: string | number;
+    email: string;
+    name: string;
+  };
 }
 
 interface SessionEntry {
