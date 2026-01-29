@@ -33,7 +33,7 @@ export default function NoticeListView({ state, actions }: NoticeListViewProps) 
               onClick={() => handleNoticeClick(notice.id)}
             >
               <div className="notice-list__item-meta">
-                <span className="notice-list__category">{notice.category}</span>
+                <span className={`notice-list__category ${notice.category === '이벤트' ? 'notice-list__category--event' : ''}`}>{notice.category}</span>
                 <span className="notice-list__date">{notice.createdAt}</span>
               </div>
               <p className="notice-list__title">{notice.title}</p>

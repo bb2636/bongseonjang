@@ -4,7 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useAuth } from '../../../contexts/AuthContext';
-import { AlertModal } from '@components';
+import { AlertModal, AppBar } from '@components';
+import { AppBarSpacer } from '../../../components/AppBar';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './WriteReviewPage.css';
 
@@ -27,13 +28,6 @@ async function fetchProductInfo(productId: string): Promise<ProductInfo> {
   };
 }
 
-function CloseIcon() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6.5 6.5L19.5 19.5M19.5 6.5L6.5 19.5" stroke="#101112" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
 
 function StarIcon({ filled, size = 36 }: { filled: boolean; size?: number }) {
   return (
@@ -174,17 +168,13 @@ export default function WriteReviewPage() {
           title="로그인 후 이용해주세요"
           onConfirm={handleLoginConfirm}
         />
-        <header className="write-review-page__header">
-          <div className="write-review-page__header-spacer" />
-          <h1 className="write-review-page__title">리뷰 작성하기</h1>
-          <button 
-            className="write-review-page__close-btn" 
-            onClick={handleClose}
-            type="button"
-          >
-            <CloseIcon />
-          </button>
-        </header>
+        <AppBar
+          variant="subpage"
+          title="리뷰 작성하기"
+          showBackButton
+          onBackClick={handleClose}
+        />
+        <AppBarSpacer variant="subpage" />
         <div className="write-review-page__loading">
           <div className="write-review-page__spinner" />
         </div>
@@ -199,17 +189,13 @@ export default function WriteReviewPage() {
         title="로그인 후 이용해주세요"
         onConfirm={handleLoginConfirm}
       />
-      <header className="write-review-page__header">
-        <div className="write-review-page__header-spacer" />
-        <h1 className="write-review-page__title">리뷰 작성하기</h1>
-        <button 
-          className="write-review-page__close-btn" 
-          onClick={handleClose}
-          type="button"
-        >
-          <CloseIcon />
-        </button>
-      </header>
+      <AppBar
+        variant="subpage"
+        title="리뷰 작성하기"
+        showBackButton
+        onBackClick={handleClose}
+      />
+      <AppBarSpacer variant="subpage" />
 
       <div className="write-review-page__content">
         <section className="write-review-page__product-info">

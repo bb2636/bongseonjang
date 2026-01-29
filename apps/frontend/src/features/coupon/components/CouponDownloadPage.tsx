@@ -1,4 +1,6 @@
 import { Coupon } from '../types/coupon';
+import { AppBar } from '../../../components';
+import { AppBarSpacer } from '../../../components/AppBar';
 import './CouponDownloadPage.css';
 
 interface CouponDownloadPageProps {
@@ -80,21 +82,13 @@ export default function CouponDownloadPage({
 }: CouponDownloadPageProps) {
   return (
     <div className="coupon-download-page">
-      <header className="coupon-download-page-header">
-        <div className="coupon-download-page-header-spacer" />
-        <h1 className="coupon-download-page-title">쿠폰 다운로드</h1>
-        <button className="coupon-download-page-close" onClick={onClose} aria-label="닫기">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M18 6L6 18M6 6L18 18"
-              stroke="#0C0C0C"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </header>
+      <AppBar
+        variant="subpage"
+        title="쿠폰 다운로드"
+        showBackButton
+        onBackClick={onClose}
+      />
+      <AppBarSpacer variant="subpage" />
 
       <div className="coupon-download-page-summary">
         <span className="coupon-download-page-summary-text">전체 {String(totalCount).padStart(3, '0')}장</span>
