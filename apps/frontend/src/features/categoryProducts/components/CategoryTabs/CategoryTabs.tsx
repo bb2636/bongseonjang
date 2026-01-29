@@ -58,17 +58,19 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   const staticSlugs = ['all', 'best', 'new'];
 
   useEffect(() => {
-    if (dynamicCategories.length === 0) return;
-    
-    const activeTab = tabRefs.current.get(activeSlug);
-    if (activeTab && containerRef.current) {
-      const container = containerRef.current;
-      const tabLeft = activeTab.offsetLeft;
-      const tabWidth = activeTab.offsetWidth;
-      const containerWidth = container.offsetWidth;
-      const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
-      container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-    }
+    const scrollToActiveTab = () => {
+      const activeTab = tabRefs.current.get(activeSlug);
+      if (activeTab && containerRef.current) {
+        const container = containerRef.current;
+        const tabLeft = activeTab.offsetLeft;
+        const tabWidth = activeTab.offsetWidth;
+        const containerWidth = container.offsetWidth;
+        const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
+        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+      }
+    };
+
+    requestAnimationFrame(scrollToActiveTab);
   }, [activeSlug, dynamicCategories]);
 
   const handleTabClick = (tab: CategoryTab) => {
