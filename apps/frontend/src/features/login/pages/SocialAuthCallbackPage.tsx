@@ -195,11 +195,6 @@ export default function SocialAuthCallbackPage() {
         return;
       }
       
-      if (isProcessingRef.current) {
-        return;
-      }
-      isProcessingRef.current = true;
-      
       const code = searchParams.get('code');
       const state = searchParams.get('state');
       const errorParam = searchParams.get('error');
@@ -218,11 +213,6 @@ export default function SocialAuthCallbackPage() {
       console.log('[OAuth Callback] error:', errorParam);
       console.log('[OAuth Callback] platform:', platformParam);
       console.log('[OAuth Callback] Full URL:', window.location.href);
-      
-      if (provider === 'naver') {
-        const savedState = sessionStorage.getItem('naver_oauth_state');
-        console.log('[OAuth Callback] savedState from sessionStorage:', savedState);
-      }
 
       if (errorParam) {
         console.log('[OAuth Callback] Error param detected:', errorParam);
@@ -231,9 +221,20 @@ export default function SocialAuthCallbackPage() {
         return;
       }
 
-      if (key && !platformParam) {
+      if (key) {
+        console.log('[OAuth Callback] Processing with key (no platform param)');
         await processSessionKey(key);
         return;
+      }
+      
+      if (isProcessingRef.current) {
+        return;
+      }
+      isProcessingRef.current = true;
+      
+      if (provider === 'naver') {
+        const savedState = sessionStorage.getItem('naver_oauth_state');
+        console.log('[OAuth Callback] savedState from sessionStorage:', savedState);
       }
 
       if (tokenFromUrl && provider) {
