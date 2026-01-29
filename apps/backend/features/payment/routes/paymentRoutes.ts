@@ -83,6 +83,40 @@ const router = Router();
 const NICEPAY_CLIENT_KEY = process.env.NICEPAY_CLIENT_KEY || '';
 const NICEPAY_SECRET_KEY = process.env.NICEPAY_SECRET_KEY || '';
 
+const DEFAULT_PRODUCTION_BACKEND_URL = 'https://bongseonjang--tkfkdgowjdakfas.replit.app';
+
+function getBackendBaseUrl(req: Request): string {
+  if (process.env.BACKEND_URL) {
+    return process.env.BACKEND_URL;
+  }
+  
+  if (process.env.REPLIT_DEPLOYMENT) {
+    return process.env.REPLIT_DEPLOYMENT_URL || DEFAULT_PRODUCTION_BACKEND_URL;
+  }
+  
+  if (process.env.REPLIT_DEV_DOMAIN) {
+    return `https://${process.env.REPLIT_DEV_DOMAIN}`;
+  }
+  
+  const host = req.headers.host;
+  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  if (host) {
+    return `${protocol}://${host}`;
+  }
+  
+  return DEFAULT_PRODUCTION_BACKEND_URL;
+}
+
+function getBackendCallbackUrl(req: Request, appScheme?: string): string {
+  const baseUrl = getBackendBaseUrl(req);
+  
+  const callbackPath = appScheme 
+    ? `/api/payment/callback?appScheme=${appScheme}`
+    : '/api/payment/callback';
+    
+  return `${baseUrl}${callbackPath}`;
+}
+
 function getFrontendUrl(req?: Request): string {
   if (process.env.SOCIAL_REDIRECT_BASE_URL) {
     return process.env.SOCIAL_REDIRECT_BASE_URL;
@@ -123,6 +157,45 @@ function getFrontendUrl(req?: Request): string {
   }
   
   return 'http://localhost:5000';
+}
+
+async function verifyPaymentWithNicePay(tid: string, orderId: string): Promise<{
+  success: boolean;
+  resultCode?: string;
+  resultMsg?: string;
+  amount?: number;
+  status?: string;
+}> {
+  try {
+    const credentials = Buffer.from(`${NICEPAY_CLIENT_KEY}:${NICEPAY_SECRET_KEY}`).toString('base64');
+    
+    const response = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Basic ${credentials}`,
+      },
+    });
+    
+    const result = await response.json() as {
+      resultCode: string;
+      resultMsg: string;
+      amount?: number;
+      status?: string;
+    };
+    
+    console.log('[NicePay Verify] Payment status check result:', result);
+    
+    return {
+      success: result.resultCode === '0000',
+      resultCode: result.resultCode,
+      resultMsg: result.resultMsg,
+      amount: result.amount,
+      status: result.status,
+    };
+  } catch (error) {
+    console.error('[NicePay Verify] Failed to verify payment:', error);
+    return { success: false };
+  }
 }
 
 function generateOrderNumber(): string {
@@ -495,10 +568,8 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
     };
     const paymentMethod = methodMap[payment.method] || 'card';
 
-    const baseUrl = getFrontendUrl(req);
-    const returnUrl = appScheme 
-      ? `${baseUrl}/api/payment/callback?appScheme=${appScheme}`
-      : `${baseUrl}/api/payment/callback`;
+    const returnUrl = getBackendCallbackUrl(req, appScheme);
+    console.log('[NicePay Form] Generated returnUrl:', returnUrl, 'appScheme:', appScheme);
 
     const html = `
 <!DOCTYPE html>
@@ -664,37 +735,93 @@ async function handlePaymentCallback(req: Request, res: Response) {
     };
 
     console.log('[NicePay Callback] authResultCode:', authResultCode, 'type:', typeof authResultCode);
-    if (authResultCode !== '0000') {
-      console.log('[NicePay Callback] Auth failed - code:', authResultCode, 'msg:', authResultMsg);
-      return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: authResultMsg || '결제 인증 실패' }));
+    
+    const payment = await paymentRepository.findOne({ where: { orderId } });
+    
+    if (order.status === 'paid' || payment?.status === 'completed') {
+      console.log('[NicePay Callback] Order already paid, redirecting to success');
+      return res.redirect(buildOrderRedirectUrl('/payment/success', { orderId }));
     }
-    console.log('[NicePay Callback] Auth successful, proceeding to approval');
+    
+    let isAlreadyPaid = false;
+    let skipApproval = false;
+    
+    if (authResultCode !== '0000') {
+      console.log('[NicePay Callback] Auth code not 0000, verifying payment status with NicePay API...');
+      
+      const verifyResult = await verifyPaymentWithNicePay(tid, orderId);
+      console.log('[NicePay Callback] Verify result:', verifyResult);
+      
+      if (verifyResult.amount && verifyResult.amount !== parseInt(amount, 10)) {
+        console.log('[NicePay Callback] Amount mismatch! Expected:', amount, 'Got:', verifyResult.amount);
+        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: '결제 금액이 일치하지 않습니다' }));
+      }
+      
+      if (verifyResult.success && verifyResult.status === 'paid') {
+        console.log('[NicePay Callback] Payment already confirmed via verification, skipping approval');
+        isAlreadyPaid = true;
+        skipApproval = true;
+      } else if (verifyResult.status === 'ready' || verifyResult.status === 'authenticated') {
+        console.log('[NicePay Callback] Payment authenticated but not approved, will try approval');
+      } else {
+        console.log('[NicePay Callback] Auth failed - code:', authResultCode, 'msg:', authResultMsg);
+        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: authResultMsg || '결제 인증 실패' }));
+      }
+    }
 
-    console.log('[NicePay Callback] Client key exists:', !!NICEPAY_CLIENT_KEY, 'Secret key exists:', !!NICEPAY_SECRET_KEY);
-    console.log('[NicePay Callback] Client key prefix:', NICEPAY_CLIENT_KEY?.substring(0, 3));
     const credentials = Buffer.from(`${NICEPAY_CLIENT_KEY}:${NICEPAY_SECRET_KEY}`).toString('base64');
-
-    console.log('[NicePay Callback] Calling approval API for tid:', tid, 'amount:', amount);
-    const response = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${credentials}`,
-      },
-      body: JSON.stringify({ amount: parseInt(amount, 10) }),
-    });
-
-    const result = await response.json() as {
+    
+    let approvalSuccess = isAlreadyPaid;
+    let approvalResult: {
       resultCode: string;
       resultMsg: string;
       cardName?: string;
       cardNo?: string;
-    };
-    console.log('[NicePay Callback] Approval result:', result);
+    } | null = null;
+    
+    if (parseInt(amount, 10) !== order.finalAmount) {
+      console.log('[NicePay Callback] Amount mismatch - callback:', amount, 'order:', order.finalAmount);
+      return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: '결제 금액이 일치하지 않습니다' }));
+    }
+    
+    if (!skipApproval) {
+      console.log('[NicePay Callback] Proceeding to approval');
+      console.log('[NicePay Callback] Calling approval API for tid:', tid, 'amount:', amount);
+      
+      const response = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${credentials}`,
+        },
+        body: JSON.stringify({ amount: parseInt(amount, 10) }),
+      });
 
-    const payment = await paymentRepository.findOne({ where: { orderId } });
+      approvalResult = await response.json() as {
+        resultCode: string;
+        resultMsg: string;
+        cardName?: string;
+        cardNo?: string;
+      };
+      console.log('[NicePay Callback] Approval result:', approvalResult);
+      
+      if (approvalResult.resultCode === '0000' || approvalResult.resultCode === '0') {
+        approvalSuccess = true;
+      } else if (approvalResult.resultMsg?.includes('이미 승인') || approvalResult.resultMsg?.includes('already')) {
+        console.log('[NicePay Callback] Payment was already approved');
+        approvalSuccess = true;
+      } else {
+        console.log('[NicePay Callback] Approval failed:', approvalResult.resultMsg);
+        if (payment) {
+          payment.status = 'failed';
+          payment.failReason = approvalResult.resultMsg || '결제 승인 실패';
+          await paymentRepository.save(payment);
+        }
+        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: approvalResult.resultMsg || '결제 승인 실패' }));
+      }
+    }
 
-    if (result.resultCode === '0000') {
+    if (approvalSuccess) {
       console.log('[NicePay Callback] Payment approved successfully');
       
       const orderItemRepository = AppDataSource.getRepository(OrderItem);
@@ -829,8 +956,10 @@ async function handlePaymentCallback(req: Request, res: Response) {
         payment.status = 'completed';
         payment.pgTransactionId = tid;
         payment.paidAt = new Date();
-        payment.cardCompany = result.cardName || null;
-        payment.cardNumber = result.cardNo || null;
+        if (approvalResult) {
+          payment.cardCompany = approvalResult.cardName || null;
+          payment.cardNumber = approvalResult.cardNo || null;
+        }
         await paymentRepository.save(payment);
       }
 
@@ -852,20 +981,21 @@ async function handlePaymentCallback(req: Request, res: Response) {
       const successUrl = buildOrderRedirectUrl(`/payment/complete/${order.id}`);
       console.log('[NicePay Callback] Redirecting to success:', successUrl);
       return res.redirect(successUrl);
-    } else {
-      console.log('[NicePay Callback] Payment approval failed:', result.resultMsg);
-      
-      order.status = 'payment_failed';
-      await orderRepository.save(order);
-
-      if (payment) {
-        payment.status = 'failed';
-        payment.failReason = result.resultMsg || '결제 승인 실패';
-        await paymentRepository.save(payment);
-      }
-
-      return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderNumber: order.orderNumber, message: result.resultMsg || '결제 승인 실패' }));
     }
+    
+    console.log('[NicePay Callback] Unexpected state - approvalSuccess is false');
+    const failReason = approvalResult?.resultMsg || '결제 처리 실패';
+    
+    order.status = 'payment_failed';
+    await orderRepository.save(order);
+
+    if (payment) {
+      payment.status = 'failed';
+      payment.failReason = failReason;
+      await paymentRepository.save(payment);
+    }
+
+    return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderNumber: order.orderNumber, message: failReason }));
   } catch (error) {
     console.error('[NicePay Callback] Error:', error);
     const catchData = { ...req.query, ...req.body };
