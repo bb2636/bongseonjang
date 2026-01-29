@@ -663,12 +663,18 @@ async function handlePaymentCallback(req: Request, res: Response) {
       return `${frontendUrl}/${cleanPath}${queryString}`;
     };
 
+    console.log('[NicePay Callback] authResultCode:', authResultCode, 'type:', typeof authResultCode);
     if (authResultCode !== '0000') {
+      console.log('[NicePay Callback] Auth failed - code:', authResultCode, 'msg:', authResultMsg);
       return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: authResultMsg || '결제 인증 실패' }));
     }
+    console.log('[NicePay Callback] Auth successful, proceeding to approval');
 
+    console.log('[NicePay Callback] Client key exists:', !!NICEPAY_CLIENT_KEY, 'Secret key exists:', !!NICEPAY_SECRET_KEY);
+    console.log('[NicePay Callback] Client key prefix:', NICEPAY_CLIENT_KEY?.substring(0, 3));
     const credentials = Buffer.from(`${NICEPAY_CLIENT_KEY}:${NICEPAY_SECRET_KEY}`).toString('base64');
 
+    console.log('[NicePay Callback] Calling approval API for tid:', tid, 'amount:', amount);
     const response = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}`, {
       method: 'POST',
       headers: {
