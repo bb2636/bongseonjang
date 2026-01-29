@@ -333,6 +333,10 @@ function AppContent() {
           path="/oauth/:provider/callback"
           element={<SocialAuthCallbackPage />}
         />
+        <Route
+          path="/social-callback"
+          element={<SocialAuthCallbackPage />}
+        />
         <Route path="/signup/email" element={<SignupEmailPage />} />
         <Route path="/signup/complete" element={<SignupCompletePage />} />
         <Route path="/signup/terms" element={<TermsPage />} />
