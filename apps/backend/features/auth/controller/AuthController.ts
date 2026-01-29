@@ -609,6 +609,87 @@ export class AuthController {
       return `${baseUrl}/social-callback?key=${sessionKey}`;
     };
 
+    const sendDeepLinkPage = (targetUrl: string): void => {
+      const html = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 처리 중...</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    p { color: #666; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>앱으로 이동 중...</p>
+  </div>
+  <script>
+    (function() {
+      var targetUrl = "${targetUrl}";
+      console.log('[OAuth Redirect] Redirecting to:', targetUrl);
+      
+      // Try immediate redirect via location
+      window.location.href = targetUrl;
+      
+      // Fallback: try after a short delay
+      setTimeout(function() {
+        window.location.replace(targetUrl);
+      }, 500);
+      
+      // Last resort: create a hidden link and click it
+      setTimeout(function() {
+        var link = document.createElement('a');
+        link.href = targetUrl;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+      }, 1000);
+    })();
+  </script>
+</body>
+</html>`;
+      res.status(200).type('html').send(html);
+    };
+
+    const doRedirect = (provider: string, platform: string | undefined, sessionKey: string): void => {
+      const redirectUrl = getRedirectUrl(provider, platform, sessionKey);
+      console.log(`[OAuth Callback] Redirecting to: ${redirectUrl}`);
+      
+      if (platform === 'app' && provider === 'google') {
+        sendDeepLinkPage(redirectUrl);
+      } else {
+        res.redirect(redirectUrl);
+      }
+    };
+
     try {
       const provider = req.params.provider as string;
       const { code, state, error: oauthError } = req.query;
@@ -620,27 +701,27 @@ export class AuthController {
 
       if (oauthError) {
         const sessionKey = oauthSessionStore.save({ error: oauthError as string, state: originalState });
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
         return;
       }
 
       if (!originalState || !validateAndClearPendingAuthState(originalState)) {
         console.warn(`[OAuth Callback] Invalid or missing state. State: ${originalState}, Provider: ${provider}`);
         const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
         return;
       }
 
       if (!code) {
         const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
         return;
       }
 
       const validProviders = ['kakao', 'naver', 'google'];
       if (!validProviders.includes(provider)) {
         const sessionKey = oauthSessionStore.save({ error: 'invalid_provider', state: originalState });
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
         return;
       }
 
@@ -656,13 +737,13 @@ export class AuthController {
       } catch (tokenError) {
         console.error('Token exchange error:', tokenError);
         const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
         return;
       }
 
       if (!socialUserInfo) {
         const sessionKey = oauthSessionStore.save({ error: 'user_info_failed', state: originalState });
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
         return;
       }
 
@@ -674,7 +755,7 @@ export class AuthController {
           name: socialUserInfo.name,
           state: originalState,
         });
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
         return;
       }
 
@@ -698,12 +779,12 @@ export class AuthController {
           },
         });
         console.log(`[OAuth Callback] Success! Redirecting to: ${getRedirectUrl(provider, platform, sessionKey)}`);
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
       } catch (loginError) {
         console.error('Social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
         const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
-        res.redirect(getRedirectUrl(provider, platform, sessionKey));
+        doRedirect(provider, platform, sessionKey);
       }
     } catch (error) {
       console.error('OAuth callback error:', error);
@@ -712,7 +793,7 @@ export class AuthController {
       const { originalState } = extractAppSchemeFromState(state as string | undefined);
       const pendingSession = originalState ? pendingAuthSessions.get(originalState) : undefined;
       const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: originalState });
-      res.redirect(getRedirectUrl(provider, pendingSession?.platform, sessionKey));
+      doRedirect(provider, pendingSession?.platform, sessionKey);
     }
   }
 }
