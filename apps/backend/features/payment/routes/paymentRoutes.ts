@@ -118,6 +118,91 @@ function getBackendCallbackUrl(req: Request, appScheme?: string): string {
   return `${baseUrl}${callbackPath}`;
 }
 
+function sendRedirectPage(res: Response, targetUrl: string, appScheme?: string): void {
+  const html = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>결제 처리 중...</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .message { color: #666; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <div class="spinner"></div>
+    <p class="message">결제 완료 처리 중...</p>
+  </div>
+  <script>
+    (function() {
+      const targetUrl = '${targetUrl}';
+      const appScheme = '${appScheme || ''}';
+      
+      console.log('[Payment Redirect] Target URL:', targetUrl);
+      console.log('[Payment Redirect] App scheme:', appScheme);
+      
+      function redirect() {
+        if (appScheme && targetUrl.startsWith(appScheme + '://')) {
+          console.log('[Payment Redirect] App scheme redirect');
+          window.location.href = targetUrl;
+          return;
+        }
+        
+        if (window.opener) {
+          console.log('[Payment Redirect] Popup mode - redirecting opener');
+          window.opener.location.href = targetUrl;
+          window.close();
+          return;
+        }
+        
+        if (window.parent !== window) {
+          console.log('[Payment Redirect] Iframe mode - redirecting parent');
+          window.parent.location.href = targetUrl;
+          return;
+        }
+        
+        console.log('[Payment Redirect] Normal mode - direct redirect');
+        window.location.href = targetUrl;
+      }
+      
+      setTimeout(redirect, 100);
+    })();
+  </script>
+</body>
+</html>`;
+
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.send(html);
+}
+
 function getFrontendUrl(req?: Request): string {
   if (process.env.SOCIAL_REDIRECT_BASE_URL) {
     return process.env.SOCIAL_REDIRECT_BASE_URL;
@@ -707,7 +792,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
     };
 
     if (!tid || !orderId || !amount) {
-      return res.redirect(buildRedirectUrl('/payment/fail', { message: '결제 정보가 누락되었습니다' }));
+      return sendRedirectPage(res, buildRedirectUrl('/payment/fail', { message: '결제 정보가 누락되었습니다' }), appScheme);
     }
 
     const orderRepository = AppDataSource.getRepository(Order);
@@ -716,7 +801,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
 
     const order = await orderRepository.findOne({ where: { id: orderId } });
     if (!order) {
-      return res.redirect(buildRedirectUrl('/payment/fail', { message: '주문을 찾을 수 없습니다' }));
+      return sendRedirectPage(res, buildRedirectUrl('/payment/fail', { message: '주문을 찾을 수 없습니다' }), appScheme);
     }
 
     const frontendUrl = appScheme ? null : (order.returnUrl || fallbackUrl);
@@ -740,8 +825,8 @@ async function handlePaymentCallback(req: Request, res: Response) {
     const payment = await paymentRepository.findOne({ where: { orderId } });
     
     if (order.status === 'paid' || payment?.status === 'completed') {
-      console.log('[NicePay Callback] Order already paid, redirecting to success');
-      return res.redirect(buildOrderRedirectUrl('/payment/success', { orderId }));
+      console.log('[NicePay Callback] Order already paid, redirecting to complete');
+      return sendRedirectPage(res, buildOrderRedirectUrl(`/payment/complete/${orderId}`), appScheme);
     }
     
     let isAlreadyPaid = false;
@@ -755,7 +840,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
       
       if (verifyResult.amount && verifyResult.amount !== parseInt(amount, 10)) {
         console.log('[NicePay Callback] Amount mismatch! Expected:', amount, 'Got:', verifyResult.amount);
-        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: '결제 금액이 일치하지 않습니다' }));
+        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId, message: '결제 금액이 일치하지 않습니다' }), appScheme);
       }
       
       if (verifyResult.success && verifyResult.status === 'paid') {
@@ -766,7 +851,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
         console.log('[NicePay Callback] Payment authenticated but not approved, will try approval');
       } else {
         console.log('[NicePay Callback] Auth failed - code:', authResultCode, 'msg:', authResultMsg);
-        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: authResultMsg || '결제 인증 실패' }));
+        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId, message: authResultMsg || '결제 인증 실패' }), appScheme);
       }
     }
 
@@ -782,7 +867,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
     
     if (parseInt(amount, 10) !== order.finalAmount) {
       console.log('[NicePay Callback] Amount mismatch - callback:', amount, 'order:', order.finalAmount);
-      return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: '결제 금액이 일치하지 않습니다' }));
+      return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId, message: '결제 금액이 일치하지 않습니다' }), appScheme);
     }
     
     if (!skipApproval) {
@@ -818,7 +903,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
           payment.failReason = approvalResult.resultMsg || '결제 승인 실패';
           await paymentRepository.save(payment);
         }
-        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId, message: approvalResult.resultMsg || '결제 승인 실패' }));
+        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId, message: approvalResult.resultMsg || '결제 승인 실패' }), appScheme);
       }
     }
 
@@ -946,7 +1031,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
         }
         
         const errorMessage = `재고 부족: ${stockCheckResult.insufficientProducts.join(', ')}`;
-        return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: errorMessage }));
+        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: errorMessage }), appScheme);
       }
       
       order.status = 'paid';
@@ -1005,7 +1090,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
 
       const successUrl = buildOrderRedirectUrl(`/payment/complete/${order.id}`);
       console.log('[NicePay Callback] Redirecting to success:', successUrl);
-      return res.redirect(successUrl);
+      return sendRedirectPage(res, successUrl, appScheme);
     }
     
     console.log('[NicePay Callback] Unexpected state - approvalSuccess is false');
@@ -1020,15 +1105,15 @@ async function handlePaymentCallback(req: Request, res: Response) {
       await paymentRepository.save(payment);
     }
 
-    return res.redirect(buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: failReason }));
+    return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: failReason }), appScheme);
   } catch (error) {
     console.error('[NicePay Callback] Error:', error);
     const catchData = { ...req.query, ...req.body };
     const appSchemeFromCatch = catchData.appScheme as string | undefined;
-    if (appSchemeFromCatch) {
-      return res.redirect(`${appSchemeFromCatch}://payment/fail?message=${encodeURIComponent('결제 처리 중 오류가 발생했습니다')}`);
-    }
-    return res.redirect(`${fallbackUrl}/payment/fail?message=${encodeURIComponent('결제 처리 중 오류가 발생했습니다')}`);
+    const errorUrl = appSchemeFromCatch 
+      ? `${appSchemeFromCatch}://payment/fail?message=${encodeURIComponent('결제 처리 중 오류가 발생했습니다')}`
+      : `${fallbackUrl}/payment/fail?message=${encodeURIComponent('결제 처리 중 오류가 발생했습니다')}`;
+    return sendRedirectPage(res, errorUrl, appSchemeFromCatch);
   }
 }
 

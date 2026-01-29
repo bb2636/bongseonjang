@@ -354,6 +354,7 @@ export function GuestCheckoutPage() {
           const isPaymentCallback = 
             url.includes('/payment/success') || 
             url.includes('/payment/fail') || 
+            url.includes('/payment/complete') ||
             url.includes('/payment/callback') ||
             url.includes('/api/payment/callback') ||
             url.startsWith(`${CAPACITOR_APP_SCHEME}://`);
@@ -371,6 +372,14 @@ export function GuestCheckoutPage() {
             
             try {
               const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
+              
+              const completeMatch = url.match(/\/payment\/complete\/([a-zA-Z0-9-]+)/);
+              if (completeMatch) {
+                const orderId = completeMatch[1];
+                navigate(`/payment/complete/${orderId}`);
+                return;
+              }
+              
               const orderId = urlObj.searchParams.get('orderId') || paymentData.orderId;
               
               if (url.includes('/payment/success') || url.includes('payment-success')) {
@@ -378,9 +387,11 @@ export function GuestCheckoutPage() {
               } else if (url.includes('/payment/fail') || url.includes('payment-fail')) {
                 const message = urlObj.searchParams.get('message') || '결제에 실패했습니다';
                 navigate(`/payment/fail?message=${encodeURIComponent(message)}`);
+              } else {
+                navigate(`/payment/complete/${paymentData.orderId}`);
               }
             } catch {
-              navigate(`/payment/success?orderId=${paymentData.orderId}`);
+              navigate(`/payment/complete/${paymentData.orderId}`);
             }
           }
         };
@@ -404,8 +415,8 @@ export function GuestCheckoutPage() {
               if (orderDetail) {
                 const orderStatus = orderDetail.status;
                 if (orderStatus === 'paid' || orderStatus === 'shipping' || orderStatus === 'delivered') {
-                  console.log('[GuestPayment] Order was paid, navigating to success page');
-                  navigate(`/payment/success?orderId=${paymentData.orderId}`);
+                  console.log('[GuestPayment] Order was paid, navigating to complete page');
+                  navigate(`/payment/complete/${paymentData.orderId}`);
                   return;
                 }
               }
@@ -432,8 +443,8 @@ export function GuestCheckoutPage() {
               if (orderDetail) {
                 const orderStatus = orderDetail.status;
                 if (orderStatus === 'paid' || orderStatus === 'shipping' || orderStatus === 'delivered') {
-                  console.log('[GuestPayment] Order was actually paid, navigating to success');
-                  navigate(`/payment/success?orderId=${paymentData.orderId}`);
+                  console.log('[GuestPayment] Order was actually paid, navigating to complete');
+                  navigate(`/payment/complete/${paymentData.orderId}`);
                   return;
                 }
               }
