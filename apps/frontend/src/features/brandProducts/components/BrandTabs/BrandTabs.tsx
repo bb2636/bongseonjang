@@ -17,6 +17,10 @@ interface BrandTabsProps {
   onBrandChange: (brandId: string) => void;
 }
 
+export function BrandTabsSpacer() {
+  return <div className="brand-tabs-spacer" />;
+}
+
 export function BrandTabs({ activeBrandId, onBrandChange }: BrandTabsProps) {
   return (
     <nav className="brand-tabs">

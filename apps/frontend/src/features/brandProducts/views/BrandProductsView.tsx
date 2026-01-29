@@ -1,5 +1,5 @@
 import { AppBar, AppBarSpacer } from '@/components/AppBar';
-import { BrandTabs } from '../components/BrandTabs';
+import { BrandTabs, BrandTabsSpacer } from '../components/BrandTabs';
 import { ProductGridContent } from '@/components/ProductGridContent';
 import type { ProductCardData } from '@/components/ProductCard';
 import './BrandProductsView.css';
@@ -28,17 +28,17 @@ export default function BrandProductsView({
   return (
     <div className="brand-products-page">
       <AppBar 
-        variant="subpage"
         showBackButton
         onBackClick={onBack}
         showLogo={false}
         onCartClick={onCartClick}
       />
-      <AppBarSpacer variant="subpage" />
+      <AppBarSpacer />
       <BrandTabs 
         activeBrandId={activeBrandId}
         onBrandChange={onBrandChange}
       />
+      <BrandTabsSpacer />
       <main className="brand-products-page__content">
         <ProductGridContent
           products={products}

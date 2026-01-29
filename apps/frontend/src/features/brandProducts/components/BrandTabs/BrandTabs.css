@@ -1,10 +1,17 @@
 .brand-tabs {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   width: 100%;
+  height: 38px;
+  background: #ffffff;
   border-bottom: 1px solid rgba(12, 12, 12, 0.06);
-  background-color: #fff;
-  position: sticky;
-  top: calc(44px + var(--safe-area-top, 0px));
-  z-index: 10;
+  position: fixed;
+  top: calc(48px + var(--safe-area-top, 0px));
+  left: 0;
+  right: 0;
+  z-index: 999;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
   backface-visibility: hidden;
@@ -29,17 +36,17 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 6px 8px;
-  gap: 6px;
-  height: 32px;
+  padding: 10px 8px;
+  gap: 10px;
+  height: 38px;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Pretendard', sans-serif;
   font-style: normal;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 128%;
   text-align: center;
   letter-spacing: -0.01em;
@@ -49,4 +56,9 @@
 
 .brand-tabs__tab--active {
   border-bottom: 2px solid #3B9BD5;
+}
+
+.brand-tabs-spacer {
+  height: 38px;
+  flex-shrink: 0;
 }

@@ -1,1 +1,1 @@
-export { BrandTabs } from './BrandTabs';
+export { BrandTabs, BrandTabsSpacer } from './BrandTabs';
