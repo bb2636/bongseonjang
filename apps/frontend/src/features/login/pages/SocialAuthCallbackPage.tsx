@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../../contexts/AuthContext';
 import { socialLogin, isRequiresEmailResponse, AccountSuspendedError, SocialProvider } from '../api/socialAuthApi';
 import { fetchHomeData } from '../../home/api/homeDataApi';
-import { getApiBaseUrlDynamic } from '@/shared/config/apiConfig';
+import { getApiBaseUrlDynamic, CAPACITOR_APP_SCHEME } from '@/shared/config/apiConfig';
 interface SessionData {
   token?: string;
   refreshToken?: string;
@@ -33,14 +33,173 @@ export default function SocialAuthCallbackPage() {
   const [isLoading, setIsLoading] = useState(true);
   const isProcessingRef = useRef(false);
 
+  const processSessionKey = async (sessionKey: string) => {
+    if (isProcessingRef.current) {
+      console.log('[OAuth Callback] Already processing, skipping duplicate call');
+      return;
+    }
+    isProcessingRef.current = true;
+    
+    console.log('[OAuth Callback] Processing session key:', sessionKey);
+    try {
+      const response = await fetch(`${getApiBaseUrlDynamic()}/auth/session/${sessionKey}`);
+      if (!response.ok) {
+        console.log('[OAuth Callback] Session fetch failed, status:', response.status);
+        setError('세션이 만료되었습니다. 다시 시도해주세요.');
+        setIsLoading(false);
+        return;
+      }
+      
+      const sessionData: SessionData = await response.json();
+      console.log('[OAuth Callback] Session data:', sessionData);
+      
+      if (sessionData.error) {
+        setError(sessionData.error === 'session_expired' ? '세션이 만료되었습니다. 다시 시도해주세요.' : '로그인에 실패했습니다.');
+        setIsLoading(false);
+        return;
+      }
+      
+      if (sessionData.requiresEmail && sessionData.providerId) {
+        navigate('/login/social/email', {
+          state: {
+            provider: sessionData.provider || provider,
+            providerUserId: sessionData.providerId,
+            name: sessionData.name || '',
+            profileImage: sessionData.profileImage || null,
+          },
+          replace: true,
+        });
+        return;
+      }
+      
+      if (sessionData.token && sessionData.user) {
+        if (sessionData.isNewUser) {
+          const signupFormData = {
+            email: sessionData.user.email,
+            isEmailVerified: true,
+            isCodeSent: true,
+            verificationCode: '',
+            password: 'SOCIAL_LOGIN_NO_PASSWORD',
+            passwordConfirm: 'SOCIAL_LOGIN_NO_PASSWORD',
+            showPassword: false,
+            showPasswordConfirm: false,
+            isPasswordSet: true,
+            name: sessionData.user.name || '',
+            phone: '',
+            isPhoneVerified: false,
+            addressName: '',
+            zonecode: '',
+            address: '',
+            addressDetail: '',
+            birthYear: '',
+            birthMonth: '',
+            birthDay: '',
+            gender: '',
+            referralId: '',
+            isReferralIdVerified: false,
+            isOver14: false,
+            termsAgreed: false,
+            privacyAgreed: false,
+            socialProvider: sessionData.provider || provider,
+          };
+          sessionStorage.setItem('signupFormData', JSON.stringify(signupFormData));
+          sessionStorage.setItem('pendingSocialLogin', JSON.stringify({
+            token: sessionData.token,
+            user: sessionData.user,
+          }));
+          navigate('/signup/email', { replace: true });
+        } else {
+          loginWithToken(sessionData.token, {
+            id: String(sessionData.user.id),
+            email: sessionData.user.email,
+            name: sessionData.user.name,
+          });
+          queryClient.prefetchQuery({
+            queryKey: ['homeData'],
+            queryFn: fetchHomeData,
+          });
+          navigate('/', { replace: true });
+        }
+        return;
+      }
+      
+      setError('로그인 정보를 확인할 수 없습니다.');
+      setIsLoading(false);
+    } catch (err) {
+      console.error('[OAuth Callback] Session fetch error:', err);
+      const message = err instanceof Error ? err.message : '로그인에 실패했습니다.';
+      setError(message);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const key = searchParams.get('key');
+    const platformParam = searchParams.get('platform');
+    const providerParam = searchParams.get('provider');
+    
+    if (platformParam !== 'app' || !key) {
+      return;
+    }
+    
+    console.log('[OAuth Callback] App platform detected, attempting app scheme redirect...');
+    const appCallbackUrl = `${CAPACITOR_APP_SCHEME}://oauth/${providerParam || 'google'}/callback?key=${key}`;
+    console.log('[OAuth Callback] App callback URL:', appCallbackUrl);
+    
+    const redirectStartTime = Date.now();
+    
+    window.location.href = appCallbackUrl;
+    
+    const checkVisibilityAndFallback = () => {
+      const elapsed = Date.now() - redirectStartTime;
+      console.log('[OAuth Callback] Visibility check, elapsed:', elapsed, 'hidden:', document.hidden);
+      
+      if (document.hidden) {
+        console.log('[OAuth Callback] Page is hidden, app likely opened successfully');
+        return;
+      }
+      
+      if (elapsed > 1500) {
+        console.log('[OAuth Callback] App scheme redirect likely failed, processing in web as fallback...');
+        processSessionKey(key);
+      }
+    };
+    
+    const timeoutId = setTimeout(checkVisibilityAndFallback, 1500);
+    
+    const visibilityHandler = () => {
+      if (!document.hidden) {
+        console.log('[OAuth Callback] Page became visible again, checking fallback...');
+        setTimeout(() => {
+          if (!document.hidden) {
+            processSessionKey(key);
+          }
+        }, 500);
+      }
+    };
+    
+    document.addEventListener('visibilitychange', visibilityHandler, { once: true });
+    
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('visibilitychange', visibilityHandler);
+    };
+  }, [searchParams, processSessionKey]);
+  
   useEffect(() => {
     async function handleCallback() {
+      const key = searchParams.get('key');
+      const platformParam = searchParams.get('platform');
+      
+      if (platformParam === 'app' && key) {
+        return;
+      }
+      
       if (isProcessingRef.current) {
         return;
       }
       isProcessingRef.current = true;
       
-      const key = searchParams.get('key');
       const code = searchParams.get('code');
       const state = searchParams.get('state');
       const errorParam = searchParams.get('error');
@@ -57,6 +216,7 @@ export default function SocialAuthCallbackPage() {
       console.log('[OAuth Callback] code:', code ? `${code.substring(0, 10)}...` : 'NULL');
       console.log('[OAuth Callback] state from URL:', state);
       console.log('[OAuth Callback] error:', errorParam);
+      console.log('[OAuth Callback] platform:', platformParam);
       console.log('[OAuth Callback] Full URL:', window.location.href);
       
       if (provider === 'naver') {
@@ -71,100 +231,9 @@ export default function SocialAuthCallbackPage() {
         return;
       }
 
-      if (key) {
-        console.log('[OAuth Callback] Processing session key:', key);
-        try {
-          const response = await fetch(`${getApiBaseUrlDynamic()}/auth/session/${key}`);
-          if (!response.ok) {
-            console.log('[OAuth Callback] Session fetch failed, status:', response.status);
-            setError('세션이 만료되었습니다. 다시 시도해주세요.');
-            setIsLoading(false);
-            return;
-          }
-          
-          const sessionData: SessionData = await response.json();
-          console.log('[OAuth Callback] Session data:', sessionData);
-          
-          if (sessionData.error) {
-            setError(sessionData.error === 'session_expired' ? '세션이 만료되었습니다. 다시 시도해주세요.' : '로그인에 실패했습니다.');
-            setIsLoading(false);
-            return;
-          }
-          
-          if (sessionData.requiresEmail && sessionData.providerId) {
-            navigate('/login/social/email', {
-              state: {
-                provider: sessionData.provider || provider,
-                providerUserId: sessionData.providerId,
-                name: sessionData.name || '',
-                profileImage: sessionData.profileImage || null,
-              },
-              replace: true,
-            });
-            return;
-          }
-          
-          if (sessionData.token && sessionData.user) {
-            if (sessionData.isNewUser) {
-              const signupFormData = {
-                email: sessionData.user.email,
-                isEmailVerified: true,
-                isCodeSent: true,
-                verificationCode: '',
-                password: 'SOCIAL_LOGIN_NO_PASSWORD',
-                passwordConfirm: 'SOCIAL_LOGIN_NO_PASSWORD',
-                showPassword: false,
-                showPasswordConfirm: false,
-                isPasswordSet: true,
-                name: sessionData.user.name || '',
-                phone: '',
-                isPhoneVerified: false,
-                addressName: '',
-                zonecode: '',
-                address: '',
-                addressDetail: '',
-                birthYear: '',
-                birthMonth: '',
-                birthDay: '',
-                gender: '',
-                referralId: '',
-                isReferralIdVerified: false,
-                isOver14: false,
-                termsAgreed: false,
-                privacyAgreed: false,
-                socialProvider: sessionData.provider || provider,
-              };
-              sessionStorage.setItem('signupFormData', JSON.stringify(signupFormData));
-              sessionStorage.setItem('pendingSocialLogin', JSON.stringify({
-                token: sessionData.token,
-                user: sessionData.user,
-              }));
-              navigate('/signup/email', { replace: true });
-            } else {
-              loginWithToken(sessionData.token, {
-                id: String(sessionData.user.id),
-                email: sessionData.user.email,
-                name: sessionData.user.name,
-              });
-              queryClient.prefetchQuery({
-                queryKey: ['homeData'],
-                queryFn: fetchHomeData,
-              });
-              navigate('/', { replace: true });
-            }
-            return;
-          }
-          
-          setError('로그인 정보를 확인할 수 없습니다.');
-          setIsLoading(false);
-          return;
-        } catch (err) {
-          console.error('[OAuth Callback] Session fetch error:', err);
-          const message = err instanceof Error ? err.message : '로그인에 실패했습니다.';
-          setError(message);
-          setIsLoading(false);
-          return;
-        }
+      if (key && !platformParam) {
+        await processSessionKey(key);
+        return;
       }
 
       if (tokenFromUrl && provider) {

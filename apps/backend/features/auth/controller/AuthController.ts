@@ -598,8 +598,8 @@ export class AuthController {
     };
 
     const getRedirectUrl = (provider: string, platform: string | undefined, sessionKey: string): string => {
-      if (provider === 'google' && platform === 'app') {
-        return `${APP_SCHEME}://oauth/google/callback?key=${sessionKey}`;
+      if (platform === 'app') {
+        return `${baseUrl}/social-callback?key=${sessionKey}&platform=app&provider=${provider}`;
       }
       return `${baseUrl}/social-callback?key=${sessionKey}`;
     };
