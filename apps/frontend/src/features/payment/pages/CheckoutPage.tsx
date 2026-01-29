@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
 import { fetchDefaultAddress, fetchAddresses, AddressResponse } from '../../address/api/addressApi';
 import { fetchUserProfile } from '../../profile/api/profileApi';
-import { preparePayment, prepareDirectPayment, DirectPurchaseItem, fetchMyCoupons, fetchAvailableCoupons, CouponDto } from '../api/paymentApi';
+import { preparePayment, prepareDirectPayment, DirectPurchaseItem, fetchMyCoupons, fetchAvailableCoupons, CouponDto, getPaymentResult } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
 import type { ProductDetail } from '../../productDetail/types/productDetail';
 import { useToast } from '../../../contexts/ToastContext';
@@ -525,7 +525,14 @@ export function CheckoutPage() {
           const url = event.url;
           console.log('[Payment] URL changed:', url);
           
-          if (url.includes('/payment/success') || url.includes('/payment/fail') || url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
+          const isPaymentCallback = 
+            url.includes('/payment/success') || 
+            url.includes('/payment/fail') || 
+            url.includes('/payment/callback') ||
+            url.includes('/api/payment/callback') ||
+            url.startsWith(`${CAPACITOR_APP_SCHEME}://`);
+          
+          if (isPaymentCallback) {
             browserClosed = true;
             
             if (timeoutId) {
@@ -552,7 +559,7 @@ export function CheckoutPage() {
           }
         };
         
-        const handleClose = () => {
+        const handleClose = async () => {
           console.log('[Payment] InAppBrowser closed');
           
           if (!browserClosed) {
@@ -561,7 +568,25 @@ export function CheckoutPage() {
               clearTimeout(timeoutId);
               timeoutId = null;
             }
-            InAppBrowser.removeAllListeners();
+            await InAppBrowser.removeAllListeners();
+            
+            try {
+              console.log('[Payment] Checking order status after browser close...');
+              const result = await getPaymentResult(paymentData.orderId);
+              console.log('[Payment] Order status result:', result);
+              
+              if (result.success && result.order) {
+                const orderStatus = result.order.status;
+                if (orderStatus === 'paid' || orderStatus === 'shipping' || orderStatus === 'delivered') {
+                  console.log('[Payment] Order was paid, navigating to success page');
+                  navigate(`/payment/success?orderId=${paymentData.orderId}`);
+                  return;
+                }
+              }
+            } catch (err) {
+              console.error('[Payment] Failed to check order status:', err);
+            }
+            
             setIsProcessing(false);
           }
         };
@@ -571,10 +596,25 @@ export function CheckoutPage() {
         
         timeoutId = setTimeout(async () => {
           if (!browserClosed) {
-            console.log('[Payment] Timeout reached');
+            console.log('[Payment] Timeout reached, checking order status...');
             browserClosed = true;
             await InAppBrowser.removeAllListeners();
             await InAppBrowser.close().catch(() => {});
+            
+            try {
+              const result = await getPaymentResult(paymentData.orderId);
+              if (result.success && result.order) {
+                const orderStatus = result.order.status;
+                if (orderStatus === 'paid' || orderStatus === 'shipping' || orderStatus === 'delivered') {
+                  console.log('[Payment] Order was actually paid, navigating to success');
+                  navigate(`/payment/success?orderId=${paymentData.orderId}`);
+                  return;
+                }
+              }
+            } catch (err) {
+              console.error('[Payment] Failed to check order status on timeout:', err);
+            }
+            
             setIsProcessing(false);
             showToast('결제 시간이 초과되었습니다', 'error');
           }

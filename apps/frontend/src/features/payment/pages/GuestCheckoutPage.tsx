@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useQuery } from '@tanstack/react-query';
-import { prepareGuestPayment, GuestCartItem } from '../api/paymentApi';
+import { prepareGuestPayment, GuestCartItem, fetchGuestOrderDetail } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
 import { guestCartStorage, guestShippingStorage, guestOrdererStorage } from '../../../utils/guestStorage';
 import { useToast } from '../../../contexts/ToastContext';
@@ -351,7 +351,14 @@ export function GuestCheckoutPage() {
           const url = event.url;
           console.log('[GuestPayment] URL changed:', url);
           
-          if (url.includes('/payment/success') || url.includes('/payment/fail') || url.startsWith(`${CAPACITOR_APP_SCHEME}://`)) {
+          const isPaymentCallback = 
+            url.includes('/payment/success') || 
+            url.includes('/payment/fail') || 
+            url.includes('/payment/callback') ||
+            url.includes('/api/payment/callback') ||
+            url.startsWith(`${CAPACITOR_APP_SCHEME}://`);
+          
+          if (isPaymentCallback) {
             browserClosed = true;
             
             if (timeoutId) {
@@ -378,7 +385,7 @@ export function GuestCheckoutPage() {
           }
         };
         
-        const handleClose = () => {
+        const handleClose = async () => {
           console.log('[GuestPayment] InAppBrowser closed');
           
           if (!browserClosed) {
@@ -387,7 +394,25 @@ export function GuestCheckoutPage() {
               clearTimeout(timeoutId);
               timeoutId = null;
             }
-            InAppBrowser.removeAllListeners();
+            await InAppBrowser.removeAllListeners();
+            
+            try {
+              console.log('[GuestPayment] Checking order status after browser close...');
+              const orderDetail = await fetchGuestOrderDetail(paymentData.orderId);
+              console.log('[GuestPayment] Order status result:', orderDetail);
+              
+              if (orderDetail) {
+                const orderStatus = orderDetail.status;
+                if (orderStatus === 'paid' || orderStatus === 'shipping' || orderStatus === 'delivered') {
+                  console.log('[GuestPayment] Order was paid, navigating to success page');
+                  navigate(`/payment/success?orderId=${paymentData.orderId}`);
+                  return;
+                }
+              }
+            } catch (err) {
+              console.error('[GuestPayment] Failed to check order status:', err);
+            }
+            
             setIsProcessing(false);
           }
         };
@@ -397,10 +422,25 @@ export function GuestCheckoutPage() {
         
         timeoutId = setTimeout(async () => {
           if (!browserClosed) {
-            console.log('[GuestPayment] Timeout reached');
+            console.log('[GuestPayment] Timeout reached, checking order status...');
             browserClosed = true;
             await InAppBrowser.removeAllListeners();
             await InAppBrowser.close().catch(() => {});
+            
+            try {
+              const orderDetail = await fetchGuestOrderDetail(paymentData.orderId);
+              if (orderDetail) {
+                const orderStatus = orderDetail.status;
+                if (orderStatus === 'paid' || orderStatus === 'shipping' || orderStatus === 'delivered') {
+                  console.log('[GuestPayment] Order was actually paid, navigating to success');
+                  navigate(`/payment/success?orderId=${paymentData.orderId}`);
+                  return;
+                }
+              }
+            } catch (err) {
+              console.error('[GuestPayment] Failed to check order status on timeout:', err);
+            }
+            
             setIsProcessing(false);
             showToast('결제 시간이 초과되었습니다', 'error');
           }

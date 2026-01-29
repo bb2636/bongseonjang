@@ -111,7 +111,7 @@ export default function BottomNav({ onHomeClick }: BottomNavProps) {
     if (path === '/') return 'home';
     if (path.startsWith('/category')) return 'category';
     if (path.startsWith('/search')) return 'search';
-    if (path.startsWith('/profile')) return 'profile';
+    if (path.startsWith('/profile') || path.startsWith('/review')) return 'profile';
     return 'home';
   };
 
