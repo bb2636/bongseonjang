@@ -179,8 +179,8 @@
 }
 
 .notice-list__type-badge--important {
-  background-color: #FFEBEB;
-  color: #E53935;
+  background-color: rgba(255, 82, 82, 0.15);
+  color: #FF5252;
 }
 
 .notice-list__type-badge--event {

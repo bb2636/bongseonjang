@@ -5,6 +5,7 @@ interface SeedData {
   productCategories: Array<{ id: string; name: string; sortOrder: number; isActive: boolean }>;
   exposureCategories: Array<{ id: number; name: string; sort_order: number }>;
   bannerPositions: Array<{ id: number; code: string; name: string; sort_no: number; is_active: boolean }>;
+  noticeTypes: Array<{ id: number; code: string; name: string; sortNo: number; isActive: boolean }>;
   investmentInfoTypes: Array<{ id: number; code: string; name: string; sortNo: number; isActive: boolean }>;
   products: Array<{
     id: string;
@@ -75,6 +76,12 @@ const seedData: SeedData = {
     { id: 3, code: 'HOME_BOTTOM', name: '홈/하단', sort_no: 3, is_active: true },
     { id: 4, code: 'HOME_EVENT', name: '홈/이벤트', sort_no: 4, is_active: true },
     { id: 5, code: 'MYPAGE', name: '마이페이지', sort_no: 5, is_active: true },
+  ],
+  noticeTypes: [
+    { id: 1, code: 'NOTICE', name: '공지', sortNo: 1, isActive: true },
+    { id: 2, code: 'EVENT', name: '이벤트', sortNo: 2, isActive: true },
+    { id: 3, code: 'SHIPPING', name: '배송', sortNo: 3, isActive: true },
+    { id: 4, code: 'IMPORTANT', name: '중요', sortNo: 0, isActive: true },
   ],
   investmentInfoTypes: [
     { id: 1, code: 'NORMAL', name: '일반', sortNo: 1, isActive: true },
@@ -196,6 +203,14 @@ export async function runProductionSeed(): Promise<void> {
       );
     }
     console.log('Seeded banner positions');
+
+    for (const nt of seedData.noticeTypes) {
+      await queryRunner.query(
+        `INSERT INTO notice_types (id, code, name, "sortNo", "isActive") VALUES ($1, $2, $3, $4, $5) ON CONFLICT (id) DO NOTHING`,
+        [nt.id, nt.code, nt.name, nt.sortNo, nt.isActive]
+      );
+    }
+    console.log('Seeded notice types');
 
     for (const iit of seedData.investmentInfoTypes) {
       await queryRunner.query(
