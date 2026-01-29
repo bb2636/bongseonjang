@@ -612,6 +612,20 @@ export function CheckoutPage() {
                   return;
                 }
               }
+              
+              console.log('[Payment] Order not paid, deleting pending order...');
+              await fetch(`${API_BASE_URL}/payment/log-error`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  orderId: paymentData.orderId,
+                  method: paymentMethod,
+                  errorCode: 'USER_CANCELLED',
+                  errorMsg: '사용자가 결제를 취소했습니다',
+                  deleteOrder: true,
+                }),
+              });
+              console.log('[Payment] Pending order deletion requested');
             } catch (err) {
               console.error('[Payment] Failed to check order status:', err);
             }
@@ -640,6 +654,19 @@ export function CheckoutPage() {
                   return;
                 }
               }
+              
+              console.log('[Payment] Timeout - deleting pending order...');
+              await fetch(`${API_BASE_URL}/payment/log-error`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  orderId: paymentData.orderId,
+                  method: paymentMethod,
+                  errorCode: 'TIMEOUT',
+                  errorMsg: '결제 시간이 초과되었습니다',
+                  deleteOrder: true,
+                }),
+              });
             } catch (err) {
               console.error('[Payment] Failed to check order status on timeout:', err);
             }
@@ -673,17 +700,40 @@ export function CheckoutPage() {
 
       setPaymentStep('waiting');
 
+      const currentOrderId = paymentData.orderId;
+      
       window.AUTHNICE.requestPay({
         clientId: paymentData.clientKey,
         method: paymentMethod,
-        orderId: paymentData.orderId,
+        orderId: currentOrderId,
         amount: paymentData.amount,
         goodsName: paymentData.goodsName,
         returnUrl: paymentData.returnUrl,
         ...(paymentMethod === 'vbank' && { vbankHolder: currentAddress.recipientName }),
-        fnError: (result) => {
+        fnError: async (result) => {
+          console.error('[Payment] fnError:', result);
           showToast(`결제 오류: ${result.errorMsg}`, 'error');
           setIsProcessing(false);
+          
+          if (currentOrderId) {
+            try {
+              await fetch(`${API_BASE_URL}/payment/log-error`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  orderId: currentOrderId,
+                  method: paymentMethod,
+                  errorCode: result.errorCode,
+                  errorMsg: result.errorMsg,
+                  fullResult: result,
+                  deleteOrder: true,
+                }),
+              });
+              console.log('[Payment] Pending order deletion requested');
+            } catch (err) {
+              console.error('[Payment] Failed to delete pending order:', err);
+            }
+          }
         },
       });
     } catch (error) {
