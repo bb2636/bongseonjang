@@ -156,8 +156,10 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
 
   const formatOrderStatus = (status: string): string => {
     const statusMap: Record<string, string> = {
-      pending: '결제대기',
+      pending: '입금 전',
+      payment_failed: '결제실패',
       paid: '결제완료',
+      confirmed: '주문확인',
       preparing: '상품준비중',
       shipping: '배송중',
       delivered: '배송완료',
