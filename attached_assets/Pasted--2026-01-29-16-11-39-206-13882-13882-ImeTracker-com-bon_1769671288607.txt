@@ -1,0 +1,495 @@
+
+2026-01-29 16:11:39.206 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:9c88ba26: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:11:39.209 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 6420 bytes, containing 2 windows, 17 views
+2026-01-29 16:12:00.721 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:f0b2f251: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:12:00.721 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:12:00.721 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@a6b96d5
+2026-01-29 16:12:00.722 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:12:00.769 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:770293b9: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:12:01.136 13882-14046 cr_PlatformSensor       com.bongkru.app                      W  Should not get sensor events after PlatformSensorAndroid is destroyed.
+2026-01-29 16:12:01.153 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:12:01.156 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/nidlogin.login
+2026-01-29 16:12:01.520 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:12:01.520 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:12:01.586 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:12:01.615 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:12:01.667 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:12:01.695 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:12:01.746 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:12:01.775 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:12:01.828 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:12:01.874 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:12:01.906 13882-13882 chromium                com.bongkru.app                      I  [INFO:CONSOLE(2)] "Error", source: https://wtm.pstatic.net/bcf13cb/74ded82ea2fa78fbbad0.js (2)
+2026-01-29 16:12:06.445 13882-13882 InAppBrowser            com.bongkru.app                      D  onCreateWindow called - isUserGesture: true, GooglePaySupport: false, preventDeeplink: false
+2026-01-29 16:12:06.446 13882-13882 InAppBrowser            com.bongkru.app                      D  Opening target=_blank link externally: https://nid.naver.com/user2/V2Join?m=agree&lang=en_US&realname=N
+2026-01-29 16:12:06.518 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event pause
+2026-01-29 16:12:06.518 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event pause
+2026-01-29 16:12:06.529 13882-13882 Capacitor               com.bongkru.app                      D  App paused
+2026-01-29 16:12:06.756 13882-13882 InAppBrowser            com.bongkru.app                      D  onCreateWindow called - isUserGesture: true, GooglePaySupport: false, preventDeeplink: false
+2026-01-29 16:12:06.757 13882-13882 InAppBrowser            com.bongkru.app                      D  Opening target=_blank link externally: https://nid.naver.com/user2/V2Join?m=agree&lang=en_US&realname=N
+2026-01-29 16:12:07.571 13882-13882 VRI[MainActivity]       com.bongkru.app                      D  visibilityChanged oldVisibility=true newVisibility=false
+2026-01-29 16:12:07.575 13882-13882 VRI[MainActivity]       com.bongkru.app                      D  visibilityChanged oldVisibility=true newVisibility=false
+2026-01-29 16:12:07.753 13882-13882 AutofillManager         com.bongkru.app                      I  onInvisibleForAutofill(): expiringResponse
+2026-01-29 16:12:07.754 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  Firing change: false
+2026-01-29 16:12:07.755 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event appStateChange
+2026-01-29 16:12:07.755 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event appStateChange
+2026-01-29 16:12:07.755 13882-13882 Capacitor               com.bongkru.app                      D  App stopped
+2026-01-29 16:12:07.763 13882-13882 Capacitor               com.bongkru.app                      D  Saving instance state!
+2026-01-29 16:12:09.489 13882-13882 VRI[MainActivity]       com.bongkru.app                      D  visibilityChanged oldVisibility=false newVisibility=true
+2026-01-29 16:12:09.491 13882-13882 ViewRootImpl            com.bongkru.app                      D  Skipping stats log for color mode
+2026-01-29 16:12:09.492 13882-13882 Capacitor               com.bongkru.app                      D  App restarted
+2026-01-29 16:12:09.493 13882-13882 Capacitor               com.bongkru.app                      D  App started
+2026-01-29 16:12:09.494 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      W  OnBackInvokedCallback is not enabled for the application.
+                                                                                                    Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+2026-01-29 16:12:09.494 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  Firing change: true
+2026-01-29 16:12:09.496 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event appStateChange
+2026-01-29 16:12:09.496 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event appStateChange
+2026-01-29 16:12:09.497 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event resume
+2026-01-29 16:12:09.497 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event resume
+2026-01-29 16:12:09.616 13882-13882 Capacitor               com.bongkru.app                      D  App resumed
+2026-01-29 16:12:10.400 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:12:10.401 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:6921277: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:15:32.572 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] Timeout reached
+2026-01-29 16:15:32.588 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224701, pluginId: InAppBrowser, methodName: removeAllListeners
+2026-01-29 16:15:32.588 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224701, pluginId: InAppBrowser, methodName: removeAllListeners, methodData: {}
+2026-01-29 16:15:32.595 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:15:32.600 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224702, pluginId: InAppBrowser, methodName: close
+2026-01-29 16:15:32.601 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224702, pluginId: InAppBrowser, methodName: close, methodData: {}
+2026-01-29 16:15:32.605 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event closeEvent
+2026-01-29 16:15:32.605 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event closeEvent
+2026-01-29 16:15:32.629 13882-13882 cr_AwContents           com.bongkru.app                      W  WebView.destroy() called while WebView is still attached to window.
+2026-01-29 16:15:32.635 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): null
+2026-01-29 16:15:32.695 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:15:32.698 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DTlRncLp.js - Line 2 - Msg: [SocialLogin] 네이버 결과: [object Object]
+2026-01-29 16:15:32.713 13882-14114 cr_PlatformSensor       com.bongkru.app                      W  Should not get sensor events after PlatformSensorAndroid is destroyed.
+2026-01-29 16:15:32.714 13882-14114 cr_PlatformSensor       com.bongkru.app                      W  Should not get sensor events after PlatformSensorAndroid is destroyed.
+2026-01-29 16:15:32.721 13882-14114 cr_PlatformSensor       com.bongkru.app                      W  Should not get sensor events after PlatformSensorAndroid is destroyed.
+2026-01-29 16:15:32.725 13882-14114 cr_PlatformSensor       com.bongkru.app                      W  Should not get sensor events after PlatformSensorAndroid is destroyed.
+2026-01-29 16:15:32.791 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:15:32.792 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:1ac42740: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:17:13.081 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event pause
+2026-01-29 16:17:13.082 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event pause
+2026-01-29 16:17:13.107 13882-13882 Capacitor               com.bongkru.app                      D  App paused
+2026-01-29 16:17:13.108 13882-13882 VRI[MainActivity]       com.bongkru.app                      D  visibilityChanged oldVisibility=true newVisibility=false
+2026-01-29 16:17:13.115 13882-13882 AutofillManager         com.bongkru.app                      I  onInvisibleForAutofill(): expiringResponse
+2026-01-29 16:17:13.116 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  Firing change: false
+2026-01-29 16:17:13.116 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event appStateChange
+2026-01-29 16:17:13.116 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event appStateChange
+2026-01-29 16:17:13.117 13882-13882 Capacitor               com.bongkru.app                      D  App stopped
+2026-01-29 16:17:13.117 13882-13882 Capacitor               com.bongkru.app                      D  Saving instance state!
+2026-01-29 16:17:50.632 13882-13882 Capacitor               com.bongkru.app                      D  App restarted
+2026-01-29 16:17:50.645 13882-13882 Capacitor               com.bongkru.app                      D  App started
+2026-01-29 16:17:50.655 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      W  OnBackInvokedCallback is not enabled for the application.
+                                                                                                    Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+2026-01-29 16:17:50.683 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  Firing change: true
+2026-01-29 16:17:50.683 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event appStateChange
+2026-01-29 16:17:50.683 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event appStateChange
+2026-01-29 16:17:50.683 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      V  Notifying listeners for event resume
+2026-01-29 16:17:50.684 13882-13882 Capacitor/AppPlugin     com.bongkru.app                      D  No listeners found for event resume
+2026-01-29 16:17:50.741 13882-13882 Capacitor               com.bongkru.app                      D  App resumed
+2026-01-29 16:17:51.075 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:17:51.075 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:3e5145b0: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:17:53.521 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DTlRncLp.js - Line 2 - Msg: [SocialLogin] 네이버 로그인 버튼 클릭
+2026-01-29 16:17:53.522 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [NaverOAuth] naverAuthorize called, isCapacitor: true
+2026-01-29 16:17:53.523 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] === Starting OAuth with InAppBrowser ===
+2026-01-29 16:17:53.525 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] provider: naver
+2026-01-29 16:17:53.525 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] authUrl: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/start/naver?platform=app
+2026-01-29 16:17:53.531 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224703, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:17:53.531 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224703, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"urlChangeEvent"}
+2026-01-29 16:17:53.532 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224704, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:17:53.533 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224704, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"closeEvent"}
+2026-01-29 16:17:53.533 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224705, pluginId: InAppBrowser, methodName: openWebView
+2026-01-29 16:17:53.533 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224705, pluginId: InAppBrowser, methodName: openWebView, methodData: {"url":"https:\/\/bongseonjang--tkfkdgowjdakfas.replit.app\/api\/auth\/start\/naver?platform=app"}
+2026-01-29 16:17:53.534 13882-13939 InAppBrowserPlugin      com.bongkru.app                      D  No authorized app links provided.
+2026-01-29 16:17:53.534 13882-13939 InAppBrowserPlugin      com.bongkru.app                      D  No blocked hosts provided.
+2026-01-29 16:17:53.609 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:17:53.609 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] InAppBrowser opened
+2026-01-29 16:17:53.610 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:17:53.619 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:17:53.766 13882-13882 InAppBrowser            com.bongkru.app                      D  JavaScript interface injected early after URL load
+2026-01-29 16:17:53.853 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:17:53.853 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:de791c94: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:17:53.972 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=5ecf70bd92477fd8493463ae6406c899
+2026-01-29 16:17:53.973 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:17:53.973 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:17:54.085 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:17:54.092 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=5ecf70bd92477fd8493463ae6406c899
+2026-01-29 16:17:54.406 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:17:54.406 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:17:54.488 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:17:54.528 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:17:54.612 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:17:54.679 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:17:54.719 13882-13882 chromium                com.bongkru.app                      I  [INFO:CONSOLE(2)] "Error", source: https://wtm.pstatic.net/bcf13cb/74ded82ea2fa78fbbad0.js (2)
+2026-01-29 16:17:54.775 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:17:54.812 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:17:54.913 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:17:54.964 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:17:55.850 13882-13882 AutofillManager         com.bongkru.app                      I  showAutofillDialog() return false due to improve fill dialog
+2026-01-29 16:17:55.867 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:120c50bb: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:17:55.868 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:17:55.868 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:17:55.885 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 4636 bytes, containing 2 windows, 15 views
+2026-01-29 16:17:56.036 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:17:56.409 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:120c50bb: onShown
+2026-01-29 16:17:58.073 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:2fce52df: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:17:58.073 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:17:58.073 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:2fce52df: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:18:59.710 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:149d7300: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:18:59.710 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:18:59.710 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:18:59.711 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:18:59.819 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:1ec50642: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:00.899 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:82fc6bd8: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:00.899 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:00.899 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:19:00.978 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:19:01.343 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:82fc6bd8: onShown
+2026-01-29 16:19:04.473 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:6e5d9323: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:04.473 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:04.473 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:6e5d9323: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:19:04.478 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 4644 bytes, containing 2 windows, 15 views
+2026-01-29 16:19:07.929 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:19:07.932 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/nidlogin.login
+2026-01-29 16:19:07.963 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:e8288ec3: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:19:07.963 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:19:07.964 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:19:07.964 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:19:07.995 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:f4a563af: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:08.345 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:19:08.345 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:19:08.411 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:08.445 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:08.506 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:08.539 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:08.601 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:08.633 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:08.700 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:08.773 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:08.804 13882-13882 chromium                com.bongkru.app                      I  [INFO:CONSOLE(2)] "Error", source: https://wtm.pstatic.net/bcf13cb/74ded82ea2fa78fbbad0.js (2)
+2026-01-29 16:19:09.196 13882-13882 AutofillManager         com.bongkru.app                      I  showAutofillDialog() return false due to improve fill dialog
+2026-01-29 16:19:09.201 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 6412 bytes, containing 2 windows, 17 views
+2026-01-29 16:19:09.224 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:39b5b247: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:09.225 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:09.225 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:19:09.374 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:19:09.727 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:39b5b247: onShown
+2026-01-29 16:19:12.147 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:1320dedf: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:19:12.148 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:19:12.149 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:19:12.149 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:19:12.179 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:e47bb1bf: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:12.841 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:9bb42fba: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:12.841 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:12.841 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:19:12.848 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 6420 bytes, containing 2 windows, 17 views
+2026-01-29 16:19:12.882 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:9bb42fba: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:12.914 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:19:13.060 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:9bb42fba: onShown
+2026-01-29 16:19:22.190 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:19:22.194 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/nidlogin.login
+2026-01-29 16:19:22.234 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:d7e1a279: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:19:22.234 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:19:22.234 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:19:22.234 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:19:22.278 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:4b1560d5: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:22.431 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:19:22.432 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:19:22.531 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:22.565 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:22.625 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:22.655 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:22.780 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:22.812 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:22.870 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:22.923 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:22.953 13882-13882 chromium                com.bongkru.app                      I  [INFO:CONSOLE(2)] "Error", source: https://wtm.pstatic.net/bcf13cb/74ded82ea2fa78fbbad0.js (2)
+2026-01-29 16:19:23.413 13882-13882 AutofillManager         com.bongkru.app                      I  showAutofillDialog() return false due to improve fill dialog
+2026-01-29 16:19:23.421 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:e59f3349: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:23.422 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:23.423 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:19:23.428 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 4644 bytes, containing 2 windows, 15 views
+2026-01-29 16:19:23.514 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:19:23.893 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:e59f3349: onShown
+2026-01-29 16:19:25.994 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:e22df2b0: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:19:25.995 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:19:25.995 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:19:25.995 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:19:26.029 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:317cfe55: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:27.106 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 4644 bytes, containing 2 windows, 15 views
+2026-01-29 16:19:27.111 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:fd9e45: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:27.111 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:27.112 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:19:27.176 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@caac499
+2026-01-29 16:19:27.290 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:19:27.643 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:fd9e45: onShown
+2026-01-29 16:19:28.034 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:eeaa4f58: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:19:28.034 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:19:28.035 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:19:28.036 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:19:28.065 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): null
+2026-01-29 16:19:28.084 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:b66b3635: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:30.525 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:7caa27f9: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:30.526 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:30.526 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:19:30.586 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:19:30.960 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:7caa27f9: onShown
+2026-01-29 16:19:34.714 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:cd52b8d7: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:34.716 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:34.717 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:cd52b8d7: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:19:34.749 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@17c6c28
+2026-01-29 16:19:35.498 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:1c317dc: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:19:35.498 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:19:35.498 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:19:35.498 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:19:35.528 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): null
+2026-01-29 16:19:35.542 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:c0048b7b: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:36.392 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:aa6b443b: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:36.392 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:36.393 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:19:36.449 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:19:36.814 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:aa6b443b: onShown
+2026-01-29 16:19:40.710 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:94f08f0f: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:40.711 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:40.711 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:94f08f0f: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:19:41.211 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:d686ccd6: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:19:41.213 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:19:41.213 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:d686ccd6: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:19:43.427 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:24934522: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:19:43.427 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:19:43.428 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:19:43.428 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:19:43.462 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:1667c35f: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:19:44.063 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:19:44.068 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/nidlogin.login
+2026-01-29 16:19:44.469 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:19:44.469 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:19:44.547 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:44.582 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:44.643 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:44.673 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:44.732 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:44.765 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:44.826 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:44.874 13882-13940 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:19:44.905 13882-13882 chromium                com.bongkru.app                      I  [INFO:CONSOLE(2)] "Error", source: https://wtm.pstatic.net/bcf13cb/74ded82ea2fa78fbbad0.js (2)
+2026-01-29 16:20:24.825 13882-13882 AutofillManager         com.bongkru.app                      I  showAutofillDialog() return false due to improve fill dialog
+2026-01-29 16:20:24.831 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:ceead868: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:20:24.832 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:20:24.832 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:20:24.841 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 6412 bytes, containing 2 windows, 17 views
+2026-01-29 16:20:24.901 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@d5eab4c
+2026-01-29 16:20:25.530 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:ceead868: onShown
+2026-01-29 16:20:31.146 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:d1c0597f: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:20:31.146 13882-13882 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:20:31.146 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:d1c0597f: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:20:31.149 13882-13882 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 6420 bytes, containing 2 windows, 17 views
+2026-01-29 16:20:34.295 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:c354e71e: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:20:34.297 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:20:34.297 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8e013a2
+2026-01-29 16:20:34.297 13882-13882 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:20:34.341 13882-13882 ImeTracker              com.bongkru.app                      I  system_server:c83508a0: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:20:34.614 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=5ecf70bd92477fd8493463ae6406c899&client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&locale=en_US&inapp_view=&oauth_os=
+2026-01-29 16:20:34.615 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:20:34.615 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:20:34.619 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:20:34.622 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/nidlogin.login
+2026-01-29 16:20:34.753 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/login/noauth/allow_oauth?oauth_token=DTf5rRTmhiCULwxEmb&with_pin&step=agree_term&inapp_view&oauth_os
+2026-01-29 16:20:34.753 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:20:34.754 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:20:34.757 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:20:34.759 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=5ecf70bd92477fd8493463ae6406c899&client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&locale=en_US&inapp_view=&oauth_os=
+2026-01-29 16:20:34.787 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=5ecf70bd92477fd8493463ae6406c899&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&client_id=3gieVh251O79fUraIJhx&oauth_os&inapp_view&locale=en_US&oauth_token=DTf5rRTmhiCULwxEmb
+2026-01-29 16:20:34.788 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:20:34.788 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:20:34.855 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/oauth/naver/callback?code=DTf5rRTmhiCULwxEmb&state=5ecf70bd92477fd8493463ae6406c899
+2026-01-29 16:20:34.855 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:20:34.855 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:20:34.861 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:20:34.863 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=5ecf70bd92477fd8493463ae6406c899&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&client_id=3gieVh251O79fUraIJhx&oauth_os&inapp_view&locale=en_US&oauth_token=DTf5rRTmhiCULwxEmb
+2026-01-29 16:20:37.561 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: bongseonjang://oauth/naver/callback?key=c7d11d78-6bbc-496c-9064-24c63b74a5ee
+2026-01-29 16:20:37.561 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:20:37.561 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:20:37.573 13882-13882 InAppBrowser            com.bongkru.app                      W  No handler for external URL: bongseonjang://oauth/naver/callback?key=c7d11d78-6bbc-496c-9064-24c63b74a5ee (Ask Gemini)
+                                                                                                    android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.VIEW dat=bongseonjang://oauth/... flg=0x10000000 xflg=0x4 }
+                                                                                                    	at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2453)
+                                                                                                    	at android.app.Instrumentation.execStartActivity(Instrumentation.java:2020)
+                                                                                                    	at android.app.Activity.startActivityForResult(Activity.java:6058)
+                                                                                                    	at androidx.activity.ComponentActivity.startActivityForResult(ComponentActivity.kt:704)
+                                                                                                    	at android.app.Activity.startActivityForResult(Activity.java:6015)
+                                                                                                    	at androidx.activity.ComponentActivity.startActivityForResult(ComponentActivity.kt:683)
+                                                                                                    	at android.app.Activity.startActivity(Activity.java:6518)
+                                                                                                    	at android.app.Activity.startActivity(Activity.java:6485)
+                                                                                                    	at android.content.ContextWrapper.startActivity(ContextWrapper.java:438)
+                                                                                                    	at ee.forgr.capacitor_inappbrowser.WebViewDialog$5.shouldOverrideUrlLoading(WebViewDialog.java:2206)
+                                                                                                    	at org.chromium.android_webview.AwContentsClientBridge.shouldOverrideUrlLoading(chromium-TrichromeWebViewGoogle6432.aab-stable-699813538:117)
+                                                                                                    	at android.os.MessageQueue.nativePollOnce(Native Method)
+                                                                                                    	at android.os.MessageQueue.nextLegacy(MessageQueue.java:983)
+                                                                                                    	at android.os.MessageQueue.next(MessageQueue.java:1092)
+                                                                                                    	at android.os.Looper.loopOnce(Looper.java:197)
+                                                                                                    	at android.os.Looper.loop(Looper.java:367)
+                                                                                                    	at android.app.ActivityThread.main(ActivityThread.java:9282)
+                                                                                                    	at java.lang.reflect.Method.invoke(Native Method)
+                                                                                                    	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:566)
+                                                                                                    	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:929)
+2026-01-29 16:20:37.573 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event pageLoadError
+2026-01-29 16:20:37.573 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event pageLoadError
+2026-01-29 16:20:37.577 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:20:37.577 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:20:37.579 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:20:37.579 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:21:01.012 13882-13882 cr_AwContents           com.bongkru.app                      W  WebView.destroy() called while WebView is still attached to window.
+2026-01-29 16:21:01.014 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): null
+2026-01-29 16:21:01.032 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event closeEvent
+2026-01-29 16:21:01.037 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] InAppBrowser closed
+2026-01-29 16:21:01.071 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DTlRncLp.js - Line 2 - Msg: [SocialLogin] 네이버 결과: [object Object]
+2026-01-29 16:21:01.083 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224706, pluginId: InAppBrowser, methodName: removeAllListeners
+2026-01-29 16:21:01.083 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224706, pluginId: InAppBrowser, methodName: removeAllListeners, methodData: {}
+2026-01-29 16:21:01.096 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:21:01.098 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:49c9526e: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:21:01.119 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:21:04.358 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DTlRncLp.js - Line 2 - Msg: [SocialLogin] 네이버 로그인 버튼 클릭
+2026-01-29 16:21:04.358 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [NaverOAuth] naverAuthorize called, isCapacitor: true
+2026-01-29 16:21:04.362 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] === Starting OAuth with InAppBrowser ===
+2026-01-29 16:21:04.362 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] provider: naver
+2026-01-29 16:21:04.363 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] authUrl: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/start/naver?platform=app
+2026-01-29 16:21:04.367 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224707, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:21:04.367 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224707, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"urlChangeEvent"}
+2026-01-29 16:21:04.368 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224708, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:21:04.369 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224708, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"closeEvent"}
+2026-01-29 16:21:04.369 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224709, pluginId: InAppBrowser, methodName: openWebView
+2026-01-29 16:21:04.369 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224709, pluginId: InAppBrowser, methodName: openWebView, methodData: {"url":"https:\/\/bongseonjang--tkfkdgowjdakfas.replit.app\/api\/auth\/start\/naver?platform=app"}
+2026-01-29 16:21:04.370 13882-13939 InAppBrowserPlugin      com.bongkru.app                      D  No authorized app links provided.
+2026-01-29 16:21:04.370 13882-13939 InAppBrowserPlugin      com.bongkru.app                      D  No blocked hosts provided.
+2026-01-29 16:21:04.401 13882-13888 com.bongkru.app         com.bongkru.app                      W  Cleared Reference was only reachable from finalizer (only reported once)
+2026-01-29 16:21:04.430 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:21:04.430 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] InAppBrowser opened
+2026-01-29 16:21:04.430 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:21:04.438 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@780ef73
+2026-01-29 16:21:04.598 13882-13882 InAppBrowser            com.bongkru.app                      D  JavaScript interface injected early after URL load
+2026-01-29 16:21:04.645 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=0e82df4406a812f979bfb6d7d033fb00
+2026-01-29 16:21:04.645 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:04.645 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:04.712 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:21:04.712 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:a012d6b2: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:21:04.796 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/login/noauth/allow_oauth?oauth_token=FbTE49GCkUzzpYojbI&with_pin&step=agree_term&inapp_view&oauth_os
+2026-01-29 16:21:04.797 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:04.797 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:04.801 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:21:04.806 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=0e82df4406a812f979bfb6d7d033fb00
+2026-01-29 16:21:04.838 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=0e82df4406a812f979bfb6d7d033fb00&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&client_id=3gieVh251O79fUraIJhx&oauth_os&inapp_view&locale=en_US&oauth_token=FbTE49GCkUzzpYojbI
+2026-01-29 16:21:04.838 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:04.838 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:04.906 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:21:04.909 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/oauth/naver/callback?code=FbTE49GCkUzzpYojbI&state=0e82df4406a812f979bfb6d7d033fb00
+2026-01-29 16:21:04.909 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:04.909 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:04.913 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=0e82df4406a812f979bfb6d7d033fb00&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&client_id=3gieVh251O79fUraIJhx&oauth_os&inapp_view&locale=en_US&oauth_token=FbTE49GCkUzzpYojbI
+2026-01-29 16:21:06.684 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: bongseonjang://oauth/naver/callback?key=ad9aeb30-de48-465a-8717-f48a0addcb1c
+2026-01-29 16:21:06.684 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:06.684 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:06.686 13882-13882 InAppBrowser            com.bongkru.app                      W  No handler for external URL: bongseonjang://oauth/naver/callback?key=ad9aeb30-de48-465a-8717-f48a0addcb1c (Ask Gemini)
+                                                                                                    android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.VIEW dat=bongseonjang://oauth/... flg=0x10000000 xflg=0x4 }
+                                                                                                    	at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2453)
+                                                                                                    	at android.app.Instrumentation.execStartActivity(Instrumentation.java:2020)
+                                                                                                    	at android.app.Activity.startActivityForResult(Activity.java:6058)
+                                                                                                    	at androidx.activity.ComponentActivity.startActivityForResult(ComponentActivity.kt:704)
+                                                                                                    	at android.app.Activity.startActivityForResult(Activity.java:6015)
+                                                                                                    	at androidx.activity.ComponentActivity.startActivityForResult(ComponentActivity.kt:683)
+                                                                                                    	at android.app.Activity.startActivity(Activity.java:6518)
+                                                                                                    	at android.app.Activity.startActivity(Activity.java:6485)
+                                                                                                    	at android.content.ContextWrapper.startActivity(ContextWrapper.java:438)
+                                                                                                    	at ee.forgr.capacitor_inappbrowser.WebViewDialog$5.shouldOverrideUrlLoading(WebViewDialog.java:2206)
+                                                                                                    	at org.chromium.android_webview.AwContentsClientBridge.shouldOverrideUrlLoading(chromium-TrichromeWebViewGoogle6432.aab-stable-699813538:117)
+                                                                                                    	at android.os.MessageQueue.nativePollOnce(Native Method)
+                                                                                                    	at android.os.MessageQueue.nextLegacy(MessageQueue.java:983)
+                                                                                                    	at android.os.MessageQueue.next(MessageQueue.java:1092)
+                                                                                                    	at android.os.Looper.loopOnce(Looper.java:197)
+                                                                                                    	at android.os.Looper.loop(Looper.java:367)
+                                                                                                    	at android.app.ActivityThread.main(ActivityThread.java:9282)
+                                                                                                    	at java.lang.reflect.Method.invoke(Native Method)
+                                                                                                    	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:566)
+                                                                                                    	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:929)
+2026-01-29 16:21:06.686 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event pageLoadError
+2026-01-29 16:21:06.686 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event pageLoadError
+2026-01-29 16:21:06.691 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:21:06.691 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:21:06.693 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:21:06.693 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:21:10.412 13882-13882 cr_AwContents           com.bongkru.app                      W  WebView.destroy() called while WebView is still attached to window.
+2026-01-29 16:21:10.414 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): null
+2026-01-29 16:21:10.426 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event closeEvent
+2026-01-29 16:21:10.442 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] InAppBrowser closed
+2026-01-29 16:21:10.443 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DTlRncLp.js - Line 2 - Msg: [SocialLogin] 네이버 결과: [object Object]
+2026-01-29 16:21:10.448 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224710, pluginId: InAppBrowser, methodName: removeAllListeners
+2026-01-29 16:21:10.448 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224710, pluginId: InAppBrowser, methodName: removeAllListeners, methodData: {}
+2026-01-29 16:21:10.462 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:21:10.468 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:21:10.468 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:7d30440b: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:21:11.496 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DTlRncLp.js - Line 2 - Msg: [SocialLogin] 네이버 로그인 버튼 클릭
+2026-01-29 16:21:11.497 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [NaverOAuth] naverAuthorize called, isCapacitor: true
+2026-01-29 16:21:11.497 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] === Starting OAuth with InAppBrowser ===
+2026-01-29 16:21:11.498 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] provider: naver
+2026-01-29 16:21:11.498 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] authUrl: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/start/naver?platform=app
+2026-01-29 16:21:11.500 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224711, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:21:11.500 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224711, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"urlChangeEvent"}
+2026-01-29 16:21:11.501 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224712, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:21:11.501 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224712, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"closeEvent"}
+2026-01-29 16:21:11.501 13882-13882 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 61224713, pluginId: InAppBrowser, methodName: openWebView
+2026-01-29 16:21:11.502 13882-13882 Capacitor               com.bongkru.app                      V  callback: 61224713, pluginId: InAppBrowser, methodName: openWebView, methodData: {"url":"https:\/\/bongseonjang--tkfkdgowjdakfas.replit.app\/api\/auth\/start\/naver?platform=app"}
+2026-01-29 16:21:11.502 13882-13939 InAppBrowserPlugin      com.bongkru.app                      D  No authorized app links provided.
+2026-01-29 16:21:11.502 13882-13939 InAppBrowserPlugin      com.bongkru.app                      D  No blocked hosts provided.
+2026-01-29 16:21:11.533 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:21:11.534 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] InAppBrowser opened
+2026-01-29 16:21:11.534 13882-13882 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:21:11.539 13882-13882 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@1585cb4
+2026-01-29 16:21:11.651 13882-13882 InAppBrowser            com.bongkru.app                      D  JavaScript interface injected early after URL load
+2026-01-29 16:21:11.703 13882-13882 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:21:11.703 13882-13882 ImeTracker              com.bongkru.app                      I  com.bongkru.app:ba42fd63: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:21:11.744 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=b101e03e1bac2f7064ff42cb07a697b1
+2026-01-29 16:21:11.744 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:11.744 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:11.882 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/login/noauth/allow_oauth?oauth_token=QMupP2Bfx9ujV2HftI&with_pin&step=agree_term&inapp_view&oauth_os
+2026-01-29 16:21:11.883 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:11.883 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:11.891 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:21:11.898 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=b101e03e1bac2f7064ff42cb07a697b1
+2026-01-29 16:21:11.927 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=b101e03e1bac2f7064ff42cb07a697b1&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&client_id=3gieVh251O79fUraIJhx&oauth_os&inapp_view&locale=en_US&oauth_token=QMupP2Bfx9ujV2HftI
+2026-01-29 16:21:11.928 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:11.929 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:11.985 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:21:11.991 13882-13882 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=b101e03e1bac2f7064ff42cb07a697b1&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&client_id=3gieVh251O79fUraIJhx&oauth_os&inapp_view&locale=en_US&oauth_token=QMupP2Bfx9ujV2HftI
+2026-01-29 16:21:11.993 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/oauth/naver/callback?code=QMupP2Bfx9ujV2HftI&state=b101e03e1bac2f7064ff42cb07a697b1
+2026-01-29 16:21:11.993 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:11.993 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:13.427 13882-13882 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: bongseonjang://oauth/naver/callback?key=d31815d0-5729-42d8-bc79-359fe471c36e
+2026-01-29 16:21:13.427 13882-13882 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:21:13.427 13882-13882 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:21:13.429 13882-13882 InAppBrowser            com.bongkru.app                      W  No handler for external URL: bongseonjang://oauth/naver/callback?key=d31815d0-5729-42d8-bc79-359fe471c36e (Ask Gemini)
+                                                                                                    android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.VIEW dat=bongseonjang://oauth/... flg=0x10000000 xflg=0x4 }
+                                                                                                    	at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2453)
+                                                                                                    	at android.app.Instrumentation.execStartActivity(Instrumentation.java:2020)
+                                                                                                    	at android.app.Activity.startActivityForResult(Activity.java:6058)
+                                                                                                    	at androidx.activity.ComponentActivity.startActivityForResult(ComponentActivity.kt:704)
+                                                                                                    	at android.app.Activity.startActivityForResult(Activity.java:6015)
+                                                                                                    	at androidx.activity.ComponentActivity.startActivityForResult(ComponentActivity.kt:683)
+                                                                                                    	at android.app.Activity.startActivity(Activity.java:6518)
+                                                                                                    	at android.app.Activity.startActivity(Activity.java:6485)
+                                                                                                    	at android.content.ContextWrapper.startActivity(ContextWrapper.java:438)
+                                                                                                    	at ee.forgr.capacitor_inappbrowser.WebViewDialog$5.shouldOverrideUrlLoading(WebViewDialog.java:2206)
+                                                                                                    	at org.chromium.android_webview.AwContentsClientBridge.shouldOverrideUrlLoading(chromium-TrichromeWebViewGoogle6432.aab-stable-699813538:117)
+                                                                                                    	at android.os.MessageQueue.nativePollOnce(Native Method)
+                                                                                                    	at android.os.MessageQueue.nextLegacy(MessageQueue.java:983)
+                                                                                                    	at android.os.MessageQueue.next(MessageQueue.java:1092)
+                                                                                                    	at android.os.Looper.loopOnce(Looper.java:197)
+                                                                                                    	at android.os.Looper.loop(Looper.java:367)
+                                                                                                    	at android.app.ActivityThread.main(ActivityThread.java:9282)
+                                                                                                    	at java.lang.reflect.Method.invoke(Native Method)
+                                                                                                    	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:566)
+                                                                                                    	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:929)
+2026-01-29 16:21:13.430 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event pageLoadError
+2026-01-29 16:21:13.430 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event pageLoadError
+2026-01-29 16:21:13.435 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:21:13.435 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:21:13.435 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:21:13.435 13882-13882 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
