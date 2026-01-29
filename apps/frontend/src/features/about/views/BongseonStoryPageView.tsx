@@ -1,9 +1,9 @@
-import { AppBar, AppBarSpacer } from '../../../components';
+import { AppBar } from '../../../components';
 import { useBongseonStoryPage } from '../hooks/useBongseonStoryPage';
 import './BongseonStoryPageView.css';
 
 export default function BongseonStoryPageView() {
-  const { handleBack, handleCartClick, handleHeroAction } = useBongseonStoryPage();
+  const { handleBack, handleCartClick } = useBongseonStoryPage();
 
   return (
     <div className="bongseon-story-page">
@@ -13,21 +13,14 @@ export default function BongseonStoryPageView() {
         onBackClick={handleBack}
         showCart
         onCartClick={handleCartClick}
+        className="bongseon-story-page__app-bar"
       />
-      <AppBarSpacer />
       <div className="bongseon-story-page__hero" role="banner">
         <div className="bongseon-story-page__hero-overlay" />
         <div className="bongseon-story-page__hero-content">
           <p className="bongseon-story-page__hero-kicker">바다의 신선함을</p>
           <p className="bongseon-story-page__hero-kicker">당신의 집까지</p>
           <h1 className="bongseon-story-page__hero-title">가장 빠르고 가장 신선하게-</h1>
-          <button
-            type="button"
-            className="bongseon-story-page__hero-button"
-            onClick={handleHeroAction}
-          >
-            새벽배송 소식 보기
-          </button>
         </div>
       </div>
 
