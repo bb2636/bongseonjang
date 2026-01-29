@@ -6,7 +6,7 @@ import { getPhoneVerificationService } from '../application/phoneVerificationFac
 import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
 import { SocialProvider } from '../../../entity/UserSocialAccount.js';
 import { LoginRequest, SignupRequest } from '@bongkru/contract';
-import { oauthSessionStore, OAuthSessionData } from '../domain/OAuthSessionStore.js';
+import { oauthSessionStore, OAuthSessionData, pollingSessionStore } from '../domain/OAuthSessionStore.js';
 
 const userService = new UserApplicationService();
 const socialAuthService = new SocialAuthService();
@@ -722,7 +722,91 @@ export class AuthController {
       res.status(200).type('html').send(html);
     };
 
-    const doRedirect = (provider: string, platform: string | undefined, sessionKey: string): void => {
+    const sendPollingCompletePage = (success: boolean, message: string): void => {
+      const html = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${success ? '로그인 완료' : '로그인 실패'}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .container {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+    .message { 
+      color: #333; 
+      font-size: 18px;
+      margin: 0 0 8px 0; 
+      font-weight: 600;
+    }
+    .hint {
+      color: #666;
+      font-size: 14px;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">${success ? '✓' : '✕'}</div>
+    <p class="message">${message}</p>
+    <p class="hint">${success ? '이 창은 자동으로 닫힙니다' : '앱으로 돌아가서 다시 시도해주세요'}</p>
+  </div>
+</body>
+</html>`;
+      res.status(200).type('html').send(html);
+    };
+
+    const doRedirect = (provider: string, platform: string | undefined, sessionKey: string, originalState?: string): void => {
+      // Handle polling-based OAuth (for Google on mobile without deep links)
+      if (platform === 'polling' && originalState?.startsWith('polling:')) {
+        const pollingSessionId = originalState.replace('polling:', '');
+        const sessionData = oauthSessionStore.get(sessionKey);
+        
+        if (sessionData?.token) {
+          // Successful login - update polling session
+          pollingSessionStore.update(pollingSessionId, {
+            status: 'completed',
+            token: sessionData.token,
+            isNewUser: sessionData.isNewUser,
+            user: sessionData.user,
+          });
+          console.log('[Polling OAuth] Session completed:', pollingSessionId);
+          sendPollingCompletePage(true, '로그인 완료!');
+        } else if (sessionData?.error) {
+          // Error - update polling session with error
+          pollingSessionStore.update(pollingSessionId, {
+            status: 'error',
+            error: sessionData.error,
+          });
+          console.log('[Polling OAuth] Session error:', pollingSessionId, sessionData.error);
+          sendPollingCompletePage(false, '로그인에 실패했습니다');
+        } else {
+          // Unknown state
+          pollingSessionStore.update(pollingSessionId, {
+            status: 'error',
+            error: 'unknown_error',
+          });
+          sendPollingCompletePage(false, '알 수 없는 오류가 발생했습니다');
+        }
+        return;
+      }
+
       const redirectUrl = getRedirectUrl(provider, platform, sessionKey);
       console.log(`[OAuth Callback] Redirecting to: ${redirectUrl}`);
       
@@ -744,27 +828,27 @@ export class AuthController {
 
       if (oauthError) {
         const sessionKey = oauthSessionStore.save({ error: oauthError as string, state: originalState });
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
       if (!originalState || !validateAndClearPendingAuthState(originalState)) {
         console.warn(`[OAuth Callback] Invalid or missing state. State: ${originalState}, Provider: ${provider}`);
         const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
       if (!code) {
         const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
       const validProviders = ['kakao', 'naver', 'google'];
       if (!validProviders.includes(provider)) {
         const sessionKey = oauthSessionStore.save({ error: 'invalid_provider', state: originalState });
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
@@ -780,13 +864,13 @@ export class AuthController {
       } catch (tokenError) {
         console.error('Token exchange error:', tokenError);
         const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
       if (!socialUserInfo) {
         const sessionKey = oauthSessionStore.save({ error: 'user_info_failed', state: originalState });
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
@@ -798,7 +882,7 @@ export class AuthController {
           name: socialUserInfo.name,
           state: originalState,
         });
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
@@ -822,21 +906,126 @@ export class AuthController {
           },
         });
         console.log(`[OAuth Callback] Success! Redirecting to: ${getRedirectUrl(provider, platform, sessionKey)}`);
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
       } catch (loginError) {
         console.error('Social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
         const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
-        doRedirect(provider, platform, sessionKey);
+        doRedirect(provider, platform, sessionKey, originalState);
       }
     } catch (error) {
       console.error('OAuth callback error:', error);
       const provider = req.params.provider as string;
       const { state } = req.query;
-      const { originalState } = extractAppSchemeFromState(state as string | undefined);
-      const pendingSession = originalState ? pendingAuthSessions.get(originalState) : undefined;
-      const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: originalState });
-      doRedirect(provider, pendingSession?.platform, sessionKey);
+      const { originalState: catchOriginalState } = extractAppSchemeFromState(state as string | undefined);
+      const pendingSession = catchOriginalState ? pendingAuthSessions.get(catchOriginalState) : undefined;
+      const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: catchOriginalState });
+      doRedirect(provider, pendingSession?.platform, sessionKey, catchOriginalState);
+    }
+  }
+
+  // Create a polling session for deep-link-free OAuth flow
+  async createPollingSession(req: Request, res: Response): Promise<void> {
+    const sessionId = pollingSessionStore.create();
+    console.log('[Polling OAuth] Created session:', sessionId);
+    res.status(200).json({ sessionId });
+  }
+
+  // Check polling session status
+  async checkPollingSession(req: Request, res: Response): Promise<void> {
+    const { sessionId } = req.params;
+    const session = pollingSessionStore.check(sessionId);
+    
+    if (!session) {
+      res.status(404).json({ error: 'Session not found or expired' });
+      return;
+    }
+
+    if (session.status === 'completed') {
+      // Consume the session data (one-time use)
+      const data = pollingSessionStore.consume(sessionId);
+      res.status(200).json(data);
+      return;
+    }
+
+    res.status(200).json({ status: session.status });
+  }
+
+  // Start OAuth flow with polling session
+  async startPollingOAuth(req: Request, res: Response): Promise<void> {
+    const provider = req.params.provider as string;
+    const { pollingSessionId } = req.query;
+
+    if (!pollingSessionId) {
+      res.status(400).json({ error: 'pollingSessionId is required' });
+      return;
+    }
+
+    const socialRedirectBase = process.env.VITE_SOCIAL_REDIRECT_BASE_URL || process.env.SOCIAL_REDIRECT_BASE_URL;
+    const baseUrl = socialRedirectBase || (process.env.REPLIT_DEPLOYMENT_URL
+      ? `https://${process.env.REPLIT_DEPLOYMENT_URL}`
+      : process.env.REPLIT_DEV_DOMAIN
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}`
+        : `${req.protocol}://${req.get('host')}`);
+
+    try {
+      // Store the polling session ID in state
+      const stateData = `polling:${pollingSessionId}`;
+      pendingAuthSessions.set(stateData, {
+        state: stateData,
+        platform: 'polling',
+        createdAt: Date.now()
+      });
+
+      const redirectUri = `${baseUrl}/api/auth/oauth/${provider}/callback`;
+      let authUrl: string;
+
+      if (provider === 'kakao') {
+        const clientId = process.env.KAKAO_REST_API_KEY;
+        if (!clientId) throw new Error('KAKAO_REST_API_KEY not configured');
+        const params = new URLSearchParams({
+          client_id: clientId,
+          redirect_uri: redirectUri,
+          response_type: 'code',
+          state: stateData,
+        });
+        authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
+      } else if (provider === 'naver') {
+        const clientId = process.env.NAVER_CLIENT_ID;
+        if (!clientId) throw new Error('NAVER_CLIENT_ID not configured');
+        const params = new URLSearchParams({
+          client_id: clientId,
+          redirect_uri: redirectUri,
+          response_type: 'code',
+          state: stateData,
+        });
+        authUrl = `https://nid.naver.com/oauth2.0/authorize?${params.toString()}`;
+      } else if (provider === 'google') {
+        const clientId = process.env.GOOGLE_CLIENT_ID;
+        if (!clientId) throw new Error('GOOGLE_CLIENT_ID not configured');
+        const params = new URLSearchParams({
+          client_id: clientId,
+          redirect_uri: redirectUri,
+          response_type: 'code',
+          scope: 'email profile',
+          state: stateData,
+          access_type: 'offline',
+          prompt: 'consent',
+        });
+        authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+      } else {
+        res.status(400).json({ error: 'Unsupported provider for polling OAuth' });
+        return;
+      }
+      
+      console.log('[Polling OAuth] Starting OAuth for provider:', provider);
+      console.log('[Polling OAuth] Polling session ID:', pollingSessionId);
+      console.log('[Polling OAuth] Redirect URL:', authUrl);
+      
+      res.redirect(authUrl);
+    } catch (error) {
+      console.error('[Polling OAuth] Error starting OAuth:', error);
+      res.status(500).json({ error: 'Failed to start OAuth' });
     }
   }
 }

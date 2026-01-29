@@ -66,3 +66,93 @@ class OAuthSessionStore {
 }
 
 export const oauthSessionStore = new OAuthSessionStore();
+
+// Polling session store for deep-link-free OAuth flow
+export interface PollingSessionData {
+  status: 'pending' | 'completed' | 'error';
+  token?: string;
+  refreshToken?: string;
+  isNewUser?: boolean;
+  error?: string;
+  user?: {
+    id: string | number;
+    email: string;
+    name: string;
+  };
+}
+
+interface PollingSessionEntry {
+  data: PollingSessionData;
+  expiresAt: number;
+}
+
+const POLLING_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+class PollingSessionStore {
+  private store: Map<string, PollingSessionEntry> = new Map();
+
+  create(): string {
+    const sessionId = crypto.randomUUID();
+    const expiresAt = Date.now() + POLLING_TTL_MS;
+    
+    this.store.set(sessionId, { 
+      data: { status: 'pending' }, 
+      expiresAt 
+    });
+    this.cleanup();
+    
+    return sessionId;
+  }
+
+  update(sessionId: string, data: Partial<PollingSessionData>): boolean {
+    const entry = this.store.get(sessionId);
+    if (!entry || Date.now() > entry.expiresAt) {
+      return false;
+    }
+    
+    entry.data = { ...entry.data, ...data };
+    return true;
+  }
+
+  check(sessionId: string): PollingSessionData | null {
+    const entry = this.store.get(sessionId);
+    
+    if (!entry) {
+      return null;
+    }
+
+    if (Date.now() > entry.expiresAt) {
+      this.store.delete(sessionId);
+      return null;
+    }
+
+    return entry.data;
+  }
+
+  consume(sessionId: string): PollingSessionData | null {
+    const entry = this.store.get(sessionId);
+    
+    if (!entry) {
+      return null;
+    }
+
+    if (Date.now() > entry.expiresAt) {
+      this.store.delete(sessionId);
+      return null;
+    }
+
+    this.store.delete(sessionId);
+    return entry.data;
+  }
+
+  private cleanup(): void {
+    const now = Date.now();
+    for (const [key, entry] of this.store.entries()) {
+      if (now > entry.expiresAt) {
+        this.store.delete(key);
+      }
+    }
+  }
+}
+
+export const pollingSessionStore = new PollingSessionStore();

@@ -17,6 +17,11 @@ router.post('/social/complete', (req, res) => authController.completeSocialLogin
 router.post('/apple/callback', (req, res) => authController.appleCallback(req, res));
 router.get('/oauth/:provider/callback', (req, res) => authController.oauthCallback(req, res));
 router.get('/session/:key', (req, res) => authController.getSession(req, res));
+
+// Polling-based OAuth for deep-link-free flow (Google OAuth on mobile)
+router.post('/polling-session', (req, res) => authController.createPollingSession(req, res));
+router.get('/polling-session/:sessionId', (req, res) => authController.checkPollingSession(req, res));
+router.get('/start-polling/:provider', (req, res) => authController.startPollingOAuth(req, res));
 router.post('/social/complete-profile', authMiddleware, (req, res) => authController.completeSocialProfile(req, res));
 
 router.get('/social/accounts', authMiddleware, (req, res) => authController.getLinkedAccounts(req, res));
