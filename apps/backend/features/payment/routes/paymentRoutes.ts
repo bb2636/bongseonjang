@@ -655,7 +655,14 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
     const paymentMethod = methodMap[payment.method] || 'card';
 
     const returnUrl = getBackendCallbackUrl(req, appScheme);
-    console.log('[NicePay Form] Generated returnUrl:', returnUrl, 'appScheme:', appScheme);
+    console.log('[NicePay Form] === Payment Config ===');
+    console.log('[NicePay Form] orderId:', orderId);
+    console.log('[NicePay Form] payment.method (DB):', payment.method);
+    console.log('[NicePay Form] paymentMethod (mapped):', paymentMethod);
+    console.log('[NicePay Form] amount:', order.finalAmount);
+    console.log('[NicePay Form] goodsName:', goodsName);
+    console.log('[NicePay Form] returnUrl:', returnUrl);
+    console.log('[NicePay Form] appScheme:', appScheme);
 
     const html = `
 <!DOCTYPE html>
