@@ -162,19 +162,25 @@ export class RealProfileRepository implements ProfileRepository {
     }));
   }
 
+  private toKST(date: Date): Date {
+    return new Date(date.getTime() + (9 * 60 * 60 * 1000));
+  }
+
   private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const kst = this.toKST(date);
+    const year = kst.getUTCFullYear();
+    const month = String(kst.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kst.getUTCDate()).padStart(2, '0');
     return `${year}.${month}.${day}`;
   }
 
   private formatStatusDate(date: Date): string {
-    const year = String(date.getFullYear()).slice(-2);
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const kst = this.toKST(date);
+    const year = String(kst.getUTCFullYear()).slice(-2);
+    const month = String(kst.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(kst.getUTCDate()).padStart(2, '0');
+    const hours = String(kst.getUTCHours()).padStart(2, '0');
+    const minutes = String(kst.getUTCMinutes()).padStart(2, '0');
     return `${year}.${month}.${day} ${hours}:${minutes}`;
   }
 

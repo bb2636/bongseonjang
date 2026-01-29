@@ -129,7 +129,9 @@ export function CheckoutPage() {
   const [isDeliverySheetOpen, setIsDeliverySheetOpen] = useState(false);
   const [isAddressSheetOpen, setIsAddressSheetOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
-  const hasUserSelectedAddress = useRef(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(() => {
+    return sessionStorage.getItem('checkout_selected_address_id');
+  });
   const [isProductsExpanded, setIsProductsExpanded] = useState(true);
   const [pointInput, setPointInput] = useState('');
   const [usedPoints, setUsedPoints] = useState(0);
@@ -196,10 +198,26 @@ export function CheckoutPage() {
     : (isCartLoading || isAddressLoading || isAddressesLoading || isProfileLoading);
 
   useEffect(() => {
-    if (defaultAddress && !hasUserSelectedAddress.current) {
+    if (selectedAddressId && addresses.length > 0) {
+      const savedAddress = addresses.find(addr => addr.id === selectedAddressId);
+      if (savedAddress) {
+        setSelectedAddress(savedAddress);
+        return;
+      } else {
+        sessionStorage.removeItem('checkout_selected_address_id');
+        setSelectedAddressId(null);
+      }
+    }
+    if (defaultAddress && !selectedAddress) {
       setSelectedAddress(defaultAddress);
     }
-  }, [defaultAddress]);
+  }, [defaultAddress, addresses, selectedAddressId]);
+
+  useEffect(() => {
+    return () => {
+      sessionStorage.removeItem('checkout_selected_address_id');
+    };
+  }, []);
 
   const currentAddress = selectedAddress || defaultAddress;
 
@@ -1123,8 +1141,9 @@ export function CheckoutPage() {
         addresses={addresses}
         selectedAddressId={currentAddress?.id || null}
         onSelect={(address) => {
-          hasUserSelectedAddress.current = true;
           setSelectedAddress(address);
+          setSelectedAddressId(address.id);
+          sessionStorage.setItem('checkout_selected_address_id', address.id);
         }}
         onEdit={(address) => navigate(`/address/edit/${address.id}`)}
         onAddNew={() => navigate('/address/add')}
