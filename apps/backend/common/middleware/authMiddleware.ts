@@ -44,3 +44,33 @@ export async function authMiddleware(
   req.userId = user.id;
   next();
 }
+
+export async function optionalAuthMiddleware(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    next();
+    return;
+  }
+
+  const token = authHeader.substring(7);
+  const payload = authService.verifyToken(token);
+
+  if (!payload) {
+    next();
+    return;
+  }
+
+  const userRepository = new UserRepository();
+  const user = await userRepository.findById(payload.userId);
+
+  if (user && !user.isSuspended) {
+    req.userId = user.id;
+  }
+
+  next();
+}

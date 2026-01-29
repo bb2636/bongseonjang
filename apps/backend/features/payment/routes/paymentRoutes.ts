@@ -14,7 +14,7 @@ import { Product } from '../../../entity/Product';
 import { ProductImage } from '../../../entity/ProductImage';
 import { ProductExposureCategory } from '../../../entity/ProductExposureCategory';
 import { ProductCategory } from '../../../entity/ProductCategory';
-import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
+import { authMiddleware, optionalAuthMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
 import { PointRepository } from '../../point/repository/PointRepository';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl';
@@ -77,6 +77,18 @@ async function checkProductMatchesTargetCategories(
 
 function hashPhone(phone: string): string {
   return crypto.createHash('sha256').update(phone).digest('hex');
+}
+
+// Generate a secure deletion token for an order (HMAC-based, no DB storage needed)
+function generateDeletionToken(orderId: string): string {
+  const secret = process.env.NICEPAY_SECRET_KEY || 'fallback-deletion-secret';
+  return crypto.createHmac('sha256', secret).update(`delete:${orderId}`).digest('hex').substring(0, 32);
+}
+
+// Verify deletion token
+function verifyDeletionToken(orderId: string, token: string): boolean {
+  const expectedToken = generateDeletionToken(orderId);
+  return crypto.timingSafeEqual(Buffer.from(expectedToken), Buffer.from(token));
 }
 
 const router = Router();
@@ -592,6 +604,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
       amount: finalAmount,
       goodsName,
       returnUrl: clientReturnUrl,
+      deletionToken: generateDeletionToken(order.id),
     });
   } catch (error) {
     console.error('Failed to prepare payment:', error);
@@ -655,6 +668,7 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
     const paymentMethod = methodMap[payment.method] || 'card';
 
     const returnUrl = getBackendCallbackUrl(req, appScheme);
+    const deletionToken = generateDeletionToken(orderId);
     console.log('[NicePay Form] === Payment Config ===');
     console.log('[NicePay Form] orderId:', orderId);
     console.log('[NicePay Form] payment.method (DB):', payment.method);
@@ -759,7 +773,8 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
               errorCode: result.errorCode || result.resultCode,
               errorMsg: result.errorMsg || result.resultMsg,
               fullResult: result,
-              deleteOrder: true
+              deleteOrder: true,
+              deletionToken: '${deletionToken}'
             })
           }).catch(function(e) { console.error('Failed to log error:', e); });
         }
@@ -789,7 +804,9 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
 });
 
 // Helper function to safely delete pending orders within a transaction
-async function deletePendingOrder(orderId: string): Promise<boolean> {
+const PAYMENT_SESSION_TIMEOUT_MINUTES = 30;
+
+async function deletePendingOrder(orderId: string, userId?: string): Promise<boolean> {
   const queryRunner = AppDataSource.createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
@@ -802,10 +819,26 @@ async function deletePendingOrder(orderId: string): Promise<boolean> {
       return false;
     }
 
+    // Security: If userId is provided, verify ownership
+    if (userId && order.userId && order.userId !== userId) {
+      console.log('[Order Delete] User mismatch - userId:', userId, 'order.userId:', order.userId);
+      await queryRunner.rollbackTransaction();
+      return false;
+    }
+
     // Only delete orders with pending status (not yet paid)
     const deletableStatuses = ['pending', 'payment_pending'];
     if (!deletableStatuses.includes(order.status)) {
       console.log('[Order Delete] Cannot delete order with status:', order.status);
+      await queryRunner.rollbackTransaction();
+      return false;
+    }
+
+    // Security: Only allow deletion of orders created within payment session window
+    const orderAge = Date.now() - new Date(order.createdAt).getTime();
+    const maxAge = PAYMENT_SESSION_TIMEOUT_MINUTES * 60 * 1000;
+    if (orderAge > maxAge) {
+      console.log('[Order Delete] Order too old for deletion. Age:', Math.round(orderAge / 60000), 'minutes');
       await queryRunner.rollbackTransaction();
       return false;
     }
@@ -858,6 +891,8 @@ async function handlePaymentCallback(req: Request, res: Response) {
       console.error('[NicePay Callback] Authentication failed, returning error page');
       
       // Delete pending order when payment auth fails (user cancelled or error)
+      // Security: Callback is from NicePay server, orderId was originally sent by our server.
+      // deletePendingOrder validates: 30-min age limit + pending status only
       if (orderId) {
         await deletePendingOrder(orderId);
       }
@@ -1210,20 +1245,41 @@ router.get('/callback', handlePaymentCallback);
 router.post('/callback', handlePaymentCallback);
 
 // Error logging endpoint for NicePay payment errors (also handles order deletion)
-router.post('/log-error', async (req: Request, res: Response) => {
-  const { orderId, method, errorCode, errorMsg, fullResult, deleteOrder } = req.body;
+// Uses optional auth - if token provided, validates ownership
+router.post('/log-error', optionalAuthMiddleware, async (req: Request, res: Response) => {
+  const authReq = req as AuthenticatedRequest;
+  const userId = authReq.userId;
+  const { orderId, method, errorCode, errorMsg, fullResult, deleteOrder, deletionToken } = req.body;
+  
   console.error('[NicePay Payment Error] ========================');
   console.error('[NicePay Payment Error] OrderId:', orderId);
   console.error('[NicePay Payment Error] Method:', method);
   console.error('[NicePay Payment Error] ErrorCode:', errorCode);
   console.error('[NicePay Payment Error] ErrorMsg:', errorMsg);
+  console.error('[NicePay Payment Error] UserId:', userId || 'guest');
+  console.error('[NicePay Payment Error] HasDeletionToken:', !!deletionToken);
   console.error('[NicePay Payment Error] Full Result:', JSON.stringify(fullResult, null, 2));
   console.error('[NicePay Payment Error] ========================');
   
   // Delete pending order if requested (from payment cancellation)
+  // Security: Requires valid deletion token OR authenticated user ownership
+  // Also validates order age (within 30 minutes) and status (pending only)
   let orderDeleted = false;
   if (deleteOrder && orderId) {
-    orderDeleted = await deletePendingOrder(orderId);
+    // Security check: Guest users MUST provide a valid deletion token
+    // Authenticated users are verified by userId in deletePendingOrder
+    if (!userId) {
+      // Guest user - require deletion token
+      if (!deletionToken) {
+        console.error('[NicePay Payment Error] Missing deletion token for guest orderId:', orderId);
+        return res.status(403).json({ logged: true, orderDeleted: false, error: 'Deletion token required' });
+      }
+      if (!verifyDeletionToken(orderId, deletionToken)) {
+        console.error('[NicePay Payment Error] Invalid deletion token for orderId:', orderId);
+        return res.status(403).json({ logged: true, orderDeleted: false, error: 'Invalid deletion token' });
+      }
+    }
+    orderDeleted = await deletePendingOrder(orderId, userId);
   }
   
   res.status(200).json({ logged: true, orderDeleted });
@@ -1533,6 +1589,7 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
       amount: finalAmount,
       goodsName,
       returnUrl: clientReturnUrl,
+      deletionToken: generateDeletionToken(order.id),
     });
   } catch (error) {
     console.error('Failed to prepare direct payment:', error);
@@ -1747,6 +1804,7 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
       amount: finalAmount,
       goodsName,
       returnUrl: clientReturnUrl,
+      deletionToken: generateDeletionToken(order.id),
     });
   } catch (error) {
     console.error('Failed to prepare guest payment:', error);

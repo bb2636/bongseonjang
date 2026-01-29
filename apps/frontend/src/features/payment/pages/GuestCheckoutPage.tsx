@@ -431,6 +431,7 @@ export function GuestCheckoutPage() {
                   errorCode: 'USER_CANCELLED',
                   errorMsg: '사용자가 결제를 취소했습니다',
                   deleteOrder: true,
+                  deletionToken: paymentData.deletionToken,
                 }),
               });
               console.log('[GuestPayment] Pending order deletion requested');
@@ -473,6 +474,7 @@ export function GuestCheckoutPage() {
                   errorCode: 'TIMEOUT',
                   errorMsg: '결제 시간이 초과되었습니다',
                   deleteOrder: true,
+                  deletionToken: paymentData.deletionToken,
                 }),
               });
             } catch (err) {
@@ -535,6 +537,7 @@ export function GuestCheckoutPage() {
                   errorMsg: result.errorMsg,
                   fullResult: result,
                   deleteOrder: true,
+                  deletionToken: paymentData.deletionToken,
                 }),
               });
               console.log('[Payment] Pending order deletion requested');
