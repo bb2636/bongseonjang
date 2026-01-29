@@ -604,7 +604,7 @@ export class AuthController {
 
     const getRedirectUrl = (provider: string, platform: string | undefined, sessionKey: string): string => {
       if (platform === 'app') {
-        return `${baseUrl}/social-callback?key=${sessionKey}&platform=app&provider=${provider}`;
+        return `${APP_SCHEME}://oauth/${provider}/callback?key=${sessionKey}`;
       }
       return `${baseUrl}/social-callback?key=${sessionKey}`;
     };
