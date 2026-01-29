@@ -726,12 +726,34 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
         returnUrl: '${returnUrl}',
         ${paymentMethod === 'vbank' ? `vbankHolder: '${buyerName.replace(/['"\\]/g, "")}',` : ''}
         fnError: function(result) {
+          console.error('[NicePay Error] Full result:', JSON.stringify(result));
+          console.error('[NicePay Error] errorCode:', result.errorCode);
+          console.error('[NicePay Error] errorMsg:', result.errorMsg);
+          console.error('[NicePay Error] resultCode:', result.resultCode);
+          console.error('[NicePay Error] resultMsg:', result.resultMsg);
+          console.error('[NicePay Error] tid:', result.tid);
+          
           document.querySelector('.loading').style.display = 'none';
+          var errorDetails = 'Code: ' + (result.errorCode || result.resultCode || 'N/A') + 
+                            ', Msg: ' + (result.errorMsg || result.resultMsg || '결제를 진행할 수 없습니다');
           document.getElementById('error-container').innerHTML = 
             '<div class="error">' +
             '<strong>결제 오류</strong><br>' +
-            (result.errorMsg || '결제를 진행할 수 없습니다') +
+            errorDetails +
             '</div>';
+          
+          // Send error to server for logging
+          fetch('/api/payment/log-error', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: '${orderId}',
+              method: '${paymentMethod}',
+              errorCode: result.errorCode || result.resultCode,
+              errorMsg: result.errorMsg || result.resultMsg,
+              fullResult: result
+            })
+          }).catch(function(e) { console.error('Failed to log error:', e); });
         }
       };
 
@@ -777,6 +799,19 @@ async function handlePaymentCallback(req: Request, res: Response) {
     };
 
     console.log('[NicePay Callback] Parsed data:', { authResultCode, authResultMsg, tid, orderId, amount, appScheme });
+    
+    // Log auth result for debugging (especially for bank transfer failures)
+    if (authResultCode && authResultCode !== '0000') {
+      console.error('[NicePay Callback] Auth Failed - Code:', authResultCode, 'Msg:', authResultMsg);
+    }
+    
+    // Check if auth was successful before proceeding
+    if (authResultCode && authResultCode !== '0000') {
+      console.error('[NicePay Callback] Authentication failed, returning error page');
+      const errorMsg = authResultMsg || '결제 인증에 실패했습니다';
+      const errorUrl = `${fallbackUrl}/payment/fail?message=${encodeURIComponent(errorMsg)}&code=${authResultCode}`;
+      return sendRedirectPage(res, appScheme ? `${appScheme}://payment/fail?message=${encodeURIComponent(errorMsg)}&code=${authResultCode}` : errorUrl, appScheme);
+    }
 
     const buildRedirectUrl = (path: string, params?: Record<string, string>) => {
       const queryString = params 
@@ -1119,6 +1154,19 @@ async function handlePaymentCallback(req: Request, res: Response) {
 
 router.get('/callback', handlePaymentCallback);
 router.post('/callback', handlePaymentCallback);
+
+// Error logging endpoint for NicePay payment errors
+router.post('/log-error', (req: Request, res: Response) => {
+  const { orderId, method, errorCode, errorMsg, fullResult } = req.body;
+  console.error('[NicePay Payment Error] ========================');
+  console.error('[NicePay Payment Error] OrderId:', orderId);
+  console.error('[NicePay Payment Error] Method:', method);
+  console.error('[NicePay Payment Error] ErrorCode:', errorCode);
+  console.error('[NicePay Payment Error] ErrorMsg:', errorMsg);
+  console.error('[NicePay Payment Error] Full Result:', JSON.stringify(fullResult, null, 2));
+  console.error('[NicePay Payment Error] ========================');
+  res.status(200).json({ logged: true });
+});
 
 interface DirectPurchaseItem {
   productOptionId: number | null;

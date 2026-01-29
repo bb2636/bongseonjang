@@ -1,0 +1,89 @@
+2026-01-29 16:40:13.087 15565-15565 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DTlRncLp.js - Line 2 - Msg: [SocialLogin] 네이버 로그인 버튼 클릭
+2026-01-29 16:40:13.089 15565-15565 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [NaverOAuth] naverAuthorize called, isCapacitor: true
+2026-01-29 16:40:13.089 15565-15565 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] === Starting OAuth with InAppBrowser ===
+2026-01-29 16:40:13.091 15565-15565 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] provider: naver
+2026-01-29 16:40:13.091 15565-15565 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] authUrl: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/start/naver?platform=app
+2026-01-29 16:40:13.094 15565-15565 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 119356897, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:40:13.094 15565-15565 Capacitor               com.bongkru.app                      V  callback: 119356897, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"urlChangeEvent"}
+2026-01-29 16:40:13.097 15565-15565 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 119356898, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:40:13.098 15565-15565 Capacitor               com.bongkru.app                      V  callback: 119356898, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"closeEvent"}
+2026-01-29 16:40:13.099 15565-15565 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 119356899, pluginId: InAppBrowser, methodName: openWebView
+2026-01-29 16:40:13.099 15565-15565 Capacitor               com.bongkru.app                      V  callback: 119356899, pluginId: InAppBrowser, methodName: openWebView, methodData: {"url":"https:\/\/bongseonjang--tkfkdgowjdakfas.replit.app\/api\/auth\/start\/naver?platform=app"}
+2026-01-29 16:40:13.100 15565-15625 InAppBrowserPlugin      com.bongkru.app                      D  No authorized app links provided.
+2026-01-29 16:40:13.100 15565-15625 InAppBrowserPlugin      com.bongkru.app                      D  No blocked hosts provided.
+2026-01-29 16:40:13.179 15565-15565 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@e071c3d
+2026-01-29 16:40:13.488 15565-15565 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:40:13.489 15565-15565 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] InAppBrowser opened
+2026-01-29 16:40:13.490 15565-15565 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:40:13.498 15565-15565 InAppBrowser            com.bongkru.app                      D  JavaScript interface injected early after URL load
+2026-01-29 16:40:13.566 15565-15565 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=d3c09a0ee2385a8081a0ee9d0a786e98
+2026-01-29 16:40:13.566 15565-15565 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:40:13.566 15565-15565 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:40:13.702 15565-15565 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:40:13.702 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:f9029f20: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:40:13.725 15565-15565 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:40:13.743 15565-15565 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=d3c09a0ee2385a8081a0ee9d0a786e98
+2026-01-29 16:40:13.965 15565-15565 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:40:13.965 15565-15565 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:40:14.078 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:14.133 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:14.235 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:14.313 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:14.383 15565-15565 chromium                com.bongkru.app                      I  [INFO:CONSOLE(2)] "Error", source: https://wtm.pstatic.net/bcf13cb/74ded82ea2fa78fbbad0.js (2)
+2026-01-29 16:40:14.628 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:14.732 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:14.872 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:14.927 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:18.802 15565-15565 AutofillManager         com.bongkru.app                      I  showAutofillDialog() return false due to improve fill dialog
+2026-01-29 16:40:18.817 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:da872d25: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:40:18.817 15565-15565 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:40:18.817 15565-15565 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:40:18.827 15565-15565 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 4636 bytes, containing 2 windows, 15 views
+2026-01-29 16:40:19.104 15565-15565 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@7ceadcf
+2026-01-29 16:40:19.597 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:da872d25: onShown
+2026-01-29 16:40:22.214 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:59f270e1: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_REQUEST_HIDE_WITH_CONTROL fromUser true
+2026-01-29 16:40:22.214 15565-15565 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:40:22.214 15565-15565 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@e071c3d
+2026-01-29 16:40:22.214 15565-15565 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:40:22.262 15565-15565 ImeTracker              com.bongkru.app                      I  system_server:665cb65c: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:40:22.465 15565-15565 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:40:22.465 15565-15565 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:40:22.467 15565-15565 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:40:22.467 15565-15565 ImeTracker              com.bongkru.app                      I  com.google.android.inputmethod.latin:b7ab9c6d: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:40:22.499 15565-15565 ImeTracker              com.bongkru.app                      I  com.google.android.inputmethod.latin:b7ab9c6d: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:40:22.563 15565-15565 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@7ceadcf
+2026-01-29 16:40:22.602 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:f238cd90: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:40:22.602 15565-15565 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:40:22.602 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:f238cd90: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+2026-01-29 16:40:22.619 15565-15565 AssistStructure         com.bongkru.app                      I  Flattened final assist data: 4644 bytes, containing 2 windows, 15 views
+2026-01-29 16:40:22.706 15565-15565 ImeTracker              com.bongkru.app                      I  com.google.android.inputmethod.latin:b7ab9c6d: onShown
+2026-01-29 16:40:22.822 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:2f9d39b2: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:40:22.822 15565-15565 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:40:22.822 15565-15565 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@e071c3d
+2026-01-29 16:40:22.822 15565-15565 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:40:22.905 15565-15565 ImeTracker              com.bongkru.app                      I  system_server:6844413a: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:40:24.330 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:9d9449f6: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+2026-01-29 16:40:24.330 15565-15565 InsetsController        com.bongkru.app                      D  show(ime())
+2026-01-29 16:40:24.330 15565-15565 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 511 (was 503)
+2026-01-29 16:40:24.429 15565-15565 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@7ceadcf
+2026-01-29 16:40:24.881 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:9d9449f6: onShown
+2026-01-29 16:40:27.794 15565-15565 ImeTracker              com.bongkru.app                      I  com.bongkru.app:e50895f4: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+2026-01-29 16:40:27.794 15565-15565 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:40:27.795 15565-15565 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@e071c3d
+2026-01-29 16:40:27.795 15565-15565 InsetsController        com.bongkru.app                      D  Setting requestedVisibleTypes to 503 (was 511)
+2026-01-29 16:40:27.870 15565-15565 ImeTracker              com.bongkru.app                      I  system_server:68a8ebc5: onCancelled at PHASE_CLIENT_ON_CONTROLS_CHANGED
+2026-01-29 16:40:28.184 15565-15965 cr_PlatformSensor       com.bongkru.app                      W  Should not get sensor events after PlatformSensorAndroid is destroyed.
+2026-01-29 16:40:28.189 15565-15965 cr_PlatformSensor       com.bongkru.app                      W  Should not get sensor events after PlatformSensorAndroid is destroyed.
+2026-01-29 16:40:28.195 15565-15565 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:40:28.201 15565-15565 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/nidlogin.login
+2026-01-29 16:40:28.581 15565-15565 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:40:28.581 15565-15565 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:40:28.697 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:28.787 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:28.875 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:28.927 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:29.011 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:29.060 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:29.147 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:29.220 15565-15626 GFXSTREAM               com.bongkru.app                      E  [GLClientState.cpp(298)] set vao to self, no-op (1)
+2026-01-29 16:40:29.257 15565-15565 chromium                com.bongkru.app                      I  [INFO:CONSOLE(2)] "Error", source: https://wtm.pstatic.net/bcf13cb/74ded82ea2fa78fbbad0.js (2)
