@@ -1,5 +1,6 @@
 import { AppBar, AppBarSpacer } from '../../../components';
 import { useBongseonStoryPage } from '../hooks/useBongseonStoryPage';
+import heroImage from '../assets/fishing-net-hero.jpg';
 import './BongseonStoryPageView.css';
 
 export default function BongseonStoryPageView() {
@@ -8,15 +9,20 @@ export default function BongseonStoryPageView() {
   return (
     <div className="bongseon-story-page">
       <AppBar
-        variant="subpage"
+        variant="transparent"
         title="봉선장 이야기"
         showBackButton
         onBackClick={handleBack}
         showCart
         onCartClick={handleCartClick}
       />
-      <AppBarSpacer variant="subpage" />
+      <AppBarSpacer variant="transparent" />
       <div className="bongseon-story-page__hero" role="banner">
+        <img
+          src={heroImage}
+          alt="바다 그물"
+          className="bongseon-story-page__hero-image"
+        />
         <div className="bongseon-story-page__hero-overlay" />
         <div className="bongseon-story-page__hero-content">
           <p className="bongseon-story-page__hero-kicker">바다의 신선함을</p>
