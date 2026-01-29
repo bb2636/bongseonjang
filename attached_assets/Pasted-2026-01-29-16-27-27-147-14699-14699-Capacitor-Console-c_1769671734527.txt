@@ -1,0 +1,69 @@
+2026-01-29 16:27:27.147 14699-14699 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DTlRncLp.js - Line 2 - Msg: [SocialLogin] 네이버 로그인 버튼 클릭
+2026-01-29 16:27:27.148 14699-14699 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [NaverOAuth] naverAuthorize called, isCapacitor: true
+2026-01-29 16:27:27.149 14699-14699 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] === Starting OAuth with InAppBrowser ===
+2026-01-29 16:27:27.149 14699-14699 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] provider: naver
+2026-01-29 16:27:27.149 14699-14699 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] authUrl: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/start/naver?platform=app
+2026-01-29 16:27:27.152 14699-14699 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 119416673, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:27:27.152 14699-14699 Capacitor               com.bongkru.app                      V  callback: 119416673, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"urlChangeEvent"}
+2026-01-29 16:27:27.153 14699-14699 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 119416674, pluginId: InAppBrowser, methodName: addListener
+2026-01-29 16:27:27.153 14699-14699 Capacitor               com.bongkru.app                      V  callback: 119416674, pluginId: InAppBrowser, methodName: addListener, methodData: {"eventName":"closeEvent"}
+2026-01-29 16:27:27.153 14699-14699 Capacitor/Plugin        com.bongkru.app                      V  To native (Capacitor plugin): callbackId: 119416675, pluginId: InAppBrowser, methodName: openWebView
+2026-01-29 16:27:27.153 14699-14699 Capacitor               com.bongkru.app                      V  callback: 119416675, pluginId: InAppBrowser, methodName: openWebView, methodData: {"url":"https:\/\/bongseonjang--tkfkdgowjdakfas.replit.app\/api\/auth\/start\/naver?platform=app"}
+2026-01-29 16:27:27.156 14699-14760 InAppBrowserPlugin      com.bongkru.app                      D  No authorized app links provided.
+2026-01-29 16:27:27.157 14699-14760 InAppBrowserPlugin      com.bongkru.app                      D  No blocked hosts provided.
+2026-01-29 16:27:27.303 14699-14699 WindowOnBackDispatcher  com.bongkru.app                      D  setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@5821501
+2026-01-29 16:27:27.490 14699-14699 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:27:27.491 14699-14699 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] InAppBrowser opened
+2026-01-29 16:27:27.493 14699-14699 Capacitor/Console       com.bongkru.app                      I  File:  - Line 333 - Msg: undefined
+2026-01-29 16:27:27.505 14699-14699 InAppBrowser            com.bongkru.app                      D  JavaScript interface injected early after URL load
+2026-01-29 16:27:27.524 14699-14699 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=885e9b6df0e18d2b9cbc5ebca5716383
+2026-01-29 16:27:27.524 14699-14699 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:27:27.524 14699-14699 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:27:27.573 14699-14699 InsetsController        com.bongkru.app                      D  hide(ime())
+2026-01-29 16:27:27.574 14699-14699 ImeTracker              com.bongkru.app                      I  com.bongkru.app:3eb20b49: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2026-01-29 16:27:27.718 14699-14699 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:27:27.721 14699-14699 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/login/noauth/allow_oauth?oauth_token=UC1LgKpbEzc5JJrhn0&with_pin&step=agree_term&inapp_view&oauth_os
+2026-01-29 16:27:27.722 14699-14699 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:27:27.722 14699-14699 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:27:27.726 14699-14699 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?client_id=3gieVh251O79fUraIJhx&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&response_type=code&state=885e9b6df0e18d2b9cbc5ebca5716383
+2026-01-29 16:27:27.762 14699-14699 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=885e9b6df0e18d2b9cbc5ebca5716383&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&client_id=3gieVh251O79fUraIJhx&oauth_os&inapp_view&locale=en_US&oauth_token=UC1LgKpbEzc5JJrhn0
+2026-01-29 16:27:27.762 14699-14699 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:27:27.762 14699-14699 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:27:27.837 14699-14699 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/auth/oauth/naver/callback?code=UC1LgKpbEzc5JJrhn0&state=885e9b6df0e18d2b9cbc5ebca5716383
+2026-01-29 16:27:27.837 14699-14699 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:27:27.837 14699-14699 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:27:27.841 14699-14699 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event urlChangeEvent
+2026-01-29 16:27:27.844 14699-14699 Capacitor/Console       com.bongkru.app                      I  File: https://localhost/assets/index-DlhBSCFt.js - Line 11 - Msg: [OAuth] URL changed: https://nid.naver.com/oauth2.0/authorize?response_type=code&state=885e9b6df0e18d2b9cbc5ebca5716383&redirect_uri=https%3A%2F%2Fbongseonjang--tkfkdgowjdakfas.replit.app%2Fapi%2Fauth%2Foauth%2Fnaver%2Fcallback&client_id=3gieVh251O79fUraIJhx&oauth_os&inapp_view&locale=en_US&oauth_token=UC1LgKpbEzc5JJrhn0
+2026-01-29 16:27:29.596 14699-14699 InAppBrowser            com.bongkru.app                      D  shouldOverrideUrlLoading: bongseonjang://oauth/naver/callback?key=69b158bc-f92a-4a83-8e15-55f6454bcb50
+2026-01-29 16:27:29.596 14699-14699 InAppBrowser            com.bongkru.app                      D  authorizedLinks: []
+2026-01-29 16:27:29.596 14699-14699 InAppBrowser            com.bongkru.app                      D  urlAuthorized: false
+2026-01-29 16:27:29.606 14699-14699 InAppBrowser            com.bongkru.app                      W  No handler for external URL: bongseonjang://oauth/naver/callback?key=69b158bc-f92a-4a83-8e15-55f6454bcb50 (Ask Gemini)
+                                                                                                    android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.VIEW dat=bongseonjang://oauth/... flg=0x10000000 xflg=0x4 }
+                                                                                                    	at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2453)
+                                                                                                    	at android.app.Instrumentation.execStartActivity(Instrumentation.java:2020)
+                                                                                                    	at android.app.Activity.startActivityForResult(Activity.java:6058)
+                                                                                                    	at androidx.activity.ComponentActivity.startActivityForResult(ComponentActivity.kt:704)
+                                                                                                    	at android.app.Activity.startActivityForResult(Activity.java:6015)
+                                                                                                    	at androidx.activity.ComponentActivity.startActivityForResult(ComponentActivity.kt:683)
+                                                                                                    	at android.app.Activity.startActivity(Activity.java:6518)
+                                                                                                    	at android.app.Activity.startActivity(Activity.java:6485)
+                                                                                                    	at android.content.ContextWrapper.startActivity(ContextWrapper.java:438)
+                                                                                                    	at ee.forgr.capacitor_inappbrowser.WebViewDialog$5.shouldOverrideUrlLoading(WebViewDialog.java:2206)
+                                                                                                    	at org.chromium.android_webview.AwContentsClientBridge.shouldOverrideUrlLoading(chromium-TrichromeWebViewGoogle6432.aab-stable-699813538:117)
+                                                                                                    	at android.os.MessageQueue.nativePollOnce(Native Method)
+                                                                                                    	at android.os.MessageQueue.nextLegacy(MessageQueue.java:983)
+                                                                                                    	at android.os.MessageQueue.next(MessageQueue.java:1092)
+                                                                                                    	at android.os.Looper.loopOnce(Looper.java:197)
+                                                                                                    	at android.os.Looper.loop(Looper.java:367)
+                                                                                                    	at android.app.ActivityThread.main(ActivityThread.java:9282)
+                                                                                                    	at java.lang.reflect.Method.invoke(Native Method)
+                                                                                                    	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:566)
+                                                                                                    	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:929)
+2026-01-29 16:27:29.606 14699-14699 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event pageLoadError
+2026-01-29 16:27:29.606 14699-14699 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event pageLoadError
+2026-01-29 16:27:29.611 14699-14699 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:27:29.611 14699-14699 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:27:29.614 14699-14699 Capacitor/...wserPlugin com.bongkru.app                      V  Notifying listeners for event browserPageLoaded
+2026-01-29 16:27:29.615 14699-14699 Capacitor/...wserPlugin com.bongkru.app                      D  No listeners found for event browserPageLoaded
+2026-01-29 16:27:52.430 14699-14705 com.bongkru.app         com.bongkru.app                      W  userfaultfd: MOVE ioctl seems unsupported: Connection timed out
+2026-01-29 16:27:52.451 14699-14705 com.bongkru.app         com.bongkru.app                      I  Background concurrent mark compact GC freed 7378KB AllocSpace bytes, 30(1096KB) LOS objects, 49% free, 4250KB/8501KB, paused 1.177ms,4.274ms total 326.709ms
