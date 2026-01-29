@@ -22,6 +22,7 @@ interface AppBarProps {
   showCart?: boolean;
   onCartClick?: () => void;
   rightAction?: React.ReactNode;
+  className?: string;
 }
 
 export default function AppBar({
@@ -34,6 +35,7 @@ export default function AppBar({
   showCart = true,
   onCartClick,
   rightAction,
+  className,
 }: AppBarProps) {
   const navigate = useNavigate();
   const { cartCount } = useCart();
@@ -64,8 +66,9 @@ export default function AppBar({
   };
 
   if (variant === 'subpage') {
+    const headerClassName = `app-bar app-bar--subpage${className ? ` ${className}` : ''}`;
     return (
-      <header className="app-bar app-bar--subpage">
+      <header className={headerClassName}>
         <button
           type="button"
           className="app-bar__back-button"
@@ -118,8 +121,9 @@ export default function AppBar({
     );
   }
 
+  const defaultHeaderClassName = `app-bar${className ? ` ${className}` : ''}`;
   return (
-    <header className="app-bar">
+    <header className={defaultHeaderClassName}>
       <div className="app-bar__left">
         {showBackButton && (
           <button 

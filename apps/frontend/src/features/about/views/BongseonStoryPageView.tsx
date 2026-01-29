@@ -1,5 +1,4 @@
 import { AppBar } from '../../../components';
-import { AppBarSpacer } from '../../../components/AppBar';
 import { useBongseonStoryPage } from '../hooks/useBongseonStoryPage';
 import './BongseonStoryPageView.css';
 
@@ -8,19 +7,20 @@ export default function BongseonStoryPageView() {
 
   return (
     <div className="bongseon-story-page">
+      <AppBar
+        variant="subpage"
+        title="봉선장 이야기"
+        showBackButton
+        onBackClick={handleBack}
+        showCart
+        onCartClick={handleCartClick}
+        className="bongseon-story-page__app-bar"
+      />
       <div className="bongseon-story-page__hero" role="banner">
         <div className="bongseon-story-page__hero-overlay" />
-        <AppBar
-          variant="subpage"
-          title="봉선장 이야기"
-          showBackButton
-          onBackClick={handleBack}
-          showCart
-          onCartClick={handleCartClick}
-        />
-        <AppBarSpacer variant="subpage" />
         <div className="bongseon-story-page__hero-content">
-          <p className="bongseon-story-page__hero-kicker">바다의 신선함을 당신의 집까지</p>
+          <p className="bongseon-story-page__hero-kicker">바다의 신선함을</p>
+          <p className="bongseon-story-page__hero-kicker">당신의 집까지</p>
           <h1 className="bongseon-story-page__hero-title">가장 빠르고 가장 신선하게-</h1>
           <button
             type="button"
