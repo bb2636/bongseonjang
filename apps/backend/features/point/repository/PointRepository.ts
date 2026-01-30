@@ -135,6 +135,16 @@ export class PointRepository {
     description: string,
     relatedOrderId?: string
   ): Promise<PointTransaction> {
+    if (relatedOrderId) {
+      const existingRefund = await this.transactionRepository.findOne({
+        where: { relatedOrderId, type: 'refund' },
+      });
+      if (existingRefund) {
+        console.log('[PointRepository] Points already refunded for order:', relatedOrderId);
+        return existingRefund;
+      }
+    }
+
     const wallet = await this.walletRepository.findOne({ where: { id: walletId } });
     if (!wallet) {
       throw new Error('Wallet not found');
@@ -157,6 +167,55 @@ export class PointRepository {
     });
 
     return this.transactionRepository.save(transaction);
+  }
+
+  async cancelPointsWithManager(
+    manager: EntityManager,
+    walletId: string,
+    amount: number,
+    description: string,
+    relatedOrderId?: string
+  ): Promise<PointTransaction> {
+    const transactionRepo = manager.getRepository(PointTransaction);
+
+    if (relatedOrderId) {
+      const existingRefund = await transactionRepo.findOne({
+        where: { relatedOrderId, type: 'refund' },
+      });
+      if (existingRefund) {
+        console.log('[PointRepository] Points already refunded for order:', relatedOrderId);
+        return existingRefund;
+      }
+    }
+
+    const wallet = await manager
+      .getRepository(PointWallet)
+      .createQueryBuilder('wallet')
+      .setLock('pessimistic_write')
+      .where('wallet.id = :id', { id: walletId })
+      .getOne();
+
+    if (!wallet) {
+      throw new Error('Wallet not found');
+    }
+
+    const newBalance = wallet.balance + amount;
+
+    await manager.getRepository(PointWallet).update(walletId, {
+      balance: newBalance,
+      totalUsed: wallet.totalUsed - amount,
+    });
+
+    const transaction = transactionRepo.create({
+      walletId,
+      type: 'refund',
+      amount,
+      balanceAfter: newBalance,
+      description,
+      relatedOrderId,
+    });
+
+    return transactionRepo.save(transaction);
   }
 
   async usePointsWithManager(

@@ -289,15 +289,14 @@ router.put('/:orderId/status', async (req: Request, res: Response) => {
 
         if (order.usedPoints > 0 && order.userId) {
           const pointRepository = new PointRepository();
-          const wallet = await pointRepository.findWalletByUserId(order.userId);
-          if (wallet) {
-            await pointRepository.cancelPoints(
-              wallet.id,
-              order.usedPoints,
-              `주문 취소로 인한 포인트 복원 (${order.orderNumber})`,
-              order.id
-            );
-          }
+          const wallet = await pointRepository.getOrCreateWalletWithManager(manager, order.userId);
+          await pointRepository.cancelPointsWithManager(
+            manager,
+            wallet.id,
+            order.usedPoints,
+            `주문 취소로 인한 포인트 복원 (${order.orderNumber})`,
+            order.id
+          );
         }
 
         const couponRepository = new CouponRepository();
@@ -305,13 +304,13 @@ router.put('/:orderId/status', async (req: Request, res: Response) => {
           try {
             const couponIds: number[] = JSON.parse(order.userCouponIdsJson);
             for (const couponId of couponIds) {
-              await couponRepository.restoreUserCoupon(couponId);
+              await couponRepository.restoreUserCouponWithManager(manager, couponId);
             }
           } catch (e) {
             console.error('Failed to parse userCouponIdsJson:', e);
           }
         } else if (order.userCouponId) {
-          await couponRepository.restoreUserCoupon(order.userCouponId);
+          await couponRepository.restoreUserCouponWithManager(manager, order.userCouponId);
         }
 
         order.status = status;

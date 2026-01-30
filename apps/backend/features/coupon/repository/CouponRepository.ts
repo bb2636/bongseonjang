@@ -276,6 +276,15 @@ export class CouponRepository {
   }
 
   async restoreUserCoupon(userCouponId: number): Promise<void> {
+    const userCoupon = await this.userCouponRepo.findOne({ where: { id: userCouponId } });
+    if (!userCoupon) {
+      console.log('[CouponRepository] UserCoupon not found:', userCouponId);
+      return;
+    }
+    if (userCoupon.status === 'ISSUED') {
+      console.log('[CouponRepository] Coupon already in ISSUED status:', userCouponId);
+      return;
+    }
     await this.userCouponRepo.update(userCouponId, {
       status: 'ISSUED',
       usedAt: null,
@@ -287,7 +296,24 @@ export class CouponRepository {
     manager: EntityManager,
     userCouponId: number
   ): Promise<void> {
-    await manager.getRepository(UserCoupon).update(userCouponId, {
+    const userCouponRepo = manager.getRepository(UserCoupon);
+    
+    const userCoupon = await userCouponRepo
+      .createQueryBuilder('userCoupon')
+      .setLock('pessimistic_write')
+      .where('userCoupon.id = :id', { id: userCouponId })
+      .getOne();
+
+    if (!userCoupon) {
+      console.log('[CouponRepository] UserCoupon not found:', userCouponId);
+      return;
+    }
+    if (userCoupon.status === 'ISSUED') {
+      console.log('[CouponRepository] Coupon already in ISSUED status:', userCouponId);
+      return;
+    }
+
+    await userCouponRepo.update(userCouponId, {
       status: 'ISSUED',
       usedAt: null,
       usedOrderId: null,
