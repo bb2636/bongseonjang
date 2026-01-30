@@ -29,7 +29,11 @@ export function useHomeShell() {
 
   const handleTabChange = useCallback((tab: CategoryTab) => {
     setActiveTab(tab);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
+    });
   }, []);
 
   const handleLogoClick = useCallback(() => {
