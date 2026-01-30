@@ -14,7 +14,7 @@
   flex: 1;
   padding: 0;
   padding-top: 16px;
-  padding-bottom: 120px;
+  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
 }
 
 .category-products-page__loading {
