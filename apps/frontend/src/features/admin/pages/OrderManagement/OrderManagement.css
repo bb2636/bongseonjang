@@ -374,3 +374,70 @@
 .order-table__view-button:hover {
   background: rgba(35, 157, 255, 0.2);
 }
+
+.shipping-snackbar {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  padding: 16px 20px;
+  z-index: 2000;
+  min-width: 320px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.shipping-snackbar__content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.shipping-snackbar__icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.shipping-snackbar__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shipping-snackbar__title {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0c0c0c;
+}
+
+.shipping-snackbar__details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  color: rgba(12, 12, 12, 0.7);
+}
+
+.shipping-snackbar__close {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(12, 12, 12, 0.6);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.shipping-snackbar__close:hover {
+  color: #0c0c0c;
+}

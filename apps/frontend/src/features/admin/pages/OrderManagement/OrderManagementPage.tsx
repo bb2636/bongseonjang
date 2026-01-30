@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '../../layouts';
 import { fetchAdminOrders, updateShippingInfo, updateOrderStatus, OrderStatus, PaymentMethod, AdminOrderDto, BackendOrderStatus } from './api/adminOrderApi';
 import { TrackingNumberDialog } from './components/TrackingNumberDialog';
 import { OrderDetailPanel } from './components/OrderDetailPanel';
+import shippingSuccessIcon from './components/shipping-success-icon.png';
 import './OrderManagement.css';
+
+interface ShippingSnackbarState {
+  isVisible: boolean;
+  productSummary: string;
+  totalAmount: number;
+}
 
 const orderStatusOptions: { code: OrderStatus; label: string }[] = [
   { code: 'ALL', label: '전체' },
@@ -97,6 +104,16 @@ export function OrderManagementPage() {
   const [trackingDialogState, setTrackingDialogState] = useState<TrackingDialogState | null>(null);
   const [savingOrderId, setSavingOrderId] = useState<string | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [shippingSnackbar, setShippingSnackbar] = useState<ShippingSnackbarState | null>(null);
+
+  useEffect(() => {
+    if (shippingSnackbar?.isVisible) {
+      const timer = setTimeout(() => {
+        setShippingSnackbar(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [shippingSnackbar]);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['adminOrders', orderStatusFilter, paymentMethodFilter, searchKeyword],
@@ -170,6 +187,8 @@ export function OrderManagementPage() {
   const handleSaveTrackingNumber = async (trackingNumber: string) => {
     if (!trackingDialogState) return;
 
+    const targetOrder = orders.find(o => o.id === trackingDialogState.orderId);
+
     setSavingOrderId(trackingDialogState.orderId);
     try {
       await updateShippingInfo(trackingDialogState.orderId, {
@@ -179,6 +198,14 @@ export function OrderManagementPage() {
       });
       await queryClient.invalidateQueries({ queryKey: ['adminOrders'] });
       setTrackingDialogState(null);
+
+      if (targetOrder) {
+        setShippingSnackbar({
+          isVisible: true,
+          productSummary: targetOrder.productSummary,
+          totalAmount: targetOrder.totalAmount,
+        });
+      }
     } catch (error) {
       console.error('Failed to save shipping info:', error);
     } finally {
@@ -357,6 +384,32 @@ export function OrderManagementPage() {
           isOpen={!!selectedOrderId}
           onClose={() => setSelectedOrderId(null)}
         />
+      )}
+
+      {shippingSnackbar?.isVisible && (
+        <div className="shipping-snackbar">
+          <div className="shipping-snackbar__content">
+            <img 
+              src={shippingSuccessIcon} 
+              alt="" 
+              className="shipping-snackbar__icon" 
+            />
+            <div className="shipping-snackbar__text">
+              <div className="shipping-snackbar__title">택배사 정보가 등록되었습니다.</div>
+              <div className="shipping-snackbar__details">
+                <span>• 상품명 : {shippingSnackbar.productSummary}</span>
+                <span>• 금액 : {shippingSnackbar.totalAmount.toLocaleString()}원</span>
+              </div>
+            </div>
+          </div>
+          <button 
+            type="button"
+            className="shipping-snackbar__close" 
+            onClick={() => setShippingSnackbar(null)}
+          >
+            닫기
+          </button>
+        </div>
       )}
     </AdminLayout>
   );

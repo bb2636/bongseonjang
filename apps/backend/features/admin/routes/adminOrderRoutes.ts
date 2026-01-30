@@ -39,6 +39,7 @@ interface AdminOrderListItem {
   paymentMethod: FrontendPaymentMethod | null;
   shippingCompany: string | null;
   trackingNumber: string | null;
+  productSummary: string;
 }
 
 const dbStatusToFrontend: Record<string, FrontendOrderStatus> = {
@@ -93,6 +94,7 @@ router.get('/', async (req: Request, res: Response) => {
     let queryBuilder = orderRepository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.user', 'user')
+      .leftJoinAndSelect('order.items', 'items')
       .leftJoin(Payment, 'payment', 'payment.orderId = order.id')
       .leftJoin(Shipment, 'shipment', 'shipment.orderId = order.id')
       .addSelect([
@@ -153,6 +155,25 @@ router.get('/', async (req: Request, res: Response) => {
         frontendPaymentMethod = dbPaymentMethodToFrontend[paymentMethodValue] || null;
       }
 
+      let productSummary = '상품정보 없음';
+      const orderItems = (order.items || []).slice().sort((a, b) => 
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+      if (orderItems.length > 0) {
+        const firstItem = orderItems[0];
+        const firstProductName = firstItem.productName 
+          ? (firstItem.optionName 
+              ? `${firstItem.productName} ${firstItem.optionName}` 
+              : firstItem.productName)
+          : '상품정보 없음';
+        
+        if (orderItems.length === 1) {
+          productSummary = firstProductName;
+        } else {
+          productSummary = `${firstProductName} 외 ${orderItems.length - 1}건`;
+        }
+      }
+
       return {
         id: order.id,
         orderNumber: order.orderNumber,
@@ -165,6 +186,7 @@ router.get('/', async (req: Request, res: Response) => {
         paymentMethod: frontendPaymentMethod,
         shippingCompany: raw.shipment_carrierName || null,
         trackingNumber: raw.shipment_trackingNumber || null,
+        productSummary,
       };
     });
 

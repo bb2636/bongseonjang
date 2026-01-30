@@ -24,6 +24,7 @@ export interface AdminOrderDto {
   paymentMethod: Exclude<PaymentMethod, 'ALL'> | null;
   shippingCompany: string | null;
   trackingNumber: string | null;
+  productSummary: string;
 }
 
 export interface AdminOrderListResponse {
