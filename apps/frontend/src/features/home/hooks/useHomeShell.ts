@@ -1,6 +1,17 @@
 import { useCallback, useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { CategoryTab } from '../types/navigation';
+import { IS_CAPACITOR } from '@/shared/config/apiConfig';
+
+function scrollToTop(behavior: ScrollBehavior = 'instant') {
+  if (IS_CAPACITOR) {
+    const root = document.getElementById('root');
+    if (root) {
+      root.scrollTo({ top: 0, behavior });
+    }
+  }
+  window.scrollTo({ top: 0, behavior });
+}
 
 const CATEGORY_TO_TAB_MAP: Record<string, CategoryTab> = {
   'all': 'all',
@@ -31,14 +42,14 @@ export function useHomeShell() {
     setActiveTab(tab);
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        scrollToTop('instant');
       });
     });
   }, []);
 
   const handleLogoClick = useCallback(() => {
     setActiveTab('default');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop('smooth');
   }, []);
 
   return {
