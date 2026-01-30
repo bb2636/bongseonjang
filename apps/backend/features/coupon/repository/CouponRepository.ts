@@ -1,3 +1,4 @@
+import { EntityManager } from 'typeorm';
 import { AppDataSource } from '../../../config/database';
 import { Coupon } from '../../../entity/Coupon';
 import { UserCoupon } from '../../../entity/UserCoupon';
@@ -239,5 +240,38 @@ export class CouponRepository {
       where: { couponId },
     });
     return applyExposureCategories.map(aec => Number(aec.exposureCategoryId));
+  }
+
+  async useUserCouponWithManager(
+    manager: EntityManager,
+    userCouponId: number,
+    orderId: string
+  ): Promise<void> {
+    const userCouponRepo = manager.getRepository(UserCoupon);
+    
+    const userCoupon = await userCouponRepo
+      .createQueryBuilder('userCoupon')
+      .setLock('pessimistic_write')
+      .where('userCoupon.id = :id', { id: userCouponId })
+      .getOne();
+
+    if (!userCoupon) {
+      throw new Error('쿠폰을 찾을 수 없습니다');
+    }
+
+    if (userCoupon.usedOrderId === orderId) {
+      console.log('[CouponRepository] Coupon already used for this order:', orderId);
+      return;
+    }
+
+    if (userCoupon.status !== 'ISSUED') {
+      throw new Error('이미 사용되었거나 만료된 쿠폰입니다');
+    }
+
+    await userCouponRepo.update(userCouponId, {
+      status: 'USED',
+      usedAt: new Date(),
+      usedOrderId: orderId,
+    });
   }
 }

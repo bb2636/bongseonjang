@@ -1038,7 +1038,21 @@ async function handlePaymentCallback(req: Request, res: Response) {
         where: { orderId },
       });
       
-      const stockCheckResult = await AppDataSource.transaction(async (transactionalEntityManager: typeof AppDataSource.manager) => {
+      const pointRepository = new PointRepository();
+      const couponRepository = new CouponRepository();
+      
+      let userCouponIds: number[] = [];
+      if (order.userCouponIdsJson) {
+        try {
+          userCouponIds = JSON.parse(order.userCouponIdsJson);
+        } catch (e) {
+          console.error('[NicePay Callback] Failed to parse userCouponIdsJson:', e);
+        }
+      } else if (order.userCouponId) {
+        userCouponIds = [order.userCouponId];
+      }
+      
+      const atomicResult = await AppDataSource.transaction(async (transactionalEntityManager: typeof AppDataSource.manager) => {
         const insufficientStockProducts: string[] = [];
         const productUpdates: Array<{ productId: string; quantityToDeduct: number }> = [];
         const optionUpdates: Array<{ optionId: number; quantityToDeduct: number }> = [];
@@ -1105,7 +1119,12 @@ async function handlePaymentCallback(req: Request, res: Response) {
         }
         
         if (insufficientStockProducts.length > 0) {
-          return { success: false, insufficientProducts: insufficientStockProducts };
+          return { 
+            success: false, 
+            errorType: 'stock_insufficient' as const, 
+            errorMessage: `재고 부족: ${insufficientStockProducts.join(', ')}`,
+            insufficientProducts: insufficientStockProducts 
+          };
         }
         
         for (const update of productUpdates) {
@@ -1120,11 +1139,32 @@ async function handlePaymentCallback(req: Request, res: Response) {
             .decrement({ id: update.optionId }, 'stockQuantity', update.quantityToDeduct);
         }
         
-        return { success: true, insufficientProducts: [] };
+        if (order.userId && order.usedPoints > 0) {
+          const wallet = await pointRepository.getOrCreateWalletWithManager(transactionalEntityManager, order.userId);
+          await pointRepository.usePointsWithManager(
+            transactionalEntityManager,
+            wallet.id,
+            order.usedPoints,
+            `주문 결제 - ${order.orderNumber}`,
+            order.id
+          );
+          console.log('[NicePay Callback] Points deducted within transaction:', order.usedPoints);
+        }
+        
+        for (const userCouponId of userCouponIds) {
+          await couponRepository.useUserCouponWithManager(
+            transactionalEntityManager,
+            userCouponId,
+            order.id
+          );
+          console.log('[NicePay Callback] Coupon used within transaction:', userCouponId);
+        }
+        
+        return { success: true, errorType: null, errorMessage: null, insufficientProducts: [] };
       });
       
-      if (!stockCheckResult.success) {
-        console.log('[NicePay Callback] Stock insufficient, cancelling payment:', stockCheckResult.insufficientProducts);
+      if (!atomicResult.success) {
+        console.log('[NicePay Callback] Atomic transaction failed:', atomicResult.errorMessage);
         
         const cancelResponse = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}/cancel`, {
           method: 'POST',
@@ -1133,7 +1173,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
             'Authorization': `Basic ${credentials}`,
           },
           body: JSON.stringify({
-            reason: '재고 부족으로 인한 주문 취소',
+            reason: atomicResult.errorMessage || '주문 처리 실패로 인한 결제 취소',
             orderId: orderId,
           }),
         });
@@ -1141,18 +1181,17 @@ async function handlePaymentCallback(req: Request, res: Response) {
         const cancelResult = await cancelResponse.json() as { resultCode: string; resultMsg: string };
         console.log('[NicePay Callback] Cancel result:', cancelResult);
         
-        order.status = 'stock_insufficient';
+        order.status = atomicResult.errorType === 'stock_insufficient' ? 'stock_insufficient' : 'payment_failed';
         await orderRepository.save(order);
         
         if (payment) {
           payment.status = 'cancelled';
           payment.pgTransactionId = tid;
-          payment.failReason = `재고 부족: ${stockCheckResult.insufficientProducts.join(', ')}`;
+          payment.failReason = atomicResult.errorMessage || '주문 처리 실패';
           await paymentRepository.save(payment);
         }
         
-        const errorMessage = `재고 부족: ${stockCheckResult.insufficientProducts.join(', ')}`;
-        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: errorMessage }), appScheme);
+        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: atomicResult.errorMessage || '주문 처리 실패' }), appScheme);
       }
       
       order.status = 'paid';
@@ -1168,37 +1207,6 @@ async function handlePaymentCallback(req: Request, res: Response) {
           payment.cardNumber = approvalResult.cardNo || null;
         }
         await paymentRepository.save(payment);
-      }
-
-      if (order.userId && order.usedPoints > 0) {
-        try {
-          const pointRepository = new PointRepository();
-          const wallet = await pointRepository.getOrCreateWallet(order.userId);
-          await pointRepository.usePoints(
-            wallet.id,
-            order.usedPoints,
-            `주문 결제 - ${order.orderNumber}`,
-            order.id
-          );
-          console.log('[NicePay Callback] Points deducted:', order.usedPoints);
-        } catch (pointError) {
-          console.error('[NicePay Callback] Failed to deduct points:', pointError);
-        }
-      }
-
-      try {
-        if (order.userCouponIdsJson) {
-          const couponRepository = new CouponRepository();
-          const couponIds: number[] = JSON.parse(order.userCouponIdsJson);
-          for (const couponId of couponIds) {
-            await couponRepository.useUserCoupon(couponId, order.id);
-          }
-        } else if (order.userCouponId) {
-          const couponRepository = new CouponRepository();
-          await couponRepository.useUserCoupon(order.userCouponId, order.id);
-        }
-      } catch (couponError) {
-        console.error('[NicePay Callback] Failed to use coupons:', couponError);
       }
 
       try {
