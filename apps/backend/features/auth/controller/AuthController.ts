@@ -1020,9 +1020,9 @@ export class AuthController {
       
       console.log('[Polling OAuth] Starting OAuth for provider:', provider);
       console.log('[Polling OAuth] Polling session ID:', pollingSessionId);
-      console.log('[Polling OAuth] Redirect URL:', authUrl);
+      console.log('[Polling OAuth] Auth URL:', authUrl);
       
-      res.redirect(authUrl);
+      res.json({ authUrl });
     } catch (error) {
       console.error('[Polling OAuth] Error starting OAuth:', error);
       res.status(500).json({ error: 'Failed to start OAuth' });

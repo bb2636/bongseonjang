@@ -5,6 +5,9 @@
   min-height: 100dvh;
   background: #f5f5f5;
   color: #0c0c0c;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
 }
 
