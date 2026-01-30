@@ -46,7 +46,7 @@ const SHIPMENT_STATUS_MAP: Record<ShipmentStatus, UnifiedOrderStatus> = {
 
 const UNIFIED_STATUS_LABELS: Record<UnifiedOrderStatus, string> = {
   pending: '결제 대기',
-  confirmed: '주문 확정',
+  confirmed: '결제 완료',
   shipping: '배송중',
   delivered: '배송완료',
   cancelled: '취소됨',

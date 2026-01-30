@@ -547,8 +547,6 @@ export function CheckoutPage() {
             url.includes('/payment/success') || 
             url.includes('/payment/fail') || 
             url.includes('/payment/complete') ||
-            url.includes('/payment/callback') ||
-            url.includes('/api/payment/callback') ||
             url.startsWith(`${CAPACITOR_APP_SCHEME}://`);
           
           if (isPaymentCallback) {

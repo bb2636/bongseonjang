@@ -1,0 +1,199 @@
+Deployment
+Source
+Log
+2026-01-30 10:52:29.57
+a54bcf56
+User
+← GET /form/edb0f0f6-4f86-485c-9f3a-243211c4cf26 200 (217ms)
+2026-01-30 10:54:02.83
+a54bcf56
+User
+← GET /above-fold 304 (1ms)
+2026-01-30 10:54:02.83
+a54bcf56
+User
+← GET /below-fold 304 (1ms)
+2026-01-30 10:54:03.07
+a54bcf56
+User
+→ GET /api/auth/me
+2026-01-30 10:54:03.16
+a54bcf56
+User
+← GET /me 304 (93ms)
+2026-01-30 10:54:03.59
+a54bcf56
+User
+→ GET /api/cart/count
+2026-01-30 10:54:03.74
+a54bcf56
+User
+← GET /count 304 (152ms)
+2026-01-30 10:54:05.69
+a54bcf56
+User
+→ GET /api/products/categories
+2026-01-30 10:54:05.74
+a54bcf56
+User
+← GET /categories 304 (47ms)
+2026-01-30 10:54:07.27
+a54bcf56
+User
+→ GET /api/products/163d1581-a27c-4c32-996f-07bf4f5e6dca
+2026-01-30 10:54:07.46
+a54bcf56
+User
+← GET /163d1581-a27c-4c32-996f-07bf4f5e6dca 200 (186ms)
+2026-01-30 10:54:08.22
+a54bcf56
+User
+→ GET /api/products/163d1581-a27c-4c32-996f-07bf4f5e6dca
+2026-01-30 10:54:08.41
+a54bcf56
+User
+← GET /163d1581-a27c-4c32-996f-07bf4f5e6dca 304 (191ms)
+2026-01-30 10:54:08.43
+a54bcf56
+User
+→ POST /api/coupons/available
+2026-01-30 10:54:08.43
+a54bcf56
+User
+→ GET /api/profile
+2026-01-30 10:54:08.43
+a54bcf56
+User
+→ GET /api/address/default
+2026-01-30 10:54:08.43
+a54bcf56
+User
+→ GET /api/address
+2026-01-30 10:54:08.53
+a54bcf56
+User
+← GET /default 304 (98ms)
+2026-01-30 10:54:08.53
+a54bcf56
+User
+← GET / 304 (102ms)
+2026-01-30 10:54:08.58
+a54bcf56
+User
+← GET / 304 (153ms)
+2026-01-30 10:54:09.04
+a54bcf56
+User
+← POST /available 200 (615ms)
+2026-01-30 10:54:16.15
+a54bcf56
+User
+→ POST /api/payment/prepare-direct
+2026-01-30 10:54:16.72
+a54bcf56
+User
+[NicePay] Prepare direct payment - returnUrl: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/payment/callback?appScheme=bongseonjang
+2026-01-30 10:54:16.72
+a54bcf56
+User
+← POST /prepare-direct 200 (576ms)
+2026-01-30 10:54:17.21
+a54bcf56
+User
+→ GET /api/payment/form/e3607c1a-174f-4e38-b51e-d5e0adf57581
+2026-01-30 10:54:17.40
+a54bcf56
+User
+[NicePay Form] paymentMethod (mapped): card
+2026-01-30 10:54:17.40
+a54bcf56
+User
+[NicePay Form] payment.method (DB): card
+2026-01-30 10:54:17.40
+a54bcf56
+User
+[NicePay Form] orderId: e3607c1a-174f-4e38-b51e-d5e0adf57581
+2026-01-30 10:54:17.40
+a54bcf56
+User
+[NicePay Form] === Payment Config ===
+2026-01-30 10:54:17.40
+a54bcf56
+User
+[NicePay Form] goodsName: 101원 금액 테스트
+2026-01-30 10:54:17.40
+a54bcf56
+User
+[NicePay Form] returnUrl: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/payment/callback?appScheme=bongseonjang
+2026-01-30 10:54:17.40
+a54bcf56
+User
+[NicePay Form] appScheme: bongseonjang
+2026-01-30 10:54:17.40
+a54bcf56
+User
+[NicePay Form] amount: 101
+2026-01-30 10:54:17.40
+a54bcf56
+User
+← GET /form/e3607c1a-174f-4e38-b51e-d5e0adf57581 200 (195ms)
+2026-01-30 10:54:42.56
+a54bcf56
+User
+→ GET /api/orders/e3607c1a-174f-4e38-b51e-d5e0adf57581
+2026-01-30 10:54:43.15
+a54bcf56
+User
+← GET /e3607c1a-174f-4e38-b51e-d5e0adf57581 200 (588ms)
+2026-01-30 10:54:50.42
+a54bcf56
+User
+→ GET /admin/products
+2026-01-30 10:54:50.43
+a54bcf56
+User
+← GET /admin/products 200 (13ms)
+2026-01-30 10:54:50.61
+a54bcf56
+User
+→ GET /assets/index-CfJ_vvu6.js
+2026-01-30 10:54:50.61
+a54bcf56
+User
+→ GET /assets/index-2gLTVRo8.css
+2026-01-30 10:54:50.61
+a54bcf56
+User
+← GET /assets/index-CfJ_vvu6.js 304 (1ms)
+2026-01-30 10:54:50.61
+a54bcf56
+User
+← GET /assets/index-2gLTVRo8.css 304 (1ms)
+2026-01-30 10:54:50.80
+a54bcf56
+User
+→ GET /favicon.svg
+2026-01-30 10:54:50.80
+a54bcf56
+User
+→ GET /api/auth/me
+2026-01-30 10:54:50.81
+a54bcf56
+User
+← GET /favicon.svg 200 (10ms)
+2026-01-30 10:54:50.91
+a54bcf56
+User
+← GET /me 304 (109ms)
+2026-01-30 10:54:51.09
+a54bcf56
+User
+→ GET /assets/index-BABM0Udr.css
+2026-01-30 10:54:51.09
+a54bcf56
+User
+→ GET /assets/sucess-BlQgXpiZ.js
+2026-01-30 10:54:51.09
+a54bcf56
+User
+← GET /assets/index-BABM0Udr.css 304 (2ms)

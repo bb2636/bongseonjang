@@ -1,0 +1,201 @@
+
+Time
+Deployment
+Source
+Log
+2026-01-30 10:56:57.51
+a54bcf56
+User
+→ GET /api/points/wallet
+2026-01-30 11:09:23.10
+dd194751
+User
+at Route.dispatch (/home/runner/workspace/node_modules/router/lib/route.js:117:3)
+2026-01-30 11:09:23.10
+dd194751
+User
+at HomeDataService.getAboveFoldData (/home/runner/workspace/apps/backend/features/home/application/HomeDataService.ts:101:27)
+2026-01-30 11:09:23.10
+dd194751
+User
+at next (/home/runner/workspace/node_modules/router/lib/route.js:157:13)
+2026-01-30 11:09:23.10
+dd194751
+User
+← GET /above-fold 500 (19ms)
+2026-01-30 11:09:23.16
+dd194751
+User
+→ GET /api/home/below-fold
+2026-01-30 11:09:23.45
+dd194751
+User
+→ GET /api/auth/me
+2026-01-30 11:09:24.30
+dd194751
+User
+→ GET /api/home/above-fold
+2026-01-30 11:09:24.66
+dd194751
+User
+Database connection established
+2026-01-30 11:09:24.69
+dd194751
+User
+← GET /above-fold 200 (390ms)
+2026-01-30 11:09:24.71
+dd194751
+User
+Database ready
+2026-01-30 11:09:24.71
+dd194751
+User
+Database already has data, skipping seed
+2026-01-30 11:09:25.56
+dd194751
+User
+← GET /below-fold 304 (2403ms)
+2026-01-30 11:09:25.83
+dd194751
+User
+← GET /me 304 (2379ms)
+2026-01-30 11:09:26.28
+dd194751
+User
+→ GET /api/cart/count
+2026-01-30 11:09:26.43
+dd194751
+User
+← GET /count 304 (145ms)
+2026-01-30 11:09:26.52
+dd194751
+User
+→ GET /api/products/163d1581-a27c-4c32-996f-07bf4f5e6dca
+2026-01-30 11:09:26.71
+dd194751
+User
+← GET /163d1581-a27c-4c32-996f-07bf4f5e6dca 304 (193ms)
+2026-01-30 11:09:27.69
+dd194751
+User
+→ GET /api/products/163d1581-a27c-4c32-996f-07bf4f5e6dca
+2026-01-30 11:09:27.87
+dd194751
+User
+← GET /163d1581-a27c-4c32-996f-07bf4f5e6dca 304 (181ms)
+2026-01-30 11:09:27.92
+dd194751
+User
+→ GET /api/address/default
+2026-01-30 11:09:27.92
+dd194751
+User
+→ GET /api/profile
+2026-01-30 11:09:28.01
+dd194751
+User
+→ POST /api/coupons/available
+2026-01-30 11:09:28.03
+dd194751
+User
+→ GET /api/address
+2026-01-30 11:09:28.07
+dd194751
+User
+← GET /default 304 (145ms)
+2026-01-30 11:09:28.12
+dd194751
+User
+← GET / 304 (93ms)
+2026-01-30 11:09:28.13
+dd194751
+User
+← GET / 304 (205ms)
+2026-01-30 11:09:28.61
+dd194751
+User
+← POST /available 200 (601ms)
+2026-01-30 11:09:41.81
+dd194751
+User
+→ POST /api/payment/prepare-direct
+2026-01-30 11:09:43.03
+dd194751
+User
+← POST /prepare-direct 200 (1220ms)
+2026-01-30 11:09:43.68
+dd194751
+User
+→ GET /api/payment/form/20be2a10-2a37-4af9-92f9-f07f536c7c23
+2026-01-30 11:09:43.91
+dd194751
+User
+[NicePay Form] === Payment Config ===
+2026-01-30 11:09:43.91
+dd194751
+User
+[NicePay Form] paymentMethod (mapped): card
+2026-01-30 11:09:43.91
+dd194751
+User
+[NicePay Form] orderId: 20be2a10-2a37-4af9-92f9-f07f536c7c23
+2026-01-30 11:09:43.91
+dd194751
+User
+[NicePay Form] payment.method (DB): card
+2026-01-30 11:09:43.91
+dd194751
+User
+[NicePay Form] goodsName: 101원 금액 테스트
+2026-01-30 11:09:43.91
+dd194751
+User
+[NicePay Form] returnUrl: https://bongseonjang--tkfkdgowjdakfas.replit.app/api/payment/callback?appScheme=bongseonjang
+2026-01-30 11:09:43.91
+dd194751
+User
+[NicePay Form] amount: 0
+2026-01-30 11:09:43.91
+dd194751
+User
+[NicePay Form] appScheme: bongseonjang
+2026-01-30 11:09:43.91
+dd194751
+User
+← GET /form/20be2a10-2a37-4af9-92f9-f07f536c7c23 200 (236ms)
+2026-01-30 11:09:45.49
+dd194751
+User
+→ GET /api/orders/20be2a10-2a37-4af9-92f9-f07f536c7c23
+2026-01-30 11:09:45.77
+dd194751
+User
+← GET /20be2a10-2a37-4af9-92f9-f07f536c7c23 200 (278ms)
+2026-01-30 11:09:52.07
+dd194751
+User
+→ GET /api/profile/orders
+2026-01-30 11:09:52.07
+dd194751
+User
+→ GET /api/profile
+2026-01-30 11:09:52.26
+dd194751
+User
+← GET /orders 200 (189ms)
+2026-01-30 11:09:54.77
+dd194751
+User
+← GET / 304 (2694ms)
+2026-01-30 11:10:05.24
+dd194751
+User
+→ GET /api/points/transactions
+2026-01-30 11:10:05.24
+dd194751
+User
+→ GET /api/points/wallet
+2026-01-30 11:10:05.61
+dd194751
+User
+← GET /wallet 304 (364ms)
