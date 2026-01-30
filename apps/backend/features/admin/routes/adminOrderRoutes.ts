@@ -4,6 +4,11 @@ import { Order } from '../../../entity/Order';
 import { User } from '../../../entity/User';
 import { Payment } from '../../../entity/Payment';
 import { Shipment } from '../../../entity/Shipment';
+import { OrderItem } from '../../../entity/OrderItem';
+import { Product } from '../../../entity/Product';
+import { ProductOption } from '../../../entity/ProductOption';
+import { PointRepository } from '../../point/repository/PointRepository';
+import { CouponRepository } from '../../coupon/repository/CouponRepository';
 
 const router = Router();
 
@@ -252,11 +257,73 @@ router.put('/:orderId/status', async (req: Request, res: Response) => {
       return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
     }
 
-    order.status = status;
-    if (status === 'delivered') {
-      order.deliveredAt = new Date();
+    const previousStatus = order.status;
+    const isCancelOrRefund = status === 'cancelled' || status === 'refunded';
+    const wasAlreadyCancelledOrRefunded = previousStatus === 'cancelled' || previousStatus === 'refunded';
+    const wasPaidOrAfter = ['paid', 'preparing', 'shipping', 'delivered'].includes(previousStatus);
+    const shouldRestore = isCancelOrRefund && !wasAlreadyCancelledOrRefunded && wasPaidOrAfter;
+
+    if (shouldRestore) {
+      await AppDataSource.transaction(async (manager) => {
+        const orderItemRepo = manager.getRepository(OrderItem);
+        const productRepo = manager.getRepository(Product);
+        const productOptionRepo = manager.getRepository(ProductOption);
+
+        const orderItems = await orderItemRepo.find({ where: { orderId: order.id } });
+        for (const item of orderItems) {
+          if (item.productId) {
+            await productRepo.increment(
+              { id: item.productId },
+              'stockQuantity',
+              item.quantity
+            );
+          }
+          if (item.productOptionId) {
+            await productOptionRepo.increment(
+              { id: item.productOptionId },
+              'stockQuantity',
+              item.quantity
+            );
+          }
+        }
+
+        if (order.usedPoints > 0 && order.userId) {
+          const pointRepository = new PointRepository();
+          const wallet = await pointRepository.findWalletByUserId(order.userId);
+          if (wallet) {
+            await pointRepository.cancelPoints(
+              wallet.id,
+              order.usedPoints,
+              `주문 취소로 인한 포인트 복원 (${order.orderNumber})`,
+              order.id
+            );
+          }
+        }
+
+        const couponRepository = new CouponRepository();
+        if (order.userCouponIdsJson) {
+          try {
+            const couponIds: number[] = JSON.parse(order.userCouponIdsJson);
+            for (const couponId of couponIds) {
+              await couponRepository.restoreUserCoupon(couponId);
+            }
+          } catch (e) {
+            console.error('Failed to parse userCouponIdsJson:', e);
+          }
+        } else if (order.userCouponId) {
+          await couponRepository.restoreUserCoupon(order.userCouponId);
+        }
+
+        order.status = status;
+        await manager.save(order);
+      });
+    } else {
+      order.status = status;
+      if (status === 'delivered') {
+        order.deliveredAt = new Date();
+      }
+      await orderRepository.save(order);
     }
-    await orderRepository.save(order);
 
     return res.json({
       success: true,

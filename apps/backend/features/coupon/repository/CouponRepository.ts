@@ -274,4 +274,23 @@ export class CouponRepository {
       usedOrderId: orderId,
     });
   }
+
+  async restoreUserCoupon(userCouponId: number): Promise<void> {
+    await this.userCouponRepo.update(userCouponId, {
+      status: 'ISSUED',
+      usedAt: null,
+      usedOrderId: null,
+    });
+  }
+
+  async restoreUserCouponWithManager(
+    manager: EntityManager,
+    userCouponId: number
+  ): Promise<void> {
+    await manager.getRepository(UserCoupon).update(userCouponId, {
+      status: 'ISSUED',
+      usedAt: null,
+      usedOrderId: null,
+    });
+  }
 }
