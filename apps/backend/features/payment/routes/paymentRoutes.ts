@@ -924,7 +924,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
       return sendRedirectPage(res, buildRedirectUrl('/payment/fail', { message: '주문을 찾을 수 없습니다' }), appScheme);
     }
 
-    const frontendUrl = appScheme ? null : (order.returnUrl || fallbackUrl);
+    const frontendUrl = order.returnUrl || fallbackUrl;
     console.log('[NicePay Callback] Using frontend URL from order:', frontendUrl, 'appScheme:', appScheme);
     
     const buildOrderRedirectUrl = (path: string, params?: Record<string, string>) => {
@@ -934,9 +934,6 @@ async function handlePaymentCallback(req: Request, res: Response) {
       
       const cleanPath = path.startsWith('/') ? path.substring(1) : path;
       
-      if (appScheme) {
-        return `${appScheme}://${cleanPath}${queryString}`;
-      }
       return `${frontendUrl}/${cleanPath}${queryString}`;
     };
 
