@@ -70,7 +70,11 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
       }
     };
 
-    requestAnimationFrame(scrollToActiveTab);
+    const timeoutId = setTimeout(() => {
+      requestAnimationFrame(scrollToActiveTab);
+    }, 50);
+
+    return () => clearTimeout(timeoutId);
   }, [activeSlug, dynamicCategories]);
 
   const handleTabClick = (tab: CategoryTab) => {
