@@ -1,5 +1,5 @@
 import type { CartDto, CartItemDto } from '../api/cartApi';
-import { CartAppBar } from '../components/CartAppBar';
+import { CartAppBar, CartAppBarSpacer } from '../components/CartAppBar';
 import { CartItem } from '../components/CartItem';
 import { CartSummary } from '../components/CartSummary';
 import { ConfirmModal } from '../../../components/ConfirmModal';
@@ -45,6 +45,7 @@ export function CartView({
     return (
       <div className="cart-view">
         <CartAppBar />
+        <CartAppBarSpacer />
         <div className="cart-view__loading">
           <p>장바구니를 불러오는 중...</p>
         </div>
@@ -57,6 +58,7 @@ export function CartView({
   return (
     <div className="cart-view">
       <CartAppBar />
+      <CartAppBarSpacer />
       <div className="cart-view__header">
         <div className="cart-view__select-all">
           <button

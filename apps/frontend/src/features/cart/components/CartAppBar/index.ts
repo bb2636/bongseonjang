@@ -1,1 +1,1 @@
-export { CartAppBar } from './CartAppBar';
+export { CartAppBar, CartAppBarSpacer } from './CartAppBar';

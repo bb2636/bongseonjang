@@ -20,3 +20,7 @@ export function CartAppBar() {
     </header>
   );
 }
+
+export function CartAppBarSpacer() {
+  return <div className="cart-app-bar-spacer" />;
+}

@@ -27,11 +27,13 @@ export class TypeORMProductRepository implements ProductRepository {
 
   async findAll(filter?: ProductFilter): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
+    const now = new Date();
     
     const queryBuilder = productRepository
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
-      .leftJoinAndSelect('product.options', 'options');
+      .leftJoinAndSelect('product.options', 'options')
+      .where('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now });
 
     if (filter?.productCategory) {
       queryBuilder.andWhere('product.productCategoryId = :productCategoryId', { productCategoryId: filter.productCategory });
