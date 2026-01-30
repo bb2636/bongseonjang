@@ -53,6 +53,16 @@ function AddPhotoIcon() {
   );
 }
 
+function CameraIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="22" height="22" rx="4" fill="#D9D9D9" />
+      <path d="M19 15.5C19 15.8978 18.842 16.2794 18.5607 16.5607C18.2794 16.842 17.8978 17 17.5 17H4.5C4.10218 17 3.72064 16.842 3.43934 16.5607C3.15804 16.2794 3 15.8978 3 15.5V8C3 7.60218 3.15804 7.22064 3.43934 6.93934C3.72064 6.65804 4.10218 6.5 4.5 6.5H7L8.5 4.5H13.5L15 6.5H17.5C17.8978 6.5 18.2794 6.65804 18.5607 6.93934C18.842 7.22064 19 7.60218 19 8V15.5Z" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="11" cy="11" r="2.5" stroke="rgba(12, 12, 12, 0.6)" strokeWidth="1.2"/>
+    </svg>
+  );
+}
+
 export default function WriteInquiryPage() {
   const { productId } = useParams<{ productId: string }>();
   const goBack = useGoBack();
@@ -106,6 +116,9 @@ export default function WriteInquiryPage() {
     fileInputRef,
     removeImage,
     getUploadedUrls,
+    pickFromCamera,
+    pickFromGallery,
+    isCapacitorEnvironment,
   } = useImageUploader({ purpose: 'inquiry', maxImages: 10 });
 
   const createInquiryMutation = useMutation({
@@ -244,16 +257,39 @@ export default function WriteInquiryPage() {
 
         <section className="write-inquiry-page__section">
           <div className="write-inquiry-page__field-label">사진 첨부(선택)</div>
-          <p className="write-inquiry-page__helper">사진은 최대 10장, jpg, png, pdf 파일만 가능해요</p>
+          <p className="write-inquiry-page__helper">사진은 최대 10장, jpg, png 파일만 가능해요</p>
           <div className="write-inquiry-page__images">
-            <button
-              className="write-inquiry-page__image-add"
-              type="button"
-              onClick={openFilePicker}
-              disabled={!canAddMore}
-            >
-              <AddPhotoIcon />
-            </button>
+            {isCapacitorEnvironment ? (
+              <>
+                <button
+                  className="write-inquiry-page__image-add"
+                  type="button"
+                  onClick={pickFromCamera}
+                  disabled={!canAddMore}
+                  title="카메라로 촬영"
+                >
+                  <CameraIcon />
+                </button>
+                <button
+                  className="write-inquiry-page__image-add"
+                  type="button"
+                  onClick={pickFromGallery}
+                  disabled={!canAddMore}
+                  title="갤러리에서 선택"
+                >
+                  <AddPhotoIcon />
+                </button>
+              </>
+            ) : (
+              <button
+                className="write-inquiry-page__image-add"
+                type="button"
+                onClick={openFilePicker}
+                disabled={!canAddMore}
+              >
+                <AddPhotoIcon />
+              </button>
+            )}
             {images.map((image, index) => (
               <div key={image.previewUrl} className="write-inquiry-page__image-item">
                 <img src={image.previewUrl} alt={`첨부 이미지 ${index + 1}`} className="write-inquiry-page__image-preview" />

@@ -1,6 +1,9 @@
 import { useState, useRef, useCallback } from 'react';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { IS_CAPACITOR } from '@/shared/config/apiConfig';
 
 export type UploadPurpose = 'review' | 'inquiry' | 'profile' | 'support';
+export type ImageSourceType = 'camera' | 'gallery';
 
 export interface UploadedImage {
   file: File;
@@ -18,6 +21,35 @@ interface UseImageUploaderOptions {
 
 function getUploadEndpoint(): string {
   return '/api/upload';
+}
+
+async function base64ToFile(base64Data: string, filename: string): Promise<File> {
+  const response = await fetch(base64Data);
+  const blob = await response.blob();
+  return new File([blob], filename, { type: blob.type });
+}
+
+async function pickImageWithCapacitor(source: CameraSource): Promise<File | null> {
+  try {
+    const photo = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl,
+      source,
+      correctOrientation: true,
+    });
+
+    if (!photo.dataUrl) {
+      return null;
+    }
+
+    const extension = photo.format || 'jpg';
+    const filename = `photo_${Date.now()}.${extension}`;
+    return await base64ToFile(photo.dataUrl, filename);
+  } catch (error) {
+    console.log('[Capacitor Camera] User cancelled or error:', error);
+    return null;
+  }
 }
 
 function getExtensionFromFile(file: File): string {
@@ -67,6 +99,69 @@ export function useImageUploader(options: UseImageUploaderOptions) {
   const openFilePicker = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
+
+  const uploadSingleFile = useCallback(async (file: File) => {
+    const newImage: UploadedImage = {
+      file,
+      previewUrl: URL.createObjectURL(file),
+      isUploading: true,
+    };
+
+    setImages((prev) => [...prev, newImage]);
+    setIsUploading(true);
+
+    try {
+      const objectPath = await uploadImageToServer(file, purpose);
+      setImages((prev) =>
+        prev.map((img) =>
+          img.file === file
+            ? { ...img, uploadedUrl: objectPath, isUploading: false }
+            : img
+        )
+      );
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '업로드 실패';
+      setImages((prev) =>
+        prev.map((img) =>
+          img.file === file
+            ? { ...img, isUploading: false, error: errorMessage }
+            : img
+        )
+      );
+    }
+
+    setIsUploading(false);
+  }, [purpose]);
+
+  const pickFromCamera = useCallback(async () => {
+    if (!IS_CAPACITOR) {
+      openFilePicker();
+      return;
+    }
+
+    if (images.length >= maxImages) return;
+
+    const file = await pickImageWithCapacitor(CameraSource.Camera);
+    if (file) {
+      await uploadSingleFile(file);
+    }
+  }, [images.length, maxImages, openFilePicker, uploadSingleFile]);
+
+  const pickFromGallery = useCallback(async () => {
+    if (!IS_CAPACITOR) {
+      openFilePicker();
+      return;
+    }
+
+    if (images.length >= maxImages) return;
+
+    const file = await pickImageWithCapacitor(CameraSource.Photos);
+    if (file) {
+      await uploadSingleFile(file);
+    }
+  }, [images.length, maxImages, openFilePicker, uploadSingleFile]);
+
+  const isCapacitorEnvironment = IS_CAPACITOR;
 
   const handleFileChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,5 +250,8 @@ export function useImageUploader(options: UseImageUploaderOptions) {
     removeImage,
     clearImages,
     getUploadedUrls,
+    pickFromCamera,
+    pickFromGallery,
+    isCapacitorEnvironment,
   };
 }

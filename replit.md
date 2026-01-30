@@ -1,61 +1,7 @@
 # 봉크루 (Bongkru)
 
 ## Overview
-본 프로젝트는 사용자 친화적인 이커머스 웹 애플리케이션 구축을 목표로 합니다. 효율적인 사용자 인증 및 계정 관리 시스템을 포함하며, 확장 가능하고 유지보수하기 쉬운 아키텍처를 통해 견고한 서비스를 제공합니다.
-
-## Project Structure (Monorepo)
-```
-bongkru/
-├── apps/
-│   ├── frontend/          # React + Vite 프론트엔드
-│   │   ├── src/           # 소스 코드
-│   │   ├── public/        # 정적 파일
-│   │   ├── package.json   # 프론트엔드 의존성
-│   │   └── vite.config.ts # Vite 설정
-│   └── backend/           # Express + TypeORM 백엔드
-│       ├── entity/        # TypeORM 엔티티
-│       ├── features/      # 기능별 모듈
-│       ├── package.json   # 백엔드 의존성
-│       └── index.ts       # 서버 진입점
-├── packages/
-│   └── contract/          # 공용 타입 패키지
-│       ├── src/           # 타입 정의 파일
-│       └── package.json   # 패키지 설정
-├── pnpm-workspace.yaml    # pnpm 워크스페이스 설정
-└── package.json           # 루트 스크립트
-```
-
-### Commands
-- `npm install` - 모든 의존성 설치
-- `npm run dev` - 개발 서버 실행 (프론트엔드 + 백엔드)
-- `npm run build` - 프로덕션 빌드
-- `npm run dev:frontend` - 프론트엔드만 실행
-- `npm run dev:backend` - 백엔드만 실행
-
-### Capacitor API Configuration
-모든 프론트엔드 fetch 호출은 `API_BASE_URL`을 사용합니다:
-```typescript
-import { API_BASE_URL } from '@/shared/config/apiConfig';
-
-fetch(`${API_BASE_URL}/endpoint`, {...})
-```
-
-**빌드 모드별 API URL:**
-- 개발 환경: `/api` (Vite 프록시 사용)
-- 프로덕션/Capacitor: 배포된 백엔드 URL (vite.config.ts의 PRODUCTION_API_URL)
-
-**Capacitor 빌드 방법:**
-```bash
-# 로컬에서 빌드 후 Android Studio에서 실행
-npm run build
-npx cap sync android
-```
-
-### Shared Types (@bongkru/contract)
-프론트엔드와 백엔드에서 공용으로 사용하는 타입 정의:
-```typescript
-import { LoginRequest, ProductDto, OrderStatus } from '@bongkru/contract';
-```
+본 프로젝트는 사용자 친화적인 이커머스 웹 애플리케이션 구축을 목표로 합니다. 효율적인 사용자 인증 및 계정 관리 시스템을 포함하며, 확장 가능하고 유지보수하기 쉬운 아키텍처를 통해 견고한 서비스를 제공합니다. 주요 목표는 고객에게 원활한 쇼핑 경험을 제공하고, 다양한 제품과 서비스를 효과적으로 제공할 수 있는 안정적인 플랫폼을 구축하는 것입니다.
 
 ## User Preferences
 
@@ -100,7 +46,7 @@ import { LoginRequest, ProductDto, OrderStatus } from '@bongkru/contract';
 - SOLID 원칙 적용
 
 ### Development Process
-- **중요**: 구현 전 반드시 계획을 제안하고 사용자 승인을 받을 것
+- 구현 전 반드시 계획을 제안하고 사용자 승인을 받을 것
 - 개발 완료 후에도 사용자 승인을 받을 것
 
 ### Git Workflow
@@ -128,118 +74,61 @@ feat: 간단한 제목
   - `chore`: 빌드, 설정 파일 변경
 
 ### Replit Agent 협업 규칙
-- **중요**: Replit Agent는 코드 변경 시 자동으로 커밋을 생성함 (비활성화 불가)
+- Replit Agent는 코드 변경 시 자동으로 커밋을 생성함 (비활성화 불가)
 - **워크플로우**:
   1. Agent가 코드 변경 완료
   2. Agent가 커밋 메시지 제안 및 "**커밋 메시지를 수정해주세요!**" 표시
   3. 사용자가 `git commit --amend`로 메시지 수정
   4. 사용자가 `git push` 실행
 - **역할 분담**:
-
-| 역할 | 담당 |
-|------|------|
-| Agent | 코드 변경, 커밋 메시지 제안, 수정 알림 |
-| 사용자 | 커밋 메시지 수정, push |
+  - Agent: 코드 변경, 커밋 메시지 제안, 수정 알림
+  - 사용자: 커밋 메시지 수정, push
 
 ## System Architecture
 
+### Project Structure (Monorepo)
+프로젝트는 `apps/` (frontend, backend), `packages/` (contract)로 구성된 모노레포 형태로 관리됩니다.
+
 ### Frontend Architecture (Hook-First Pattern)
-프론트엔드는 Hook-First 패턴을 따르며, Context, Api, Service, Hook, Page, View 레이어로 구성됩니다. Page는 Hook 호출 후 View에 props를 전달하고, View는 UI 렌더링만 담당합니다. 모든 페이지는 Hook과 View로 분리되어야 하며, Page 파일에는 CSS import를 금지하고, View는 순수 프레젠테이션 컴포넌트여야 합니다. 전역 상태는 React Context, 서버 상태는 React Query, 기능별 상태는 Custom Hook으로 관리합니다.
+프론트엔드는 React와 Vite를 사용하며, Hook-First 패턴을 따릅니다. Context, Api, Service, Hook, Page, View 레이어로 구성되며, Page는 Hook 호출 후 View에 props를 전달하고, View는 UI 렌더링만 담당합니다. 전역 상태는 React Context, 서버 상태는 React Query, 기능별 상태는 Custom Hook으로 관리합니다. 모든 프론트엔드 fetch 호출은 `API_BASE_URL`을 사용합니다. Capacitor 환경을 지원하며, 카메라 플러그인을 활용한 이미지 업로드 기능을 제공합니다.
 
 ### Backend Architecture (Clean Architecture + Feature-Based)
-백엔드는 Clean Architecture를 따르며, 기능(Feature)별로 폴더를 구성합니다. 각 Feature 내에서 Controller, Application, Domain, Repository, Routes 레이어가 단방향 의존성을 유지합니다. Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈니스 로직 처리 및 DTO로 변환합니다. Mock/Real 스위칭을 지원하는 Generic Factory + Map 캐싱 패턴을 사용합니다.
+백엔드는 Express.js와 TypeORM을 사용하며, Clean Architecture를 따르고 기능(Feature)별로 폴더를 구성합니다. 각 Feature 내에서 Controller, Application, Domain, Repository, Routes 레이어가 단방향 의존성을 유지합니다. Repository는 DB 접근 및 TypeORM Entity를 반환하며, Service에서 비즈니스 로직 처리 및 DTO로 변환합니다. Mock/Real 스위칭을 지원하는 Generic Factory + Map 캐싱 패턴을 사용합니다.
 
 ### UI/UX Patterns
 CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통 Input/PasswordInput 컴포넌트, 반응형 디자인, 스켈레톤 로딩 등을 통해 사용자 경험을 개선합니다. 완료 화면은 `CompletionScreen` 공용 컴포넌트를 사용합니다.
 
 ### Authentication System (Separated Sessions)
-관리자와 사용자 인증 세션이 완전히 분리되어 있습니다:
-- **사용자 인증**: `user_token` localStorage 키 사용 (`AuthContext`)
-- **관리자 인증**: `admin_token` localStorage 키 사용 (`AdminAuthContext`)
-- 관리자 로그인 시 사용자 세션에 영향 없음
-- 사용자 로그인 시 관리자 세션에 영향 없음
+관리자와 사용자 인증 세션이 완전히 분리되어 `user_token` 및 `admin_token`을 사용하여 관리됩니다.
 
 ### Core Features
-- **홈 화면**: Feature-first 레이아웃, 자체 AppBar/BottomNav, Swiper.js 기반 HeroBanner.
-- **이벤트**: HOME_EVENT 배너 위치를 이벤트로 활용. 별도 events 테이블 대신 banners 테이블의 HOME_EVENT 포지션 사용. Banner 엔티티에 description, startedAt, endedAt 필드로 이벤트 정보 저장. `/api/events` 엔드포인트가 HOME_EVENT 배너를 EventDto로 변환하여 반환.
-- **상품 상세**: "상품정보", "후기 N", "문의" 탭 네비게이션. ReviewService 주입을 통한 리뷰 통계 제공.
-- **2단계 상품 옵션**: MainOption(기본 가격)과 SubOption(추가 금액)으로 구성. lowestPrice 자동 계산. OptionBottomSheet로 선택. 레거시 상품 지원.
-- **카테고리 페이지**: 바텀 네비게이션에서 접근. CategoryAppBar, CategoryList를 포함하며, 카테고리 클릭 시 해당 탭으로 이동.
-- **브랜드 상품 페이지**: `/brand/:brandId` 라우트. 4개 브랜드(바담은, 오바다, 포시즌, 봉쿡) 탭 네비게이션. 브랜드 ID를 exposure category 태그명으로 매핑(badameun → "바담은 제품" 등).
-- **프로필/마이페이지**: ProfileAppBar, ProfileHeader, SummaryCard, RecentOrders, MenuList로 구성.
-- **소셜 로그인**: 카카오, 네이버, 구글, 애플 지원. `users` (기본), `user_social_accounts` (연동) 듀얼 테이블 구조. 이메일 필수 정책.
-  - **Apple OAuth 특이사항**: `response_mode=form_post`로 인해 백엔드 `/api/auth/apple/callback`에서 POST 수신 후 프론트엔드로 리다이렉트. Apple id_token은 JWKS로 검증 (jose 라이브러리).
-  - **환경 변수**: `SOCIAL_REDIRECT_BASE_URL` (서버용), `VITE_SOCIAL_REDIRECT_BASE_URL` (프론트엔드용) 사용.
-- **장바구니/주문**: `carts`, `cart_items`, `orders`, `order_items`, `order_status_history` 테이블로 관리. 주문 시 상품 가격/옵션 스냅샷 저장.
-- **배송**: `shipping_addresses`, `shipments`, `shipment_events` 테이블.
-- **결제**: `payments`, `payment_refunds` 테이블. NicePayments v1 API 연동. 장바구니 항목 ID 스냅샷(`cartItemIdsSnapshot`)을 통해 결제 완료 후 선택된 항목만 삭제.
-  - **콜백 리다이렉트**: 결제 완료 후 JavaScript 기반 리다이렉트 페이지 사용 (`sendRedirectPage`). 팝업/iframe에서 부모 창으로 리다이렉트하거나, 앱에서 딥링크로 리다이렉트 처리.
-  - **성공 URL**: `/payment/complete/:orderId` (웹/앱 공통)
-- **쿠폰/포인트**: `coupons`, `coupon_issuances`, `coupon_apply_exposure_categories`, `point_wallets`, `point_transactions` 테이블. 포인트 만료 관리.
-  - **브랜드 카테고리 쿠폰**: ExposureCategory 기반 쿠폰 적용 지원 (바담은:3, 봉쿡:6, 오바다:9, 포시즌:10)
-  - **복수 쿠폰 사용**: `allowMultipleUse: true` 쿠폰들끼리 중복 적용 가능. Order.userCouponIdsJson에 JSON 배열로 저장.
-- **찜**: `wishlists`, `wishlist_items` 테이블.
-- **고객센터**: `support_tickets`, `support_messages` 테이블.
-- **비회원 결제**: 비회원도 장바구니/찜/결제 가능. localStorage에 버전 관리 스키마로 저장. 로그인 시 서버로 자동 병합.
-
-### Guest Checkout System
-비회원 결제 시스템 구현:
-- **저장소**: `guestStorage.ts` - 버전 관리 스키마(v1)로 localStorage에 장바구니/찜 저장
-- **병합**: `guestDataMerge.ts` - 로그인/회원가입 시 localStorage 데이터를 서버로 자동 병합
-- **DB 테이블**: `guest_order_details` - 비회원 주문 상세 정보 (이름, 해시된 전화번호, 마지막 4자리, 이메일)
-- **보안**: 휴대폰 번호는 SHA-256 해시로 저장, 마지막 4자리만 표시용으로 별도 저장
-- **주문 조회**: 이름 + 휴대폰 번호로 비회원 주문 조회 가능
-- **API 엔드포인트**:
-  - `POST /api/payment/prepare-guest` - 비회원 결제 준비
-  - `POST /api/payment/guest/lookup` - 비회원 주문 조회
-  - `GET /api/payment/guest/order/:orderId` - 비회원 주문 상세
-  - `POST /api/cart/merge` - 장바구니 병합 (수량 1~99 제한)
-  - `POST /api/wishlist/merge` - 찜 목록 병합
+-   **홈 화면**: Feature-first 레이아웃, Swiper.js 기반 HeroBanner.
+-   **이벤트**: `banners` 테이블의 `HOME_EVENT` 포지션을 활용.
+-   **상품 상세**: "상품정보", "후기 N", "문의" 탭 네비게이션, 2단계 상품 옵션 지원.
+-   **카테고리/브랜드 상품 페이지**: 바텀 네비게이션 및 브랜드 ID 매핑을 통한 제품 분류.
+-   **프로필/마이페이지**: 개인 정보 및 주문 내역 관리.
+-   **소셜 로그인**: 카카오, 네이버, 구글, 애플을 지원하며, `users`와 `user_social_accounts` 듀얼 테이블 구조를 사용합니다. Apple OAuth의 경우 백엔드에서 `form_post` 처리 후 프론트엔드로 리다이렉트합니다.
+-   **장바구니/주문/결제**: `carts`, `orders`, `payments` 등 관련 테이블로 관리하며, NicePayments v1 연동. 결제 완료 후 `cartItemIdsSnapshot`을 통해 선택된 항목만 삭제하고, JavaScript 기반 리다이렉트 또는 딥링크를 통해 결제 완료 페이지로 이동합니다.
+-   **쿠폰/포인트**: `coupons`, `point_wallets` 테이블로 관리하며, 브랜드 카테고리 쿠폰 및 복수 쿠폰 사용을 지원합니다.
+-   **찜**: `wishlists` 테이블로 관리.
+-   **고객센터**: `support_tickets` 테이블로 관리.
+-   **비회원 결제**: localStorage에 장바구니/찜 데이터를 저장하고, 로그인 시 서버로 자동 병합됩니다. 비회원 주문 상세 정보는 `guest_order_details` 테이블에 저장되며, 전화번호는 해시 처리됩니다.
 
 ### Database Schema Principles
 주문 시점의 가격/옵션 스냅샷 저장, 상태 변경 이력 관리 (`order_status_history`, `shipment_events`), 포인트 만료 관리 (`point_transactions.expiresAt`), Soft Delete를 위한 `isActive` 플래그 사용.
 
-## Object Storage (App Storage)
-프로젝트는 `@replit/object-storage` SDK를 사용하여 파일 저장을 관리합니다.
-
-### 특징
-- **자동 인증**: Replit 환경에서 자동으로 인증 처리
-- **환경 변수 불필요**: 버킷 설정을 위한 환경 변수가 필요 없음
-- **포크 후 자동 작동**: 프로젝트를 포크해도 별도 설정 없이 바로 작동
-
-### 파일 구조
-- `apps/backend/objectStorage.ts` - 스토리지 서비스 클래스
-- `apps/backend/objectAcl.ts` - 접근 권한(ACL) 관리
-- `apps/backend/common/utils/imageUrl.ts` - 이미지 URL 변환 유틸리티
-
-### 이미지 URL 변환
-Object Storage의 상대 경로(`/objects/...`)를 배포 환경에서도 작동하도록 절대 URL로 변환합니다:
-- 개발 환경: `REPLIT_DEV_DOMAIN` 환경 변수 사용
-- Capacitor APK: 절대 URL로 백엔드 이미지에 접근
-- 적용 위치: ProductService, HomeDataService, ReviewService, CartRoutes, WishlistRoutes 등
-
-### 사용 예시
-```typescript
-import { ObjectStorageService } from './objectStorage';
-
-const storageService = new ObjectStorageService();
-
-// 파일 업로드
-const objectPath = await storageService.uploadFile(buffer, 'filename.jpg', 'uploads');
-
-// 파일 다운로드
-await storageService.downloadObjectByPath(objectPath, res);
-```
+### Object Storage (App Storage)
+프로젝트는 `@replit/object-storage` SDK를 사용하여 파일 저장을 관리합니다. Replit 환경에서 자동 인증되며, `objectStorage.ts`, `objectAcl.ts`, `imageUrl.ts` 파일에서 관련 로직을 처리합니다. 이미지 URL은 배포 환경에서 작동하도록 절대 URL로 변환됩니다.
 
 ## External Dependencies
-- **React 18**: 프론트엔드 라이브러리
-- **Vite**: 빌드 도구
-- **Vanilla CSS**: 스타일링
-- **React Query**: 서버 상태 관리
-- **Swiper.js**: 이미지 슬라이더/캐러셀
-- **Express.js**: 백엔드 프레임워크
-- **TypeORM**: ORM
-- **PostgreSQL**: 데이터베이스
-- **bcrypt**: 비밀번호 해싱
-- **jsonwebtoken**: JWT 토큰
-- **NicePayments v1**: PG 결제 연동
+-   **React 18**: 프론트엔드 라이브러리
+-   **Vite**: 빌드 도구
+-   **Vanilla CSS**: 스타일링
+-   **React Query**: 서버 상태 관리
+-   **Swiper.js**: 이미지 슬라이더/캐러셀
+-   **Express.js**: 백엔드 프레임워크
+-   **TypeORM**: ORM
+-   **PostgreSQL**: 데이터베이스
+-   **bcrypt**: 비밀번호 해싱
+-   **jsonwebtoken**: JWT 토큰
+-   **NicePayments v1**: PG 결제 연동
