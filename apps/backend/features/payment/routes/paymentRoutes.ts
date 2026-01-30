@@ -1018,7 +1018,14 @@ async function handlePaymentCallback(req: Request, res: Response) {
         approvalSuccess = true;
       } else {
         console.log('[NicePay Callback] Approval failed:', approvalResult.resultMsg);
-        if (payment) {
+        
+        // For card payments, delete the order when approval fails
+        // Bank transfer and virtual account orders should remain for later payment
+        const isCardMethod = payment?.method?.toLowerCase() === 'card';
+        if (payment && isCardMethod) {
+          console.log('[NicePay Callback] Card payment approval failed, deleting pending order:', orderId);
+          await deletePendingOrder(orderId);
+        } else if (payment) {
           payment.status = 'failed';
           payment.failReason = approvalResult.resultMsg || '결제 승인 실패';
           await paymentRepository.save(payment);
@@ -1216,13 +1223,21 @@ async function handlePaymentCallback(req: Request, res: Response) {
     console.log('[NicePay Callback] Unexpected state - approvalSuccess is false');
     const failReason = approvalResult?.resultMsg || '결제 처리 실패';
     
-    order.status = 'payment_failed';
-    await orderRepository.save(order);
+    // For card payments, delete the order when payment fails unexpectedly
+    // Bank transfer and virtual account orders should remain for later payment
+    const isUnexpectedCardMethod = payment?.method?.toLowerCase() === 'card';
+    if (payment && isUnexpectedCardMethod) {
+      console.log('[NicePay Callback] Card payment failed unexpectedly, deleting pending order:', order.id);
+      await deletePendingOrder(order.id);
+    } else {
+      order.status = 'payment_failed';
+      await orderRepository.save(order);
 
-    if (payment) {
-      payment.status = 'failed';
-      payment.failReason = failReason;
-      await paymentRepository.save(payment);
+      if (payment) {
+        payment.status = 'failed';
+        payment.failReason = failReason;
+        await paymentRepository.save(payment);
+      }
     }
 
     return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: failReason }), appScheme);
@@ -1261,7 +1276,8 @@ router.post('/log-error', optionalAuthMiddleware, async (req: Request, res: Resp
   // Only for CARD payments - bank transfer/virtual account orders should remain for later payment
   // Security: Requires valid deletion token OR authenticated user ownership
   let orderDeleted = false;
-  if (deleteOrder && orderId && method === 'CARD') {
+  const isCardPayment = method?.toUpperCase() === 'CARD';
+  if (deleteOrder && orderId && isCardPayment) {
     // Security check: Guest users MUST provide a valid deletion token
     // Authenticated users are verified by userId in deletePendingOrder
     if (!userId) {
@@ -1276,7 +1292,7 @@ router.post('/log-error', optionalAuthMiddleware, async (req: Request, res: Resp
       }
     }
     orderDeleted = await deletePendingOrder(orderId, userId);
-  } else if (deleteOrder && orderId && method !== 'CARD') {
+  } else if (deleteOrder && orderId && !isCardPayment) {
     console.log('[NicePay Payment Error] Skipping order deletion for non-CARD method:', method);
   }
   
