@@ -133,13 +133,14 @@ export function useProductDetailPage(productId: string) {
   };
 
   const handleShare = async () => {
-    const shareUrl = window.location.href;
+    const webBaseUrl = 'https://bongseonjang--tkfkdgowjdakfas.replit.app';
+    const shareUrl = `${webBaseUrl}/product/${productId}`;
     
     if (Capacitor.isNativePlatform()) {
       try {
         await Share.share({
-          title: product?.name || '상품 공유',
-          text: product?.name || '상품을 확인해보세요',
+          title: product?.name || '봉선장 상품',
+          text: product?.name ? `${product.name} - 봉선장에서 확인해보세요!` : '봉선장에서 상품을 확인해보세요!',
           url: shareUrl,
           dialogTitle: '공유하기',
         });
@@ -151,7 +152,8 @@ export function useProductDetailPage(productId: string) {
     } else if (navigator.share) {
       try {
         await navigator.share({
-          title: product?.name,
+          title: product?.name || '봉선장 상품',
+          text: product?.name ? `${product.name} - 봉선장에서 확인해보세요!` : '봉선장에서 상품을 확인해보세요!',
           url: shareUrl,
         });
       } catch (err) {
