@@ -1,4 +1,5 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import { checkIsCapacitor } from '@/shared/config/apiConfig';
 import './AddressInputForm.css';
 
 export interface AddressData {
@@ -42,18 +43,48 @@ export function AddressInputForm({
   showLabel = true,
   label = '배송지',
 }: AddressInputFormProps) {
+  const [showAddressLayer, setShowAddressLayer] = useState(false);
+  const layerRef = useRef<HTMLDivElement>(null);
+  const isCapacitor = checkIsCapacitor();
+
   const handleAddressSearch = useCallback(() => {
     if (!window.daum?.Postcode) {
       onSearchError?.('주소 검색 서비스를 불러오지 못했습니다. 페이지를 새로고침 해주세요.');
       return;
     }
-    new window.daum.Postcode({
-      oncomplete: (data) => {
-        const selectedAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-        onAddressSearch(data.zonecode, selectedAddress);
-      },
-    }).open();
-  }, [onAddressSearch, onSearchError]);
+
+    if (isCapacitor) {
+      setShowAddressLayer(true);
+    } else {
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          const selectedAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+          onAddressSearch(data.zonecode, selectedAddress);
+        },
+      }).open();
+    }
+  }, [onAddressSearch, onSearchError, isCapacitor]);
+
+  useEffect(() => {
+    if (showAddressLayer && layerRef.current && window.daum?.Postcode) {
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          const selectedAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+          onAddressSearch(data.zonecode, selectedAddress);
+          setShowAddressLayer(false);
+        },
+        onclose: () => {
+          setShowAddressLayer(false);
+        },
+        width: '100%',
+        height: '100%',
+      }).embed(layerRef.current);
+    }
+  }, [showAddressLayer, onAddressSearch]);
+
+  const handleCloseLayer = useCallback(() => {
+    setShowAddressLayer(false);
+  }, []);
 
   const getInputBoxClass = (hasError: boolean, isFull = false) => {
     let className = 'address-input-form__input-box';
@@ -120,6 +151,24 @@ export function AddressInputForm({
           <span className="address-input-form__error">{errors.address}</span>
         )}
       </div>
+
+      {showAddressLayer && (
+        <div className="address-layer-overlay">
+          <div className="address-layer-container">
+            <div className="address-layer-header">
+              <span>주소 검색</span>
+              <button
+                type="button"
+                className="address-layer-close"
+                onClick={handleCloseLayer}
+              >
+                닫기
+              </button>
+            </div>
+            <div className="address-layer-content" ref={layerRef} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -241,6 +241,15 @@ function AppContent() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   useEffect(() => {
+    if (IS_CAPACITOR) {
+      document.body.classList.add('capacitor-app');
+    }
+    return () => {
+      document.body.classList.remove('capacitor-app');
+    };
+  }, []);
+
+  useEffect(() => {
     if (!IS_CAPACITOR) return;
 
     const handleAppUrlOpen = async (event: URLOpenListenerEvent) => {
