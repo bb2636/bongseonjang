@@ -83,9 +83,11 @@ router.get('/', async (req: Request, res: Response) => {
           }
         }
 
-        const optionPrices = options.filter(o => o.price !== null).map(o => o.price as number);
-        const lowestPrice = optionPrices.length > 0
-          ? Math.min(...optionPrices)
+        const validOptionPrices = options
+          .filter(o => o.price !== null && o.price > 0)
+          .map(o => o.price as number);
+        const lowestPrice = validOptionPrices.length > 0
+          ? Math.min(...validOptionPrices)
           : product.basePrice;
 
         const optionSummary = options.length > 0
