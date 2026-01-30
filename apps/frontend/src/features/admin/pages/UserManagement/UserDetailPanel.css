@@ -584,10 +584,11 @@
 }
 
 .user-detail-order-table-cell--product-summary {
-  flex: 1;
-  min-width: 0;
-  align-items: flex-start;
-  text-align: left;
+  width: 180px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-detail-order-table-cell--amount {
