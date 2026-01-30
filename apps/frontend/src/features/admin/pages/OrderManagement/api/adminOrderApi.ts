@@ -118,3 +118,67 @@ export async function updateShippingInfo(orderId: string, params: UpdateShipping
     throw new Error(data.error || '배송 정보 저장에 실패했습니다');
   }
 }
+
+export interface AdminOrderDetailDto {
+  id: string;
+  orderNumber: string;
+  orderedAt: string;
+  orderStatus: string;
+  customerName: string;
+  phoneNumber: string;
+  email: string;
+  items: Array<{
+    id: string;
+    productName: string;
+    optionName: string | null;
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+  }>;
+  recipientName: string;
+  recipientPhone: string;
+  address: string;
+  addressDetail: string | null;
+  deliveryRequest: string | null;
+  shippingCompany: string | null;
+  trackingNumber: string | null;
+  totalProductPrice: number;
+  shippingFee: number;
+  couponDiscountAmount: number;
+  usedPoints: number;
+  finalAmount: number;
+  paymentMethod: string | null;
+  adminMemo: string | null;
+}
+
+export async function fetchAdminOrderDetail(orderId: string): Promise<AdminOrderDetailDto> {
+  const token = sessionStorage.getItem('admin_token');
+  const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}`, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('주문 상세 정보를 불러오는데 실패했습니다');
+  }
+
+  return response.json();
+}
+
+export async function updateAdminOrderMemo(orderId: string, adminMemo: string): Promise<void> {
+  const token = sessionStorage.getItem('admin_token');
+  const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/memo`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ adminMemo }),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || '관리 메모 저장에 실패했습니다');
+  }
+}

@@ -7,6 +7,7 @@ import { Shipment } from '../../../entity/Shipment';
 import { OrderItem } from '../../../entity/OrderItem';
 import { Product } from '../../../entity/Product';
 import { ProductOption } from '../../../entity/ProductOption';
+import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
 import { PointRepository } from '../../point/repository/PointRepository';
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
 
@@ -335,6 +336,159 @@ router.put('/:orderId/status', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Failed to update order status:', error);
     return res.status(500).json({ error: '주문 상태 변경에 실패했습니다' });
+  }
+});
+
+interface AdminOrderDetailDto {
+  id: string;
+  orderNumber: string;
+  orderedAt: string;
+  orderStatus: string;
+  customerName: string;
+  phoneNumber: string;
+  email: string;
+  items: Array<{
+    id: string;
+    productName: string;
+    optionName: string | null;
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+  }>;
+  recipientName: string;
+  recipientPhone: string;
+  address: string;
+  addressDetail: string | null;
+  deliveryRequest: string | null;
+  shippingCompany: string | null;
+  trackingNumber: string | null;
+  totalProductPrice: number;
+  shippingFee: number;
+  couponDiscountAmount: number;
+  usedPoints: number;
+  finalAmount: number;
+  paymentMethod: string | null;
+  adminMemo: string | null;
+}
+
+router.get('/:orderId', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const order = await orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['items', 'user'],
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
+    }
+
+    const guestOrderDetailRepository = AppDataSource.getRepository(GuestOrderDetail);
+    const guestOrderDetail = await guestOrderDetailRepository.findOne({
+      where: { orderId: order.id },
+    });
+
+    const shipmentRepository = AppDataSource.getRepository(Shipment);
+    const shipment = await shipmentRepository.findOne({
+      where: { orderId: order.id },
+    });
+
+    const paymentRepository = AppDataSource.getRepository(Payment);
+    const payment = await paymentRepository.findOne({
+      where: { orderId: order.id },
+    });
+
+    const user = order.user;
+
+    let customerName: string;
+    let phoneNumber: string;
+    let email: string;
+
+    if (user) {
+      customerName = user.name;
+      phoneNumber = user.phone || order.recipientPhone;
+      email = user.email;
+    } else if (guestOrderDetail) {
+      customerName = guestOrderDetail.guestName;
+      phoneNumber = order.recipientPhone;
+      email = guestOrderDetail.guestEmail || '-';
+    } else {
+      customerName = order.recipientName;
+      phoneNumber = order.recipientPhone;
+      email = '-';
+    }
+
+    const items = order.items.map((item) => ({
+      id: item.id,
+      productName: item.productName,
+      optionName: item.optionName,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      subtotal: item.totalPrice,
+    }));
+
+    let frontendPaymentMethod: string | null = null;
+    if (payment?.method) {
+      frontendPaymentMethod = dbPaymentMethodToFrontend[payment.method] || payment.method;
+    }
+
+    const response: AdminOrderDetailDto = {
+      id: order.id,
+      orderNumber: order.orderNumber,
+      orderedAt: formatDate(order.createdAt),
+      orderStatus: dbStatusToFrontend[order.status] || 'PAYMENT_PENDING',
+      customerName,
+      phoneNumber,
+      email,
+      items,
+      recipientName: order.recipientName,
+      recipientPhone: order.recipientPhone,
+      address: order.address,
+      addressDetail: order.addressDetail,
+      deliveryRequest: order.deliveryRequest,
+      shippingCompany: shipment?.carrierName || null,
+      trackingNumber: shipment?.trackingNumber || null,
+      totalProductPrice: order.totalProductPrice,
+      shippingFee: 0,
+      couponDiscountAmount: order.couponDiscountAmount,
+      usedPoints: order.usedPoints,
+      finalAmount: order.finalAmount,
+      paymentMethod: frontendPaymentMethod,
+      adminMemo: order.orderNote,
+    };
+
+    return res.json(response);
+  } catch (error) {
+    console.error('Failed to get admin order detail:', error);
+    return res.status(500).json({ error: '주문 상세 정보를 불러오는데 실패했습니다' });
+  }
+});
+
+router.put('/:orderId/memo', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    const { adminMemo } = req.body;
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const order = await orderRepository.findOne({ where: { id: orderId } });
+
+    if (!order) {
+      return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
+    }
+
+    order.orderNote = adminMemo && adminMemo.trim() !== '' ? adminMemo : null;
+    await orderRepository.save(order);
+
+    return res.json({
+      success: true,
+      message: '관리 메모가 저장되었습니다',
+      adminMemo: order.orderNote,
+    });
+  } catch (error) {
+    console.error('Failed to update admin memo:', error);
+    return res.status(500).json({ error: '관리 메모 저장에 실패했습니다' });
   }
 });
 

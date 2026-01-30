@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '../../layouts';
 import { fetchAdminOrders, updateShippingInfo, updateOrderStatus, OrderStatus, PaymentMethod, AdminOrderDto, BackendOrderStatus } from './api/adminOrderApi';
 import { TrackingNumberDialog } from './components/TrackingNumberDialog';
+import { OrderDetailPanel } from './components/OrderDetailPanel';
 import './OrderManagement.css';
 
 const orderStatusOptions: { code: OrderStatus; label: string }[] = [
@@ -95,6 +96,7 @@ export function OrderManagementPage() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [trackingDialogState, setTrackingDialogState] = useState<TrackingDialogState | null>(null);
   const [savingOrderId, setSavingOrderId] = useState<string | null>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['adminOrders', orderStatusFilter, paymentMethodFilter, searchKeyword],
@@ -252,6 +254,7 @@ export function OrderManagementPage() {
               <div className="order-table__header-cell">결제 수단</div>
               <div className="order-table__header-cell">택배사</div>
               <div className="order-table__header-cell">송장번호</div>
+              <div className="order-table__header-cell">관리</div>
             </div>
 
             {isLoading ? (
@@ -324,6 +327,15 @@ export function OrderManagementPage() {
                       {order.trackingNumber || '입력'}
                     </button>
                   </div>
+                  <div className="order-table__cell order-table__cell--action">
+                    <button
+                      type="button"
+                      className="order-table__view-button"
+                      onClick={() => setSelectedOrderId(order.id)}
+                    >
+                      보기
+                    </button>
+                  </div>
                 </div>
               ))
             )}
@@ -338,6 +350,14 @@ export function OrderManagementPage() {
         onSave={handleSaveTrackingNumber}
         isSaving={!!savingOrderId}
       />
+
+      {selectedOrderId && (
+        <OrderDetailPanel
+          orderId={selectedOrderId}
+          isOpen={!!selectedOrderId}
+          onClose={() => setSelectedOrderId(null)}
+        />
+      )}
     </AdminLayout>
   );
 }
