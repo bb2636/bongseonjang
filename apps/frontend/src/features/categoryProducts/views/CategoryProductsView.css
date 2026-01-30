@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  height: 100vh;
+  min-height: 100dvh;
   background: #FFFFFF;
   overflow-y: auto;
   overflow-x: hidden;
@@ -14,7 +14,7 @@
   flex: 1;
   padding: 0;
   padding-top: 16px;
-  padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
 }
 
 .category-products-page__loading {
