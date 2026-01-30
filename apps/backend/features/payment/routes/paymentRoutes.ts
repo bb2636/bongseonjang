@@ -895,7 +895,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
       
       const errorMsg = authResultMsg || '결제 인증에 실패했습니다';
       const errorUrl = `${fallbackUrl}/payment/fail?message=${encodeURIComponent(errorMsg)}&code=${authResultCode}`;
-      return sendRedirectPage(res, appScheme ? `${appScheme}://payment/fail?message=${encodeURIComponent(errorMsg)}&code=${authResultCode}` : errorUrl, appScheme);
+      return sendRedirectPage(res, errorUrl, appScheme);
     }
 
     const buildRedirectUrl = (path: string, params?: Record<string, string>) => {
@@ -905,9 +905,6 @@ async function handlePaymentCallback(req: Request, res: Response) {
       
       const cleanPath = path.startsWith('/') ? path.substring(1) : path;
       
-      if (appScheme) {
-        return `${appScheme}://${cleanPath}${queryString}`;
-      }
       return `${fallbackUrl}/${cleanPath}${queryString}`;
     };
 
