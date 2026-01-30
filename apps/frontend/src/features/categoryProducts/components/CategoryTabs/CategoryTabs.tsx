@@ -58,6 +58,10 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   const staticSlugs = ['all', 'best', 'new'];
 
   useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 10;
+    let rafId: number;
+
     const scrollToActiveTab = () => {
       const activeTab = tabRefs.current.get(activeSlug);
       if (activeTab && containerRef.current) {
@@ -67,14 +71,15 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
         const containerWidth = container.offsetWidth;
         const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
         container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+      } else if (retryCount < maxRetries) {
+        retryCount++;
+        rafId = requestAnimationFrame(scrollToActiveTab);
       }
     };
 
-    const timeoutId = setTimeout(() => {
-      requestAnimationFrame(scrollToActiveTab);
-    }, 50);
+    rafId = requestAnimationFrame(scrollToActiveTab);
 
-    return () => clearTimeout(timeoutId);
+    return () => cancelAnimationFrame(rafId);
   }, [activeSlug, dynamicCategories]);
 
   const handleTabClick = (tab: CategoryTab) => {
