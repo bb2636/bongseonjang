@@ -1,4 +1,5 @@
 import './LoginView.css';
+import socialLoginLogo from '@/assets/images/social-login-logo.png';
 
 interface LoginViewProps {
   login: {
@@ -26,9 +27,7 @@ export default function LoginView({ login }: LoginViewProps) {
 
       <main className="login-content">
         <div className="login-logo-section">
-          <div className="login-logo-circle">
-            <img className="login-logo-image" src="/logo.svg" alt="봉선장" />
-          </div>
+          <img className="login-logo-image" src={socialLoginLogo} alt="봉선장" />
           <h1 className="login-logo-text">봉선장</h1>
         </div>
 
