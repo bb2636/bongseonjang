@@ -78,16 +78,6 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   }, []);
 
   const handleTabClick = (tab: CategoryTab) => {
-    const tabEl = tabRefs.current.get(tab.slug);
-    if (tabEl && containerRef.current) {
-      const container = containerRef.current;
-      const tabLeft = tabEl.offsetLeft;
-      const tabWidth = tabEl.offsetWidth;
-      const containerWidth = container.offsetWidth;
-      const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
-      container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
-    }
-    
     if (!staticSlugs.includes(tab.slug)) {
       onTabChange(tab.slug, tab.id);
     } else {
@@ -116,8 +106,8 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   }, [activeSlug, scrollToElement]);
 
   return (
-    <div className="category-tabs" ref={containerRef}>
-      <div className="category-tabs__container">
+    <div className="category-tabs">
+      <div className="category-tabs__container" ref={containerRef}>
         {allTabs.map((tab) => (
           <button
             key={tab.slug}
