@@ -6,7 +6,9 @@ import ProductDetailView from '../views/ProductDetailView';
 import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
 import { AlertModal } from '../../../components/AlertModal';
 import { ConfirmModal } from '../../../components/ConfirmModal';
+import { ShareBottomSheet } from '../../../components';
 import { checkUserReview } from '../../review/api/reviewApi';
+import { useToast } from '../../../contexts/ToastContext';
 import './ProductDetailPage.css';
 
 type ModalType = 'alert' | 'retry' | null;
@@ -15,11 +17,13 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const goBack = useGoBack();
+  const { showToast } = useToast();
   const [modalState, setModalState] = useState<{ type: ModalType; message: string }>({
     type: null,
     message: '',
   });
   const [isCheckingReviewPermission, setIsCheckingReviewPermission] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   
   const { state, actions } = useProductDetailPage(id || '');
   const {
@@ -37,12 +41,31 @@ export default function ProductDetailPage() {
     isSoldOut,
   } = state;
   const {
-    handleShare,
     handleTabChange,
     handleAddToCart,
     handleToggleWishlist,
     handleWriteInquiryClick,
   } = actions;
+
+  const webBaseUrl = 'https://bongseonjang--tkfkdgowjdakfas.replit.app';
+  const shareUrl = `${webBaseUrl}/product/${id}`;
+
+  const handleShareClick = () => {
+    setIsShareOpen(true);
+  };
+
+  const handleShareClose = () => {
+    setIsShareOpen(false);
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      showToast('링크가 복사되었습니다', 'success');
+    } catch {
+      showToast('링크 복사에 실패했습니다', 'error');
+    }
+  };
 
   if (isLoading) {
     return <ProductDetailSkeleton />;
@@ -140,12 +163,19 @@ export default function ProductDetailPage() {
         relatedProductsLoading={relatedProductsLoading}
         isWishlisted={isWishlisted}
         isSoldOut={isSoldOut}
-        onShare={handleShare}
+        onShare={handleShareClick}
         onTabChange={handleTabChange}
         onAddToCart={handleAddToCart}
         onToggleWishlist={handleToggleWishlist}
         onWriteReviewClick={handleWriteReviewClick}
         onWriteInquiryClick={handleWriteInquiryClick}
+      />
+      <ShareBottomSheet
+        isOpen={isShareOpen}
+        onClose={handleShareClose}
+        productName={product.name}
+        shareUrl={shareUrl}
+        onCopyLink={handleCopyLink}
       />
       <AlertModal
         isOpen={modalState.type === 'alert'}
