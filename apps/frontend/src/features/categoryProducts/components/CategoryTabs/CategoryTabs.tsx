@@ -31,16 +31,11 @@ export function CategoryTabsSpacer() {
 
 export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsProps) {
   const [dynamicCategories, setDynamicCategories] = useState<CategoryTab[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const activeSlugRef = useRef(activeSlug);
-  const hasScrolledRef = useRef(false);
 
   activeSlugRef.current = activeSlug;
-
-  useEffect(() => {
-    hasScrolledRef.current = false;
-  }, [activeSlug, dynamicCategories.length]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -65,19 +60,23 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   const allTabs = [...STATIC_TABS, ...dynamicCategories];
   const staticSlugs = ['all', 'best', 'new'];
 
-  const scrollToElement = useCallback((el: HTMLButtonElement) => {
-    if (!containerRef.current || hasScrolledRef.current) return;
+  const scrollToCenter = useCallback((el: HTMLButtonElement) => {
+    if (!scrollContainerRef.current) return;
     
-    const container = containerRef.current;
+    const container = scrollContainerRef.current;
     const tabLeft = el.offsetLeft;
     const tabWidth = el.offsetWidth;
     const containerWidth = container.offsetWidth;
     const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
     container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
-    hasScrolledRef.current = true;
   }, []);
 
   const handleTabClick = (tab: CategoryTab) => {
+    const tabEl = tabRefs.current.get(tab.slug);
+    if (tabEl) {
+      scrollToCenter(tabEl);
+    }
+    
     if (!staticSlugs.includes(tab.slug)) {
       onTabChange(tab.slug, tab.id);
     } else {
@@ -88,26 +87,21 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   const setTabRef = useCallback((slug: string) => (el: HTMLButtonElement | null) => {
     if (el) {
       tabRefs.current.set(slug, el);
-      if (slug === activeSlugRef.current && !hasScrolledRef.current) {
-        requestAnimationFrame(() => {
-          scrollToElement(el);
-        });
-      }
     } else {
       tabRefs.current.delete(slug);
     }
-  }, [scrollToElement]);
+  }, []);
 
   useLayoutEffect(() => {
     const existingTab = tabRefs.current.get(activeSlug);
-    if (existingTab && !hasScrolledRef.current) {
-      scrollToElement(existingTab);
+    if (existingTab) {
+      scrollToCenter(existingTab);
     }
-  }, [activeSlug, scrollToElement]);
+  }, [activeSlug, scrollToCenter, dynamicCategories.length]);
 
   return (
-    <div className="category-tabs">
-      <div className="category-tabs__container" ref={containerRef}>
+    <div className="category-tabs" ref={scrollContainerRef}>
+      <div className="category-tabs__container">
         {allTabs.map((tab) => (
           <button
             key={tab.slug}
