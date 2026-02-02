@@ -31,6 +31,7 @@
     "@uppy/core": "^5.2.0",
     "@uppy/dashboard": "^5.1.0",
     "@uppy/react": "^5.1.1",
+    "capacitor-swipe-back": "^4.0.5",
     "lottie-react": "^2.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
