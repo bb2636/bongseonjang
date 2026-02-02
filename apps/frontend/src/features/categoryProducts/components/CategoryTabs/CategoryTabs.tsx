@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useLayoutEffect, useState, useRef, useCallback } from 'react';
 import { apiClient } from '../../../../services/apiClient';
 import './CategoryTabs.css';
 
@@ -33,6 +33,14 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   const [dynamicCategories, setDynamicCategories] = useState<CategoryTab[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const activeSlugRef = useRef(activeSlug);
+  const hasScrolledRef = useRef(false);
+
+  activeSlugRef.current = activeSlug;
+
+  useEffect(() => {
+    hasScrolledRef.current = false;
+  }, [activeSlug, dynamicCategories.length]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -57,30 +65,17 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
   const allTabs = [...STATIC_TABS, ...dynamicCategories];
   const staticSlugs = ['all', 'best', 'new'];
 
-  useEffect(() => {
-    let retryCount = 0;
-    const maxRetries = 10;
-    let rafId: number;
-
-    const scrollToActiveTab = () => {
-      const activeTab = tabRefs.current.get(activeSlug);
-      if (activeTab && containerRef.current) {
-        const container = containerRef.current;
-        const tabLeft = activeTab.offsetLeft;
-        const tabWidth = activeTab.offsetWidth;
-        const containerWidth = container.offsetWidth;
-        const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
-        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-      } else if (retryCount < maxRetries) {
-        retryCount++;
-        rafId = requestAnimationFrame(scrollToActiveTab);
-      }
-    };
-
-    rafId = requestAnimationFrame(scrollToActiveTab);
-
-    return () => cancelAnimationFrame(rafId);
-  }, [activeSlug, dynamicCategories]);
+  const scrollToElement = useCallback((el: HTMLButtonElement) => {
+    if (!containerRef.current || hasScrolledRef.current) return;
+    
+    const container = containerRef.current;
+    const tabLeft = el.offsetLeft;
+    const tabWidth = el.offsetWidth;
+    const containerWidth = container.offsetWidth;
+    const scrollLeft = tabLeft - (containerWidth / 2) + (tabWidth / 2);
+    container.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
+    hasScrolledRef.current = true;
+  }, []);
 
   const handleTabClick = (tab: CategoryTab) => {
     if (!staticSlugs.includes(tab.slug)) {
@@ -90,13 +85,25 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
     }
   };
 
-  const setTabRef = (slug: string) => (el: HTMLButtonElement | null) => {
+  const setTabRef = useCallback((slug: string) => (el: HTMLButtonElement | null) => {
     if (el) {
       tabRefs.current.set(slug, el);
+      if (slug === activeSlugRef.current && !hasScrolledRef.current) {
+        requestAnimationFrame(() => {
+          scrollToElement(el);
+        });
+      }
     } else {
       tabRefs.current.delete(slug);
     }
-  };
+  }, [scrollToElement]);
+
+  useLayoutEffect(() => {
+    const existingTab = tabRefs.current.get(activeSlug);
+    if (existingTab && !hasScrolledRef.current) {
+      scrollToElement(existingTab);
+    }
+  }, [activeSlug, scrollToElement]);
 
   return (
     <div className="category-tabs">
