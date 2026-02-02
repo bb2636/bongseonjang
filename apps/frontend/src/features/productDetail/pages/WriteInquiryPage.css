@@ -8,7 +8,7 @@
 .write-inquiry-page__main {
   flex: 1;
   padding: 16px;
-  padding-bottom: 96px;
+  padding-bottom: calc(100px + var(--safe-area-bottom, 0px));
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -197,7 +197,7 @@
   right: 0;
   background: #FFFFFF;
   padding: 16px;
-  padding-bottom: 46px;
+  padding-bottom: calc(16px + var(--safe-area-bottom, 0px));
 }
 
 .write-inquiry-page__submit {
