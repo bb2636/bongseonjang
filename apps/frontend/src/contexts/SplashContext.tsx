@@ -4,9 +4,11 @@ import { IS_CAPACITOR } from '@/shared/config/apiConfig';
 const SPLASH_SHOWN_KEY = 'bongkru_splash_shown';
 const MIN_DISPLAY_MS = 500;
 const MAX_DISPLAY_MS = 5000;
+const FADE_DURATION_MS = 300;
 
 interface SplashContextValue {
   showSplash: boolean;
+  fadeOut: boolean;
   signalReady: () => void;
 }
 
@@ -21,6 +23,7 @@ export function SplashProvider({ children }: SplashProviderProps) {
   const shouldShow = IS_CAPACITOR && !alreadyShown;
   
   const [showSplash, setShowSplash] = useState(shouldShow);
+  const [fadeOut, setFadeOut] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const startTimeRef = useRef(Date.now());
   const hasHiddenRef = useRef(false);
@@ -33,8 +36,11 @@ export function SplashProvider({ children }: SplashProviderProps) {
     const remainingMinTime = Math.max(0, MIN_DISPLAY_MS - elapsed);
     
     setTimeout(() => {
-      setShowSplash(false);
-      sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
+      setFadeOut(true);
+      setTimeout(() => {
+        setShowSplash(false);
+        sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
+      }, FADE_DURATION_MS);
     }, remainingMinTime);
   }, []);
 
@@ -53,13 +59,13 @@ export function SplashProvider({ children }: SplashProviderProps) {
   }, [shouldShow, hideSplash]);
 
   useEffect(() => {
-    if (isReady && showSplash) {
+    if (isReady && showSplash && !fadeOut) {
       hideSplash();
     }
-  }, [isReady, showSplash, hideSplash]);
+  }, [isReady, showSplash, fadeOut, hideSplash]);
 
   return (
-    <SplashContext.Provider value={{ showSplash, signalReady }}>
+    <SplashContext.Provider value={{ showSplash, fadeOut, signalReady }}>
       {children}
     </SplashContext.Provider>
   );
