@@ -28,6 +28,26 @@ const statusLabelMap: Record<string, string> = {
   refunded: '환불완료',
 };
 
+const statusClassMap: Record<string, string> = {
+  PAYMENT_PENDING: 'order-detail-status-badge--pending',
+  PAYMENT_FAILED: 'order-detail-status-badge--failed',
+  PAYMENT_COMPLETED: 'order-detail-status-badge--paid',
+  PREPARING: 'order-detail-status-badge--preparing',
+  SHIPPING: 'order-detail-status-badge--shipping',
+  DELIVERED: 'order-detail-status-badge--delivered',
+  CANCELLED: 'order-detail-status-badge--cancelled',
+  pending: 'order-detail-status-badge--pending',
+  payment_failed: 'order-detail-status-badge--failed',
+  paid: 'order-detail-status-badge--paid',
+  confirmed: 'order-detail-status-badge--paid',
+  preparing: 'order-detail-status-badge--preparing',
+  shipping: 'order-detail-status-badge--shipping',
+  delivered: 'order-detail-status-badge--delivered',
+  cancelled: 'order-detail-status-badge--cancelled',
+  refund_requested: 'order-detail-status-badge--cancelled',
+  refunded: 'order-detail-status-badge--cancelled',
+};
+
 const paymentMethodLabelMap: Record<string, string> = {
   CARD: '신용카드',
   ACCOUNT_TRANSFER: '무통장입금',
@@ -82,6 +102,10 @@ export function OrderDetailPanel({ orderId, isOpen, onClose }: OrderDetailPanelP
     return statusLabelMap[status] || status;
   };
 
+  const getStatusClass = (status: string): string => {
+    return statusClassMap[status] || '';
+  };
+
   const formatPaymentMethod = (method: string | null): string => {
     if (!method) return '-';
     return paymentMethodLabelMap[method] || method;
@@ -112,7 +136,7 @@ export function OrderDetailPanel({ orderId, isOpen, onClose }: OrderDetailPanelP
                 <div className="order-detail-info-row">
                   <span className="order-detail-info-item">{order.orderedAt}</span>
                   <span className="order-detail-info-dot" />
-                  <span className="order-detail-status-badge">{formatStatus(order.orderStatus)}</span>
+                  <span className={`order-detail-status-badge ${getStatusClass(order.orderStatus)}`}>{formatStatus(order.orderStatus)}</span>
                 </div>
               </div>
             </div>
