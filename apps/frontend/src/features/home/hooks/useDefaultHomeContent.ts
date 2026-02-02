@@ -2,11 +2,14 @@ import { useCallback, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAboveFoldData } from './useAboveFoldData';
 import { useBelowFoldData } from './useBelowFoldData';
+import { useSplashOptional } from '@/contexts';
 
 export function useDefaultHomeContent() {
   const navigate = useNavigate();
+  const splashContext = useSplashOptional();
   const [shouldLoadBelowFold, setShouldLoadBelowFold] = useState(false);
   const triggerRef = useRef<HTMLDivElement | null>(null);
+  const hasSignaledRef = useRef(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -21,6 +24,13 @@ export function useDefaultHomeContent() {
     bestProducts,
     isLoading: isAboveFoldLoading,
   } = useAboveFoldData();
+
+  useEffect(() => {
+    if (!isAboveFoldLoading && !hasSignaledRef.current) {
+      hasSignaledRef.current = true;
+      splashContext?.signalReady();
+    }
+  }, [isAboveFoldLoading, splashContext]);
 
   const {
     middleBanners,

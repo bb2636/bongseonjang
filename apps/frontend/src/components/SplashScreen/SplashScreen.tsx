@@ -1,45 +1,35 @@
 import { useState, useEffect } from 'react';
-import { IS_CAPACITOR } from '@/shared/config/apiConfig';
+import { useSplashOptional } from '@/contexts';
 import splashImage from '@/assets/images/splash-screen.png';
 import './SplashScreen.css';
 
-const SPLASH_SHOWN_KEY = 'bongkru_splash_shown';
-
 interface SplashScreenProps {
   children: React.ReactNode;
-  duration?: number;
 }
 
-export function SplashScreen({ children, duration = 1000 }: SplashScreenProps) {
-  const alreadyShown = sessionStorage.getItem(SPLASH_SHOWN_KEY) === 'true';
-  const shouldShowSplash = IS_CAPACITOR && !alreadyShown;
-  const [showSplash, setShowSplash] = useState(shouldShowSplash);
+export function SplashScreen({ children }: SplashScreenProps) {
+  const splashContext = useSplashOptional();
+  const showSplash = splashContext?.showSplash ?? false;
   const [fadeOut, setFadeOut] = useState(false);
+  const [visible, setVisible] = useState(showSplash);
 
   useEffect(() => {
-    if (!shouldShowSplash) {
-      return;
-    }
-
-    sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
-
-    const fadeTimer = setTimeout(() => {
+    if (!showSplash && visible) {
       setFadeOut(true);
-    }, duration);
-
-    const hideTimer = setTimeout(() => {
-      setShowSplash(false);
-    }, duration + 300);
-
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(hideTimer);
-    };
-  }, [duration, shouldShowSplash]);
+      const timer = setTimeout(() => {
+        setVisible(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+    if (showSplash && !visible) {
+      setVisible(true);
+      setFadeOut(false);
+    }
+  }, [showSplash, visible]);
 
   return (
     <>
-      {showSplash && (
+      {visible && (
         <div className={`splash-screen ${fadeOut ? 'splash-screen--fade-out' : ''}`}>
           <img 
             src={splashImage} 

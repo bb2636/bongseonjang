@@ -533,7 +533,7 @@ function AppContent() {
   }
 
   return (
-    <SplashScreen duration={1000}>
+    <SplashScreen>
       {renderContent()}
     </SplashScreen>
   );

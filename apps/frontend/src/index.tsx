@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import App from './App';
 import './styles/global.css';
-import { AuthProvider, ToastProvider, CartProvider, QuickCartProvider, AlertModalProvider } from './contexts';
+import { AuthProvider, ToastProvider, CartProvider, QuickCartProvider, AlertModalProvider, SplashProvider } from './contexts';
 import { ToastManager, QuickCartBottomSheet, PlatformInit, ScrollToTop } from './components';
 
 (function initPlatformSafeArea() {
@@ -43,19 +43,21 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <BrowserRouter>
         <ScrollToTop />
         <PlatformInit>
-          <AlertModalProvider>
-            <AuthProvider>
-              <CartProvider>
-                <ToastProvider>
-                  <QuickCartProvider>
-                    <App />
-                    <QuickCartBottomSheet />
-                    <ToastManager />
-                  </QuickCartProvider>
-                </ToastProvider>
-              </CartProvider>
-            </AuthProvider>
-          </AlertModalProvider>
+          <SplashProvider>
+            <AlertModalProvider>
+              <AuthProvider>
+                <CartProvider>
+                  <ToastProvider>
+                    <QuickCartProvider>
+                      <App />
+                      <QuickCartBottomSheet />
+                      <ToastManager />
+                    </QuickCartProvider>
+                  </ToastProvider>
+                </CartProvider>
+              </AuthProvider>
+            </AlertModalProvider>
+          </SplashProvider>
         </PlatformInit>
       </BrowserRouter>
     </QueryClientProvider>
