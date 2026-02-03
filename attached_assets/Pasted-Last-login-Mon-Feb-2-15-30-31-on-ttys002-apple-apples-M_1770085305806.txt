@@ -1,0 +1,79 @@
+Last login: Mon Feb  2 15:30:31 on ttys002
+
+apple@apples-MacBook-Air bongseonjang 3 % cd apps/frontend
+
+apple@apples-MacBook-Air frontend % npm install
+
+npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exhorbitant rates) by contacting i@izs.me
+
+added 230 packages, and audited 233 packages in 4s
+
+36 packages are looking for funding
+
+  run `npm fund` for details
+
+2 high severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+apple@apples-MacBook-Air frontend % npm run build
+
+> @bongkru/frontend@1.0.0 build
+
+> vite build
+
+npx cvite v7.3.1 building client environment for production...
+
+✓ 290 modules transformed.
+
+✗ Build failed in 394ms
+
+error during build:
+
+[vite]: Rollup failed to resolve import "@capacitor/camera" from "/Users/apple/Downloads/bongseonjang 3/apps/frontend/src/hooks/useImageUploader.ts".
+
+This is most likely unintended because it can break your application at runtime.
+
+If you do want to externalize this module explicitly add it to
+
+`build.rollupOptions.external`
+
+    at viteLog (file:///Users/apple/Downloads/bongseonjang%203/node_modules/vite/dist/node/chunks/config.js:33635:57)
+
+    at file:///Users/apple/Downloads/bongseonjang%203/node_modules/vite/dist/node/chunks/config.js:33669:73
+
+    at onwarn (file:///Users/apple/Downloads/bongseonjang%203/node_modules/@vitejs/plugin-react/dist/index.js:76:7)
+
+    at file:///Users/apple/Downloads/bongseonjang%203/node_modules/vite/dist/node/chunks/config.js:33669:28
+
+    at onRollupLog (file:///Users/apple/Downloads/bongseonjang%203/node_modules/vite/dist/node/chunks/config.js:33664:63)
+
+    at onLog (file:///Users/apple/Downloads/bongseonjang%203/node_modules/vite/dist/node/chunks/config.js:33467:4)
+
+    at file:///Users/apple/Downloads/bongseonjang%203/node_modules/rollup/dist/es/shared/node-entry.js:21037:32
+
+    at Object.logger [as onLog] (file:///Users/apple/Downloads/bongseonjang%203/node_modules/rollup/dist/es/shared/node-entry.js:22924:9)
+
+    at ModuleLoader.handleInvalidResolvedId (file:///Users/apple/Downloads/bongseonjang%203/node_modules/rollup/dist/es/shared/node-entry.js:21668:26)
+
+    at file:///Users/apple/Downloads/bongseonjang%203/node_modules/rollup/dist/es/shared/node-entry.js:21626:26
+
+npm error Lifecycle script `build` failed with error:
+
+npm error code 1
+
+npm error path /Users/apple/Downloads/bongseonjang 3/apps/frontend
+
+npm error workspace @bongkru/frontend@1.0.0
+
+npm error location /Users/apple/Downloads/bongseonjang 3/apps/frontend
+
+npm error command failed
+
+npm error command sh -c vite build
+
+apple@apples-MacBook-Air frontend % npx
