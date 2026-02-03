@@ -15,12 +15,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
-  gap: 16px;
-  width: 344px;
-  margin: 0 auto;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding: 0 16px;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .my-inquiries__filters {
@@ -28,9 +27,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0px;
-  width: 344px;
-  height: 37px;
+  padding: 8px 0;
+  width: 100%;
 }
 
 .my-inquiries__type-select {
@@ -96,10 +94,10 @@
 .my-inquiries__list {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  padding: 0px;
-  gap: 16px;
-  width: 344px;
+  align-items: stretch;
+  padding: 0;
+  gap: 0;
+  width: 100%;
 }
 
 .my-inquiries__empty {
@@ -126,18 +124,18 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
-  gap: 16px;
-  width: 344px;
+  padding: 8px 0;
+  gap: 12px;
+  width: 100%;
 }
 
 .inquiry-card__header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
-  gap: 12px;
-  width: 344px;
+  padding: 0;
+  gap: 8px;
+  width: 100%;
 }
 
 .inquiry-card__meta-row {
@@ -145,9 +143,8 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0px;
-  width: 344px;
-  height: 21px;
+  padding: 0;
+  width: 100%;
 }
 
 .inquiry-card__meta-left {
@@ -208,14 +205,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0px;
+  padding: 0;
   gap: 2px;
-  width: 344px;
+  width: 100%;
 }
 
 .inquiry-card__product-label {
-  width: 344px;
-  height: 20px;
   font-family: 'Pretendard', sans-serif;
   font-style: normal;
   font-weight: 500;
@@ -278,9 +273,9 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 0px;
+  padding: 0;
   gap: 8px;
-  width: 344px;
+  width: 100%;
 }
 
 .inquiry-card__icon {
@@ -320,11 +315,10 @@
   align-items: flex-start;
   padding: 12px;
   gap: 8px;
-  width: 344px;
+  width: 100%;
   background: rgba(59, 155, 213, 0.05);
   border-radius: 8px;
   box-sizing: border-box;
-  margin-top: 8px;
 }
 
 .inquiry-card__answer .inquiry-card__text {
@@ -332,18 +326,18 @@
 }
 
 .inquiry-card__divider {
-  width: 344px;
+  width: 100%;
   height: 1px;
-  background: rgba(12, 12, 12, 0.08);
-  margin-top: 16px;
+  background: rgba(12, 12, 12, 0.06);
+  margin-top: 8px;
 }
 
 .my-inquiries__loading {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px 0;
-  width: 344px;
+  gap: 8px;
+  padding: 8px 0;
+  width: 100%;
 }
 
 .my-inquiries__skeleton {
@@ -440,9 +434,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 344px;
+  width: 100%;
   padding: 16px;
-  margin-top: 16px;
+  margin-top: 8px;
   background: transparent;
   border: 1px solid rgba(12, 12, 12, 0.12);
   border-radius: 8px;

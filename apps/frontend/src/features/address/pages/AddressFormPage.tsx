@@ -28,6 +28,10 @@ const initialFormData: AddressFormData = {
   isDefault: false,
 };
 
+const formatPhoneNumber = (value: string): string => {
+  return value.replace(/[^0-9]/g, '');
+};
+
 export function AddressFormPage() {
   const goBack = useGoBack();
   const { id } = useParams<{ id: string }>();
@@ -55,7 +59,7 @@ export function AddressFormPage() {
     if (userProfile?.phone) {
       setFormData(prev => ({
         ...prev,
-        recipientPhone: userProfile.phone || '',
+        recipientPhone: formatPhoneNumber(userProfile.phone || ''),
       }));
     }
   }, [userProfile]);
@@ -64,9 +68,10 @@ export function AddressFormPage() {
     if (isEditMode && addresses.length > 0) {
       const existingAddress = addresses.find((addr: AddressResponse) => addr.id === id);
       if (existingAddress) {
+        const phoneValue = userProfile?.phone || existingAddress.recipientPhone;
         setFormData({
           recipientName: existingAddress.recipientName,
-          recipientPhone: userProfile?.phone || existingAddress.recipientPhone,
+          recipientPhone: formatPhoneNumber(phoneValue),
           addressName: existingAddress.addressName,
           postalCode: existingAddress.postalCode,
           address: existingAddress.address,
@@ -78,7 +83,11 @@ export function AddressFormPage() {
   }, [isEditMode, addresses, id, userProfile]);
 
   const handleInputChange = (field: keyof AddressFormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'recipientPhone' && typeof value === 'string') {
+      setFormData(prev => ({ ...prev, [field]: formatPhoneNumber(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleAddressSearchResult = useCallback((postalCode: string, address: string) => {
