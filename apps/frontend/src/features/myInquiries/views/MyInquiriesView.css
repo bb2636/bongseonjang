@@ -151,25 +151,21 @@
 }
 
 .inquiry-card__status {
-  display: flex;
-  flex-direction: row;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 3px 8px;
+  padding: 4px 10px;
   white-space: nowrap;
   flex-shrink: 0;
-  gap: 10px;
-  height: 21px;
   background: rgba(12, 12, 12, 0.1);
   border-radius: 2px;
   font-family: 'Pretendard', sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 12px;
-  line-height: 128%;
+  line-height: 1;
   letter-spacing: -0.02em;
   color: rgba(12, 12, 12, 0.8);
-  box-sizing: border-box;
 }
 
 .inquiry-card__status--answered {
