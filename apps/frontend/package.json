@@ -11,6 +11,7 @@
     "cap:build:ios": "vite build --mode capacitor && npx cap sync ios && node scripts/fix-ios-plist.js",
     "cap:open": "npx cap open android",
     "cap:open:ios": "npx cap open ios",
+    "fix:ios-plist": "node scripts/fix-ios-plist.js",
     "preview": "vite preview"
   },
   "dependencies": {
