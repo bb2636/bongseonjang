@@ -45,7 +45,15 @@ function PendingReviewCard({ item, onClick, onImageClick }: { item: ReviewableOr
   );
 }
 
-function MyReviewCard({ review }: { review: MyReviewDto }) {
+function ChevronRightIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7.5 15L12.5 10L7.5 5" stroke="rgba(12, 12, 12, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function MyReviewCard({ review, onProductClick }: { review: MyReviewDto; onProductClick: (productId: string) => void }) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
@@ -53,16 +61,28 @@ function MyReviewCard({ review }: { review: MyReviewDto }) {
 
   return (
     <div className="my-review-card">
-      <div className="my-review-card__header">
+      <div 
+        className="my-review-card__product"
+        onClick={() => onProductClick(review.productId)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onProductClick(review.productId); }}
+      >
+        <div className="my-review-card__product-thumbnail">
+          {review.productImageUrl ? (
+            <img src={review.productImageUrl} alt={review.productName} />
+          ) : (
+            <div className="my-review-card__product-placeholder" />
+          )}
+        </div>
         <div className="my-review-card__product-name">{review.productName}</div>
+        <ChevronRightIcon />
       </div>
-      <div className="my-review-card__date">{formatDate(review.createdAt)}</div>
       <div className="my-review-card__rating">
         {[1, 2, 3, 4, 5].map((star) => (
           <StarIcon key={star} filled={star <= review.rating} />
         ))}
       </div>
-      <div className="my-review-card__content">{review.content}</div>
       {review.imageUrls.length > 0 && (
         <div className="my-review-card__images">
           {review.imageUrls.map((url, index) => (
@@ -70,6 +90,8 @@ function MyReviewCard({ review }: { review: MyReviewDto }) {
           ))}
         </div>
       )}
+      <div className="my-review-card__content">{review.content}</div>
+      <div className="my-review-card__date">작성일자 {formatDate(review.createdAt)}</div>
     </div>
   );
 }
@@ -175,7 +197,11 @@ export default function ReviewListPage() {
 
             <div className="review-list-page__list">
               {myReviews.map((review) => (
-                <MyReviewCard key={review.id} review={review} />
+                <MyReviewCard 
+                  key={review.id} 
+                  review={review} 
+                  onProductClick={(productId) => navigate(`/products/${productId}`)}
+                />
               ))}
             </div>
           </>
