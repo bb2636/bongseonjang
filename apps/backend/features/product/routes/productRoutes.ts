@@ -11,6 +11,7 @@ import { User } from '../../../entity/User';
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { InquiryService } from '../../inquiry/application/InquiryService';
 import { TypeORMInquiryRepository } from '../../inquiry/repository/TypeORMInquiryRepository';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 const router = Router();
 
@@ -98,7 +99,7 @@ router.get('/:id/inquiries', optionalAuth, async (req: AuthenticatedRequest, res
       answer: row.answer || undefined,
       isPrivate: Boolean(row.isPrivate),
       isAuthor: currentUserId ? String(row.authorId) === String(currentUserId) : false,
-      imageUrls: row.imageUrls || [],
+      imageUrls: (row.imageUrls || []).map((url: string) => toAbsoluteImageUrl(url)),
     }));
 
     res.json({ inquiries, total, page, limit });

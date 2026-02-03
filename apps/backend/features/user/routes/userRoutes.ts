@@ -4,6 +4,7 @@ import { ProductInquiry } from '../../../entity/ProductInquiry';
 import { Product } from '../../../entity/Product';
 import { ProductImage } from '../../../entity/ProductImage';
 import { authMiddleware } from '../../../common/middleware/authMiddleware';
+import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
 
 const router = Router();
 
@@ -85,11 +86,11 @@ router.get('/me/inquiries', authMiddleware, async (req: Request, res: Response) 
       inquiryTypeLabel: INQUIRY_TYPE_LABELS[row.inquiryType] || '기타문의',
       productId: row.productId,
       productName: row.productName,
-      productImage: row.productImage,
+      productImage: row.productImage ? toAbsoluteImageUrl(row.productImage) : null,
       title: row.title || row.question,
       question: row.question,
       isPrivate: Boolean(row.isPrivate),
-      imageUrls: row.imageUrls || [],
+      imageUrls: (row.imageUrls || []).map((url: string) => toAbsoluteImageUrl(url)),
       answer: row.answer,
       status: row.answer ? 'answered' : 'pending',
       createdAt: formatDate(new Date(row.createdAt)),
