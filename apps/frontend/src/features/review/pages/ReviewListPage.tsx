@@ -177,7 +177,7 @@ export default function ReviewListPage() {
                   key={item.orderItemId} 
                   item={item} 
                   onClick={() => handleWriteClick(item)} 
-                  onImageClick={() => item.productId && navigate(`/products/${item.productId}`)}
+                  onImageClick={() => item.productId && navigate(`/product/${item.productId}`)}
                 />
               ))}
             </div>
@@ -200,7 +200,7 @@ export default function ReviewListPage() {
                 <MyReviewCard 
                   key={review.id} 
                   review={review} 
-                  onProductClick={(productId) => navigate(`/products/${productId}`)}
+                  onProductClick={(productId) => navigate(`/product/${productId}`)}
                 />
               ))}
             </div>
