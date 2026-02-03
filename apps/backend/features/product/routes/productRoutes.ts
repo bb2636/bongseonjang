@@ -76,6 +76,7 @@ router.get('/:id/inquiries', optionalAuth, async (req: AuthenticatedRequest, res
         'inquiry.isPrivate as "isPrivate"',
         'inquiry.createdAt as "createdAt"',
         'inquiry.authorId as "authorId"',
+        'inquiry.imageUrls as "imageUrls"',
         'author.name as "authorName"',
       ])
       .where('inquiry.productId = :productId', { productId })
@@ -97,6 +98,7 @@ router.get('/:id/inquiries', optionalAuth, async (req: AuthenticatedRequest, res
       answer: row.answer || undefined,
       isPrivate: Boolean(row.isPrivate),
       isAuthor: currentUserId ? String(row.authorId) === String(currentUserId) : false,
+      imageUrls: row.imageUrls || [],
     }));
 
     res.json({ inquiries, total, page, limit });

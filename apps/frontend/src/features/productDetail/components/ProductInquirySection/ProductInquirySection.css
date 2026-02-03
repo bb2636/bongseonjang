@@ -205,3 +205,65 @@
   font-size: 14px;
   color: rgba(12, 12, 12, 0.5);
 }
+
+.inquiry-item__images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  padding-left: 24px;
+}
+
+.inquiry-item__inquiry-image {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid rgba(12, 12, 12, 0.08);
+}
+
+.inquiry-item__inquiry-image:hover {
+  opacity: 0.8;
+}
+
+.inquiry-lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.inquiry-lightbox__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.inquiry-lightbox__close:hover {
+  opacity: 0.8;
+}
+
+.inquiry-lightbox__image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}

@@ -7,6 +7,12 @@ interface ProductInquirySectionProps {
   onCreateInquiry: () => void;
 }
 
+interface InquiryContentProps {
+  inquiry: ProductInquiry;
+  isExpanded: boolean;
+  onImageClick: (url: string) => void;
+}
+
 function StatusLabel({ status }: { status: ProductInquiry['status'] }) {
   const isAnswered = status === 'answered';
   const label = isAnswered ? '답변완료' : '미답변';
@@ -55,10 +61,11 @@ function ChevronIcon({ isExpanded }: { isExpanded: boolean }) {
   );
 }
 
-function InquiryContent({ inquiry, isExpanded }: { inquiry: ProductInquiry; isExpanded: boolean }) {
+function InquiryContent({ inquiry, isExpanded, onImageClick }: InquiryContentProps) {
   const isAuthor = inquiry.isAuthor === true;
   const isLocked = inquiry.isPrivate === true && inquiry.status !== 'answered' && !isAuthor;
   const isAnswered = inquiry.status === 'answered';
+  const hasImages = inquiry.imageUrls && inquiry.imageUrls.length > 0;
 
   return (
     <div className="inquiry-item__content-group">
@@ -79,6 +86,22 @@ function InquiryContent({ inquiry, isExpanded }: { inquiry: ProductInquiry; isEx
               <p className="inquiry-item__text inquiry-item__text--detail">{inquiry.question}</p>
             </div>
           )}
+          {hasImages && (
+            <div className="inquiry-item__images">
+              {inquiry.imageUrls!.map((url, index) => (
+                <img
+                  key={index}
+                  src={url}
+                  alt={`문의 이미지 ${index + 1}`}
+                  className="inquiry-item__inquiry-image"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onImageClick(url);
+                  }}
+                />
+              ))}
+            </div>
+          )}
           {isAnswered && inquiry.answer && (
             <div className="inquiry-item__row inquiry-item__answer">
               <span className="inquiry-item__label inquiry-item__label--answer">A</span>
@@ -94,11 +117,13 @@ function InquiryContent({ inquiry, isExpanded }: { inquiry: ProductInquiry; isEx
 function InquiryItem({ 
   inquiry, 
   isExpanded, 
-  onToggle 
+  onToggle,
+  onImageClick
 }: { 
   inquiry: ProductInquiry; 
   isExpanded: boolean;
   onToggle: () => void;
+  onImageClick: (url: string) => void;
 }) {
   const isAnswered = inquiry.status === 'answered';
   const isAuthor = inquiry.isAuthor === true;
@@ -116,7 +141,7 @@ function InquiryItem({
         <InquiryMeta inquiry={inquiry} />
         {isClickable && <ChevronIcon isExpanded={isExpanded} />}
       </div>
-      <InquiryContent inquiry={inquiry} isExpanded={isExpanded} />
+      <InquiryContent inquiry={inquiry} isExpanded={isExpanded} onImageClick={onImageClick} />
       <div className="inquiry-item__divider" />
     </div>
   );
@@ -124,9 +149,18 @@ function InquiryItem({
 
 export default function ProductInquirySection({ inquiries, onCreateInquiry }: ProductInquirySectionProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
     setExpandedId(prev => prev === id ? null : id);
+  };
+
+  const handleImageClick = (url: string) => {
+    setLightboxImage(url);
+  };
+
+  const handleCloseLightbox = () => {
+    setLightboxImage(null);
   };
 
   return (
@@ -147,10 +181,25 @@ export default function ProductInquirySection({ inquiries, onCreateInquiry }: Pr
               inquiry={inquiry} 
               isExpanded={expandedId === inquiry.id}
               onToggle={() => handleToggle(inquiry.id)}
+              onImageClick={handleImageClick}
             />
           ))
         )}
       </div>
+
+      {lightboxImage && (
+        <div className="inquiry-lightbox" onClick={handleCloseLightbox}>
+          <button className="inquiry-lightbox__close" onClick={handleCloseLightbox} aria-label="닫기">
+            ×
+          </button>
+          <img
+            src={lightboxImage}
+            alt="확대 이미지"
+            className="inquiry-lightbox__image"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </section>
   );
 }

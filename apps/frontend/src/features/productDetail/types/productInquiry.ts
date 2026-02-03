@@ -11,4 +11,5 @@ export interface ProductInquiry {
   answer?: string;
   isPrivate?: boolean;
   isAuthor?: boolean;
+  imageUrls?: string[];
 }
