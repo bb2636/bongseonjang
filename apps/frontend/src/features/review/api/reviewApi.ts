@@ -3,6 +3,7 @@ import { API_BASE_URL } from '../../../shared/config/apiConfig';
 export interface CheckReviewResponse {
   canReview: boolean;
   reason?: 'not_purchased' | 'already_reviewed';
+  orderItemId?: string;
 }
 
 export async function checkUserReview(productId: string): Promise<CheckReviewResponse> {

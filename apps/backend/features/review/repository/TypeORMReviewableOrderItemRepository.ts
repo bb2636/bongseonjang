@@ -16,14 +16,7 @@ export class TypeORMReviewableOrderItemRepository implements ReviewableOrderItem
       .andWhere('review.orderItemId IS NOT NULL')
       .getRawMany();
 
-    const reviewedProductIds = await reviewRepository
-      .createQueryBuilder('review')
-      .select('review.productId')
-      .where('review.userId = :userId', { userId })
-      .getRawMany();
-
     const reviewedOrderIds = reviewedOrderItemIds.map(r => r.review_orderItemId);
-    const reviewedProducts = reviewedProductIds.map(r => r.review_productId);
 
     const queryBuilder = orderItemRepository
       .createQueryBuilder('orderItem')
@@ -33,10 +26,6 @@ export class TypeORMReviewableOrderItemRepository implements ReviewableOrderItem
 
     if (reviewedOrderIds.length > 0) {
       queryBuilder.andWhere('orderItem.id NOT IN (:...reviewedOrderIds)', { reviewedOrderIds });
-    }
-
-    if (reviewedProducts.length > 0) {
-      queryBuilder.andWhere('(orderItem.productId IS NULL OR orderItem.productId NOT IN (:...reviewedProducts))', { reviewedProducts });
     }
 
     const items = await queryBuilder
@@ -65,6 +54,51 @@ export class TypeORMReviewableOrderItemRepository implements ReviewableOrderItem
       .getCount();
 
     return count > 0;
+  }
+
+  async hasUserPurchasedOrderItem(userId: string, orderItemId: string): Promise<boolean> {
+    const orderItemRepository = AppDataSource.getRepository(OrderItem);
+
+    const count = await orderItemRepository
+      .createQueryBuilder('orderItem')
+      .innerJoin('orderItem.order', 'order')
+      .where('orderItem.id = :orderItemId', { orderItemId })
+      .andWhere('order.userId = :userId', { userId })
+      .andWhere('order.status = :status', { status: 'delivered' })
+      .getCount();
+
+    return count > 0;
+  }
+
+  async findReviewableOrderItemForProduct(userId: string, productId: string): Promise<string | null> {
+    const orderItemRepository = AppDataSource.getRepository(OrderItem);
+    const reviewRepository = AppDataSource.getRepository(Review);
+
+    const reviewedOrderItemIds = await reviewRepository
+      .createQueryBuilder('review')
+      .select('review.orderItemId')
+      .where('review.userId = :userId', { userId })
+      .andWhere('review.orderItemId IS NOT NULL')
+      .getRawMany();
+
+    const reviewedOrderIds = reviewedOrderItemIds.map(r => r.review_orderItemId);
+
+    const queryBuilder = orderItemRepository
+      .createQueryBuilder('orderItem')
+      .innerJoin('orderItem.order', 'order')
+      .where('order.userId = :userId', { userId })
+      .andWhere('order.status = :status', { status: 'delivered' })
+      .andWhere('orderItem.productId = :productId', { productId });
+
+    if (reviewedOrderIds.length > 0) {
+      queryBuilder.andWhere('orderItem.id NOT IN (:...reviewedOrderIds)', { reviewedOrderIds });
+    }
+
+    const item = await queryBuilder
+      .orderBy('order.createdAt', 'DESC')
+      .getOne();
+
+    return item ? item.id : null;
   }
 
   private formatDate(date: Date): string {

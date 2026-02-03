@@ -104,6 +104,11 @@ export default function WriteReviewPage() {
   const stateProduct: ProductInfo | undefined = location.state?.product;
   const stateOrderItemId: string | undefined = location.state?.orderItemId;
 
+  if (!stateOrderItemId && isAuthenticated) {
+    navigate('/reviews', { replace: true });
+    return null;
+  }
+
   const { data: fetchedProduct, isLoading: productLoading } = useQuery({
     queryKey: ['productInfo', productId],
     queryFn: () => fetchProductInfo(productId!),

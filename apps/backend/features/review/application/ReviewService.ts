@@ -1,5 +1,5 @@
 import type { Review } from '../../../entity/Review';
-import type { ReviewDto, ReviewStatsDto, CreateReviewRequest, UpdateReviewRequest, ReviewableOrderItemDto, MyReviewDto } from '../domain/Review';
+import type { ReviewDto, ReviewStatsDto, CreateReviewRequest, UpdateReviewRequest, ReviewableOrderItemDto, MyReviewDto, CanReviewProductResult } from '../domain/Review';
 import type { ReviewRepository } from '../repository/ReviewRepository';
 import type { ReviewImageRepository } from '../repository/ReviewImageRepository';
 import type { ReviewableOrderItemRepository } from '../repository/ReviewableOrderItemRepository';
@@ -37,12 +37,16 @@ export class ReviewService implements ReviewStatsProvider {
   }
 
   async createReview(userId: string, request: CreateReviewRequest): Promise<ReviewDto> {
-    const hasPurchased = await this.reviewableOrderItemRepository.hasUserPurchasedProduct(userId, request.productId);
-    if (!hasPurchased) {
+    if (!request.orderItemId) {
+      throw new Error('주문 상품 정보가 필요합니다.');
+    }
+
+    const hasPurchasedOrderItem = await this.reviewableOrderItemRepository.hasUserPurchasedOrderItem(userId, request.orderItemId);
+    if (!hasPurchasedOrderItem) {
       throw new Error('상품을 구매한 후에만 리뷰를 작성할 수 있습니다.');
     }
 
-    const hasReviewed = await this.reviewRepository.hasUserReviewedProduct(userId, request.productId);
+    const hasReviewed = await this.reviewRepository.hasUserReviewedOrderItem(userId, request.orderItemId);
     if (hasReviewed) {
       throw new Error('이미 리뷰를 작성하셨습니다.');
     }
@@ -50,7 +54,7 @@ export class ReviewService implements ReviewStatsProvider {
     const review = await this.reviewRepository.save({
       productId: request.productId,
       userId,
-      orderItemId: request.orderItemId || null,
+      orderItemId: request.orderItemId,
       rating: request.rating,
       content: request.content,
     });
@@ -124,13 +128,27 @@ export class ReviewService implements ReviewStatsProvider {
     return this.reviewRepository.hasUserReviewedProduct(userId, productId);
   }
 
-  async canUserReviewProduct(userId: string, productId: string): Promise<{ canReview: boolean; reason?: string }> {
-    const hasPurchased = await this.reviewableOrderItemRepository.hasUserPurchasedProduct(userId, productId);
-    if (!hasPurchased) {
+  async canUserReviewProduct(userId: string, productId: string): Promise<CanReviewProductResult> {
+    const reviewableOrderItemId = await this.reviewableOrderItemRepository.findReviewableOrderItemForProduct(userId, productId);
+    
+    if (!reviewableOrderItemId) {
+      const hasPurchased = await this.reviewableOrderItemRepository.hasUserPurchasedProduct(userId, productId);
+      if (!hasPurchased) {
+        return { canReview: false, reason: 'not_purchased' };
+      }
+      return { canReview: false, reason: 'already_reviewed' };
+    }
+
+    return { canReview: true, orderItemId: reviewableOrderItemId };
+  }
+
+  async canUserReviewOrderItem(userId: string, orderItemId: string): Promise<{ canReview: boolean; reason?: string }> {
+    const hasPurchasedOrderItem = await this.reviewableOrderItemRepository.hasUserPurchasedOrderItem(userId, orderItemId);
+    if (!hasPurchasedOrderItem) {
       return { canReview: false, reason: 'not_purchased' };
     }
 
-    const hasReviewed = await this.reviewRepository.hasUserReviewedProduct(userId, productId);
+    const hasReviewed = await this.reviewRepository.hasUserReviewedOrderItem(userId, orderItemId);
     if (hasReviewed) {
       return { canReview: false, reason: 'already_reviewed' };
     }

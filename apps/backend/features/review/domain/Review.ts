@@ -26,7 +26,7 @@ export interface CreateReviewRequest {
   rating: number;
   content: string;
   imageUrls?: string[];
-  orderItemId?: string;
+  orderItemId: string;
 }
 
 export interface ReviewableOrderItemDto {
@@ -53,4 +53,10 @@ export interface UpdateReviewRequest {
   rating: number;
   content: string;
   imageUrls?: string[];
+}
+
+export interface CanReviewProductResult {
+  canReview: boolean;
+  reason?: 'not_purchased' | 'already_reviewed';
+  orderItemId?: string;
 }

@@ -22,4 +22,5 @@ export interface ReviewRepository {
   update(id: string, data: Partial<Review>): Promise<Review>;
   delete(id: string): Promise<void>;
   hasUserReviewedProduct(userId: string, productId: string): Promise<boolean>;
+  hasUserReviewedOrderItem(userId: string, orderItemId: string): Promise<boolean>;
 }

@@ -141,4 +141,14 @@ export class TypeORMReviewRepository implements ReviewRepository {
 
     return !!review;
   }
+
+  async hasUserReviewedOrderItem(userId: string, orderItemId: string): Promise<boolean> {
+    const reviewRepository = AppDataSource.getRepository(Review);
+    
+    const review = await reviewRepository.findOne({
+      where: { userId, orderItemId },
+    });
+
+    return !!review;
+  }
 }

@@ -47,6 +47,7 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
   const [answerText, setAnswerText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && inquiryId) {
@@ -200,19 +201,18 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
                   <label className="inquiry-panel__label">첨부 이미지</label>
                   <div className="inquiry-panel__images">
                     {inquiry.imageUrls.map((url, index) => (
-                      <a 
+                      <button 
                         key={index} 
-                        href={url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inquiry-panel__image-link"
+                        type="button"
+                        className="inquiry-panel__image-button"
+                        onClick={() => setLightboxImage(url)}
                       >
                         <img 
                           src={url} 
                           alt={`첨부 이미지 ${index + 1}`} 
                           className="inquiry-panel__image"
                         />
-                      </a>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -302,6 +302,30 @@ export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSucc
         onCancel={() => setShowSaveConfirm(false)}
         onConfirm={handleSaveConfirm}
       />
+
+      {lightboxImage && (
+        <div 
+          className="inquiry-panel__lightbox"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button 
+            type="button"
+            className="inquiry-panel__lightbox-close"
+            onClick={() => setLightboxImage(null)}
+            aria-label="닫기"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <img 
+            src={lightboxImage} 
+            alt="확대 이미지" 
+            className="inquiry-panel__lightbox-image"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </>
   );
 }

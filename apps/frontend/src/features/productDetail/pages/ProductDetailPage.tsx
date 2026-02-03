@@ -128,6 +128,7 @@ export default function ProductDetailPage() {
             name: product.name,
             thumbnailUrl: product.thumbnailUrl,
           },
+          orderItemId: reviewResult.orderItemId,
         },
       });
     } catch (error) {
