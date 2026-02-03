@@ -61,7 +61,7 @@ function ReviewPhotoGrid({
   onViewAllClick 
 }: ReviewPhotoGridProps) {
   const filledStars = Math.round(averageRating);
-  const placeholderCount = MAX_PHOTO_COUNT - photoUrls.length;
+  const hasPhotos = photoUrls.length > 0;
 
   return (
     <div className="review-photo-grid">
@@ -84,22 +84,18 @@ function ReviewPhotoGrid({
         </button>
       </div>
 
-      <div className="review-photo-grid__grid">
-        {photoUrls.map((url, index) => (
-          <img
-            key={index}
-            src={url}
-            alt={`리뷰 사진 ${index + 1}`}
-            className="review-photo-grid__image"
-          />
-        ))}
-        {Array.from({ length: placeholderCount }).map((_, index) => (
-          <div 
-            key={`placeholder-${index}`} 
-            className="review-photo-grid__placeholder" 
-          />
-        ))}
-      </div>
+      {hasPhotos && (
+        <div className="review-photo-grid__grid">
+          {photoUrls.map((url, index) => (
+            <img
+              key={index}
+              src={url}
+              alt={`리뷰 사진 ${index + 1}`}
+              className="review-photo-grid__image"
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

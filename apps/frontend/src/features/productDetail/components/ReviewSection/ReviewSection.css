@@ -1,7 +1,7 @@
 .review-section {
   display: flex;
   flex-direction: column;
-  padding: 16px 16px 0 16px;
+  padding: 16px 16px 120px 16px;
   background: #FFFFFF;
 }
 

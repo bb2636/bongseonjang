@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { IS_CAPACITOR } from '@/shared/config/apiConfig';
+import { IS_CAPACITOR, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
 
 export type UploadPurpose = 'review' | 'inquiry' | 'profile' | 'support';
 export type ImageSourceType = 'camera' | 'gallery';
@@ -20,7 +20,8 @@ interface UseImageUploaderOptions {
 }
 
 function getUploadEndpoint(): string {
-  return '/api/upload';
+  const apiUrl = getAbsoluteApiUrl();
+  return `${apiUrl}/upload`;
 }
 
 async function base64ToFile(base64Data: string, filename: string): Promise<File> {
