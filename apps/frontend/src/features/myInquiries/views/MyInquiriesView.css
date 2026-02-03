@@ -5,11 +5,6 @@
   background-color: #ffffff;
 }
 
-.my-inquiries .app-bar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
 
 .my-inquiries__content {
   display: flex;
