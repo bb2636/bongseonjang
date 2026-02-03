@@ -160,6 +160,7 @@ function InquiryCard({
         <div className="inquiry-card__content">
           <span className="inquiry-card__icon">Q</span>
           <div className="inquiry-card__content-body">
+            <p className="inquiry-card__title">{inquiry.title}</p>
             <p className="inquiry-card__text">{inquiry.question}</p>
             {inquiry.imageUrls && inquiry.imageUrls.length > 0 && (
               <div className="inquiry-card__images">

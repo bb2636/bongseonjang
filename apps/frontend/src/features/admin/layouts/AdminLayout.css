@@ -152,17 +152,3 @@
   }
 }
 
-.admin-layout .toast-container {
-  bottom: 24px;
-  left: auto;
-  right: 24px;
-  transform: none;
-  align-items: flex-end;
-}
-
-.admin-layout .alert-modal-overlay,
-.admin-layout .confirm-modal-overlay {
-  justify-content: flex-end;
-  align-items: flex-end;
-  padding: 24px;
-}

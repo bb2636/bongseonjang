@@ -9,6 +9,7 @@ export interface MyInquiry {
   productId: string | null;
   productName: string | null;
   productImage: string | null;
+  title: string;
   question: string;
   answer: string | null;
   status: InquiryStatus;
