@@ -14,6 +14,18 @@ export default function NoticeDetailView({ state, actions }: NoticeDetailViewPro
   const { notice, isLoading, notFound } = state;
   const { handleBack, handleCartClick } = actions;
 
+  const getCategoryClassName = (category: string) => {
+    const baseClass = 'notice-detail__category';
+    const lowerCategory = category.toLowerCase();
+    if (lowerCategory === '이벤트' || lowerCategory === 'event') {
+      return `${baseClass} notice-detail__category--event`;
+    }
+    if (lowerCategory === '중요' || lowerCategory === 'important') {
+      return `${baseClass} notice-detail__category--important`;
+    }
+    return baseClass;
+  };
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -36,7 +48,7 @@ export default function NoticeDetailView({ state, actions }: NoticeDetailViewPro
       <article className="notice-detail">
         <header className="notice-detail__header">
           <div className="notice-detail__meta">
-            <span className="notice-detail__category">{notice.category}</span>
+            <span className={getCategoryClassName(notice.category)}>{notice.category}</span>
             <span className="notice-detail__date">{notice.createdAt}</span>
           </div>
           <h1 className="notice-detail__title">{notice.title}</h1>

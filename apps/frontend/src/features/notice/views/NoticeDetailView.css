@@ -37,12 +37,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 10px;
-  background-color: var(--color-primary, #3B9BD5);
-  color: #ffffff;
+  padding: 4px 8px;
+  background: rgba(12, 12, 12, 0.1);
+  border-radius: 2px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
   font-size: 12px;
-  font-weight: 500;
-  border-radius: 4px;
+  line-height: 128%;
+  letter-spacing: -0.02em;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.notice-detail__category--event {
+  background: rgba(59, 155, 213, 0.15);
+  color: #3B9BD5;
+}
+
+.notice-detail__category--important {
+  background: rgba(255, 82, 82, 0.15);
+  color: #FF5252;
 }
 
 .notice-detail__date {
