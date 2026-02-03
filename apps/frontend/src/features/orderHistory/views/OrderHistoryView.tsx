@@ -1,6 +1,7 @@
 import { OrderStatusFilter, OrderHistoryEntry } from '../api/orderHistoryApi';
 import { OrderStatusTabs } from '../components/OrderStatusTabs';
 import { OrderCard } from '../components/OrderCard';
+import { useCart } from '../../../contexts';
 import './OrderHistoryView.css';
 
 interface OrderHistoryViewProps {
@@ -22,6 +23,8 @@ export function OrderHistoryView({
   onOrderClick,
   onCartClick,
 }: OrderHistoryViewProps) {
+  const { cartCount } = useCart();
+  
   return (
     <div className="order-history">
       <header className="order-history__header">
@@ -41,6 +44,9 @@ export function OrderHistoryView({
               strokeLinejoin="round"
             />
           </svg>
+          {cartCount > 0 && (
+            <span className="order-history__cart-badge">{cartCount}</span>
+          )}
         </button>
       </header>
 

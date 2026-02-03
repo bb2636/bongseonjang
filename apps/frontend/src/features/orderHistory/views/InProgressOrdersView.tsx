@@ -1,5 +1,6 @@
 import { OrderHistoryEntry } from '../api/orderHistoryApi';
 import { OrderCard } from '../components/OrderCard';
+import { useCart } from '../../../contexts';
 import './OrderHistoryView.css';
 
 interface InProgressOrdersViewProps {
@@ -17,6 +18,8 @@ export function InProgressOrdersView({
   onOrderClick,
   onCartClick,
 }: InProgressOrdersViewProps) {
+  const { cartCount } = useCart();
+  
   return (
     <div className="order-history">
       <header className="order-history__header">
@@ -36,6 +39,9 @@ export function InProgressOrdersView({
               strokeLinejoin="round"
             />
           </svg>
+          {cartCount > 0 && (
+            <span className="order-history__cart-badge">{cartCount}</span>
+          )}
         </button>
       </header>
 
