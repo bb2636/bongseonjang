@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { MyInquiry, InquiryType, SortOrder } from "../types/myInquiry";
 import { INQUIRY_TYPE_OPTIONS, SORT_OPTIONS } from "../types/myInquiry";
 import AppBar, { AppBarSpacer } from "../../../components/AppBar/AppBar";
@@ -100,10 +101,12 @@ function InquiryCard({
   inquiry,
   onProductClick,
   isLast,
+  onImageClick,
 }: {
   inquiry: MyInquiry;
   onProductClick: (productId: string) => void;
   isLast: boolean;
+  onImageClick: (imageUrl: string) => void;
 }) {
   return (
     <>
@@ -156,7 +159,22 @@ function InquiryCard({
 
         <div className="inquiry-card__content">
           <span className="inquiry-card__icon">Q</span>
-          <p className="inquiry-card__text">{inquiry.question}</p>
+          <div className="inquiry-card__content-body">
+            <p className="inquiry-card__text">{inquiry.question}</p>
+            {inquiry.imageUrls && inquiry.imageUrls.length > 0 && (
+              <div className="inquiry-card__images">
+                {inquiry.imageUrls.map((imageUrl, index) => (
+                  <img
+                    key={index}
+                    src={imageUrl}
+                    alt={`문의 이미지 ${index + 1}`}
+                    className="inquiry-card__inquiry-image"
+                    onClick={() => onImageClick(imageUrl)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {inquiry.answer && (
@@ -196,6 +214,8 @@ function LoadingSkeleton() {
 }
 
 export default function MyInquiriesView({ state, actions }: MyInquiriesViewProps) {
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  
   const {
     inquiries,
     total,
@@ -214,6 +234,15 @@ export default function MyInquiriesView({ state, actions }: MyInquiriesViewProps
     onProductClick,
     onLoadMore,
   } = actions;
+
+  const handleImageClick = (imageUrl: string) => {
+    setLightboxImage(imageUrl);
+  };
+
+  const handleCloseLightbox = () => {
+    setLightboxImage(null);
+  };
+
   return (
     <div className="my-inquiries">
       <AppBar
@@ -277,6 +306,7 @@ export default function MyInquiriesView({ state, actions }: MyInquiriesViewProps
                   inquiry={inquiry}
                   onProductClick={onProductClick}
                   isLast={index === inquiries.length - 1}
+                  onImageClick={handleImageClick}
                 />
               ))}
             </div>
@@ -293,6 +323,24 @@ export default function MyInquiriesView({ state, actions }: MyInquiriesViewProps
           </>
         )}
       </main>
+
+      {lightboxImage && (
+        <div className="inquiry-lightbox" onClick={handleCloseLightbox}>
+          <button 
+            type="button"
+            className="inquiry-lightbox__close"
+            onClick={handleCloseLightbox}
+          >
+            &times;
+          </button>
+          <img
+            src={lightboxImage}
+            alt="확대 이미지"
+            className="inquiry-lightbox__image"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
