@@ -14,6 +14,7 @@ export interface MyInquiry {
   status: InquiryStatus;
   createdAt: string;
   answeredAt: string | null;
+  imageUrls: string[];
 }
 
 export interface MyInquiriesResponse {
