@@ -182,12 +182,12 @@ export default function ProfileEditView({
           {phoneVerificationMode === 'code' && (
             <div className="profile-edit__verification-code-section">
               <label className="profile-edit__section-label">휴대폰 인증코드</label>
-              <div className="profile-edit__verification-code-row">
+              <div className={`profile-edit__verification-code-container ${verificationCodeError ? 'profile-edit__verification-code-container--error' : ''}`}>
                 <input
                   type="text"
                   inputMode="numeric"
-                  className={`profile-edit__verification-code-input ${verificationCodeError ? 'profile-edit__verification-code-input--error' : ''}`}
-                  placeholder="인증코드"
+                  className="profile-edit__verification-code-input"
+                  placeholder="인증코드 6자리"
                   value={verificationCode}
                   onChange={(e) => onVerificationCodeChange(e.target.value)}
                   maxLength={6}
@@ -199,7 +199,7 @@ export default function ProfileEditView({
                   onClick={onVerifyCode}
                   disabled={isVerifyingCode}
                 >
-                  {isVerifyingCode ? '확인중...' : '확인'}
+                  {isVerifyingCode ? '...' : '확인'}
                 </button>
               </div>
               {verificationCodeError && (
