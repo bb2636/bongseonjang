@@ -505,7 +505,7 @@
 
 .inquiry-lightbox__close {
   position: absolute;
-  top: 20px;
+  top: calc(20px + var(--safe-area-top, 0px));
   right: 20px;
   width: 40px;
   height: 40px;
