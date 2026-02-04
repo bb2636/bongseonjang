@@ -20,9 +20,9 @@ const privacyDescriptions = {
 
 function addPrivacyDescriptions() {
   if (!fs.existsSync(plistPath)) {
-    console.error('❌ Info.plist not found at:', plistPath);
-    console.log('Run "npx cap add ios" first to create iOS project.');
-    process.exit(1);
+    console.log('⚠️  Info.plist not found - iOS project not yet created. Skipping.');
+    console.log('   Run "npx cap add ios" to create iOS project.');
+    process.exit(0);
   }
 
   let plistContent = fs.readFileSync(plistPath, 'utf8');
