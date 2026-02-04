@@ -6,6 +6,7 @@ import { fetchAddresses, AddressResponse } from '../api/addressApi';
 import { fetchUserProfile } from '../../profile/api/profileApi';
 import { useToast } from '../../../contexts/ToastContext';
 import { AddressInputForm } from '@components';
+import { API_BASE_URL } from '../../../shared/config/apiConfig';
 import './AddressFormPage.css';
 
 interface AddressFormData {
@@ -105,7 +106,7 @@ export function AddressFormPage() {
   const saveAddressMutation = useMutation({
     mutationFn: async (data: AddressFormData) => {
       const token = localStorage.getItem('user_token');
-      const url = isEditMode ? `/api/address/${id}` : '/api/address';
+      const url = isEditMode ? `${API_BASE_URL}/address/${id}` : `${API_BASE_URL}/address`;
       const method = isEditMode ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
