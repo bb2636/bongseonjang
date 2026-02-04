@@ -272,6 +272,7 @@ function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
       />
 
       <button
+        type="button"
         className={verifyButtonClass}
         onClick={emailStep.onVerifyEmail}
         disabled={
@@ -303,6 +304,7 @@ function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
                 />
                 <span className="signup-timer-text">{emailStep.timer}</span>
                 <button
+                  type="button"
                   className={confirmButtonClass}
                   onClick={emailStep.onConfirmCode}
                   disabled={emailStep.isConfirming || emailStep.verificationCode.length !== 6}
@@ -318,7 +320,7 @@ function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
 
           <div className="signup-resend-link">
             인증코드를 받지 못하셨나요?
-            <button className="signup-resend-button" onClick={emailStep.onResendCode}>
+            <button type="button" className="signup-resend-button" onClick={emailStep.onResendCode}>
               인증코드 재전송하기
             </button>
           </div>
@@ -415,6 +417,7 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
             )}
           </div>
           <button 
+            type="button"
             className="signup-black-verify-button" 
             onClick={profileStep.onSendPhoneCode}
             disabled={profileStep.isPhoneCodeSending || profileStep.isPhoneVerified}
@@ -441,6 +444,7 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
               )}
             </div>
             <button 
+              type="button"
               className="signup-black-verify-button"
               onClick={profileStep.onVerifyPhoneCode}
               disabled={profileStep.isPhoneCodeVerifying || profileStep.phoneCodeTimer <= 0}
@@ -562,6 +566,7 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
             )}
           </div>
           <button 
+            type="button"
             className="signup-black-verify-button"
             onClick={profileStep.onReferralIdVerify}
             disabled={profileStep.isReferralVerifying}
