@@ -259,26 +259,23 @@ export function useSignupProfileStep() {
     
     setIsPhoneCodeSending(true);
     
-    try {
-      const result = await signupService.sendPhoneVerificationCode(formData.phone);
-      
-      if (result.success) {
-        setIsPhoneCodeSent(true);
-        setPhoneCodeTimer(PHONE_CODE_EXPIRY_SECONDS);
-        setTimerTrigger((prev) => prev + 1);
-        setPhoneVerificationCode('');
-        setPhoneModalMessage('인증번호가 발송되었습니다');
-        setIsPhoneVerifySuccess(true);
-        setShowPhoneModal(true);
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '인증번호 발송에 실패했습니다';
-      setPhoneModalMessage(message);
+    const result = await signupService.sendPhoneVerificationCode(formData.phone);
+    
+    if (result.success) {
+      setIsPhoneCodeSent(true);
+      setPhoneCodeTimer(PHONE_CODE_EXPIRY_SECONDS);
+      setTimerTrigger((prev) => prev + 1);
+      setPhoneVerificationCode('');
+      setPhoneModalMessage('인증번호가 발송되었습니다');
+      setIsPhoneVerifySuccess(true);
+      setShowPhoneModal(true);
+    } else {
+      setPhoneModalMessage(result.message);
       setIsPhoneVerifySuccess(false);
       setShowPhoneModal(true);
-    } finally {
-      setIsPhoneCodeSending(false);
     }
+    
+    setIsPhoneCodeSending(false);
   }, [isPhoneValid, formData.phone]);
 
   const onVerifyPhoneCode = useCallback(async () => {
@@ -298,28 +295,21 @@ export function useSignupProfileStep() {
     
     setIsPhoneCodeVerifying(true);
     
-    try {
-      const result = await signupService.verifyPhoneCode(formData.phone, phoneVerificationCode);
-      
-      if (result.success) {
-        updateFormData({ isPhoneVerified: true });
-        setPhoneCodeTimer(0);
-        setPhoneModalMessage('휴대폰 인증이 완료되었습니다');
-        setIsPhoneVerifySuccess(true);
-        setShowPhoneModal(true);
-      } else {
-        setPhoneModalMessage(result.message);
-        setIsPhoneVerifySuccess(false);
-        setShowPhoneModal(true);
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '인증에 실패했습니다';
-      setPhoneModalMessage(message);
+    const result = await signupService.verifyPhoneCode(formData.phone, phoneVerificationCode);
+    
+    if (result.success) {
+      updateFormData({ isPhoneVerified: true });
+      setPhoneCodeTimer(0);
+      setPhoneModalMessage('휴대폰 인증이 완료되었습니다');
+      setIsPhoneVerifySuccess(true);
+      setShowPhoneModal(true);
+    } else {
+      setPhoneModalMessage(result.message);
       setIsPhoneVerifySuccess(false);
       setShowPhoneModal(true);
-    } finally {
-      setIsPhoneCodeVerifying(false);
     }
+    
+    setIsPhoneCodeVerifying(false);
   }, [phoneVerificationCode, phoneCodeTimer, formData.phone, updateFormData]);
 
   const onPhoneVerificationCodeChange = useCallback((value: string) => {

@@ -207,40 +207,32 @@ export function useProfileEdit() {
     setIsSendingCode(true);
     setPhoneError(null);
 
-    try {
-      const result = await signupService.sendPhoneVerificationCode(phone);
-      if (result.success) {
-        setPhoneVerificationMode('code');
-        startTimer();
-        showToast('인증번호가 발송되었습니다', 'success');
-      } else {
-        setPhoneError(result.message);
-      }
-    } catch {
-      setPhoneError('인증번호 발송에 실패했습니다');
-    } finally {
-      setIsSendingCode(false);
+    const result = await signupService.sendPhoneVerificationCode(phone);
+    if (result.success) {
+      setPhoneVerificationMode('code');
+      startTimer();
+      showToast('인증번호가 발송되었습니다', 'success');
+    } else {
+      setPhoneError(result.message);
     }
+    
+    setIsSendingCode(false);
   }, [phone, showToast]);
 
   const handleResendCode = useCallback(async () => {
     setIsSendingCode(true);
     setVerificationCodeError(null);
 
-    try {
-      const result = await signupService.sendPhoneVerificationCode(phone);
-      if (result.success) {
-        startTimer();
-        setVerificationCode('');
-        showToast('인증번호가 재발송되었습니다', 'success');
-      } else {
-        setVerificationCodeError(result.message);
-      }
-    } catch {
-      setVerificationCodeError('인증번호 발송에 실패했습니다');
-    } finally {
-      setIsSendingCode(false);
+    const result = await signupService.sendPhoneVerificationCode(phone);
+    if (result.success) {
+      startTimer();
+      setVerificationCode('');
+      showToast('인증번호가 재발송되었습니다', 'success');
+    } else {
+      setVerificationCodeError(result.message);
     }
+    
+    setIsSendingCode(false);
   }, [phone, showToast]);
 
   const handleVerificationCodeChange = (value: string) => {
@@ -263,22 +255,18 @@ export function useProfileEdit() {
     setIsVerifyingCode(true);
     setVerificationCodeError(null);
 
-    try {
-      const result = await signupService.verifyPhoneCode(phone, verificationCode);
-      if (result.success) {
-        setOriginalPhone(phone);
-        setPhoneVerificationMode('view');
-        setVerificationCode('');
-        setTimer(0);
-        showToast('휴대폰 번호가 인증되었습니다', 'success');
-      } else {
-        setVerificationCodeError(result.message);
-      }
-    } catch {
-      setVerificationCodeError('인증에 실패했습니다');
-    } finally {
-      setIsVerifyingCode(false);
+    const result = await signupService.verifyPhoneCode(phone, verificationCode);
+    if (result.success) {
+      setOriginalPhone(phone);
+      setPhoneVerificationMode('view');
+      setVerificationCode('');
+      setTimer(0);
+      showToast('휴대폰 번호가 인증되었습니다', 'success');
+    } else {
+      setVerificationCodeError(result.message);
     }
+    
+    setIsVerifyingCode(false);
   }, [phone, verificationCode, timer, showToast]);
 
   const handleModalConfirm = () => {
