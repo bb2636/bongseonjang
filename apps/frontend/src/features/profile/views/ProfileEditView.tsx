@@ -1,5 +1,6 @@
 import { BottomNav } from '../../../components/BottomNav';
 import { Input, AlertModal } from '../../../components';
+import PhoneVerificationModal from '../components/PhoneVerificationModal';
 import './ProfileEditView.css';
 
 interface ProfileEditViewProps {
@@ -16,6 +17,7 @@ interface ProfileEditViewProps {
   phoneError: string | null;
   isSubmitting: boolean;
   showSuccessModal: boolean;
+  showPhoneVerificationModal: boolean;
   onNameChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
   onBirthYearChange: (value: string) => void;
@@ -28,7 +30,11 @@ interface ProfileEditViewProps {
   onBack: () => void;
   onModalConfirm: () => void;
   onWithdrawClick: () => void;
-  onPhoneVerifyClick?: () => void;
+  onPhoneVerifyClick: () => void;
+  onPhoneVerificationModalClose: () => void;
+  onSendPhoneCode: (phone: string) => Promise<{ success: boolean; message: string }>;
+  onVerifyPhoneCode: (phone: string, code: string) => Promise<{ success: boolean; message: string }>;
+  onPhoneVerified: (newPhone: string) => void;
 }
 
 export default function ProfileEditView({
@@ -45,6 +51,7 @@ export default function ProfileEditView({
   phoneError,
   isSubmitting,
   showSuccessModal,
+  showPhoneVerificationModal,
   onNameChange,
   onPhoneChange,
   onBirthYearChange,
@@ -58,6 +65,10 @@ export default function ProfileEditView({
   onModalConfirm,
   onWithdrawClick,
   onPhoneVerifyClick,
+  onPhoneVerificationModalClose,
+  onSendPhoneCode,
+  onVerifyPhoneCode,
+  onPhoneVerified,
 }: ProfileEditViewProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -270,6 +281,15 @@ export default function ProfileEditView({
         isOpen={showSuccessModal}
         title="수정되었습니다."
         onConfirm={onModalConfirm}
+      />
+
+      <PhoneVerificationModal
+        isOpen={showPhoneVerificationModal}
+        currentPhone={phone}
+        onClose={onPhoneVerificationModalClose}
+        onVerified={onPhoneVerified}
+        onSendCode={onSendPhoneCode}
+        onVerifyCode={onVerifyPhoneCode}
       />
 
       <BottomNav />

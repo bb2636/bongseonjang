@@ -1,0 +1,165 @@
+.phone-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.phone-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.phone-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.phone-modal__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #101112;
+  margin: 0;
+}
+
+.phone-modal__close {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-modal__content {
+  padding: 20px;
+}
+
+.phone-modal__field {
+  margin-bottom: 16px;
+}
+
+.phone-modal__field:last-of-type {
+  margin-bottom: 0;
+}
+
+.phone-modal__label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #101112;
+  margin-bottom: 8px;
+}
+
+.phone-modal__input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.phone-modal__input {
+  flex: 1;
+  height: 48px;
+  padding: 0 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #101112;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.phone-modal__input:focus {
+  border-color: #101112;
+}
+
+.phone-modal__input:disabled {
+  background: #f5f5f5;
+  color: #999;
+}
+
+.phone-modal__code-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.phone-modal__code-wrapper .phone-modal__input {
+  width: 100%;
+  padding-right: 60px;
+}
+
+.phone-modal__timer {
+  position: absolute;
+  right: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #e53935;
+}
+
+.phone-modal__send-button,
+.phone-modal__verify-button {
+  flex-shrink: 0;
+  height: 48px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.phone-modal__send-button {
+  background: #101112;
+  color: #fff;
+}
+
+.phone-modal__send-button:hover:not(:disabled) {
+  background: #2a2a2a;
+}
+
+.phone-modal__send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.phone-modal__verify-button {
+  background: #3B9BD5;
+  color: #fff;
+}
+
+.phone-modal__verify-button:hover:not(:disabled) {
+  background: #2d8ac4;
+}
+
+.phone-modal__verify-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.phone-modal__error {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #e53935;
+}
+
+.phone-modal__success {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #4caf50;
+}

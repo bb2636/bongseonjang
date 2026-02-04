@@ -17,6 +17,7 @@ export default function ProfileEditPage() {
     isSubmitting,
     isLoading,
     showSuccessModal,
+    showPhoneVerificationModal,
     handleNameChange,
     handlePhoneChange,
     handleBirthYearChange,
@@ -30,6 +31,10 @@ export default function ProfileEditPage() {
     handleModalConfirm,
     handleWithdrawClick,
     handlePhoneVerifyClick,
+    handlePhoneVerificationModalClose,
+    handleSendPhoneCode,
+    handleVerifyPhoneCode,
+    handlePhoneVerified,
   } = useProfileEdit();
 
   if (isLoading) {
@@ -81,6 +86,11 @@ export default function ProfileEditPage() {
       onModalConfirm={handleModalConfirm}
       onWithdrawClick={handleWithdrawClick}
       onPhoneVerifyClick={handlePhoneVerifyClick}
+      showPhoneVerificationModal={showPhoneVerificationModal}
+      onPhoneVerificationModalClose={handlePhoneVerificationModalClose}
+      onSendPhoneCode={handleSendPhoneCode}
+      onVerifyPhoneCode={handleVerifyPhoneCode}
+      onPhoneVerified={handlePhoneVerified}
     />
   );
 }

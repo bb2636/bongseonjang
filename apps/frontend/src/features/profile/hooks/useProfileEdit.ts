@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
 import { profileApi } from '../api/profileApi';
 import { useGoBack } from '../../../hooks/useGoBack';
+import { signupService } from '../../signup/services/signupService';
 
 export function useProfileEdit() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export function useProfileEdit() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showPhoneVerificationModal, setShowPhoneVerificationModal] = useState(false);
 
   const email = user?.email || '';
 
@@ -148,8 +150,26 @@ export function useProfileEdit() {
   };
 
   const handlePhoneVerifyClick = () => {
-    showToast('휴대폰 번호 변경 기능은 준비 중입니다', 'info');
+    setShowPhoneVerificationModal(true);
   };
+
+  const handlePhoneVerificationModalClose = () => {
+    setShowPhoneVerificationModal(false);
+  };
+
+  const handleSendPhoneCode = useCallback(async (phoneNumber: string) => {
+    return await signupService.sendPhoneVerificationCode(phoneNumber);
+  }, []);
+
+  const handleVerifyPhoneCode = useCallback(async (phoneNumber: string, code: string) => {
+    return await signupService.verifyPhoneCode(phoneNumber, code);
+  }, []);
+
+  const handlePhoneVerified = useCallback((newPhone: string) => {
+    setPhone(newPhone);
+    setShowPhoneVerificationModal(false);
+    showToast('휴대폰 번호가 변경되었습니다', 'success');
+  }, [showToast]);
 
   const handleModalConfirm = () => {
     setShowSuccessModal(false);
@@ -171,6 +191,7 @@ export function useProfileEdit() {
     isSubmitting,
     isLoading,
     showSuccessModal,
+    showPhoneVerificationModal,
     handleNameChange,
     handlePhoneChange,
     handleBirthYearChange,
@@ -184,5 +205,9 @@ export function useProfileEdit() {
     handleModalConfirm,
     handleWithdrawClick,
     handlePhoneVerifyClick,
+    handlePhoneVerificationModalClose,
+    handleSendPhoneCode,
+    handleVerifyPhoneCode,
+    handlePhoneVerified,
   };
 }
