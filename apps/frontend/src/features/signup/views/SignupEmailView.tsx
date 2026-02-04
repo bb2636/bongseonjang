@@ -256,40 +256,33 @@ export default function SignupEmailView({
 }
 
 function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
+  const verifyButtonClass = `signup-verify-button ${emailStep.email.trim().length > 0 && !emailStep.isCodeSent ? 'signup-verify-button--active' : ''}`;
   const confirmButtonClass = `signup-confirm-button ${emailStep.verificationCode.length === 6 ? 'signup-confirm-button--active' : ''}`;
 
   return (
     <>
-      <div className="signup-text-field">
-        <label className="signup-label">이메일</label>
-        <div className="signup-email-row">
-          <div className={`signup-email-input-box ${emailStep.errors.email ? 'signup-email-input-box--error' : ''}`}>
-            <input
-              className="signup-email-input"
-              type="email"
-              placeholder="이메일"
-              value={emailStep.email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => emailStep.onEmailChange(e.target.value)}
-              onBlur={emailStep.onEmailBlur}
-            />
-          </div>
-          <button
-            type="button"
-            className="signup-black-verify-button"
-            onClick={emailStep.onVerifyEmail}
-            disabled={
-              emailStep.isVerifying ||
-              !emailStep.email.trim() ||
-              emailStep.isCodeSent
-            }
-          >
-            {emailStep.isVerifying ? "인증중..." : "인증하기"}
-          </button>
-        </div>
-        {emailStep.errors.email && (
-          <span className="signup-error">{emailStep.errors.email}</span>
-        )}
-      </div>
+      <Input
+        label="이메일"
+        type="email"
+        placeholder="이메일"
+        value={emailStep.email}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => emailStep.onEmailChange(e.target.value)}
+        onBlur={emailStep.onEmailBlur}
+        error={emailStep.errors.email}
+      />
+
+      <button
+        type="button"
+        className={verifyButtonClass}
+        onClick={emailStep.onVerifyEmail}
+        disabled={
+          emailStep.isVerifying ||
+          !emailStep.email.trim() ||
+          emailStep.isCodeSent
+        }
+      >
+        {emailStep.isVerifying ? "인증 중..." : "이메일 인증하기"}
+      </button>
 
       {emailStep.isCodeSent && (
         <div className="signup-verification-section">
