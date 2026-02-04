@@ -68,6 +68,11 @@
   color: #ffffff;
 }
 
+.terms-view__header-placeholder {
+  width: 42px;
+  height: 42px;
+}
+
 .terms-view__body {
   flex: 1;
   padding: 64px 16px 24px;

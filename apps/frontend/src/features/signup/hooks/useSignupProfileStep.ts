@@ -434,11 +434,11 @@ export function useSignupProfileStep() {
   }, [updateFormData]);
 
   const onTermsDetailClick = useCallback(() => {
-    navigate('/signup/terms');
+    navigate('/terms');
   }, [navigate]);
 
   const onPrivacyDetailClick = useCallback(() => {
-    navigate('/signup/privacy');
+    navigate('/terms?type=PRIVACY_POLICY');
   }, [navigate]);
 
   const onAddressDetailBlur = useCallback(() => {
