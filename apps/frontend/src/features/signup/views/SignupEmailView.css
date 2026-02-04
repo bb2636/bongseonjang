@@ -637,3 +637,39 @@
 .signup-address-input-box--full {
   width: 100%;
 }
+
+.signup-email-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.signup-email-input-box {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+
+.signup-email-input-box--error {
+  border-color: #ff4444;
+}
+
+.signup-email-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: #101112;
+  outline: none;
+  min-width: 0;
+}
+
+.signup-email-input::placeholder {
+  color: rgba(16, 17, 18, 0.4);
+}
