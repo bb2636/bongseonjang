@@ -131,7 +131,7 @@ export default function PasswordResetRequestView({
               <input
                 type="email"
                 className={`password-reset-input ${isEmailVerified ? 'password-reset-input--verified' : ''} ${socialProvider ? 'password-reset-input--error' : ''}`}
-                placeholder="xblock@gmail.com"
+                placeholder="이메일"
                 value={email}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => onEmailChange(e.target.value)}
                 disabled={isEmailVerified}
