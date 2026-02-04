@@ -96,40 +96,49 @@ export const signupService = {
   },
 
   async sendPhoneVerificationCode(phone: string): Promise<{ success: boolean; message: string; devCode?: string }> {
-    const response = await fetch(`${API_BASE_URL}/auth/phone/send-code`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/phone/send-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.message || '인증번호 발송에 실패했습니다');
+      if (!response.ok) {
+        return { success: false, message: data.message || '인증번호 발송에 실패했습니다' };
+      }
+
+      if (data.devCode) {
+        console.log(`[테스트용] 인증번호: ${data.devCode}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('[sendPhoneVerificationCode] Error:', error);
+      return { success: false, message: '네트워크 오류가 발생했습니다' };
     }
-
-    // TODO: 프로덕션에서는 devCode 로깅 제거
-    if (data.devCode) {
-      console.log(`[테스트용] 인증번호: ${data.devCode}`);
-    }
-
-    return data;
   },
 
   async verifyPhoneCode(phone: string, code: string): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE_URL}/auth/phone/verify-code`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, code }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/phone/verify-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, code }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.message || '인증에 실패했습니다');
+      if (!response.ok) {
+        return { success: false, message: data.message || '인증에 실패했습니다' };
+      }
+
+      return data;
+    } catch (error) {
+      console.error('[verifyPhoneCode] Error:', error);
+      return { success: false, message: '네트워크 오류가 발생했습니다' };
     }
-
-    return data;
   },
 
   async signup(data: SignupData): Promise<SignupResult> {
