@@ -94,6 +94,9 @@ app.get("/api/health", (_, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+const staticPath = path.join(__dirname, "static");
+app.use("/static", express.static(staticPath));
+
 const distPath = path.join(__dirname, "..", "frontend", "dist");
 app.use(express.static(distPath));
 

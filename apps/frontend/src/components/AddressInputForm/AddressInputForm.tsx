@@ -1,5 +1,6 @@
-import { useCallback, useState, useRef, useEffect } from 'react';
-import { checkIsCapacitor } from '@/shared/config/apiConfig';
+import { useCallback } from 'react';
+import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
+import { checkIsCapacitor, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
 import './AddressInputForm.css';
 
 export interface AddressData {
@@ -28,6 +29,11 @@ interface AddressInputFormProps {
   label?: string;
 }
 
+function getBackendBaseUrl(): string {
+  const apiUrl = getAbsoluteApiUrl();
+  return apiUrl.replace(/\/api$/, '');
+}
+
 export function AddressInputForm({
   addressName,
   postalCode,
@@ -43,19 +49,104 @@ export function AddressInputForm({
   showLabel = true,
   label = '배송지',
 }: AddressInputFormProps) {
-  const [showAddressLayer, setShowAddressLayer] = useState(false);
-  const layerRef = useRef<HTMLDivElement>(null);
   const isCapacitor = checkIsCapacitor();
 
-  const handleAddressSearch = useCallback(() => {
-    if (!window.daum?.Postcode) {
-      onSearchError?.('주소 검색 서비스를 불러오지 못했습니다. 페이지를 새로고침 해주세요.');
-      return;
-    }
+  const openAddressSearchInAppBrowser = useCallback(async () => {
+    const backendUrl = getBackendBaseUrl();
+    const searchUrl = `${backendUrl}/static/address-search.html`;
 
+    console.log('[AddressSearch] Opening InAppBrowser:', searchUrl);
+
+    return new Promise<{ zonecode: string; address: string } | null>((resolve) => {
+      let resolved = false;
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+      const handleUrlChange = async (event: UrlEvent) => {
+        const url = event.url;
+        console.log('[AddressSearch] URL changed:', url);
+
+        if (url.includes('/address-callback')) {
+          try {
+            const urlObj = new URL(url);
+            const zonecode = urlObj.searchParams.get('zonecode');
+            const addressValue = urlObj.searchParams.get('address');
+
+            if (zonecode && addressValue && !resolved) {
+              resolved = true;
+              console.log('[AddressSearch] Detected address result:', { zonecode, address: addressValue });
+
+              if (timeoutId) {
+                clearTimeout(timeoutId);
+                timeoutId = null;
+              }
+
+              await InAppBrowser.removeAllListeners();
+              await InAppBrowser.close();
+
+              resolve({ zonecode, address: addressValue });
+            }
+          } catch (e) {
+            console.error('[AddressSearch] Error parsing callback URL:', e);
+          }
+        }
+      };
+
+      const handleClose = () => {
+        console.log('[AddressSearch] InAppBrowser closed');
+
+        if (!resolved) {
+          resolved = true;
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+          }
+          InAppBrowser.removeAllListeners();
+          resolve(null);
+        }
+      };
+
+      (async () => {
+        await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
+        await InAppBrowser.addListener('closeEvent', handleClose);
+
+        timeoutId = setTimeout(async () => {
+          if (!resolved) {
+            console.log('[AddressSearch] Timeout reached');
+            resolved = true;
+            await InAppBrowser.removeAllListeners();
+            await InAppBrowser.close().catch(() => {});
+            resolve(null);
+          }
+        }, 5 * 60 * 1000);
+
+        try {
+          await InAppBrowser.openWebView({ url: searchUrl });
+          console.log('[AddressSearch] InAppBrowser opened');
+        } catch (err) {
+          console.error('[AddressSearch] Failed to open InAppBrowser:', err);
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          await InAppBrowser.removeAllListeners();
+          resolved = true;
+          resolve(null);
+        }
+      })();
+    });
+  }, []);
+
+  const handleAddressSearch = useCallback(async () => {
     if (isCapacitor) {
-      setShowAddressLayer(true);
+      const result = await openAddressSearchInAppBrowser();
+      if (result) {
+        onAddressSearch(result.zonecode, result.address);
+      }
     } else {
+      if (!window.daum?.Postcode) {
+        onSearchError?.('주소 검색 서비스를 불러오지 못했습니다. 페이지를 새로고침 해주세요.');
+        return;
+      }
+
       new window.daum.Postcode({
         oncomplete: (data) => {
           const selectedAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
@@ -63,28 +154,7 @@ export function AddressInputForm({
         },
       }).open();
     }
-  }, [onAddressSearch, onSearchError, isCapacitor]);
-
-  useEffect(() => {
-    if (showAddressLayer && layerRef.current && window.daum?.Postcode) {
-      new window.daum.Postcode({
-        oncomplete: (data) => {
-          const selectedAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
-          onAddressSearch(data.zonecode, selectedAddress);
-          setShowAddressLayer(false);
-        },
-        onclose: () => {
-          setShowAddressLayer(false);
-        },
-        width: '100%',
-        height: '100%',
-      }).embed(layerRef.current);
-    }
-  }, [showAddressLayer, onAddressSearch]);
-
-  const handleCloseLayer = useCallback(() => {
-    setShowAddressLayer(false);
-  }, []);
+  }, [isCapacitor, onAddressSearch, onSearchError, openAddressSearchInAppBrowser]);
 
   const getInputBoxClass = (hasError: boolean, isFull = false) => {
     let className = 'address-input-form__input-box';
@@ -151,24 +221,6 @@ export function AddressInputForm({
           <span className="address-input-form__error">{errors.address}</span>
         )}
       </div>
-
-      {showAddressLayer && (
-        <div className="address-layer-overlay">
-          <div className="address-layer-container">
-            <div className="address-layer-header">
-              <span>주소 검색</span>
-              <button
-                type="button"
-                className="address-layer-close"
-                onClick={handleCloseLayer}
-              >
-                닫기
-              </button>
-            </div>
-            <div className="address-layer-content" ref={layerRef} />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
