@@ -602,7 +602,8 @@ export function GuestCheckoutPage() {
             <div className="checkout-input-group">
               <label className="checkout-label">휴대폰 번호 *</label>
               <input
-                type="tel"
+                type="text"
+                inputMode="numeric"
                 className="checkout-input"
                 value={guestPhone}
                 onChange={(e) => handlePhoneChange(setGuestPhone)(e.target.value)}
@@ -666,7 +667,8 @@ export function GuestCheckoutPage() {
             <div className="checkout-input-group">
               <label className="checkout-label">수령인 연락처 *</label>
               <input
-                type="tel"
+                type="text"
+                inputMode="numeric"
                 className="checkout-input"
                 value={recipientPhone}
                 onChange={(e) => handlePhoneChange(setRecipientPhone)(e.target.value)}

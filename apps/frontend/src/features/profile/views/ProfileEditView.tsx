@@ -113,7 +113,8 @@ export default function ProfileEditView({
           <div className="profile-edit__phone-field">
             <Input
               label="휴대폰"
-              type="tel"
+              type="text"
+              inputMode="numeric"
               placeholder="휴대폰 번호를 입력해주세요"
               value={phone}
               onChange={(e) => onPhoneChange(e.target.value)}

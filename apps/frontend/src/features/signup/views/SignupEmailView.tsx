@@ -401,7 +401,8 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
           <div className={getInputBoxClass(!!profileStep.errors.phone, profileStep.isPhoneVerified)}>
             <input
               className="signup-form-input"
-              type="tel"
+              type="text"
+              inputMode="numeric"
               placeholder="휴대폰 번호를 입력해주세요"
               value={profileStep.phone}
               onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onPhoneChange(e.target.value)}

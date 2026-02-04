@@ -222,7 +222,8 @@ export function AddressFormPage() {
           <label className="address-form-field__label">휴대폰 번호</label>
           <div className="address-form-field__input-wrapper">
             <input
-              type="tel"
+              type="text"
+              inputMode="numeric"
               className="address-form-field__input"
               placeholder="휴대폰 번호를 입력해주세요"
               value={formData.recipientPhone}
