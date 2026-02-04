@@ -1,7 +1,8 @@
 import { BottomNav } from '../../../components/BottomNav';
 import { Input, AlertModal } from '../../../components';
-import PhoneVerificationModal from '../components/PhoneVerificationModal';
 import './ProfileEditView.css';
+
+type PhoneVerificationMode = 'view' | 'input' | 'code';
 
 interface ProfileEditViewProps {
   email: string;
@@ -17,7 +18,13 @@ interface ProfileEditViewProps {
   phoneError: string | null;
   isSubmitting: boolean;
   showSuccessModal: boolean;
-  showPhoneVerificationModal: boolean;
+  phoneVerificationMode: PhoneVerificationMode;
+  verificationCode: string;
+  verificationCodeError: string | null;
+  timer: number;
+  timerDisplay: string;
+  isSendingCode: boolean;
+  isVerifyingCode: boolean;
   onNameChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
   onBirthYearChange: (value: string) => void;
@@ -31,10 +38,11 @@ interface ProfileEditViewProps {
   onModalConfirm: () => void;
   onWithdrawClick: () => void;
   onPhoneVerifyClick: () => void;
-  onPhoneVerificationModalClose: () => void;
-  onSendPhoneCode: (phone: string) => Promise<{ success: boolean; message: string }>;
-  onVerifyPhoneCode: (phone: string, code: string) => Promise<{ success: boolean; message: string }>;
-  onPhoneVerified: (newPhone: string) => void;
+  onCancelPhoneVerification: () => void;
+  onSendPhoneCode: () => void;
+  onResendCode: () => void;
+  onVerificationCodeChange: (value: string) => void;
+  onVerifyCode: () => void;
 }
 
 export default function ProfileEditView({
@@ -51,7 +59,12 @@ export default function ProfileEditView({
   phoneError,
   isSubmitting,
   showSuccessModal,
-  showPhoneVerificationModal,
+  phoneVerificationMode,
+  verificationCode,
+  verificationCodeError,
+  timerDisplay,
+  isSendingCode,
+  isVerifyingCode,
   onNameChange,
   onPhoneChange,
   onBirthYearChange,
@@ -65,15 +78,45 @@ export default function ProfileEditView({
   onModalConfirm,
   onWithdrawClick,
   onPhoneVerifyClick,
-  onPhoneVerificationModalClose,
+  onCancelPhoneVerification,
   onSendPhoneCode,
-  onVerifyPhoneCode,
-  onPhoneVerified,
+  onResendCode,
+  onVerificationCodeChange,
+  onVerifyCode,
 }: ProfileEditViewProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit();
+  };
+
+  const renderPhoneButton = () => {
+    if (phoneVerificationMode === 'view') {
+      return (
+        <button
+          type="button"
+          className="profile-edit__phone-verify-button"
+          onClick={onPhoneVerifyClick}
+        >
+          다른 번호 인증
+        </button>
+      );
+    }
+    
+    if (phoneVerificationMode === 'input') {
+      return (
+        <button
+          type="button"
+          className="profile-edit__phone-verify-button profile-edit__phone-verify-button--primary"
+          onClick={onSendPhoneCode}
+          disabled={isSendingCode}
+        >
+          {isSendingCode ? '발송중...' : '인증하기'}
+        </button>
+      );
+    }
+    
+    return null;
   };
 
   return (
@@ -131,15 +174,57 @@ export default function ProfileEditView({
               onChange={(e) => onPhoneChange(e.target.value)}
               error={phoneError}
               maxLength={11}
+              readOnly={phoneVerificationMode === 'view' || phoneVerificationMode === 'code'}
             />
-            <button
-              type="button"
-              className="profile-edit__phone-verify-button"
-              onClick={onPhoneVerifyClick}
-            >
-              다른 번호 인증
-            </button>
+            {renderPhoneButton()}
           </div>
+
+          {phoneVerificationMode === 'code' && (
+            <div className="profile-edit__verification-code-section">
+              <label className="profile-edit__section-label">휴대폰 인증코드</label>
+              <div className="profile-edit__verification-code-row">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  className={`profile-edit__verification-code-input ${verificationCodeError ? 'profile-edit__verification-code-input--error' : ''}`}
+                  placeholder="인증코드"
+                  value={verificationCode}
+                  onChange={(e) => onVerificationCodeChange(e.target.value)}
+                  maxLength={6}
+                />
+                <span className="profile-edit__verification-timer">{timerDisplay}</span>
+                <button
+                  type="button"
+                  className="profile-edit__verification-confirm-button"
+                  onClick={onVerifyCode}
+                  disabled={isVerifyingCode}
+                >
+                  {isVerifyingCode ? '확인중...' : '확인'}
+                </button>
+              </div>
+              {verificationCodeError && (
+                <p className="profile-edit__verification-error">{verificationCodeError}</p>
+              )}
+              <p className="profile-edit__verification-help">
+                인증코드를 받지 못하셨나요?{' '}
+                <button
+                  type="button"
+                  className="profile-edit__resend-link"
+                  onClick={onResendCode}
+                  disabled={isSendingCode}
+                >
+                  인증코드 재전송하기
+                </button>
+              </p>
+              <button
+                type="button"
+                className="profile-edit__cancel-verification-link"
+                onClick={onCancelPhoneVerification}
+              >
+                취소
+              </button>
+            </div>
+          )}
 
           <div className="profile-edit__birth-section">
             <label className="profile-edit__section-label">생년월일</label>
@@ -281,15 +366,6 @@ export default function ProfileEditView({
         isOpen={showSuccessModal}
         title="수정되었습니다."
         onConfirm={onModalConfirm}
-      />
-
-      <PhoneVerificationModal
-        isOpen={showPhoneVerificationModal}
-        currentPhone={phone}
-        onClose={onPhoneVerificationModalClose}
-        onVerified={onPhoneVerified}
-        onSendCode={onSendPhoneCode}
-        onVerifyCode={onVerifyPhoneCode}
       />
 
       <BottomNav />

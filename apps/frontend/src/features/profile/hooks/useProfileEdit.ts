@@ -1,10 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useToast } from '../../../contexts/ToastContext';
 import { profileApi } from '../api/profileApi';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { signupService } from '../../signup/services/signupService';
+
+type PhoneVerificationMode = 'view' | 'input' | 'code';
+
+const VERIFICATION_CODE_EXPIRY_SECONDS = 180;
 
 export function useProfileEdit() {
   const navigate = useNavigate();
@@ -14,6 +18,7 @@ export function useProfileEdit() {
   
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [originalPhone, setOriginalPhone] = useState('');
   const [birthYear, setBirthYear] = useState('');
   const [birthMonth, setBirthMonth] = useState('');
   const [birthDay, setBirthDay] = useState('');
@@ -27,7 +32,14 @@ export function useProfileEdit() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showPhoneVerificationModal, setShowPhoneVerificationModal] = useState(false);
+
+  const [phoneVerificationMode, setPhoneVerificationMode] = useState<PhoneVerificationMode>('view');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationCodeError, setVerificationCodeError] = useState<string | null>(null);
+  const [timer, setTimer] = useState(0);
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const email = user?.email || '';
 
@@ -37,6 +49,7 @@ export function useProfileEdit() {
         const profile = await profileApi.fetchUserProfile();
         setName(profile.name || '');
         setPhone(profile.phone || '');
+        setOriginalPhone(profile.phone || '');
         
         if (profile.birthDate) {
           const [year, month, day] = profile.birthDate.split('-');
@@ -57,6 +70,25 @@ export function useProfileEdit() {
     }
     loadProfile();
   }, [showToast]);
+
+  useEffect(() => {
+    if (timer > 0) {
+      timerRef.current = setTimeout(() => setTimer(timer - 1), 1000);
+    }
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [timer]);
+
+  const startTimer = () => {
+    setTimer(VERIFICATION_CODE_EXPIRY_SECONDS);
+  };
+
+  const formatTimer = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleNameChange = (value: string) => {
     setName(value);
@@ -150,26 +182,104 @@ export function useProfileEdit() {
   };
 
   const handlePhoneVerifyClick = () => {
-    setShowPhoneVerificationModal(true);
+    setPhone('');
+    setPhoneVerificationMode('input');
+    setVerificationCode('');
+    setVerificationCodeError(null);
+    setPhoneError(null);
   };
 
-  const handlePhoneVerificationModalClose = () => {
-    setShowPhoneVerificationModal(false);
+  const handleCancelPhoneVerification = useCallback(() => {
+    setPhone(originalPhone);
+    setPhoneVerificationMode('view');
+    setVerificationCode('');
+    setVerificationCodeError(null);
+    setPhoneError(null);
+    setTimer(0);
+  }, [originalPhone]);
+
+  const handleSendPhoneCode = useCallback(async () => {
+    if (!phone || phone.length < 10) {
+      setPhoneError('휴대폰 번호를 정확히 입력해주세요');
+      return;
+    }
+
+    setIsSendingCode(true);
+    setPhoneError(null);
+
+    try {
+      const result = await signupService.sendPhoneVerificationCode(phone);
+      if (result.success) {
+        setPhoneVerificationMode('code');
+        startTimer();
+        showToast('인증번호가 발송되었습니다', 'success');
+      } else {
+        setPhoneError(result.message);
+      }
+    } catch {
+      setPhoneError('인증번호 발송에 실패했습니다');
+    } finally {
+      setIsSendingCode(false);
+    }
+  }, [phone, showToast]);
+
+  const handleResendCode = useCallback(async () => {
+    setIsSendingCode(true);
+    setVerificationCodeError(null);
+
+    try {
+      const result = await signupService.sendPhoneVerificationCode(phone);
+      if (result.success) {
+        startTimer();
+        setVerificationCode('');
+        showToast('인증번호가 재발송되었습니다', 'success');
+      } else {
+        setVerificationCodeError(result.message);
+      }
+    } catch {
+      setVerificationCodeError('인증번호 발송에 실패했습니다');
+    } finally {
+      setIsSendingCode(false);
+    }
+  }, [phone, showToast]);
+
+  const handleVerificationCodeChange = (value: string) => {
+    const formatted = value.replace(/[^0-9]/g, '').slice(0, 6);
+    setVerificationCode(formatted);
+    if (verificationCodeError) setVerificationCodeError(null);
   };
 
-  const handleSendPhoneCode = useCallback(async (phoneNumber: string) => {
-    return await signupService.sendPhoneVerificationCode(phoneNumber);
-  }, []);
+  const handleVerifyCode = useCallback(async () => {
+    if (!verificationCode || verificationCode.length !== 6) {
+      setVerificationCodeError('인증번호 6자리를 입력해주세요');
+      return;
+    }
 
-  const handleVerifyPhoneCode = useCallback(async (phoneNumber: string, code: string) => {
-    return await signupService.verifyPhoneCode(phoneNumber, code);
-  }, []);
+    if (timer === 0) {
+      setVerificationCodeError('인증 시간이 만료되었습니다. 다시 시도해주세요');
+      return;
+    }
 
-  const handlePhoneVerified = useCallback((newPhone: string) => {
-    setPhone(newPhone);
-    setShowPhoneVerificationModal(false);
-    showToast('휴대폰 번호가 변경되었습니다', 'success');
-  }, [showToast]);
+    setIsVerifyingCode(true);
+    setVerificationCodeError(null);
+
+    try {
+      const result = await signupService.verifyPhoneCode(phone, verificationCode);
+      if (result.success) {
+        setOriginalPhone(phone);
+        setPhoneVerificationMode('view');
+        setVerificationCode('');
+        setTimer(0);
+        showToast('휴대폰 번호가 인증되었습니다', 'success');
+      } else {
+        setVerificationCodeError(result.message);
+      }
+    } catch {
+      setVerificationCodeError('인증에 실패했습니다');
+    } finally {
+      setIsVerifyingCode(false);
+    }
+  }, [phone, verificationCode, timer, showToast]);
 
   const handleModalConfirm = () => {
     setShowSuccessModal(false);
@@ -191,7 +301,13 @@ export function useProfileEdit() {
     isSubmitting,
     isLoading,
     showSuccessModal,
-    showPhoneVerificationModal,
+    phoneVerificationMode,
+    verificationCode,
+    verificationCodeError,
+    timer,
+    timerDisplay: formatTimer(timer),
+    isSendingCode,
+    isVerifyingCode,
     handleNameChange,
     handlePhoneChange,
     handleBirthYearChange,
@@ -205,9 +321,10 @@ export function useProfileEdit() {
     handleModalConfirm,
     handleWithdrawClick,
     handlePhoneVerifyClick,
-    handlePhoneVerificationModalClose,
+    handleCancelPhoneVerification,
     handleSendPhoneCode,
-    handleVerifyPhoneCode,
-    handlePhoneVerified,
+    handleResendCode,
+    handleVerificationCodeChange,
+    handleVerifyCode,
   };
 }

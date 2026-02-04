@@ -17,7 +17,13 @@ export default function ProfileEditPage() {
     isSubmitting,
     isLoading,
     showSuccessModal,
-    showPhoneVerificationModal,
+    phoneVerificationMode,
+    verificationCode,
+    verificationCodeError,
+    timer,
+    timerDisplay,
+    isSendingCode,
+    isVerifyingCode,
     handleNameChange,
     handlePhoneChange,
     handleBirthYearChange,
@@ -31,10 +37,11 @@ export default function ProfileEditPage() {
     handleModalConfirm,
     handleWithdrawClick,
     handlePhoneVerifyClick,
-    handlePhoneVerificationModalClose,
+    handleCancelPhoneVerification,
     handleSendPhoneCode,
-    handleVerifyPhoneCode,
-    handlePhoneVerified,
+    handleResendCode,
+    handleVerificationCodeChange,
+    handleVerifyCode,
   } = useProfileEdit();
 
   if (isLoading) {
@@ -73,6 +80,13 @@ export default function ProfileEditPage() {
       phoneError={phoneError}
       isSubmitting={isSubmitting}
       showSuccessModal={showSuccessModal}
+      phoneVerificationMode={phoneVerificationMode}
+      verificationCode={verificationCode}
+      verificationCodeError={verificationCodeError}
+      timer={timer}
+      timerDisplay={timerDisplay}
+      isSendingCode={isSendingCode}
+      isVerifyingCode={isVerifyingCode}
       onNameChange={handleNameChange}
       onPhoneChange={handlePhoneChange}
       onBirthYearChange={handleBirthYearChange}
@@ -86,11 +100,11 @@ export default function ProfileEditPage() {
       onModalConfirm={handleModalConfirm}
       onWithdrawClick={handleWithdrawClick}
       onPhoneVerifyClick={handlePhoneVerifyClick}
-      showPhoneVerificationModal={showPhoneVerificationModal}
-      onPhoneVerificationModalClose={handlePhoneVerificationModalClose}
+      onCancelPhoneVerification={handleCancelPhoneVerification}
       onSendPhoneCode={handleSendPhoneCode}
-      onVerifyPhoneCode={handleVerifyPhoneCode}
-      onPhoneVerified={handlePhoneVerified}
+      onResendCode={handleResendCode}
+      onVerificationCodeChange={handleVerificationCodeChange}
+      onVerifyCode={handleVerifyCode}
     />
   );
 }
