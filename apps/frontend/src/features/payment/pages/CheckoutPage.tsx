@@ -776,7 +776,7 @@ export function CheckoutPage() {
       </header>
       <div className="checkout-header-spacer" />
 
-      <form className="checkout-form" onSubmit={handleSubmit}>
+      <form className="checkout-form" onSubmit={handleSubmit} noValidate>
         <section className="checkout-address-card">
           {currentAddress ? (
             <>

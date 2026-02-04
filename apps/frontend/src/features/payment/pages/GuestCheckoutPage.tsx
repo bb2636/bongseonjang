@@ -583,7 +583,7 @@ export function GuestCheckoutPage() {
       </header>
       <div className="checkout-header-spacer" />
 
-      <form className="checkout-form" onSubmit={handleSubmit}>
+      <form className="checkout-form" onSubmit={handleSubmit} noValidate>
         <section className="checkout-section">
           <div className="checkout-section-header">
             <h2 className="checkout-section-title">주문자 정보</h2>

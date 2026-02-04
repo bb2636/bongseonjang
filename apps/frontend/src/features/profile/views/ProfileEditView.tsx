@@ -92,7 +92,7 @@ export default function ProfileEditView({
       <div className="profile-edit__header-spacer" />
 
       <div className="profile-edit__content">
-        <form className="profile-edit__form" onSubmit={handleSubmit}>
+        <form className="profile-edit__form" onSubmit={handleSubmit} noValidate>
           <Input
             label="이메일"
             type="email"

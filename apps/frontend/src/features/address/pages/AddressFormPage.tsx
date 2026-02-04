@@ -158,6 +158,10 @@ export function AddressFormPage() {
     setIsSubmitting(true);
     try {
       await saveAddressMutation.mutateAsync(formData);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('pattern')) {
+        showToast('입력 형식이 올바르지 않습니다. 다시 시도해주세요.', 'error');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -204,7 +208,7 @@ export function AddressFormPage() {
         </button>
       </header>
 
-      <form className="address-form-content" onSubmit={handleSubmit}>
+      <form className="address-form-content" onSubmit={handleSubmit} noValidate>
         <div className="address-form-field">
           <label className="address-form-field__label">받으실 분</label>
           <div className="address-form-field__input-wrapper">
@@ -224,6 +228,7 @@ export function AddressFormPage() {
             <input
               type="text"
               inputMode="numeric"
+              autoComplete="off"
               className="address-form-field__input"
               placeholder="휴대폰 번호를 입력해주세요"
               value={formData.recipientPhone}
