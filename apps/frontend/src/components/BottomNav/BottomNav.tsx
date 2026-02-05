@@ -16,7 +16,7 @@ const NAV_ITEMS: { id: NavItem; label: string; path: string }[] = [
 
 function HomeIcon({ active }: { active: boolean }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
       <path
         d="M3 9.5L12 3L21 9.5V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9.5Z"
         stroke={active ? '#3B9BD5' : 'rgba(12, 12, 12, 0.9)'}
@@ -37,7 +37,7 @@ function HomeIcon({ active }: { active: boolean }) {
 
 function CategoryIcon({ active }: { active: boolean }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
       <path
         d="M3 6H21M3 12H21M3 18H21"
         stroke={active ? '#3B9BD5' : 'rgba(12, 12, 12, 0.9)'}
@@ -51,7 +51,7 @@ function CategoryIcon({ active }: { active: boolean }) {
 
 function SearchIcon({ active }: { active: boolean }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
       <circle
         cx="11"
         cy="11"
@@ -71,7 +71,7 @@ function SearchIcon({ active }: { active: boolean }) {
 
 function ProfileIcon({ active }: { active: boolean }) {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
       <circle
         cx="12"
         cy="8"

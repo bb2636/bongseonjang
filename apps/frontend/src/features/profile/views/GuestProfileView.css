@@ -12,12 +12,12 @@
   justify-content: center;
   align-items: center;
   padding: 24px 16px;
-  padding-bottom: calc(56px + 56px + var(--safe-area-bottom, 0px));
+  padding-bottom: calc(70px + 56px + var(--safe-area-bottom, 0px));
 }
 
 .guest-profile-view .mypage-banner {
   position: fixed;
-  bottom: calc(56px + var(--safe-area-bottom, 0px));
+  bottom: calc(70px + var(--safe-area-bottom, 0px));
   left: 0;
   right: 0;
   z-index: 999;
