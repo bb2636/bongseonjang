@@ -55,8 +55,8 @@
 
 .share-bottom-sheet__options {
   display: flex;
-  justify-content: center;
-  gap: 32px;
+  justify-content: space-around;
+  gap: 16px;
 }
 
 .share-bottom-sheet__option {
@@ -94,5 +94,10 @@
 
 .share-bottom-sheet__icon--link {
   background: #F5F5F5;
+  color: rgba(12, 12, 12, 0.8);
+}
+
+.share-bottom-sheet__icon--more {
+  background: #E0E0E0;
   color: rgba(12, 12, 12, 0.8);
 }

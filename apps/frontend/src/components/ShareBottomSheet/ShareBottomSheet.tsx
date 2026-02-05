@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { Share } from '@capacitor/share';
+import { checkIsCapacitor } from '@/shared/config/apiConfig';
 import './ShareBottomSheet.css';
 
 interface ShareBottomSheetProps {
@@ -100,6 +102,41 @@ export default function ShareBottomSheet({
     onClose();
   };
 
+  const handleNativeShare = async () => {
+    const isCapacitor = checkIsCapacitor();
+    
+    if (isCapacitor) {
+      try {
+        await Share.share({
+          title: productName || '봉선장 상품',
+          text: '봉선장에서 상품을 확인해보세요!',
+          url: shareUrl,
+          dialogTitle: '공유하기',
+        });
+        onClose();
+      } catch (err) {
+        console.error('[Share] Native share failed:', err);
+        onCopyLink();
+      }
+    } else {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: productName || '봉선장 상품',
+            text: '봉선장에서 상품을 확인해보세요!',
+            url: shareUrl,
+          });
+          onClose();
+        } catch (err) {
+          console.error('[Share] Web share failed:', err);
+          onCopyLink();
+        }
+      } else {
+        onCopyLink();
+      }
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -141,6 +178,17 @@ export default function ShareBottomSheet({
               </svg>
             </div>
             <span>링크 복사</span>
+          </button>
+          
+          <button className="share-bottom-sheet__option" onClick={handleNativeShare}>
+            <div className="share-bottom-sheet__icon share-bottom-sheet__icon--more">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                <circle cx="19" cy="12" r="1" fill="currentColor"/>
+                <circle cx="5" cy="12" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <span>더보기</span>
           </button>
         </div>
       </div>
