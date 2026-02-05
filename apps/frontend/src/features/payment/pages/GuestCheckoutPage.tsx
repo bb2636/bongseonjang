@@ -485,7 +485,7 @@ export function GuestCheckoutPage() {
         }, 10 * 60 * 1000);
         
         try {
-          await InAppBrowser.openWebView({ url: paymentFormUrl });
+          await InAppBrowser.openWebView({ url: paymentFormUrl, title: '결제' });
           console.log('[GuestPayment] InAppBrowser opened');
         } catch (err) {
           console.error('[GuestPayment] Failed to open InAppBrowser:', err);

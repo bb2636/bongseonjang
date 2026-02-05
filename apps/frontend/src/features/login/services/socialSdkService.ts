@@ -317,8 +317,16 @@ async function openInAppBrowserForOAuth(provider: string): Promise<OAuthResult> 
       }
     }, 5 * 60 * 1000);
 
+    const providerTitles: Record<string, string> = {
+      kakao: '카카오 로그인',
+      naver: '네이버 로그인',
+      google: '구글 로그인',
+      apple: '애플 로그인',
+    };
+    const title = providerTitles[provider] || '로그인';
+    
     try {
-      await InAppBrowser.openWebView({ url: authUrl });
+      await InAppBrowser.openWebView({ url: authUrl, title });
       console.log('[OAuth] InAppBrowser opened');
     } catch (err) {
       console.error('[OAuth] Failed to open InAppBrowser:', err);

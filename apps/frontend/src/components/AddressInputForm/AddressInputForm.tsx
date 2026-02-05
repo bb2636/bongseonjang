@@ -120,7 +120,7 @@ export function AddressInputForm({
         }, 5 * 60 * 1000);
 
         try {
-          await InAppBrowser.openWebView({ url: searchUrl });
+          await InAppBrowser.openWebView({ url: searchUrl, title: '주소 검색' });
           console.log('[AddressSearch] InAppBrowser opened');
         } catch (err) {
           console.error('[AddressSearch] Failed to open InAppBrowser:', err);
