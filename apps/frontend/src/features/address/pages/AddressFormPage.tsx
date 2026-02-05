@@ -125,9 +125,14 @@ export function AddressFormPage() {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
       queryClient.invalidateQueries({ queryKey: ['defaultAddress'] });
+      
+      if (!isEditMode && data?.id) {
+        sessionStorage.setItem('checkout_selected_address_id', data.id);
+      }
+      
       showToast(isEditMode ? '배송지가 수정되었습니다' : '배송지가 추가되었습니다', 'success');
       goBack();
     },
