@@ -677,7 +677,12 @@ export function CheckoutPage() {
         }, 10 * 60 * 1000);
         
         try {
-          await InAppBrowser.openWebView({ url: paymentFormUrl, title: '결제' });
+          await InAppBrowser.openWebView({ 
+            url: paymentFormUrl, 
+            title: '결제',
+            isPresentAfterPageLoad: true,
+            activeNativeNavigationForWebview: true,
+          });
           console.log('[Payment] InAppBrowser opened');
         } catch (err) {
           console.error('[Payment] Failed to open InAppBrowser:', err);

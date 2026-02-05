@@ -326,7 +326,12 @@ async function openInAppBrowserForOAuth(provider: string): Promise<OAuthResult> 
     const title = providerTitles[provider] || '로그인';
     
     try {
-      await InAppBrowser.openWebView({ url: authUrl, title });
+      await InAppBrowser.openWebView({ 
+      url: authUrl, 
+      title,
+      isPresentAfterPageLoad: true,
+      activeNativeNavigationForWebview: true,
+    });
       console.log('[OAuth] InAppBrowser opened');
     } catch (err) {
       console.error('[OAuth] Failed to open InAppBrowser:', err);
