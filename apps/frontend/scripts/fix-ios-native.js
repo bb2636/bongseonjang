@@ -206,15 +206,46 @@ function removeOldSwipeBackFiles() {
     'iosSwipeBack.swift',
     'IoSwipeBack.swift',
     'SwipeBack.swift',
-    'SwipeBackPlugin.swift'
+    'SwipeBackPlugin.swift',
+    'IosSwipeBack.swift',
+    'iosSwipeBackPlugin.swift'
   ];
 
   for (const name of problematicNames) {
     const filePath = path.join(IOS_APP_DIR, name);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      console.log(`  Removed problematic file: ${name}`);
+      console.log(`  Removed file: ${name}`);
     }
+  }
+
+  removeSwipeBackFromPbxproj();
+}
+
+function removeSwipeBackFromPbxproj() {
+  const pbxprojPath = path.join(FRONTEND_DIR, 'ios', 'App', 'App.xcodeproj', 'project.pbxproj');
+  if (!fs.existsSync(pbxprojPath)) {
+    return;
+  }
+
+  let content = fs.readFileSync(pbxprojPath, 'utf8');
+  const originalLength = content.length;
+
+  const swipeBackPatterns = [
+    /^.*[Ss]wipe[Bb]ack.*\n/gm,
+    /^.*iosSwipeBack.*\n/gm,
+    /^.*IoSwipeBack.*\n/gm,
+    /^.*IosSwipeBack.*\n/gm,
+    /^.*SwipeBackPlugin.*\n/gm
+  ];
+
+  for (const pattern of swipeBackPatterns) {
+    content = content.replace(pattern, '');
+  }
+
+  if (content.length !== originalLength) {
+    fs.writeFileSync(pbxprojPath, content, 'utf8');
+    console.log('  Removed SwipeBack references from project.pbxproj');
   }
 }
 
