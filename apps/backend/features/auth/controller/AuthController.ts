@@ -579,7 +579,15 @@ export class AuthController {
       }
 
       if (!stateValid && isPollingFlow) {
-        console.log('[Apple Callback] State not in pendingAuthSessions but is polling flow, proceeding anyway');
+        const pollingSessionId = originalState!.replace('polling:', '');
+        const pollingSession = pollingSessionStore.check(pollingSessionId);
+        if (!pollingSession) {
+          console.warn('[Apple Callback] Polling session not found either, rejecting');
+          const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
+          handleAppleRedirect(sessionKey, originalState);
+          return;
+        }
+        console.log('[Apple Callback] State not in pendingAuthSessions but polling session exists, proceeding');
       }
 
       let userName: string | undefined;
