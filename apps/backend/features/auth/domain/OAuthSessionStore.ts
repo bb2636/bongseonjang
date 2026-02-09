@@ -1,4 +1,7 @@
 import crypto from 'crypto';
+import { AppDataSource } from '../../../config/database.js';
+import { OAuthSession } from '../../../entity/OAuthSession.js';
+import { MoreThan } from 'typeorm';
 
 export interface OAuthSessionData {
   token?: string;
@@ -19,55 +22,68 @@ export interface OAuthSessionData {
   };
 }
 
-interface SessionEntry {
-  data: OAuthSessionData;
-  expiresAt: number;
-}
+const TTL_MS = 5 * 60 * 1000;
 
-const TTL_MS = 5 * 60 * 1000; // 5 minutes
+let cleanupCounter = 0;
 
 class OAuthSessionStore {
-  private store: Map<string, SessionEntry> = new Map();
+  private getRepo() {
+    return AppDataSource.getRepository(OAuthSession);
+  }
 
-  save(data: OAuthSessionData): string {
+  async save(data: OAuthSessionData): Promise<string> {
     const key = crypto.randomUUID();
-    const expiresAt = Date.now() + TTL_MS;
-    
-    this.store.set(key, { data, expiresAt });
-    this.cleanup();
-    
+    const expiresAt = new Date(Date.now() + TTL_MS);
+
+    const repo = this.getRepo();
+    const session = repo.create({
+      id: key,
+      type: 'oauth',
+      status: 'active',
+      data,
+      expiresAt,
+    });
+    await repo.save(session);
+
+    cleanupCounter++;
+    if (cleanupCounter >= 10) {
+      cleanupCounter = 0;
+      this.cleanup().catch(() => {});
+    }
+
     return key;
   }
 
-  get(key: string): OAuthSessionData | null {
-    const entry = this.store.get(key);
-    
+  async get(key: string): Promise<OAuthSessionData | null> {
+    const repo = this.getRepo();
+    const entry = await repo.findOne({
+      where: {
+        id: key,
+        type: 'oauth',
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
     if (!entry) {
       return null;
     }
 
-    if (Date.now() > entry.expiresAt) {
-      this.store.delete(key);
-      return null;
-    }
-
-    this.store.delete(key);
-    return entry.data;
+    await repo.delete({ id: key });
+    return entry.data as OAuthSessionData;
   }
 
-  private cleanup(): void {
-    const now = Date.now();
-    for (const [key, entry] of this.store.entries()) {
-      if (now > entry.expiresAt) {
-        this.store.delete(key);
-      }
-    }
+  async cleanup(): Promise<void> {
+    const repo = this.getRepo();
+    await repo
+      .createQueryBuilder()
+      .delete()
+      .where('expiresAt < :now', { now: new Date() })
+      .execute();
   }
 }
 
 export const oauthSessionStore = new OAuthSessionStore();
 
-// Polling session store for deep-link-free OAuth flow
 export interface PollingSessionData {
   status: 'pending' | 'completed' | 'error';
   token?: string;
@@ -85,77 +101,84 @@ export interface PollingSessionData {
   };
 }
 
-interface PollingSessionEntry {
-  data: PollingSessionData;
-  expiresAt: number;
-}
-
-const POLLING_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const POLLING_TTL_MS = 10 * 60 * 1000;
 
 class PollingSessionStore {
-  private store: Map<string, PollingSessionEntry> = new Map();
-
-  create(): string {
-    const sessionId = crypto.randomUUID();
-    const expiresAt = Date.now() + POLLING_TTL_MS;
-    
-    this.store.set(sessionId, { 
-      data: { status: 'pending' }, 
-      expiresAt 
-    });
-    this.cleanup();
-    
-    return sessionId;
+  private getRepo() {
+    return AppDataSource.getRepository(OAuthSession);
   }
 
-  update(sessionId: string, data: Partial<PollingSessionData>): boolean {
-    const entry = this.store.get(sessionId);
-    if (!entry || Date.now() > entry.expiresAt) {
+  async create(sessionId?: string): Promise<string> {
+    const id = sessionId || crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + POLLING_TTL_MS);
+
+    const repo = this.getRepo();
+    const session = repo.create({
+      id,
+      type: 'polling',
+      status: 'pending',
+      data: { status: 'pending' },
+      expiresAt,
+    });
+    await repo.save(session);
+
+    return id;
+  }
+
+  async update(sessionId: string, data: Partial<PollingSessionData>): Promise<boolean> {
+    const repo = this.getRepo();
+    const entry = await repo.findOne({
+      where: {
+        id: sessionId,
+        type: 'polling',
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
+    if (!entry) {
       return false;
     }
-    
-    entry.data = { ...entry.data, ...data };
+
+    const mergedData = { ...(entry.data as PollingSessionData), ...data };
+    entry.data = mergedData;
+    entry.status = mergedData.status || entry.status;
+    await repo.save(entry);
     return true;
   }
 
-  check(sessionId: string): PollingSessionData | null {
-    const entry = this.store.get(sessionId);
-    
+  async check(sessionId: string): Promise<PollingSessionData | null> {
+    const repo = this.getRepo();
+    const entry = await repo.findOne({
+      where: {
+        id: sessionId,
+        type: 'polling',
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
     if (!entry) {
       return null;
     }
 
-    if (Date.now() > entry.expiresAt) {
-      this.store.delete(sessionId);
-      return null;
-    }
-
-    return entry.data;
+    return entry.data as PollingSessionData;
   }
 
-  consume(sessionId: string): PollingSessionData | null {
-    const entry = this.store.get(sessionId);
-    
+  async consume(sessionId: string): Promise<PollingSessionData | null> {
+    const repo = this.getRepo();
+    const entry = await repo.findOne({
+      where: {
+        id: sessionId,
+        type: 'polling',
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
     if (!entry) {
       return null;
     }
 
-    if (Date.now() > entry.expiresAt) {
-      this.store.delete(sessionId);
-      return null;
-    }
-
-    this.store.delete(sessionId);
-    return entry.data;
-  }
-
-  private cleanup(): void {
-    const now = Date.now();
-    for (const [key, entry] of this.store.entries()) {
-      if (now > entry.expiresAt) {
-        this.store.delete(key);
-      }
-    }
+    await repo.delete({ id: sessionId });
+    return entry.data as PollingSessionData;
   }
 }
 

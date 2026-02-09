@@ -501,7 +501,7 @@ export class AuthController {
         return;
       }
 
-      const sessionData = oauthSessionStore.get(key);
+      const sessionData = await oauthSessionStore.get(key);
 
       if (!sessionData) {
         res.status(404).json({ message: 'Session not found or expired' });
@@ -527,13 +527,13 @@ export class AuthController {
       return { originalState: fullState, appScheme: undefined };
     };
 
-    const handleAppleRedirect = (sessionKey: string, originalState: string | undefined): void => {
+    const handleAppleRedirect = async (sessionKey: string, originalState: string | undefined): Promise<void> => {
       if (originalState?.startsWith('polling:')) {
         const pollingSessionId = originalState.replace('polling:', '');
-        const sessionData = oauthSessionStore.get(sessionKey);
+        const sessionData = await oauthSessionStore.get(sessionKey);
 
         if (sessionData?.token) {
-          pollingSessionStore.update(pollingSessionId, {
+          await pollingSessionStore.update(pollingSessionId, {
             status: 'completed',
             token: sessionData.token,
             isNewUser: sessionData.isNewUser,
@@ -541,7 +541,7 @@ export class AuthController {
           });
           sendPollingCompleteHtml(res, true, '로그인 완료!');
         } else if (sessionData?.requiresEmail) {
-          pollingSessionStore.update(pollingSessionId, {
+          await pollingSessionStore.update(pollingSessionId, {
             status: 'completed',
             requiresEmail: true,
             provider: sessionData.provider,
@@ -550,7 +550,7 @@ export class AuthController {
           });
           sendPollingCompleteHtml(res, true, '로그인 완료!');
         } else {
-          pollingSessionStore.update(pollingSessionId, {
+          await pollingSessionStore.update(pollingSessionId, {
             status: 'error',
             error: sessionData?.error || 'unknown_error',
           });
@@ -573,18 +573,18 @@ export class AuthController {
 
       if (!originalState || (!stateValid && !isPollingFlow)) {
         console.warn(`[Apple Callback] Invalid or missing state. State: ${originalState}`);
-        const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
-        handleAppleRedirect(sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: 'invalid_state', state: originalState });
+        await handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
       if (!stateValid && isPollingFlow) {
         const pollingSessionId = originalState!.replace('polling:', '');
-        const pollingSession = pollingSessionStore.check(pollingSessionId);
+        const pollingSession = await pollingSessionStore.check(pollingSessionId);
         if (!pollingSession) {
           console.warn('[Apple Callback] Polling session not found either, rejecting');
-          const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
-          handleAppleRedirect(sessionKey, originalState);
+          const sessionKey = await oauthSessionStore.save({ error: 'invalid_state', state: originalState });
+          await handleAppleRedirect(sessionKey, originalState);
           return;
         }
         console.log('[Apple Callback] State not in pendingAuthSessions but polling session exists, proceeding');
@@ -606,8 +606,8 @@ export class AuthController {
 
       if (!code) {
         console.error('[Apple Callback] No authorization code received');
-        const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
-        handleAppleRedirect(sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: 'no_code', state: originalState });
+        await handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
@@ -617,21 +617,21 @@ export class AuthController {
         console.log('[Apple Callback] Got user info - provider:', socialUserInfo.provider, 'email:', socialUserInfo.email ? 'present' : 'missing', 'name:', socialUserInfo.name);
       } catch (tokenError) {
         console.error('[Apple Callback] Token exchange error:', tokenError);
-        const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
-        handleAppleRedirect(sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
+        await handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
       if (!socialUserInfo.email) {
         console.log('[Apple Callback] No email from Apple, setting requiresEmail');
-        const sessionKey = oauthSessionStore.save({
+        const sessionKey = await oauthSessionStore.save({
           requiresEmail: true,
           provider: socialUserInfo.provider,
           providerId: socialUserInfo.providerUserId,
           name: socialUserInfo.name,
           state: originalState,
         });
-        handleAppleRedirect(sessionKey, originalState);
+        await handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
@@ -646,7 +646,7 @@ export class AuthController {
 
         console.log('[Apple Callback] Social login success. isNewUser:', result.isNewUser, 'userId:', result.user.id);
 
-        const sessionKey = oauthSessionStore.save({
+        const sessionKey = await oauthSessionStore.save({
           token: result.token,
           isNewUser: result.isNewUser,
           state: originalState,
@@ -656,19 +656,19 @@ export class AuthController {
             name: result.user.name,
           },
         });
-        handleAppleRedirect(sessionKey, originalState);
+        await handleAppleRedirect(sessionKey, originalState);
       } catch (loginError) {
         console.error('[Apple Callback] Social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
-        const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
-        handleAppleRedirect(sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: errorMessage, state: originalState });
+        await handleAppleRedirect(sessionKey, originalState);
       }
     } catch (error) {
       console.error('[Apple Callback] Unexpected error:', error);
       const { state } = req.body;
       const { originalState } = extractAppSchemeFromState(state);
-      const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: originalState });
-      handleAppleRedirect(sessionKey, originalState);
+      const sessionKey = await oauthSessionStore.save({ error: 'callback_failed', state: originalState });
+      await handleAppleRedirect(sessionKey, originalState);
     }
   }
 
@@ -855,14 +855,13 @@ export class AuthController {
       res.status(200).type('html').send(html);
     };
 
-    const doRedirect = (provider: string, platform: string | undefined, sessionKey: string, originalState?: string): void => {
-      // Handle polling-based OAuth (for Google on mobile without deep links)
+    const doRedirect = async (provider: string, platform: string | undefined, sessionKey: string, originalState?: string): Promise<void> => {
       if (platform === 'polling' && originalState?.startsWith('polling:')) {
         const pollingSessionId = originalState.replace('polling:', '');
-        const sessionData = oauthSessionStore.get(sessionKey);
+        const sessionData = await oauthSessionStore.get(sessionKey);
         
         if (sessionData?.token) {
-          pollingSessionStore.update(pollingSessionId, {
+          await pollingSessionStore.update(pollingSessionId, {
             status: 'completed',
             token: sessionData.token,
             isNewUser: sessionData.isNewUser,
@@ -871,7 +870,7 @@ export class AuthController {
           console.log('[Polling OAuth] Session completed:', pollingSessionId);
           sendPollingCompletePage(true, '로그인 완료!');
         } else if (sessionData?.requiresEmail) {
-          pollingSessionStore.update(pollingSessionId, {
+          await pollingSessionStore.update(pollingSessionId, {
             status: 'completed',
             requiresEmail: true,
             provider: sessionData.provider,
@@ -881,16 +880,14 @@ export class AuthController {
           console.log('[Polling OAuth] Session requires email:', pollingSessionId);
           sendPollingCompletePage(true, '로그인 완료!');
         } else if (sessionData?.error) {
-          // Error - update polling session with error
-          pollingSessionStore.update(pollingSessionId, {
+          await pollingSessionStore.update(pollingSessionId, {
             status: 'error',
             error: sessionData.error,
           });
           console.log('[Polling OAuth] Session error:', pollingSessionId, sessionData.error);
           sendPollingCompletePage(false, '로그인에 실패했습니다');
         } else {
-          // Unknown state
-          pollingSessionStore.update(pollingSessionId, {
+          await pollingSessionStore.update(pollingSessionId, {
             status: 'error',
             error: 'unknown_error',
           });
@@ -922,29 +919,29 @@ export class AuthController {
       console.log(`[OAuth Callback] Provider: ${provider}, Platform: ${platform}, State: ${originalState}`);
 
       if (oauthError) {
-        const sessionKey = oauthSessionStore.save({ error: oauthError as string, state: originalState });
-        doRedirect(provider, platform, sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: oauthError as string, state: originalState });
+        await doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
       const isPollingFlow = originalState?.startsWith('polling:');
       if (!originalState || (!validateAndClearPendingAuthState(originalState) && !isPollingFlow)) {
         console.warn(`[OAuth Callback] Invalid or missing state. State: ${originalState}, Provider: ${provider}`);
-        const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
-        doRedirect(provider, platform, sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: 'invalid_state', state: originalState });
+        await doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
       if (!code) {
-        const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
-        doRedirect(provider, platform, sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: 'no_code', state: originalState });
+        await doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
-      const validProviders = ['kakao', 'naver', 'google'];
+      const validProviders = ['kakao', 'naver', 'google', 'apple'];
       if (!validProviders.includes(provider)) {
-        const sessionKey = oauthSessionStore.save({ error: 'invalid_provider', state: originalState });
-        doRedirect(provider, platform, sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: 'invalid_provider', state: originalState });
+        await doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
@@ -956,29 +953,31 @@ export class AuthController {
           socialUserInfo = await socialAuthService.getNaverUserInfo(code as string, originalState as string);
         } else if (provider === 'google') {
           socialUserInfo = await socialAuthService.getGoogleUserInfo(code as string);
+        } else if (provider === 'apple') {
+          socialUserInfo = await socialAuthService.getAppleUserInfo(code as string, undefined, undefined, '/api/auth/oauth/apple/callback');
         }
       } catch (tokenError) {
         console.error('Token exchange error:', tokenError);
-        const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
-        doRedirect(provider, platform, sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
+        await doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
       if (!socialUserInfo) {
-        const sessionKey = oauthSessionStore.save({ error: 'user_info_failed', state: originalState });
-        doRedirect(provider, platform, sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: 'user_info_failed', state: originalState });
+        await doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
       if (!socialUserInfo.email) {
-        const sessionKey = oauthSessionStore.save({
+        const sessionKey = await oauthSessionStore.save({
           requiresEmail: true,
           provider: socialUserInfo.provider,
           providerId: socialUserInfo.providerUserId,
           name: socialUserInfo.name,
           state: originalState,
         });
-        doRedirect(provider, platform, sessionKey, originalState);
+        await doRedirect(provider, platform, sessionKey, originalState);
         return;
       }
 
@@ -991,7 +990,7 @@ export class AuthController {
           profileImage: socialUserInfo.profileImage,
         });
 
-        const sessionKey = oauthSessionStore.save({
+        const sessionKey = await oauthSessionStore.save({
           token: result.token,
           isNewUser: result.isNewUser,
           state: originalState,
@@ -1002,12 +1001,12 @@ export class AuthController {
           },
         });
         console.log(`[OAuth Callback] Success! Redirecting to: ${getRedirectUrl(provider, platform, sessionKey)}`);
-        doRedirect(provider, platform, sessionKey, originalState);
+        await doRedirect(provider, platform, sessionKey, originalState);
       } catch (loginError) {
         console.error('Social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
-        const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
-        doRedirect(provider, platform, sessionKey, originalState);
+        const sessionKey = await oauthSessionStore.save({ error: errorMessage, state: originalState });
+        await doRedirect(provider, platform, sessionKey, originalState);
       }
     } catch (error) {
       console.error('OAuth callback error:', error);
@@ -1015,22 +1014,21 @@ export class AuthController {
       const { state } = req.query;
       const { originalState: catchOriginalState } = extractAppSchemeFromState(state as string | undefined);
       const pendingSession = catchOriginalState ? pendingAuthSessions.get(catchOriginalState) : undefined;
-      const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: catchOriginalState });
-      doRedirect(provider, pendingSession?.platform, sessionKey, catchOriginalState);
+      const sessionKey = await oauthSessionStore.save({ error: 'callback_failed', state: catchOriginalState });
+      await doRedirect(provider, pendingSession?.platform, sessionKey, catchOriginalState);
     }
   }
 
   // Create a polling session for deep-link-free OAuth flow
   async createPollingSession(req: Request, res: Response): Promise<void> {
-    const sessionId = pollingSessionStore.create();
+    const sessionId = await pollingSessionStore.create();
     console.log('[Polling OAuth] Created session:', sessionId);
     res.status(200).json({ sessionId });
   }
 
-  // Check polling session status
   async checkPollingSession(req: Request, res: Response): Promise<void> {
     const { sessionId } = req.params;
-    const session = pollingSessionStore.check(sessionId);
+    const session = await pollingSessionStore.check(sessionId);
     
     if (!session) {
       res.status(404).json({ error: 'Session not found or expired' });
@@ -1038,8 +1036,7 @@ export class AuthController {
     }
 
     if (session.status === 'completed') {
-      // Consume the session data (one-time use)
-      const data = pollingSessionStore.consume(sessionId);
+      const data = await pollingSessionStore.consume(sessionId);
       res.status(200).json(data);
       return;
     }
@@ -1112,14 +1109,11 @@ export class AuthController {
       } else if (provider === 'apple') {
         const clientId = process.env.APPLE_CLIENT_ID;
         if (!clientId) throw new Error('APPLE_CLIENT_ID not configured');
-        const appleRedirectUri = `${baseUrl}/api/auth/apple/callback`;
         const params = new URLSearchParams({
           client_id: clientId,
-          redirect_uri: appleRedirectUri,
+          redirect_uri: redirectUri,
           response_type: 'code',
-          scope: 'email',
           state: stateData,
-          response_mode: 'form_post',
         });
         authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
       } else {

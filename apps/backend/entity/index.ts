@@ -78,3 +78,5 @@ export type { UserCouponStatus } from './UserCoupon';
 
 export { Terms } from './Terms';
 export type { TermsType } from './Terms';
+
+export { OAuthSession } from './OAuthSession';
