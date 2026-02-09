@@ -265,13 +265,13 @@ export class SocialAuthService {
     };
   }
 
-  async getAppleUserInfo(code: string, idToken?: string, userName?: string): Promise<SocialUserInfo> {
+  async getAppleUserInfo(code: string, idToken?: string, userName?: string, callbackPath?: string): Promise<SocialUserInfo> {
     const clientId = process.env.APPLE_CLIENT_ID;
     const teamId = process.env.APPLE_TEAM_ID;
     const keyId = process.env.APPLE_KEY_ID;
     const privateKey = process.env.APPLE_PRIVATE_KEY;
     const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
-    const redirectUri = `${baseUrl}/api/auth/apple/callback`;
+    const redirectUri = `${baseUrl}${callbackPath || '/api/auth/apple/callback'}`;
 
     if (!clientId || !teamId || !keyId || !privateKey) {
       throw new Error('Apple OAuth configuration is missing');

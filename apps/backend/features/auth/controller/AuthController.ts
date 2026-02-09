@@ -862,7 +862,6 @@ export class AuthController {
         const sessionData = oauthSessionStore.get(sessionKey);
         
         if (sessionData?.token) {
-          // Successful login - update polling session
           pollingSessionStore.update(pollingSessionId, {
             status: 'completed',
             token: sessionData.token,
@@ -870,6 +869,16 @@ export class AuthController {
             user: sessionData.user,
           });
           console.log('[Polling OAuth] Session completed:', pollingSessionId);
+          sendPollingCompletePage(true, '로그인 완료!');
+        } else if (sessionData?.requiresEmail) {
+          pollingSessionStore.update(pollingSessionId, {
+            status: 'completed',
+            requiresEmail: true,
+            provider: sessionData.provider,
+            providerId: sessionData.providerId,
+            name: sessionData.name,
+          });
+          console.log('[Polling OAuth] Session requires email:', pollingSessionId);
           sendPollingCompletePage(true, '로그인 완료!');
         } else if (sessionData?.error) {
           // Error - update polling session with error
@@ -906,7 +915,10 @@ export class AuthController {
       const { originalState } = extractAppSchemeFromState(state as string | undefined);
 
       const pendingSession = originalState ? pendingAuthSessions.get(originalState) : undefined;
-      const platform = pendingSession?.platform;
+      let platform = pendingSession?.platform;
+      if (!platform && originalState?.startsWith('polling:')) {
+        platform = 'polling';
+      }
       console.log(`[OAuth Callback] Provider: ${provider}, Platform: ${platform}, State: ${originalState}`);
 
       if (oauthError) {
@@ -915,7 +927,8 @@ export class AuthController {
         return;
       }
 
-      if (!originalState || !validateAndClearPendingAuthState(originalState)) {
+      const isPollingFlow = originalState?.startsWith('polling:');
+      if (!originalState || (!validateAndClearPendingAuthState(originalState) && !isPollingFlow)) {
         console.warn(`[OAuth Callback] Invalid or missing state. State: ${originalState}, Provider: ${provider}`);
         const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
         doRedirect(provider, platform, sessionKey, originalState);
@@ -928,7 +941,7 @@ export class AuthController {
         return;
       }
 
-      const validProviders = ['kakao', 'naver', 'google'];
+      const validProviders = ['kakao', 'naver', 'google', 'apple'];
       if (!validProviders.includes(provider)) {
         const sessionKey = oauthSessionStore.save({ error: 'invalid_provider', state: originalState });
         doRedirect(provider, platform, sessionKey, originalState);
@@ -943,6 +956,8 @@ export class AuthController {
           socialUserInfo = await socialAuthService.getNaverUserInfo(code as string, originalState as string);
         } else if (provider === 'google') {
           socialUserInfo = await socialAuthService.getGoogleUserInfo(code as string);
+        } else if (provider === 'apple') {
+          socialUserInfo = await socialAuthService.getAppleUserInfo(code as string, undefined, undefined, '/api/auth/oauth/apple/callback');
         }
       } catch (tokenError) {
         console.error('Token exchange error:', tokenError);
@@ -1099,14 +1114,12 @@ export class AuthController {
       } else if (provider === 'apple') {
         const clientId = process.env.APPLE_CLIENT_ID;
         if (!clientId) throw new Error('APPLE_CLIENT_ID not configured');
-        const appleRedirectUri = `${baseUrl}/api/auth/apple/callback`;
         const params = new URLSearchParams({
           client_id: clientId,
-          redirect_uri: appleRedirectUri,
-          response_type: 'code id_token',
-          scope: 'name email',
+          redirect_uri: redirectUri,
+          response_type: 'code',
+          scope: 'email',
           state: stateData,
-          response_mode: 'form_post',
         });
         authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
       } else {
