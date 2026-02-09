@@ -16,6 +16,7 @@ router.post('/social/:provider', (req, res) => authController.socialLogin(req, r
 router.post('/social/complete', (req, res) => authController.completeSocialLogin(req, res));
 router.post('/apple/callback', (req, res) => authController.appleCallback(req, res));
 router.post('/apple/native-callback', (req, res) => authController.appleNativeCallback(req, res));
+router.post('/apple/notifications', (req, res) => authController.appleNotifications(req, res));
 router.get('/oauth/:provider/callback', (req, res) => authController.oauthCallback(req, res));
 router.get('/session/:key', (req, res) => authController.getSession(req, res));
 

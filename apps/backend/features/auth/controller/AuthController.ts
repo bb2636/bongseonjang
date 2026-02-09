@@ -1,12 +1,14 @@
 import crypto from 'crypto';
 import { Request, Response } from 'express';
+import * as jose from 'jose';
 import { UserApplicationService } from '../application/UserApplicationService.js';
 import { SocialAuthService } from '../domain/SocialAuthService.js';
 import { getPhoneVerificationService } from '../application/phoneVerificationFactory.js';
 import { AuthenticatedRequest } from '../../../common/middleware/authMiddleware.js';
-import { SocialProvider } from '../../../entity/UserSocialAccount.js';
+import { SocialProvider, UserSocialAccount } from '../../../entity/UserSocialAccount.js';
 import { LoginRequest, SignupRequest } from '@bongkru/contract';
 import { oauthSessionStore, OAuthSessionData, pollingSessionStore } from '../domain/OAuthSessionStore.js';
+import { AppDataSource } from '../../../config/database.js';
 
 const userService = new UserApplicationService();
 const socialAuthService = new SocialAuthService();
@@ -1189,6 +1191,109 @@ export class AuthController {
     } catch (error) {
       console.error('[Polling OAuth] Error starting OAuth:', error);
       res.status(500).json({ error: 'Failed to start OAuth' });
+    }
+  }
+
+  async appleNotifications(req: Request, res: Response): Promise<void> {
+    console.log('[Apple S2S Notification] Received notification');
+
+    try {
+      const { payload } = req.body;
+
+      if (!payload) {
+        console.warn('[Apple S2S Notification] No payload in request body');
+        res.status(200).json({ ok: true });
+        return;
+      }
+
+      const JWKS = jose.createRemoteJWKSet(new URL('https://appleid.apple.com/auth/keys'));
+
+      const appleClientId = process.env.APPLE_CLIENT_ID;
+      const bundleId = 'com.bongkru.app';
+      const validAudiences = [bundleId];
+      if (appleClientId) {
+        validAudiences.push(appleClientId);
+      }
+
+      let jwtPayload: jose.JWTPayload;
+      try {
+        const { payload: verified } = await jose.jwtVerify(payload, JWKS, {
+          issuer: 'https://appleid.apple.com',
+        });
+
+        const aud = typeof verified.aud === 'string' ? [verified.aud] : (verified.aud || []);
+        const audMatch = aud.some((a) => validAudiences.includes(a));
+        if (!audMatch) {
+          console.warn('[Apple S2S Notification] Invalid audience:', verified.aud);
+          res.status(200).json({ ok: true });
+          return;
+        }
+
+        jwtPayload = verified;
+      } catch (verifyError) {
+        console.error('[Apple S2S Notification] JWT verification failed:', verifyError);
+        res.status(200).json({ ok: true });
+        return;
+      }
+
+      let events: { type?: string; sub?: string; email?: string; is_private_email?: string; event_time?: number };
+      try {
+        events = typeof jwtPayload.events === 'string'
+          ? JSON.parse(jwtPayload.events as string)
+          : (jwtPayload.events as any) || {};
+      } catch (parseError) {
+        console.error('[Apple S2S Notification] Failed to parse events field:', parseError);
+        res.status(200).json({ ok: true });
+        return;
+      }
+
+      const eventType = events.type;
+      const sub = events.sub;
+      const email = events.email;
+
+      console.log(`[Apple S2S Notification] Event type: ${eventType}, sub: ${sub}, email: ${email}`);
+
+      if (!eventType || !sub) {
+        console.warn('[Apple S2S Notification] Missing event type or sub');
+        res.status(200).json({ ok: true });
+        return;
+      }
+
+      switch (eventType) {
+        case 'consent-revoked':
+        case 'account-delete': {
+          console.log(`[Apple S2S Notification] Processing ${eventType} for sub: ${sub}`);
+          try {
+            const socialAccountRepo = AppDataSource.getRepository(UserSocialAccount);
+            const account = await socialAccountRepo.findOne({
+              where: { provider: 'apple' as SocialProvider, providerUserId: sub },
+            });
+            if (account) {
+              await socialAccountRepo.remove(account);
+              console.log(`[Apple S2S Notification] Deleted social account link for sub: ${sub}, userId: ${account.userId}`);
+            } else {
+              console.log(`[Apple S2S Notification] No social account found for sub: ${sub}`);
+            }
+          } catch (dbError) {
+            console.error(`[Apple S2S Notification] Database error during ${eventType}:`, dbError);
+          }
+          break;
+        }
+        case 'email-disabled':
+          console.log(`[Apple S2S Notification] Email relay disabled for sub: ${sub}, email: ${email}`);
+          break;
+        case 'email-enabled':
+          console.log(`[Apple S2S Notification] Email relay enabled for sub: ${sub}, email: ${email}`);
+          break;
+        default:
+          console.warn(`[Apple S2S Notification] Unknown event type: ${eventType}`);
+          break;
+      }
+
+      res.status(200).json({ ok: true });
+    } catch (error) {
+      console.error('[Apple S2S Notification] Unexpected error:', error);
+      res.status(200).json({ ok: true });
     }
   }
 }
