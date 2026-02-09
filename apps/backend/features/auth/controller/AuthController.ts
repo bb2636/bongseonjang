@@ -677,22 +677,19 @@ export class AuthController {
       const { identityToken, authorizationCode, givenName, familyName, email } = req.body;
 
       console.log('[Apple Native] Callback received');
-      console.log('[Apple Native] Has identityToken:', !!identityToken);
-      console.log('[Apple Native] identityToken type:', typeof identityToken);
-      console.log('[Apple Native] identityToken length:', identityToken?.length);
-      console.log('[Apple Native] identityToken first 80 chars:', identityToken?.substring?.(0, 80));
-      console.log('[Apple Native] identityToken dot count:', identityToken?.split?.('.')?.length);
       console.log('[Apple Native] Has authorizationCode:', !!authorizationCode);
+      console.log('[Apple Native] Has identityToken:', !!identityToken);
       console.log('[Apple Native] Email:', email);
       console.log('[Apple Native] givenName:', givenName);
       console.log('[Apple Native] familyName:', familyName);
 
-      if (!identityToken) {
-        res.status(400).json({ message: 'Identity token is required' });
+      if (!authorizationCode) {
+        res.status(400).json({ message: 'Authorization code is required' });
         return;
       }
 
       const socialUserInfo = await socialAuthService.verifyAppleNativeToken(
+        authorizationCode,
         identityToken,
         givenName,
         familyName,

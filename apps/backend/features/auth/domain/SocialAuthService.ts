@@ -344,118 +344,64 @@ export class SocialAuthService {
     }
   }
 
-  private normalizeJwtToken(rawToken: string): string {
-    let token = rawToken.trim().replace(/[\r\n\t]/g, '');
-
-    if (token.startsWith('"') && token.endsWith('"')) {
-      token = token.slice(1, -1);
-    }
-
-    const dotCount = token.split('.').length;
-    console.log('[AppleNativeToken] After trim - dot count:', dotCount, 'length:', token.length);
-
-    if (dotCount === 3) {
-      return token;
-    }
-
-    console.log('[AppleNativeToken] Not standard JWT, trying Base64 decode...');
-    try {
-      const decoded = Buffer.from(token, 'base64').toString('utf-8');
-      if (decoded.split('.').length === 3) {
-        console.log('[AppleNativeToken] Base64 decoded to valid JWT');
-        return decoded;
-      }
-    } catch {}
-
-    try {
-      const decoded = Buffer.from(token, 'base64url').toString('utf-8');
-      if (decoded.split('.').length === 3) {
-        console.log('[AppleNativeToken] Base64url decoded to valid JWT');
-        return decoded;
-      }
-    } catch {}
-
-    return token;
-  }
-
-  private decodeJwtPayloadUnsafe(token: string): Record<string, unknown> | null {
-    try {
-      const parts = token.split('.');
-      if (parts.length !== 3) return null;
-      const payloadB64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      const padded = payloadB64 + '='.repeat((4 - payloadB64.length % 4) % 4);
-      const decoded = Buffer.from(padded, 'base64').toString('utf-8');
-      return JSON.parse(decoded);
-    } catch {
-      return null;
-    }
-  }
-
-  async verifyAppleNativeToken(identityToken: string, givenName?: string, familyName?: string, email?: string): Promise<SocialUserInfo> {
-    console.log('[AppleNativeToken] Raw token type:', typeof identityToken);
-    console.log('[AppleNativeToken] Raw token length:', identityToken?.length);
-    console.log('[AppleNativeToken] Raw first 100 chars:', identityToken?.substring(0, 100));
-    console.log('[AppleNativeToken] Raw dot count:', identityToken?.split('.').length);
-
-    const tokenToVerify = this.normalizeJwtToken(identityToken);
-
-    const unsafePayload = this.decodeJwtPayloadUnsafe(tokenToVerify);
-    if (unsafePayload) {
-      console.log('[AppleNativeToken] Decoded payload (unsafe):', JSON.stringify({
-        iss: unsafePayload.iss,
-        aud: unsafePayload.aud,
-        sub: unsafePayload.sub,
-        email: unsafePayload.email,
-        exp: unsafePayload.exp,
-      }));
-    } else {
-      console.error('[AppleNativeToken] Could not decode JWT payload - token is NOT valid JWT format');
-      console.error('[AppleNativeToken] Token starts with:', tokenToVerify.substring(0, 20));
-      console.error('[AppleNativeToken] Token char codes (first 20):', Array.from(tokenToVerify.substring(0, 20)).map(c => c.charCodeAt(0)));
-    }
-
-    const JWKS = jose.createRemoteJWKSet(new URL('https://appleid.apple.com/auth/keys'));
+  async verifyAppleNativeToken(
+    authorizationCode: string,
+    identityToken?: string,
+    givenName?: string,
+    familyName?: string,
+    email?: string
+  ): Promise<SocialUserInfo> {
     const BUNDLE_ID = 'com.bongkru.app';
-    const SERVICE_ID = process.env.APPLE_CLIENT_ID;
+    const teamId = process.env.APPLE_TEAM_ID;
+    const keyId = process.env.APPLE_KEY_ID;
+    const privateKey = process.env.APPLE_PRIVATE_KEY;
 
-    const audiences = [BUNDLE_ID];
-    if (SERVICE_ID && SERVICE_ID !== BUNDLE_ID) {
-      audiences.push(SERVICE_ID);
+    console.log('[AppleNative] === Token Exchange Start ===');
+    console.log('[AppleNative] authorizationCode length:', authorizationCode?.length);
+    console.log('[AppleNative] Has identityToken:', !!identityToken);
+    console.log('[AppleNative] Email:', email);
+    console.log('[AppleNative] givenName:', givenName, 'familyName:', familyName);
+
+    if (!teamId || !keyId || !privateKey) {
+      throw new Error('Apple OAuth configuration is missing');
     }
 
-    let lastError: unknown;
+    const clientSecret = this.generateAppleClientSecret(BUNDLE_ID, teamId, keyId, privateKey);
 
-    for (const aud of audiences) {
-      try {
-        console.log('[AppleNativeToken] Trying verification with audience:', aud);
-        const { payload } = await jose.jwtVerify(tokenToVerify, JWKS, {
-          issuer: 'https://appleid.apple.com',
-          audience: aud,
-        });
+    const tokenResponse = await fetch('https://appleid.apple.com/auth/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: BUNDLE_ID,
+        client_secret: clientSecret,
+        code: authorizationCode,
+      }),
+    });
 
-        if (!payload.sub) {
-          throw new Error('Apple ID token missing sub claim');
-        }
-
-        console.log('[AppleNativeToken] Verification SUCCESS with audience:', aud);
-
-        const userName = [givenName, familyName].filter(Boolean).join(' ') || '애플 사용자';
-
-        return {
-          provider: 'apple',
-          providerUserId: payload.sub,
-          email: email || (payload.email as string) || null,
-          name: userName,
-          profileImage: null,
-        };
-      } catch (error) {
-        console.error(`[AppleNativeToken] Verification failed with audience ${aud}:`, error instanceof Error ? error.message : error);
-        lastError = error;
-      }
+    if (!tokenResponse.ok) {
+      const errorData = await tokenResponse.text();
+      console.error('[AppleNative] Token exchange error:', tokenResponse.status, errorData);
+      throw new Error(`Failed to exchange Apple authorization code: ${errorData}`);
     }
 
-    console.error('[AppleNativeToken] All verification attempts failed');
-    throw new Error('Failed to verify Apple identity token');
+    const tokenData = await tokenResponse.json() as AppleTokenResponse;
+    console.log('[AppleNative] Token exchange successful');
+
+    const verifiedPayload = await this.verifyAppleIdToken(tokenData.id_token, BUNDLE_ID);
+    console.log('[AppleNative] ID token verified, sub:', verifiedPayload.sub);
+
+    const userName = [givenName, familyName].filter(Boolean).join(' ') || '애플 사용자';
+
+    return {
+      provider: 'apple',
+      providerUserId: verifiedPayload.sub,
+      email: email || verifiedPayload.email || null,
+      name: userName,
+      profileImage: null,
+    };
   }
 
   private generateAppleClientSecret(clientId: string, teamId: string, keyId: string, privateKey: string): string {
