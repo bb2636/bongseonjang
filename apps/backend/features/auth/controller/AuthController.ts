@@ -12,6 +12,32 @@ const userService = new UserApplicationService();
 const socialAuthService = new SocialAuthService();
 const phoneVerificationService = getPhoneVerificationService();
 
+function sendPollingCompleteHtml(res: Response, success: boolean, message: string): void {
+  const html = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${success ? '로그인 완료' : '로그인 실패'}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f5f5f5; }
+    .container { text-align: center; padding: 40px 20px; }
+    .icon { font-size: 64px; margin-bottom: 16px; }
+    .message { color: #333; font-size: 18px; margin: 0 0 8px 0; font-weight: 600; }
+    .hint { color: #666; font-size: 14px; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">${success ? '✓' : '✕'}</div>
+    <p class="message">${message}</p>
+    <p class="hint">${success ? '이 창은 자동으로 닫힙니다' : '앱으로 돌아가서 다시 시도해주세요'}</p>
+  </div>
+</body>
+</html>`;
+  res.status(200).type('html').send(html);
+}
+
 interface PendingAuthSession {
   state: string;
   platform?: string;
@@ -501,6 +527,41 @@ export class AuthController {
       return { originalState: fullState, appScheme: undefined };
     };
 
+    const handleAppleRedirect = (sessionKey: string, originalState: string | undefined): void => {
+      if (originalState?.startsWith('polling:')) {
+        const pollingSessionId = originalState.replace('polling:', '');
+        const sessionData = oauthSessionStore.get(sessionKey);
+
+        if (sessionData?.token) {
+          pollingSessionStore.update(pollingSessionId, {
+            status: 'completed',
+            token: sessionData.token,
+            isNewUser: sessionData.isNewUser,
+            user: sessionData.user,
+          });
+          sendPollingCompleteHtml(res, true, '로그인 완료!');
+        } else if (sessionData?.requiresEmail) {
+          pollingSessionStore.update(pollingSessionId, {
+            status: 'completed',
+            requiresEmail: true,
+            provider: sessionData.provider,
+            providerId: sessionData.providerId,
+            name: sessionData.name,
+          });
+          sendPollingCompleteHtml(res, true, '로그인 완료!');
+        } else {
+          pollingSessionStore.update(pollingSessionId, {
+            status: 'error',
+            error: sessionData?.error || 'unknown_error',
+          });
+          sendPollingCompleteHtml(res, false, '로그인에 실패했습니다');
+        }
+        return;
+      }
+
+      res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+    };
+
     try {
       const { code, id_token, state, user } = req.body;
       const { originalState } = extractAppSchemeFromState(state);
@@ -508,7 +569,7 @@ export class AuthController {
       if (!originalState || !validateAndClearPendingAuthState(originalState)) {
         console.warn(`[Apple Callback] Invalid or missing state. State: ${originalState}`);
         const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
@@ -528,7 +589,7 @@ export class AuthController {
 
       if (!code) {
         const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
@@ -538,7 +599,7 @@ export class AuthController {
       } catch (tokenError) {
         console.error('Apple token exchange error:', tokenError);
         const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
@@ -550,7 +611,7 @@ export class AuthController {
           name: socialUserInfo.name,
           state: originalState,
         });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
@@ -573,19 +634,19 @@ export class AuthController {
             name: result.user.name,
           },
         });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        handleAppleRedirect(sessionKey, originalState);
       } catch (loginError) {
         console.error('Apple social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
         const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
-        res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+        handleAppleRedirect(sessionKey, originalState);
       }
     } catch (error) {
       console.error('Apple callback error:', error);
       const { state } = req.body;
       const { originalState } = extractAppSchemeFromState(state);
       const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: originalState });
-      res.redirect(`${baseUrl}/social-callback?key=${sessionKey}`);
+      handleAppleRedirect(sessionKey, originalState);
     }
   }
 
@@ -1013,6 +1074,19 @@ export class AuthController {
           prompt: 'consent',
         });
         authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+      } else if (provider === 'apple') {
+        const clientId = process.env.APPLE_CLIENT_ID;
+        if (!clientId) throw new Error('APPLE_CLIENT_ID not configured');
+        const appleRedirectUri = `${baseUrl}/api/auth/apple/callback`;
+        const params = new URLSearchParams({
+          client_id: clientId,
+          redirect_uri: appleRedirectUri,
+          response_type: 'code id_token',
+          scope: 'name email',
+          state: stateData,
+          response_mode: 'form_post',
+        });
+        authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
       } else {
         res.status(400).json({ error: 'Unsupported provider for polling OAuth' });
         return;

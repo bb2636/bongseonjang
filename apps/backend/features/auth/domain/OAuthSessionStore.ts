@@ -74,6 +74,10 @@ export interface PollingSessionData {
   refreshToken?: string;
   isNewUser?: boolean;
   error?: string;
+  requiresEmail?: boolean;
+  provider?: string;
+  providerId?: string;
+  name?: string;
   user?: {
     id: string | number;
     email: string;
