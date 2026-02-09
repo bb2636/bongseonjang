@@ -9,6 +9,10 @@ const FRONTEND_DIR = path.join(__dirname, '..');
 const ROOT_DIR = path.join(FRONTEND_DIR, '../..');
 const IOS_DIR = path.join(FRONTEND_DIR, 'ios');
 
+function q(p) {
+  return `"${p}"`;
+}
+
 function run(cmd, cwd = FRONTEND_DIR) {
   console.log(`\n> ${cmd}\n`);
   execSync(cmd, { stdio: 'inherit', cwd });
@@ -26,13 +30,13 @@ function findBin(name) {
 
 function findCapBinary() {
   const bin = findBin('cap');
-  if (bin) return bin;
+  if (bin) return q(bin);
 
   const cliEntry = path.join(FRONTEND_DIR, 'node_modules', '@capacitor', 'cli', 'bin', 'capacitor.js');
-  if (fs.existsSync(cliEntry)) return `node ${cliEntry}`;
+  if (fs.existsSync(cliEntry)) return `node ${q(cliEntry)}`;
 
   const rootCliEntry = path.join(ROOT_DIR, 'node_modules', '@capacitor', 'cli', 'bin', 'capacitor.js');
-  if (fs.existsSync(rootCliEntry)) return `node ${rootCliEntry}`;
+  if (fs.existsSync(rootCliEntry)) return `node ${q(rootCliEntry)}`;
 
   return 'npx cap';
 }
@@ -67,7 +71,7 @@ function generateAssets() {
   const assetsBin = findBin('capacitor-assets');
   if (assetsBin) {
     try {
-      run(`${assetsBin} generate --iconBackgroundColor "#FFFFFF" --splashBackgroundColor "#FFFFFF" --ios`);
+      run(`${q(assetsBin)} generate --iconBackgroundColor "#FFFFFF" --splashBackgroundColor "#FFFFFF" --ios`);
       return;
     } catch {
       console.log('  @capacitor/assets failed — icon will be copied by fix-ios-native.js');
@@ -84,7 +88,7 @@ function buildFrontend() {
     console.error('ERROR: vite not found. Run "npm install" from project root first.');
     process.exit(1);
   }
-  run(`${viteBin} build --mode capacitor`);
+  run(`${q(viteBin)} build --mode capacitor`);
 }
 
 function syncAndFix() {

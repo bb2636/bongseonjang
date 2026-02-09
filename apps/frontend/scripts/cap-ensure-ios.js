@@ -9,18 +9,22 @@ const FRONTEND_DIR = path.join(__dirname, '..');
 const ROOT_DIR = path.join(FRONTEND_DIR, '../..');
 const IOS_APP_DIR = path.join(FRONTEND_DIR, 'ios', 'App');
 
+function q(p) {
+  return `"${p}"`;
+}
+
 function findCapBinary() {
   const localBin = path.join(FRONTEND_DIR, 'node_modules', '.bin', 'cap');
-  if (fs.existsSync(localBin)) return localBin;
+  if (fs.existsSync(localBin)) return q(localBin);
 
   const rootBin = path.join(ROOT_DIR, 'node_modules', '.bin', 'cap');
-  if (fs.existsSync(rootBin)) return rootBin;
+  if (fs.existsSync(rootBin)) return q(rootBin);
 
   const cliEntry = path.join(FRONTEND_DIR, 'node_modules', '@capacitor', 'cli', 'bin', 'capacitor.js');
-  if (fs.existsSync(cliEntry)) return `node ${cliEntry}`;
+  if (fs.existsSync(cliEntry)) return `node ${q(cliEntry)}`;
 
   const rootCliEntry = path.join(ROOT_DIR, 'node_modules', '@capacitor', 'cli', 'bin', 'capacitor.js');
-  if (fs.existsSync(rootCliEntry)) return `node ${rootCliEntry}`;
+  if (fs.existsSync(rootCliEntry)) return `node ${q(rootCliEntry)}`;
 
   return 'npx cap';
 }
