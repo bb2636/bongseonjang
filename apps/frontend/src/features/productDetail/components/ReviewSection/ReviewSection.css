@@ -94,6 +94,7 @@
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .review-photo-grid__placeholder {
@@ -207,6 +208,15 @@
   width: 100%;
 }
 
+.review-item__images {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  overflow-x: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
 .review-item__image {
   width: 81.25px;
   height: 81.25px;
@@ -214,6 +224,7 @@
   background: rgba(12, 12, 12, 0.06);
   border-radius: 4px;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .review-item__content {

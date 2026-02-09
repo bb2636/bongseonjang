@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Review } from '../../types/productDetail';
+import ImageLightbox from '../../../../components/ImageLightbox/ImageLightbox';
 import './ReviewSection.css';
 
 interface ReviewSectionProps {
@@ -9,6 +10,12 @@ interface ReviewSectionProps {
   isLoading: boolean;
   onViewAllClick?: () => void;
   onWriteReviewClick?: () => void;
+}
+
+interface LightboxState {
+  isOpen: boolean;
+  imageUrls: string[];
+  initialIndex: number;
 }
 
 const MAX_PHOTO_COUNT = 8;
@@ -52,13 +59,15 @@ interface ReviewPhotoGridProps {
   reviewCount: number;
   photoUrls: string[];
   onViewAllClick?: () => void;
+  onPhotoClick: (index: number) => void;
 }
 
 function ReviewPhotoGrid({ 
   averageRating, 
   reviewCount, 
   photoUrls,
-  onViewAllClick 
+  onViewAllClick,
+  onPhotoClick
 }: ReviewPhotoGridProps) {
   const filledStars = Math.round(averageRating);
   const hasPhotos = photoUrls.length > 0;
@@ -92,6 +101,7 @@ function ReviewPhotoGrid({
               src={url}
               alt={`리뷰 사진 ${index + 1}`}
               className="review-photo-grid__image"
+              onClick={() => onPhotoClick(index)}
             />
           ))}
         </div>
@@ -264,7 +274,12 @@ function formatDate(dateString: string): string {
   return `${year}.${month}.${day}`;
 }
 
-function ReviewItem({ review }: { review: Review }) {
+interface ReviewItemProps {
+  review: Review;
+  onImageClick: (imageUrls: string[], index: number) => void;
+}
+
+function ReviewItem({ review, onImageClick }: ReviewItemProps) {
   const filledStars = Math.round(review.rating);
 
   return (
@@ -282,11 +297,17 @@ function ReviewItem({ review }: { review: Review }) {
 
       <div className="review-item__body">
         {review.imageUrls.length > 0 && (
-          <img
-            src={resolveImageUrl(review.imageUrls[0])}
-            alt="리뷰 이미지"
-            className="review-item__image"
-          />
+          <div className="review-item__images">
+            {review.imageUrls.map((url, index) => (
+              <img
+                key={index}
+                src={resolveImageUrl(url)}
+                alt={`리뷰 이미지 ${index + 1}`}
+                className="review-item__image"
+                onClick={() => onImageClick(review.imageUrls.map(resolveImageUrl), index)}
+              />
+            ))}
+          </div>
         )}
         <p className="review-item__content">{review.content}</p>
       </div>
@@ -305,11 +326,20 @@ export default function ReviewSection({
   onWriteReviewClick,
 }: ReviewSectionProps) {
   const [ratingFilter, setRatingFilter] = useState<RatingFilter>('all');
+  const [lightbox, setLightbox] = useState<LightboxState>({ isOpen: false, imageUrls: [], initialIndex: 0 });
   const photoUrls = extractPhotoUrls(reviews);
 
   const filteredReviews = ratingFilter === 'all' 
     ? [...reviews].sort((a, b) => b.rating - a.rating)
     : reviews.filter((review) => Math.round(review.rating) === ratingFilter).sort((a, b) => b.rating - a.rating);
+
+  const handleGridPhotoClick = (index: number) => {
+    setLightbox({ isOpen: true, imageUrls: photoUrls, initialIndex: index });
+  };
+
+  const handleReviewImageClick = (imageUrls: string[], index: number) => {
+    setLightbox({ isOpen: true, imageUrls, initialIndex: index });
+  };
 
   return (
     <div className="review-section">
@@ -318,6 +348,7 @@ export default function ReviewSection({
         reviewCount={reviewCount}
         photoUrls={photoUrls}
         onViewAllClick={onViewAllClick}
+        onPhotoClick={handleGridPhotoClick}
       />
 
       <div className="review-section__divider" />
@@ -345,9 +376,17 @@ export default function ReviewSection({
       ) : (
         <div className="review-section__list">
           {filteredReviews.map((review) => (
-            <ReviewItem key={review.id} review={review} />
+            <ReviewItem key={review.id} review={review} onImageClick={handleReviewImageClick} />
           ))}
         </div>
+      )}
+
+      {lightbox.isOpen && (
+        <ImageLightbox
+          imageUrls={lightbox.imageUrls}
+          initialIndex={lightbox.initialIndex}
+          onClose={() => setLightbox({ isOpen: false, imageUrls: [], initialIndex: 0 })}
+        />
       )}
     </div>
   );

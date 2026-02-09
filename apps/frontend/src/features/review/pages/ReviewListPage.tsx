@@ -5,9 +5,16 @@ import { MainLayout } from '../../../layouts';
 import AppBar, { AppBarSpacer } from '../../../components/AppBar/AppBar';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { fetchPendingReviewItems, fetchMyReviews, ReviewableOrderItemDto, MyReviewDto } from '../api/reviewApi';
+import ImageLightbox from '../../../components/ImageLightbox/ImageLightbox';
 import './ReviewListPage.css';
 
 type TabType = 'pending' | 'my';
+
+interface LightboxState {
+  isOpen: boolean;
+  imageUrls: string[];
+  initialIndex: number;
+}
 
 function StarIcon({ filled }: { filled: boolean }) {
   return (
@@ -54,9 +61,15 @@ function ChevronRightIcon() {
 }
 
 function MyReviewCard({ review, onProductClick }: { review: MyReviewDto; onProductClick: (productId: string) => void }) {
+  const [lightbox, setLightbox] = useState<LightboxState>({ isOpen: false, imageUrls: [], initialIndex: 0 });
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+  };
+
+  const handleImageClick = (index: number) => {
+    setLightbox({ isOpen: true, imageUrls: review.imageUrls, initialIndex: index });
   };
 
   return (
@@ -86,12 +99,25 @@ function MyReviewCard({ review, onProductClick }: { review: MyReviewDto; onProdu
       {review.imageUrls.length > 0 && (
         <div className="my-review-card__images">
           {review.imageUrls.map((url, index) => (
-            <img key={index} src={url} alt={`리뷰 이미지 ${index + 1}`} className="my-review-card__image" />
+            <img
+              key={index}
+              src={url}
+              alt={`리뷰 이미지 ${index + 1}`}
+              className="my-review-card__image"
+              onClick={() => handleImageClick(index)}
+            />
           ))}
         </div>
       )}
       <div className="my-review-card__content">{review.content}</div>
       <div className="my-review-card__date">작성일자 {formatDate(review.createdAt)}</div>
+      {lightbox.isOpen && (
+        <ImageLightbox
+          imageUrls={lightbox.imageUrls}
+          initialIndex={lightbox.initialIndex}
+          onClose={() => setLightbox({ isOpen: false, imageUrls: [], initialIndex: 0 })}
+        />
+      )}
     </div>
   );
 }
