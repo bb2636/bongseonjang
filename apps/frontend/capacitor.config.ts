@@ -16,13 +16,8 @@ const config: CapacitorConfig = {
     scrollEnabled: true,
     backgroundColor: '#FFFFFF'
   },
-  plugins: {
-    App: {
-      launchUrl: {
-        scheme: 'bongseonjang'
-      }
-    }
-  }
+  plugins: {}
+
 };
 
 export default config;
