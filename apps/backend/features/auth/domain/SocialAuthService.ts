@@ -349,8 +349,29 @@ export class SocialAuthService {
 
     const BUNDLE_ID = 'com.bongkru.app';
 
+    let tokenToVerify = identityToken;
+
+    const dotCount = identityToken.split('.').length;
+    console.log('[AppleNativeToken] Token dot count:', dotCount, 'length:', identityToken.length);
+
+    if (dotCount !== 3) {
+      console.log('[AppleNativeToken] Token is not standard JWT format, attempting Base64 decode...');
+      try {
+        const decoded = Buffer.from(identityToken, 'base64').toString('utf-8');
+        const decodedDotCount = decoded.split('.').length;
+        console.log('[AppleNativeToken] Decoded dot count:', decodedDotCount, 'length:', decoded.length);
+        console.log('[AppleNativeToken] Decoded first 80 chars:', decoded.substring(0, 80));
+        if (decodedDotCount === 3) {
+          tokenToVerify = decoded;
+          console.log('[AppleNativeToken] Using Base64-decoded token');
+        }
+      } catch (decodeError) {
+        console.log('[AppleNativeToken] Base64 decode failed, using original token');
+      }
+    }
+
     try {
-      const { payload } = await jose.jwtVerify(identityToken, JWKS, {
+      const { payload } = await jose.jwtVerify(tokenToVerify, JWKS, {
         issuer: 'https://appleid.apple.com',
         audience: BUNDLE_ID,
       });

@@ -401,8 +401,18 @@ async function openNativeAppleSignIn(): Promise<OAuthResult> {
     });
 
     console.log('[AppleOAuth] Native sign in successful');
+    console.log('[AppleOAuth] Full result keys:', Object.keys(result));
+    console.log('[AppleOAuth] Response keys:', result.response ? Object.keys(result.response) : 'no response');
     console.log('[AppleOAuth] Has identityToken:', !!result.response.identityToken);
+    console.log('[AppleOAuth] identityToken type:', typeof result.response.identityToken);
+    console.log('[AppleOAuth] identityToken length:', result.response.identityToken?.length);
+    console.log('[AppleOAuth] identityToken first 50 chars:', result.response.identityToken?.substring(0, 50));
+    console.log('[AppleOAuth] identityToken dot count:', result.response.identityToken?.split('.').length);
     console.log('[AppleOAuth] Has authorizationCode:', !!result.response.authorizationCode);
+    console.log('[AppleOAuth] Has email:', !!result.response.email);
+    console.log('[AppleOAuth] Has givenName:', !!result.response.givenName);
+    console.log('[AppleOAuth] Has familyName:', !!result.response.familyName);
+    console.log('[AppleOAuth] user (sub):', result.response.user);
 
     const response = await fetch(`${apiUrl}/auth/apple/native-callback`, {
       method: 'POST',
