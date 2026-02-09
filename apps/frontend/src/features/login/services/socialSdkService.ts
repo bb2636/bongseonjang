@@ -385,135 +385,79 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
   redirectToWebOAuth('google');
 }
 
-let appleOAuthTimeoutId: ReturnType<typeof setTimeout> | null = null;
-let applePollingIntervalId: ReturnType<typeof setInterval> | null = null;
-
-async function openSystemBrowserForAppleOAuth(): Promise<OAuthResult> {
+async function openNativeAppleSignIn(): Promise<OAuthResult> {
+  const { SignInWithApple } = await import('@capacitor-community/apple-sign-in');
   const apiUrl = getApiBaseUrlDynamic();
-  
-  console.log('[AppleOAuth] === Starting Apple OAuth with Polling Flow ===');
-  
-  let pollingSessionId: string;
+
+  console.log('[AppleOAuth] === Starting Native Apple Sign In ===');
+
   try {
-    const createResponse = await fetch(`${apiUrl}/auth/polling-session`, {
+    const result = await SignInWithApple.authorize({
+      clientId: 'com.bongkru.app',
+      redirectURI: '',
+      scopes: 'email name',
+      state: '',
+      nonce: '',
+    });
+
+    console.log('[AppleOAuth] Native sign in successful');
+    console.log('[AppleOAuth] Has identityToken:', !!result.response.identityToken);
+    console.log('[AppleOAuth] Has authorizationCode:', !!result.response.authorizationCode);
+
+    const response = await fetch(`${apiUrl}/auth/apple/native-callback`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        identityToken: result.response.identityToken,
+        authorizationCode: result.response.authorizationCode,
+        givenName: result.response.givenName,
+        familyName: result.response.familyName,
+        email: result.response.email,
+      }),
     });
-    if (!createResponse.ok) {
-      console.error('[AppleOAuth] Failed to create polling session');
-      return { error: 'session_create_failed' };
-    }
-    const { sessionId } = await createResponse.json();
-    pollingSessionId = sessionId;
-    console.log('[AppleOAuth] Created polling session:', pollingSessionId);
-  } catch (e) {
-    console.error('[AppleOAuth] Error creating polling session:', e);
-    return { error: 'session_create_failed' };
-  }
-  
-  let authUrl: string;
-  try {
-    const startResponse = await fetch(`${apiUrl}/auth/start-polling/apple?pollingSessionId=${encodeURIComponent(pollingSessionId)}`);
-    if (!startResponse.ok) {
-      console.error('[AppleOAuth] Failed to get auth URL');
-      return { error: 'auth_url_failed' };
-    }
-    const { authUrl: url } = await startResponse.json();
-    authUrl = url;
-    console.log('[AppleOAuth] Got auth URL');
-  } catch (e) {
-    console.error('[AppleOAuth] Error getting auth URL:', e);
-    return { error: 'auth_url_failed' };
-  }
 
-  return new Promise(async (resolve) => {
-    if (appleOAuthTimeoutId) {
-      clearTimeout(appleOAuthTimeoutId);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('[AppleOAuth] Backend error:', errorData);
+      return { error: errorData.message || 'apple_login_failed' };
     }
-    if (applePollingIntervalId) {
-      clearInterval(applePollingIntervalId);
-    }
-    
-    const pollForResult = async () => {
-      try {
-        const checkResponse = await fetch(`${apiUrl}/auth/polling-session/${pollingSessionId}`);
-        if (!checkResponse.ok) {
-          if (checkResponse.status === 404) {
-            console.log('[AppleOAuth] Polling session expired');
-            cleanup();
-            resolve({ error: 'session_expired' });
-          }
-          return;
-        }
-        
-        const data = await checkResponse.json();
-        console.log('[AppleOAuth] Poll result:', data.status);
-        
-        if (data.status === 'completed') {
-          console.log('[AppleOAuth] Login successful via polling!');
-          cleanup();
-          resolve({
-            token: data.token,
-            isNewUser: data.isNewUser,
-            user: data.user,
-            requiresEmail: data.requiresEmail,
-            provider: data.provider,
-            providerId: data.providerId,
-            name: data.name,
-          });
-        } else if (data.status === 'error') {
-          console.log('[AppleOAuth] Login error via polling:', data.error);
-          cleanup();
-          resolve({ error: data.error || 'login_failed' });
-        }
-      } catch (e) {
-        console.error('[AppleOAuth] Polling error:', e);
-      }
-    };
-    
-    const cleanup = async () => {
-      if (applePollingIntervalId) {
-        clearInterval(applePollingIntervalId);
-        applePollingIntervalId = null;
-      }
-      if (appleOAuthTimeoutId) {
-        clearTimeout(appleOAuthTimeoutId);
-        appleOAuthTimeoutId = null;
-      }
-      try {
-        await Browser.close();
-      } catch (e) {
-        console.log('[AppleOAuth] Browser close error (may be already closed):', e);
-      }
-    };
-    
-    applePollingIntervalId = setInterval(pollForResult, 2000);
-    
-    appleOAuthTimeoutId = setTimeout(async () => {
-      console.log('[AppleOAuth] Timeout reached (5 min)');
-      cleanup();
-      resolve({ error: 'timeout' });
-    }, 5 * 60 * 1000);
 
-    try {
-      await Browser.open({ url: authUrl, windowName: '_blank' });
-      console.log('[AppleOAuth] System browser opened successfully');
-    } catch (err) {
-      console.error('[AppleOAuth] Failed to open system browser:', err);
-      cleanup();
-      resolve({ error: 'browser_open_failed' });
+    const data = await response.json();
+    console.log('[AppleOAuth] Backend response:', JSON.stringify(data));
+
+    if (data.requiresEmail) {
+      return {
+        requiresEmail: true,
+        provider: data.tempData?.provider || 'apple',
+        providerId: data.tempData?.providerUserId,
+        name: data.tempData?.name,
+      };
     }
-  });
+
+    return {
+      token: data.token,
+      isNewUser: data.isNewUser,
+      user: data.user,
+    };
+  } catch (error: any) {
+    console.error('[AppleOAuth] Native sign in error:', error);
+
+    if (error?.message?.includes('cancel') || error?.code === '1001' || error?.message?.includes('1001')) {
+      return { error: 'cancelled' };
+    }
+
+    return { error: error?.message || 'apple_native_failed' };
+  }
 }
 
 export async function appleAuthorize(): Promise<OAuthResult | void> {
   const isCapacitor = checkIsCapacitor();
   console.log('[AppleOAuth] appleAuthorize called, isCapacitor:', isCapacitor);
-  
+
   if (isCapacitor) {
-    return await openSystemBrowserForAppleOAuth();
+    return await openNativeAppleSignIn();
   }
-  
+
   redirectToWebOAuth('apple');
 }
 

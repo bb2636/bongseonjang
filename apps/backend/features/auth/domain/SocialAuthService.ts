@@ -344,6 +344,36 @@ export class SocialAuthService {
     }
   }
 
+  async verifyAppleNativeToken(identityToken: string, givenName?: string, familyName?: string, email?: string): Promise<SocialUserInfo> {
+    const JWKS = jose.createRemoteJWKSet(new URL('https://appleid.apple.com/auth/keys'));
+
+    const BUNDLE_ID = 'com.bongkru.app';
+
+    try {
+      const { payload } = await jose.jwtVerify(identityToken, JWKS, {
+        issuer: 'https://appleid.apple.com',
+        audience: BUNDLE_ID,
+      });
+
+      if (!payload.sub) {
+        throw new Error('Apple ID token missing sub claim');
+      }
+
+      const userName = [givenName, familyName].filter(Boolean).join(' ') || '애플 사용자';
+
+      return {
+        provider: 'apple',
+        providerUserId: payload.sub,
+        email: email || (payload.email as string) || null,
+        name: userName,
+        profileImage: null,
+      };
+    } catch (error) {
+      console.error('Apple native token verification failed:', error);
+      throw new Error('Failed to verify Apple identity token');
+    }
+  }
+
   private generateAppleClientSecret(clientId: string, teamId: string, keyId: string, privateKey: string): string {
     const now = Math.floor(Date.now() / 1000);
     const expiry = now + 86400 * 180;

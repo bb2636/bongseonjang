@@ -672,6 +672,63 @@ export class AuthController {
     }
   }
 
+  async appleNativeCallback(req: Request, res: Response): Promise<void> {
+    try {
+      const { identityToken, authorizationCode, givenName, familyName, email } = req.body;
+
+      console.log('[Apple Native] Callback received');
+      console.log('[Apple Native] Has identityToken:', !!identityToken);
+      console.log('[Apple Native] Has authorizationCode:', !!authorizationCode);
+      console.log('[Apple Native] Email:', email);
+
+      if (!identityToken) {
+        res.status(400).json({ message: 'Identity token is required' });
+        return;
+      }
+
+      const socialUserInfo = await socialAuthService.verifyAppleNativeToken(
+        identityToken,
+        givenName,
+        familyName,
+        email
+      );
+
+      console.log('[Apple Native] User info:', JSON.stringify(socialUserInfo));
+
+      if (!socialUserInfo.email) {
+        res.status(200).json({
+          success: false,
+          requiresEmail: true,
+          tempData: {
+            provider: socialUserInfo.provider,
+            providerUserId: socialUserInfo.providerUserId,
+            name: socialUserInfo.name,
+            profileImage: socialUserInfo.profileImage,
+          }
+        });
+        return;
+      }
+
+      const result = await userService.socialLogin({
+        provider: socialUserInfo.provider as any,
+        providerUserId: socialUserInfo.providerUserId,
+        email: socialUserInfo.email,
+        name: socialUserInfo.name,
+        profileImage: socialUserInfo.profileImage,
+      });
+
+      res.json(result);
+    } catch (error) {
+      console.error('[Apple Native] Error:', error);
+      const message = error instanceof Error ? error.message : 'Apple native login failed';
+      if (message === 'ACCOUNT_SUSPENDED') {
+        res.status(403).json({ code: 'ACCOUNT_SUSPENDED', message: '활동이 제한된 계정입니다' });
+        return;
+      }
+      res.status(400).json({ message });
+    }
+  }
+
   async oauthCallback(req: Request, res: Response): Promise<void> {
     const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL || '';
     const APP_SCHEME = 'bongseonjang';
