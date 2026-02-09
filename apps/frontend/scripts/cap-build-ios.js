@@ -47,7 +47,7 @@ function generateAssets() {
   try {
     run('npx @capacitor/assets generate --iconBackgroundColor "#FFFFFF" --splashBackgroundColor "#FFFFFF" --ios');
   } catch {
-    console.log('Asset generation warning (non-critical, continuing).');
+    console.log('  @capacitor/assets skipped — icon will be copied directly by fix-ios-native.js');
   }
 }
 

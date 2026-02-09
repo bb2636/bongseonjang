@@ -5,9 +5,12 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const IOS_APP_DIR = path.join(__dirname, '../ios/App/App');
+const FRONTEND_DIR = path.join(__dirname, '..');
+const IOS_APP_DIR = path.join(FRONTEND_DIR, 'ios/App/App');
 const PLIST_PATH = path.join(IOS_APP_DIR, 'Info.plist');
 const ENTITLEMENTS_PATH = path.join(IOS_APP_DIR, 'App.entitlements');
+const APPICONSET_DIR = path.join(IOS_APP_DIR, 'Assets.xcassets', 'AppIcon.appiconset');
+const ICON_SOURCE = path.join(FRONTEND_DIR, 'resources', 'icon.png');
 
 function checkiOSProjectExists() {
   if (!fs.existsSync(IOS_APP_DIR)) {
@@ -245,16 +248,54 @@ function cleanAppDelegate() {
 }
 
 function printEntitlementsReminder() {
-  console.log('\n=== Xcode Manual Steps Reminder ===');
-  console.log('  1. Open Xcode project: ios/App/App.xcodeproj');
-  console.log('  2. Select App target > Signing & Capabilities');
-  console.log('  3. Click "+ Capability" > add "Sign in with Apple"');
-  console.log('  4. Verify App.entitlements is linked in Build Settings > Code Signing Entitlements');
-  console.log('  (If App.entitlements shows in the file navigator, Xcode usually links it automatically)');
+  console.log('\n=== Note ===');
+  console.log('  First build only: In Xcode, add "Sign in with Apple" capability');
+  console.log('  (App target > Signing & Capabilities > + Capability)');
+}
+
+function fixAppIcon() {
+  console.log('\n=== App Icon ===');
+
+  if (!fs.existsSync(ICON_SOURCE)) {
+    console.log('  resources/icon.png not found. Skipping icon setup.');
+    return;
+  }
+
+  if (!fs.existsSync(APPICONSET_DIR)) {
+    fs.mkdirSync(APPICONSET_DIR, { recursive: true });
+  }
+
+  const iconDest = path.join(APPICONSET_DIR, 'AppIcon-1024.png');
+  fs.copyFileSync(ICON_SOURCE, iconDest);
+  console.log('  Copied icon.png → AppIcon-1024.png (1024x1024)');
+
+  const contentsJson = {
+    images: [
+      {
+        filename: 'AppIcon-1024.png',
+        idiom: 'universal',
+        platform: 'ios',
+        scale: '1x',
+        size: '1024x1024'
+      }
+    ],
+    info: {
+      author: 'xcode',
+      version: 1
+    }
+  };
+
+  fs.writeFileSync(
+    path.join(APPICONSET_DIR, 'Contents.json'),
+    JSON.stringify(contentsJson, null, 2),
+    'utf8'
+  );
+  console.log('  Created Contents.json for AppIcon.appiconset');
 }
 
 console.log('=== iOS Native Fix Script ===');
 checkiOSProjectExists();
+fixAppIcon();
 fixInfoPlist();
 fixEntitlements();
 fixSwiftFiles();
