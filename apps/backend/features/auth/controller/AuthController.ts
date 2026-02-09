@@ -566,11 +566,20 @@ export class AuthController {
       const { code, id_token, state, user } = req.body;
       const { originalState } = extractAppSchemeFromState(state);
 
-      if (!originalState || !validateAndClearPendingAuthState(originalState)) {
+      console.log('[Apple Callback] Received callback. State:', originalState, 'Has code:', !!code, 'Has id_token:', !!id_token, 'Has user:', !!user);
+
+      const isPollingFlow = originalState?.startsWith('polling:');
+      const stateValid = validateAndClearPendingAuthState(originalState);
+
+      if (!originalState || (!stateValid && !isPollingFlow)) {
         console.warn(`[Apple Callback] Invalid or missing state. State: ${originalState}`);
         const sessionKey = oauthSessionStore.save({ error: 'invalid_state', state: originalState });
         handleAppleRedirect(sessionKey, originalState);
         return;
+      }
+
+      if (!stateValid && isPollingFlow) {
+        console.log('[Apple Callback] State not in pendingAuthSessions but is polling flow, proceeding anyway');
       }
 
       let userName: string | undefined;
@@ -583,11 +592,12 @@ export class AuthController {
             userName = `${lastName}${firstName}`.trim() || undefined;
           }
         } catch {
-          console.error('Failed to parse Apple user data');
+          console.error('[Apple Callback] Failed to parse Apple user data');
         }
       }
 
       if (!code) {
+        console.error('[Apple Callback] No authorization code received');
         const sessionKey = oauthSessionStore.save({ error: 'no_code', state: originalState });
         handleAppleRedirect(sessionKey, originalState);
         return;
@@ -596,14 +606,16 @@ export class AuthController {
       let socialUserInfo;
       try {
         socialUserInfo = await socialAuthService.getAppleUserInfo(code, id_token, userName);
+        console.log('[Apple Callback] Got user info - provider:', socialUserInfo.provider, 'email:', socialUserInfo.email ? 'present' : 'missing', 'name:', socialUserInfo.name);
       } catch (tokenError) {
-        console.error('Apple token exchange error:', tokenError);
+        console.error('[Apple Callback] Token exchange error:', tokenError);
         const sessionKey = oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
         handleAppleRedirect(sessionKey, originalState);
         return;
       }
 
       if (!socialUserInfo.email) {
+        console.log('[Apple Callback] No email from Apple, setting requiresEmail');
         const sessionKey = oauthSessionStore.save({
           requiresEmail: true,
           provider: socialUserInfo.provider,
@@ -624,6 +636,8 @@ export class AuthController {
           profileImage: socialUserInfo.profileImage,
         });
 
+        console.log('[Apple Callback] Social login success. isNewUser:', result.isNewUser, 'userId:', result.user.id);
+
         const sessionKey = oauthSessionStore.save({
           token: result.token,
           isNewUser: result.isNewUser,
@@ -636,13 +650,13 @@ export class AuthController {
         });
         handleAppleRedirect(sessionKey, originalState);
       } catch (loginError) {
-        console.error('Apple social login error:', loginError);
+        console.error('[Apple Callback] Social login error:', loginError);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
         const sessionKey = oauthSessionStore.save({ error: errorMessage, state: originalState });
         handleAppleRedirect(sessionKey, originalState);
       }
     } catch (error) {
-      console.error('Apple callback error:', error);
+      console.error('[Apple Callback] Unexpected error:', error);
       const { state } = req.body;
       const { originalState } = extractAppSchemeFromState(state);
       const sessionKey = oauthSessionStore.save({ error: 'callback_failed', state: originalState });
