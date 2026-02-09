@@ -9,12 +9,24 @@ const FRONTEND_DIR = path.join(__dirname, '..');
 const ROOT_DIR = path.join(FRONTEND_DIR, '../..');
 const IOS_DIR = path.join(FRONTEND_DIR, 'ios');
 
-function findCapBinary() {
-  const localBin = path.join(FRONTEND_DIR, 'node_modules', '.bin', 'cap');
-  if (fs.existsSync(localBin)) return localBin;
+function run(cmd, cwd = FRONTEND_DIR) {
+  console.log(`\n> ${cmd}\n`);
+  execSync(cmd, { stdio: 'inherit', cwd });
+}
 
-  const rootBin = path.join(ROOT_DIR, 'node_modules', '.bin', 'cap');
+function findBin(name) {
+  const frontendBin = path.join(FRONTEND_DIR, 'node_modules', '.bin', name);
+  if (fs.existsSync(frontendBin)) return frontendBin;
+
+  const rootBin = path.join(ROOT_DIR, 'node_modules', '.bin', name);
   if (fs.existsSync(rootBin)) return rootBin;
+
+  return null;
+}
+
+function findCapBinary() {
+  const bin = findBin('cap');
+  if (bin) return bin;
 
   const cliEntry = path.join(FRONTEND_DIR, 'node_modules', '@capacitor', 'cli', 'bin', 'capacitor.js');
   if (fs.existsSync(cliEntry)) return `node ${cliEntry}`;
@@ -25,9 +37,17 @@ function findCapBinary() {
   return 'npx cap';
 }
 
-function run(cmd, cwd = FRONTEND_DIR) {
-  console.log(`\n> ${cmd}\n`);
-  execSync(cmd, { stdio: 'inherit', cwd });
+function ensureDependencies() {
+  const rootNodeModules = path.join(ROOT_DIR, 'node_modules');
+  const frontendNodeModules = path.join(FRONTEND_DIR, 'node_modules');
+
+  if (fs.existsSync(rootNodeModules) && fs.existsSync(frontendNodeModules)) {
+    return;
+  }
+
+  console.log('\n=== Dependencies not found. Running npm install... ===');
+  run('npm install', ROOT_DIR);
+  console.log('Dependencies installed.');
 }
 
 function ensureiOSPlatform() {
@@ -44,16 +64,27 @@ function ensureiOSPlatform() {
 
 function generateAssets() {
   console.log('\n=== Generating assets ===');
-  try {
-    run('npx @capacitor/assets generate --iconBackgroundColor "#FFFFFF" --splashBackgroundColor "#FFFFFF" --ios');
-  } catch {
-    console.log('  @capacitor/assets skipped — icon will be copied directly by fix-ios-native.js');
+  const assetsBin = findBin('capacitor-assets');
+  if (assetsBin) {
+    try {
+      run(`${assetsBin} generate --iconBackgroundColor "#FFFFFF" --splashBackgroundColor "#FFFFFF" --ios`);
+      return;
+    } catch {
+      console.log('  @capacitor/assets failed — icon will be copied by fix-ios-native.js');
+    }
+  } else {
+    console.log('  @capacitor/assets not installed — icon will be copied by fix-ios-native.js');
   }
 }
 
 function buildFrontend() {
   console.log('\n=== Building frontend ===');
-  run('npx vite build --mode capacitor');
+  const viteBin = findBin('vite');
+  if (!viteBin) {
+    console.error('ERROR: vite not found. Run "npm install" from project root first.');
+    process.exit(1);
+  }
+  run(`${viteBin} build --mode capacitor`);
 }
 
 function syncAndFix() {
@@ -86,6 +117,8 @@ console.log(`Mode: ${mode}`);
 if (mode === 'full') {
   console.log('\n=== Full build: reinstalling dependencies ===');
   run('rm -rf node_modules package-lock.json && npm install', ROOT_DIR);
+} else {
+  ensureDependencies();
 }
 
 generateAssets();
