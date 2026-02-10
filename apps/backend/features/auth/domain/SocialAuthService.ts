@@ -363,7 +363,7 @@ export class SocialAuthService {
     familyName?: string,
     email?: string
   ): Promise<SocialUserInfo> {
-    const BUNDLE_ID = 'com.bongseongjang.app';
+    const BUNDLE_ID = 'com.bongkru.app';
     const teamId = process.env.APPLE_TEAM_ID;
     const keyId = process.env.APPLE_KEY_ID;
     const privateKey = process.env.APPLE_PRIVATE_KEY;
