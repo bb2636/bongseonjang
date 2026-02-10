@@ -112,18 +112,6 @@ export function UserManagementView({
                     )}
                     <div className="user-table__user-info">
                       <span className="user-table__name">{user.name}</span>
-                      {user.socialProviders && user.socialProviders.length > 0 && (
-                        <div className="user-table__social-badges">
-                          {user.socialProviders.map((provider) => (
-                            <span 
-                              key={provider}
-                              className={`user-table__social-badge user-table__social-badge--${provider}`}
-                            >
-                              {provider === 'kakao' ? '카카오' : '네이버'}
-                            </span>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   </div>
                   <div className="user-table__cell user-table__cell--email">
