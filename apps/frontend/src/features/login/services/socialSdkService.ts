@@ -466,12 +466,142 @@ async function openNativeAppleSignIn(): Promise<OAuthResult> {
   }
 }
 
+let appleOAuthResolver: ((result: OAuthResult) => void) | null = null;
+let appleOAuthTimeoutId: ReturnType<typeof setTimeout> | null = null;
+let applePollingIntervalId: ReturnType<typeof setInterval> | null = null;
+
+async function openSystemBrowserForAppleOAuth(): Promise<OAuthResult> {
+  const apiUrl = getApiBaseUrlDynamic();
+
+  console.log('[AppleOAuth] === Starting Apple OAuth with Polling Flow ===');
+
+  let pollingSessionId: string;
+  try {
+    const createResponse = await fetch(`${apiUrl}/auth/polling-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!createResponse.ok) {
+      console.error('[AppleOAuth] Failed to create polling session');
+      return { error: 'session_create_failed' };
+    }
+    const { sessionId } = await createResponse.json();
+    pollingSessionId = sessionId;
+    console.log('[AppleOAuth] Created polling session:', pollingSessionId);
+  } catch (e) {
+    console.error('[AppleOAuth] Error creating polling session:', e);
+    return { error: 'session_create_failed' };
+  }
+
+  let authUrl: string;
+  try {
+    const startResponse = await fetch(`${apiUrl}/auth/start-polling/apple?pollingSessionId=${encodeURIComponent(pollingSessionId)}`);
+    if (!startResponse.ok) {
+      console.error('[AppleOAuth] Failed to get auth URL');
+      return { error: 'auth_url_failed' };
+    }
+    const { authUrl: url } = await startResponse.json();
+    authUrl = url;
+    console.log('[AppleOAuth] Got auth URL');
+  } catch (e) {
+    console.error('[AppleOAuth] Error getting auth URL:', e);
+    return { error: 'auth_url_failed' };
+  }
+
+  return new Promise(async (resolve) => {
+    appleOAuthResolver = resolve;
+
+    if (appleOAuthTimeoutId) {
+      clearTimeout(appleOAuthTimeoutId);
+    }
+    if (applePollingIntervalId) {
+      clearInterval(applePollingIntervalId);
+    }
+
+    const pollForResult = async () => {
+      try {
+        const checkResponse = await fetch(`${apiUrl}/auth/polling-session/${pollingSessionId}`);
+        if (!checkResponse.ok) {
+          if (checkResponse.status === 404) {
+            console.log('[AppleOAuth] Polling session expired');
+            cleanup();
+            resolve({ error: 'session_expired' });
+          }
+          return;
+        }
+
+        const data = await checkResponse.json();
+        console.log('[AppleOAuth] Poll result:', data.status);
+
+        if (data.status === 'completed') {
+          console.log('[AppleOAuth] Login successful via polling!');
+          cleanup();
+          if (data.requiresEmail) {
+            resolve({
+              requiresEmail: true,
+              provider: data.provider,
+              providerId: data.providerId,
+              name: data.name,
+            });
+          } else {
+            resolve({
+              token: data.token,
+              isNewUser: data.isNewUser,
+              user: data.user,
+            });
+          }
+        } else if (data.status === 'error') {
+          console.log('[AppleOAuth] Login error via polling:', data.error);
+          cleanup();
+          resolve({ error: data.error || 'login_failed' });
+        }
+      } catch (e) {
+        console.error('[AppleOAuth] Polling error:', e);
+      }
+    };
+
+    const cleanup = async () => {
+      if (applePollingIntervalId) {
+        clearInterval(applePollingIntervalId);
+        applePollingIntervalId = null;
+      }
+      if (appleOAuthTimeoutId) {
+        clearTimeout(appleOAuthTimeoutId);
+        appleOAuthTimeoutId = null;
+      }
+      appleOAuthResolver = null;
+      try {
+        await Browser.close();
+      } catch (e) {
+        console.log('[AppleOAuth] Browser close error (may be already closed):', e);
+      }
+    };
+
+    applePollingIntervalId = setInterval(pollForResult, 2000);
+
+    appleOAuthTimeoutId = setTimeout(async () => {
+      console.log('[AppleOAuth] Timeout reached (5 min)');
+      cleanup();
+      resolve({ error: 'timeout' });
+    }, 5 * 60 * 1000);
+
+    try {
+      await Browser.open({ url: authUrl, windowName: '_blank' });
+      console.log('[AppleOAuth] System browser opened successfully');
+    } catch (err) {
+      console.error('[AppleOAuth] Failed to open system browser:', err);
+      cleanup();
+      resolve({ error: 'browser_open_failed' });
+    }
+  });
+}
+
 export async function appleAuthorize(): Promise<OAuthResult | void> {
   const isCapacitor = checkIsCapacitor();
   console.log('[AppleOAuth] appleAuthorize called, isCapacitor:', isCapacitor);
 
   if (isCapacitor) {
-    return await openInAppBrowserForOAuth('apple');
+    return await openSystemBrowserForAppleOAuth();
   }
 
   redirectToWebOAuth('apple');

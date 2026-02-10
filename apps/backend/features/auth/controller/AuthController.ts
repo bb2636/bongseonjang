@@ -1157,11 +1157,14 @@ export class AuthController {
       } else if (provider === 'apple') {
         const clientId = process.env.APPLE_CLIENT_ID;
         if (!clientId) throw new Error('APPLE_CLIENT_ID not configured');
+        const appleRedirectUri = `${baseUrl}/api/auth/apple/callback`;
         const params = new URLSearchParams({
           client_id: clientId,
-          redirect_uri: redirectUri,
-          response_type: 'code',
+          redirect_uri: appleRedirectUri,
+          response_type: 'code id_token',
+          scope: 'name email',
           state: stateData,
+          response_mode: 'form_post',
         });
         authUrl = `https://appleid.apple.com/auth/authorize?${params.toString()}`;
       } else {
