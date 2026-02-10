@@ -121,9 +121,12 @@ export function useCouponManagement() {
   }, []);
 
   const handleFormSuccess = useCallback(() => {
+    const message = editingCoupon ? '쿠폰이 수정되었습니다' : '쿠폰이 생성되었습니다';
     fetchCoupons();
     handleCloseFormDialog();
-  }, [fetchCoupons, handleCloseFormDialog]);
+    setSnackbarMessage(message);
+    setIsSnackbarOpen(true);
+  }, [fetchCoupons, handleCloseFormDialog, editingCoupon]);
 
   const handleToggleStatus = useCallback(async (couponId: number) => {
     try {
