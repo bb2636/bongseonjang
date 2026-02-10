@@ -426,7 +426,16 @@ export class SocialAuthService {
     const now = Math.floor(Date.now() / 1000);
     const expiry = now + 86400 * 180;
 
-    const formattedPrivateKey = privateKey.replace(/\\n/g, '\n');
+    let formattedPrivateKey = privateKey;
+    if (!formattedPrivateKey.includes('\n') && formattedPrivateKey.includes('\\n')) {
+      formattedPrivateKey = formattedPrivateKey.replace(/\\n/g, '\n');
+    }
+    if (!formattedPrivateKey.startsWith('-----BEGIN')) {
+      formattedPrivateKey = `-----BEGIN PRIVATE KEY-----\n${formattedPrivateKey}\n-----END PRIVATE KEY-----`;
+    }
+    formattedPrivateKey = formattedPrivateKey.trim();
+    console.log('[AppleAuth] Private key starts with:', formattedPrivateKey.substring(0, 30));
+    console.log('[AppleAuth] Private key has newlines:', formattedPrivateKey.includes('\n'));
 
     const token = jwt.sign(
       {
