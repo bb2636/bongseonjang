@@ -622,7 +622,7 @@ export class AuthController {
         const errorStack = tokenError instanceof Error ? tokenError.stack : '';
         console.error('[Apple Callback] Token exchange error:', errorMsg);
         console.error('[Apple Callback] Token exchange stack:', errorStack);
-        const sessionKey = await oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
+        const sessionKey = await oauthSessionStore.save({ error: `token_exchange_failed: ${errorMsg}`, state: originalState });
         await handleAppleRedirect(sessionKey, originalState);
         return;
       }
@@ -667,8 +667,7 @@ export class AuthController {
         const loginErrorStack = loginError instanceof Error ? loginError.stack : '';
         console.error('[Apple Callback] Social login error:', loginErrorMsg);
         console.error('[Apple Callback] Social login stack:', loginErrorStack);
-        const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
-        const sessionKey = await oauthSessionStore.save({ error: errorMessage, state: originalState });
+        const sessionKey = await oauthSessionStore.save({ error: `social_login_failed: ${loginErrorMsg}`, state: originalState });
         await handleAppleRedirect(sessionKey, originalState);
       }
     } catch (error) {
