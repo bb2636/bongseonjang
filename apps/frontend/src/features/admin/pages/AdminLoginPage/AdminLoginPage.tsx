@@ -115,7 +115,7 @@ export function AdminLoginPage() {
         <div className="admin-login__logo-section">
           <div className="admin-login__logo-box">
             <img 
-              src="/logo.svg" 
+              src="/admin-logo.png" 
               alt="봉선장" 
             />
           </div>
