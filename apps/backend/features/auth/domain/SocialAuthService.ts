@@ -332,7 +332,16 @@ export class SocialAuthService {
       const errorData = await tokenResponse.text();
       console.error('[AppleAuth] Token exchange FAILED:', tokenResponse.status, errorData);
       console.error('[AppleAuth] Used redirect_uri:', redirectUri);
-      throw new Error(`Failed to get Apple access token: ${errorData}`);
+      const debugInfo = JSON.stringify({
+        apple_error: errorData,
+        used_client_id: clientId,
+        used_team_id: teamId,
+        used_key_id: keyId,
+        used_redirect_uri: redirectUri,
+        private_key_start: privateKey?.substring(0, 40),
+        private_key_length: privateKey?.length,
+      });
+      throw new Error(`Apple token failed: ${debugInfo}`);
     }
 
     console.log('[AppleAuth] Token exchange SUCCESS');
