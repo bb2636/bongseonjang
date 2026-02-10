@@ -471,7 +471,7 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
   console.log('[AppleOAuth] appleAuthorize called, isCapacitor:', isCapacitor);
 
   if (isCapacitor) {
-    return await openNativeAppleSignIn();
+    return await openInAppBrowserForOAuth('apple');
   }
 
   redirectToWebOAuth('apple');
