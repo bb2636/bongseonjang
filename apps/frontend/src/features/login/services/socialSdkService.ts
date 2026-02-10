@@ -393,7 +393,7 @@ async function openNativeAppleSignIn(): Promise<OAuthResult> {
 
   try {
     const result = await SignInWithApple.authorize({
-      clientId: 'com.bongseongjang.app',
+      clientId: 'com.bongkru.app',
       redirectURI: '',
       scopes: 'email name',
       state: '',

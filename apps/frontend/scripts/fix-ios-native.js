@@ -31,7 +31,7 @@ const PRIVACY_DESCRIPTIONS = {
 };
 
 const URL_SCHEME = 'bongseonjang';
-const BUNDLE_ID = 'com.bongseongjang.app';
+const BUNDLE_ID = 'com.bongkru.app';
 
 function fixInfoPlist() {
   console.log('\n=== Info.plist ===');
