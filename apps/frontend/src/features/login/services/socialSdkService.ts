@@ -392,8 +392,14 @@ async function openNativeAppleSignIn(): Promise<OAuthResult> {
   console.log('[AppleOAuth] === Starting Native Apple Sign In ===');
 
   try {
+    const appleClientId = import.meta.env.VITE_APPLE_CLIENT_ID;
+    if (!appleClientId) {
+      throw new Error('VITE_APPLE_CLIENT_ID 환경변수가 설정되지 않았습니다.');
+    }
+    console.log('[AppleOAuth] Using client_id from env');
+
     const result = await SignInWithApple.authorize({
-      clientId: 'com.bongseongjang.app',
+      clientId: appleClientId,
       redirectURI: '',
       scopes: 'email name',
       state: '',

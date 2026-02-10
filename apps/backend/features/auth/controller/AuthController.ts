@@ -1195,8 +1195,7 @@ export class AuthController {
       const JWKS = jose.createRemoteJWKSet(new URL('https://appleid.apple.com/auth/keys'));
 
       const appleClientId = process.env.APPLE_CLIENT_ID;
-      const bundleId = 'com.bongkru.app';
-      const validAudiences = [bundleId];
+      const validAudiences: string[] = [];
       if (appleClientId) {
         validAudiences.push(appleClientId);
       }

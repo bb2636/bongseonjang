@@ -363,7 +363,7 @@ export class SocialAuthService {
     familyName?: string,
     email?: string
   ): Promise<SocialUserInfo> {
-    const BUNDLE_ID = 'com.bongkru.app';
+    const clientId = process.env.APPLE_CLIENT_ID;
     const teamId = process.env.APPLE_TEAM_ID;
     const keyId = process.env.APPLE_KEY_ID;
     const privateKey = process.env.APPLE_PRIVATE_KEY;
@@ -374,20 +374,18 @@ export class SocialAuthService {
     console.log('[AppleNative] Email:', email);
     console.log('[AppleNative] givenName:', givenName, 'familyName:', familyName);
 
-    if (!teamId || !keyId || !privateKey) {
-      throw new Error('Apple OAuth configuration is missing');
+    if (!clientId || !teamId || !keyId || !privateKey) {
+      throw new Error('Apple OAuth configuration is missing (APPLE_CLIENT_ID, APPLE_TEAM_ID, APPLE_KEY_ID, or APPLE_PRIVATE_KEY)');
     }
 
     const mask = (val: string) => val.length > 6 ? `${val.substring(0, 6)}****` : '****';
 
     console.log('[AppleNative] === DEBUG: Pre-Token Exchange Diagnostics ===');
-    console.log('[AppleNative] token request client_id:', mask(BUNDLE_ID));
-    console.log('[AppleNative] APPLE_CLIENT_ID env:', process.env.APPLE_CLIENT_ID ? mask(process.env.APPLE_CLIENT_ID) : '(not set)');
-    console.log('[AppleNative] client_id vs APPLE_CLIENT_ID match:', BUNDLE_ID === process.env.APPLE_CLIENT_ID);
-    console.log('[AppleNative] APPLE_TEAM_ID:', teamId ? `${teamId.substring(0, 4)}****` : '(not set)');
-    console.log('[AppleNative] APPLE_KEY_ID:', keyId ? `${keyId.substring(0, 4)}****` : '(not set)');
+    console.log('[AppleNative] token request client_id:', mask(clientId));
+    console.log('[AppleNative] APPLE_TEAM_ID:', mask(teamId));
+    console.log('[AppleNative] APPLE_KEY_ID:', mask(keyId));
 
-    const clientSecret = this.generateAppleClientSecret(BUNDLE_ID, teamId, keyId, privateKey);
+    const clientSecret = this.generateAppleClientSecret(clientId, teamId, keyId, privateKey);
 
     const decodedHeader = JSON.parse(Buffer.from(clientSecret.split('.')[0], 'base64url').toString());
     const decodedPayload = JSON.parse(Buffer.from(clientSecret.split('.')[1], 'base64url').toString());
@@ -401,19 +399,10 @@ export class SocialAuthService {
     console.log('[AppleNative] JWT payload.iat:', new Date(decodedPayload.iat * 1000).toISOString());
 
     console.log('[AppleNative] === DEBUG: Validation Checks ===');
-    console.log('[AppleNative] client_id == JWT.sub:', BUNDLE_ID === decodedPayload.sub);
+    console.log('[AppleNative] client_id == JWT.sub:', clientId === decodedPayload.sub);
     console.log('[AppleNative] iss == APPLE_TEAM_ID:', decodedPayload.iss === teamId);
     console.log('[AppleNative] kid == APPLE_KEY_ID:', decodedHeader.kid === keyId);
     console.log('[AppleNative] aud == appleid.apple.com:', decodedPayload.aud === 'https://appleid.apple.com');
-    console.log('[AppleNative] === Bundle ID Mismatch Check ===');
-    console.log('[AppleNative] Hardcoded BUNDLE_ID (used as client_id):', mask(BUNDLE_ID));
-    console.log('[AppleNative] client_id matches APPLE_CLIENT_ID:', BUNDLE_ID === process.env.APPLE_CLIENT_ID);
-
-    console.log('[AppleNative] Token exchange params:', {
-      grant_type: 'authorization_code',
-      client_id: mask(BUNDLE_ID),
-      code_length: authorizationCode?.length,
-    });
 
     const tokenResponse = await fetch('https://appleid.apple.com/auth/token', {
       method: 'POST',
@@ -422,7 +411,7 @@ export class SocialAuthService {
       },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: BUNDLE_ID,
+        client_id: clientId,
         client_secret: clientSecret,
         code: authorizationCode,
       }),
@@ -436,15 +425,14 @@ export class SocialAuthService {
       console.error('[AppleNative] HTTP Status:', tokenResponse.status);
       console.error('[AppleNative] error:', parsedError.error || 'unknown');
       console.error('[AppleNative] error_description:', parsedError.error_description || 'none');
-      console.error('[AppleNative] Used client_id:', mask(BUNDLE_ID));
-      console.error('[AppleNative] client_id matches APPLE_CLIENT_ID:', BUNDLE_ID === process.env.APPLE_CLIENT_ID);
+      console.error('[AppleNative] Used client_id:', mask(clientId));
       throw new Error(`Failed to exchange Apple authorization code: ${JSON.stringify({ error: parsedError.error, status: tokenResponse.status })}`);
     }
 
     const tokenData = await tokenResponse.json() as AppleTokenResponse;
     console.log('[AppleNative] Token exchange successful');
 
-    const verifiedPayload = await this.verifyAppleIdToken(tokenData.id_token, BUNDLE_ID);
+    const verifiedPayload = await this.verifyAppleIdToken(tokenData.id_token, clientId);
     console.log('[AppleNative] ID token verified, sub:', mask(verifiedPayload.sub));
 
     const userName = [givenName, familyName].filter(Boolean).join(' ') || '애플 사용자';
