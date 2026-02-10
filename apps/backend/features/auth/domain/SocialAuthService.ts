@@ -378,11 +378,40 @@ export class SocialAuthService {
       throw new Error('Apple OAuth configuration is missing');
     }
 
+    const mask = (val: string) => val.length > 6 ? `${val.substring(0, 6)}****` : '****';
+
+    console.log('[AppleNative] === DEBUG: Pre-Token Exchange Diagnostics ===');
+    console.log('[AppleNative] token request client_id:', mask(BUNDLE_ID));
+    console.log('[AppleNative] APPLE_CLIENT_ID env:', process.env.APPLE_CLIENT_ID ? mask(process.env.APPLE_CLIENT_ID) : '(not set)');
+    console.log('[AppleNative] client_id vs APPLE_CLIENT_ID match:', BUNDLE_ID === process.env.APPLE_CLIENT_ID);
+    console.log('[AppleNative] APPLE_TEAM_ID:', teamId ? `${teamId.substring(0, 4)}****` : '(not set)');
+    console.log('[AppleNative] APPLE_KEY_ID:', keyId ? `${keyId.substring(0, 4)}****` : '(not set)');
+
     const clientSecret = this.generateAppleClientSecret(BUNDLE_ID, teamId, keyId, privateKey);
+
+    const decodedHeader = JSON.parse(Buffer.from(clientSecret.split('.')[0], 'base64url').toString());
+    const decodedPayload = JSON.parse(Buffer.from(clientSecret.split('.')[1], 'base64url').toString());
+    console.log('[AppleNative] === DEBUG: client_secret JWT decode ===');
+    console.log('[AppleNative] JWT header.kid:', mask(decodedHeader.kid));
+    console.log('[AppleNative] JWT header.alg:', decodedHeader.alg);
+    console.log('[AppleNative] JWT payload.iss:', mask(decodedPayload.iss));
+    console.log('[AppleNative] JWT payload.sub:', mask(decodedPayload.sub));
+    console.log('[AppleNative] JWT payload.aud:', decodedPayload.aud);
+    console.log('[AppleNative] JWT payload.exp:', new Date(decodedPayload.exp * 1000).toISOString());
+    console.log('[AppleNative] JWT payload.iat:', new Date(decodedPayload.iat * 1000).toISOString());
+
+    console.log('[AppleNative] === DEBUG: Validation Checks ===');
+    console.log('[AppleNative] client_id == JWT.sub:', BUNDLE_ID === decodedPayload.sub);
+    console.log('[AppleNative] iss == APPLE_TEAM_ID:', decodedPayload.iss === teamId);
+    console.log('[AppleNative] kid == APPLE_KEY_ID:', decodedHeader.kid === keyId);
+    console.log('[AppleNative] aud == appleid.apple.com:', decodedPayload.aud === 'https://appleid.apple.com');
+    console.log('[AppleNative] === Bundle ID Mismatch Check ===');
+    console.log('[AppleNative] Hardcoded BUNDLE_ID (used as client_id):', mask(BUNDLE_ID));
+    console.log('[AppleNative] client_id matches APPLE_CLIENT_ID:', BUNDLE_ID === process.env.APPLE_CLIENT_ID);
 
     console.log('[AppleNative] Token exchange params:', {
       grant_type: 'authorization_code',
-      client_id: BUNDLE_ID,
+      client_id: mask(BUNDLE_ID),
       code_length: authorizationCode?.length,
     });
 
@@ -401,15 +430,22 @@ export class SocialAuthService {
 
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.text();
-      console.error('[AppleNative] Token exchange error:', tokenResponse.status, errorData);
-      throw new Error(`Failed to exchange Apple authorization code: ${errorData}`);
+      let parsedError: Record<string, unknown> = {};
+      try { parsedError = JSON.parse(errorData); } catch { parsedError = { raw: errorData }; }
+      console.error('[AppleNative] === DEBUG: Apple Token Error Response ===');
+      console.error('[AppleNative] HTTP Status:', tokenResponse.status);
+      console.error('[AppleNative] error:', parsedError.error || 'unknown');
+      console.error('[AppleNative] error_description:', parsedError.error_description || 'none');
+      console.error('[AppleNative] Used client_id:', mask(BUNDLE_ID));
+      console.error('[AppleNative] client_id matches APPLE_CLIENT_ID:', BUNDLE_ID === process.env.APPLE_CLIENT_ID);
+      throw new Error(`Failed to exchange Apple authorization code: ${JSON.stringify({ error: parsedError.error, status: tokenResponse.status })}`);
     }
 
     const tokenData = await tokenResponse.json() as AppleTokenResponse;
     console.log('[AppleNative] Token exchange successful');
 
     const verifiedPayload = await this.verifyAppleIdToken(tokenData.id_token, BUNDLE_ID);
-    console.log('[AppleNative] ID token verified, sub:', verifiedPayload.sub);
+    console.log('[AppleNative] ID token verified, sub:', mask(verifiedPayload.sub));
 
     const userName = [givenName, familyName].filter(Boolean).join(' ') || '애플 사용자';
 
@@ -434,7 +470,7 @@ export class SocialAuthService {
       formattedPrivateKey = `-----BEGIN PRIVATE KEY-----\n${formattedPrivateKey}\n-----END PRIVATE KEY-----`;
     }
     formattedPrivateKey = formattedPrivateKey.trim();
-    console.log('[AppleAuth] Private key starts with:', formattedPrivateKey.substring(0, 30));
+    console.log('[AppleAuth] Private key format valid:', formattedPrivateKey.startsWith('-----BEGIN'));
     console.log('[AppleAuth] Private key has newlines:', formattedPrivateKey.includes('\n'));
 
     const token = jwt.sign(
