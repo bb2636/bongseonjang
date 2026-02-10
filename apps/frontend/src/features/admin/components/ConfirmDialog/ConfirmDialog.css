@@ -6,8 +6,8 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.3);
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
+  justify-content: center;
+  align-items: center;
   padding: 24px;
   z-index: 1100;
 }
