@@ -672,13 +672,18 @@ export class AuthController {
       }
     } catch (error) {
       const unexpectedMsg = error instanceof Error ? error.message : String(error);
-      const unexpectedStack = error instanceof Error ? error.stack : '';
       console.error('[Apple Callback] Unexpected error:', unexpectedMsg);
-      console.error('[Apple Callback] Unexpected stack:', unexpectedStack);
-      const { state } = req.body;
-      const { originalState } = extractAppSchemeFromState(state);
-      const sessionKey = await oauthSessionStore.save({ error: 'callback_failed', state: originalState });
-      await handleAppleRedirect(sessionKey, originalState);
+      try {
+        const { state } = req.body || {};
+        const { originalState } = extractAppSchemeFromState(state);
+        const sessionKey = await oauthSessionStore.save({ error: `callback_error: ${unexpectedMsg.substring(0, 500)}`, state: originalState });
+        await handleAppleRedirect(sessionKey, originalState);
+      } catch (fallbackError) {
+        console.error('[Apple Callback] Fallback error:', fallbackError);
+        if (!res.headersSent) {
+          res.redirect(`${baseUrl}/social-callback?error=apple_callback_failed`);
+        }
+      }
     }
   }
 
