@@ -298,8 +298,15 @@ export class SocialAuthService {
       throw new Error('SOCIAL_REDIRECT_BASE_URL is not configured');
     }
 
-    const clientSecret = this.generateAppleClientSecret(clientId, teamId, keyId, privateKey);
-    console.log('[AppleAuth] Generated client_secret, length:', clientSecret.length);
+    let clientSecret: string;
+    try {
+      clientSecret = this.generateAppleClientSecret(clientId, teamId, keyId, privateKey);
+      console.log('[AppleAuth] Generated client_secret, length:', clientSecret.length);
+    } catch (secretError) {
+      const secretMsg = secretError instanceof Error ? secretError.message : String(secretError);
+      console.error('[AppleAuth] client_secret generation failed:', secretMsg);
+      throw new Error(`Apple client_secret generation failed: ${secretMsg}`);
+    }
 
     const tokenRequestBody = new URLSearchParams({
       grant_type: 'authorization_code',
@@ -474,31 +481,64 @@ export class SocialAuthService {
     const expiry = now + 86400 * 180;
 
     let formattedPrivateKey = privateKey;
-    if (!formattedPrivateKey.includes('\n') && formattedPrivateKey.includes('\\n')) {
+
+    if (formattedPrivateKey.includes('\\n')) {
       formattedPrivateKey = formattedPrivateKey.replace(/\\n/g, '\n');
     }
-    if (!formattedPrivateKey.startsWith('-----BEGIN')) {
-      formattedPrivateKey = `-----BEGIN PRIVATE KEY-----\n${formattedPrivateKey}\n-----END PRIVATE KEY-----`;
-    }
+
     formattedPrivateKey = formattedPrivateKey.trim();
-    console.log('[AppleAuth] Private key format valid:', formattedPrivateKey.startsWith('-----BEGIN'));
-    console.log('[AppleAuth] Private key has newlines:', formattedPrivateKey.includes('\n'));
 
-    const token = jwt.sign(
-      {
-        iss: teamId,
-        iat: now,
-        exp: expiry,
-        aud: 'https://appleid.apple.com',
-        sub: clientId,
-      },
-      formattedPrivateKey,
-      {
-        algorithm: 'ES256',
-        keyid: keyId,
+    if (formattedPrivateKey.startsWith('-----BEGIN PRIVATE KEY-----') && formattedPrivateKey.endsWith('-----END PRIVATE KEY-----')) {
+      const body = formattedPrivateKey
+        .replace('-----BEGIN PRIVATE KEY-----', '')
+        .replace('-----END PRIVATE KEY-----', '')
+        .replace(/\s+/g, '');
+
+      const lines: string[] = [];
+      for (let i = 0; i < body.length; i += 64) {
+        lines.push(body.substring(i, i + 64));
       }
-    );
+      formattedPrivateKey = `-----BEGIN PRIVATE KEY-----\n${lines.join('\n')}\n-----END PRIVATE KEY-----`;
+    } else if (!formattedPrivateKey.startsWith('-----BEGIN')) {
+      const body = formattedPrivateKey.replace(/\s+/g, '');
+      const lines: string[] = [];
+      for (let i = 0; i < body.length; i += 64) {
+        lines.push(body.substring(i, i + 64));
+      }
+      formattedPrivateKey = `-----BEGIN PRIVATE KEY-----\n${lines.join('\n')}\n-----END PRIVATE KEY-----`;
+    }
 
-    return token;
+    const lineCount = formattedPrivateKey.split('\n').length;
+    console.log('[AppleAuth] Private key format valid:', formattedPrivateKey.startsWith('-----BEGIN'));
+    console.log('[AppleAuth] Private key lines:', lineCount);
+    console.log('[AppleAuth] Private key first 30 chars:', formattedPrivateKey.substring(0, 30));
+
+    try {
+      const token = jwt.sign(
+        {
+          iss: teamId,
+          iat: now,
+          exp: expiry,
+          aud: 'https://appleid.apple.com',
+          sub: clientId,
+        },
+        formattedPrivateKey,
+        {
+          algorithm: 'ES256',
+          keyid: keyId,
+        }
+      );
+
+      const decodedHeader = JSON.parse(Buffer.from(token.split('.')[0], 'base64url').toString());
+      const decodedPayload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
+      console.log('[AppleAuth] JWT generated - alg:', decodedHeader.alg, 'kid:', keyId);
+      console.log('[AppleAuth] JWT payload - iss:', teamId, 'sub:', clientId, 'aud:', decodedPayload.aud);
+
+      return token;
+    } catch (jwtError) {
+      const errMsg = jwtError instanceof Error ? jwtError.message : String(jwtError);
+      console.error('[AppleAuth] JWT sign FAILED:', errMsg);
+      throw new Error(`Apple client_secret generation failed: ${errMsg}`);
+    }
   }
 }
