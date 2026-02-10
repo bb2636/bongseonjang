@@ -1,4 +1,3 @@
-import { BestProductService } from '../../bestProduct/application/BestProductService';
 import { BongseonjangTvService } from '../../bongseonjangTv/application/BongseonjangTvService';
 import { ProductService } from '../../product/application/ProductService';
 import { bannerRepository } from '../../banner/repository/bannerRepository';
@@ -15,6 +14,7 @@ export interface HomeDataResponse {
   middleBanners: Array<{ id: number; imageUrl: string; linkUrl: string | null }>;
   freshProducts: Array<any>;
   mdPicks: Array<any>;
+  weeklyProducts: Array<any>;
   badameunProducts: Array<any>;
   bongseonjangTv: Array<any>;
   bongcookProducts: Array<any>;
@@ -22,12 +22,10 @@ export interface HomeDataResponse {
 }
 
 export class HomeDataService {
-  private bestProductService: BestProductService;
   private bongseonjangTvService: BongseonjangTvService;
   private productService: ProductService;
 
   constructor() {
-    this.bestProductService = new BestProductService(repositories.bestProduct);
     this.bongseonjangTvService = new BongseonjangTvService(repositories.bongseonjangTv);
     
     const productRepository = new TypeORMProductRepository();
@@ -60,77 +58,83 @@ export class HomeDataService {
     const [
       heroImages,
       timeDeals,
-      bestProducts,
+      allBestProducts,
       middleBanners,
-      freshProducts,
-      mdPicks,
-      badameunProducts,
+      allFreshProducts,
+      allMdPicks,
+      allWeeklyProducts,
+      allBadameunProducts,
       bongseonjangTv,
-      bongcookProducts,
+      allBongcookProducts,
       bottomBanners,
     ] = await Promise.all([
       this.getBannersByPosition('HOME_HERO'),
       this.productService.getTimeDeals(10),
-      this.bestProductService.getBestProducts(),
+      this.productService.getProductsByDisplayCategory('베스트'),
       this.getBannersByPosition('HOME_MIDDLE'),
-      this.productService.getFreshProducts(10),
-      this.productService.getProductsByTag('MD추천!', 10),
-      this.productService.getProductsByTag('바담은 제품', 10),
+      this.productService.getProductsByDisplayCategory('신선식품'),
+      this.productService.getProductsByDisplayCategory('MD추천!'),
+      this.productService.getProductsByDisplayCategory('이주의 상품'),
+      this.productService.getProductsByDisplayCategory('바담은 제품'),
       this.bongseonjangTvService.getAllImages(),
-      this.productService.getProductsByTag('봉쿡 제품', 10),
+      this.productService.getProductsByDisplayCategory('봉쿡 제품'),
       this.getBannersByPosition('HOME_BOTTOM'),
     ]);
 
     return {
       heroImages,
       timeDeals,
-      bestProducts,
+      bestProducts: allBestProducts.slice(0, 10),
       middleBanners,
-      freshProducts,
-      mdPicks,
-      badameunProducts,
+      freshProducts: allFreshProducts.slice(0, 10),
+      mdPicks: allMdPicks.slice(0, 10),
+      weeklyProducts: allWeeklyProducts.slice(0, 10),
+      badameunProducts: allBadameunProducts.slice(0, 10),
       bongseonjangTv,
-      bongcookProducts,
+      bongcookProducts: allBongcookProducts.slice(0, 10),
       bottomBanners,
     };
   }
 
   async getAboveFoldData(): Promise<Pick<HomeDataResponse, 'heroImages' | 'timeDeals' | 'bestProducts'>> {
-    const [heroImages, timeDeals, bestProducts] = await Promise.all([
+    const [heroImages, timeDeals, allBestProducts] = await Promise.all([
       this.getBannersByPosition('HOME_HERO'),
       this.productService.getTimeDeals(10),
-      this.bestProductService.getBestProducts(),
+      this.productService.getProductsByDisplayCategory('베스트'),
     ]);
 
-    return { heroImages, timeDeals, bestProducts };
+    return { heroImages, timeDeals, bestProducts: allBestProducts.slice(0, 10) };
   }
 
   async getBelowFoldData(): Promise<Omit<HomeDataResponse, 'heroImages' | 'timeDeals' | 'bestProducts'>> {
     const [
       middleBanners,
-      freshProducts,
-      mdPicks,
-      badameunProducts,
+      allFreshProducts,
+      allMdPicks,
+      allWeeklyProducts,
+      allBadameunProducts,
       bongseonjangTv,
-      bongcookProducts,
+      allBongcookProducts,
       bottomBanners,
     ] = await Promise.all([
       this.getBannersByPosition('HOME_MIDDLE'),
-      this.productService.getFreshProducts(10),
-      this.productService.getProductsByTag('MD추천!', 10),
-      this.productService.getProductsByTag('바담은 제품', 10),
+      this.productService.getProductsByDisplayCategory('신선식품'),
+      this.productService.getProductsByDisplayCategory('MD추천!'),
+      this.productService.getProductsByDisplayCategory('이주의 상품'),
+      this.productService.getProductsByDisplayCategory('바담은 제품'),
       this.bongseonjangTvService.getAllImages(),
-      this.productService.getProductsByTag('봉쿡 제품', 10),
+      this.productService.getProductsByDisplayCategory('봉쿡 제품'),
       this.getBannersByPosition('HOME_BOTTOM'),
     ]);
 
     return {
       middleBanners,
-      freshProducts,
-      mdPicks,
-      badameunProducts,
+      freshProducts: allFreshProducts.slice(0, 10),
+      mdPicks: allMdPicks.slice(0, 10),
+      weeklyProducts: allWeeklyProducts.slice(0, 10),
+      badameunProducts: allBadameunProducts.slice(0, 10),
       bongseonjangTv,
-      bongcookProducts,
+      bongcookProducts: allBongcookProducts.slice(0, 10),
       bottomBanners,
     };
   }

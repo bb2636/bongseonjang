@@ -17,7 +17,7 @@ export default function MdPickSection({
   if (isLoading) {
     return (
       <section className="md-pick-section">
-        <SectionHeader title="MD추천! 이 주의 상품" />
+        <SectionHeader title="MD추천!" />
         <div className="md-pick-section__loading">로딩 중...</div>
       </section>
     );
@@ -29,7 +29,7 @@ export default function MdPickSection({
 
   return (
     <section className="md-pick-section">
-      <SectionHeader title="MD추천! 이 주의 상품" />
+      <SectionHeader title="MD추천!" />
       <div className="md-pick-section__carousel">
         <Swiper
           slidesPerView="auto"

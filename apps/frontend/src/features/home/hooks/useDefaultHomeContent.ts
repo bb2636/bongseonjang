@@ -36,6 +36,7 @@ export function useDefaultHomeContent() {
     middleBanners,
     freshProducts,
     mdPicks,
+    weeklyProducts,
     badameunProducts,
     bongseonjangTv,
     bongcookProducts,
@@ -63,6 +64,10 @@ export function useDefaultHomeContent() {
     navigate('/brand/badameun');
   }, [navigate]);
 
+  const onViewAllWeeklyProducts = useCallback(() => {
+    navigate('/category/weekly');
+  }, [navigate]);
+
   const onViewAllBongcook = useCallback(() => {
     navigate('/brand/bongcook');
   }, [navigate]);
@@ -84,6 +89,9 @@ export function useDefaultHomeContent() {
     onViewAllFreshFoods,
     mdPicks,
     isMdPicksLoading: isBelowFoldLoading || !shouldLoadBelowFold,
+    weeklyProducts,
+    isWeeklyProductsLoading: isBelowFoldLoading || !shouldLoadBelowFold,
+    onViewAllWeeklyProducts,
     badameunProducts,
     isBadameunLoading: isBelowFoldLoading || !shouldLoadBelowFold,
     onViewAllBadameun,

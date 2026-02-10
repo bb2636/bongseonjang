@@ -5,6 +5,7 @@ import { BestProductSection } from "../BestProductSection";
 import { MiddleBanner } from "../MiddleBanner";
 import { FreshFoodSection } from "../FreshFoodSection";
 import { MdPickSection } from "../MdPickSection";
+import { WeeklyProductSection } from "../WeeklyProductSection";
 import { BadameunSection } from "../BadameunSection";
 import { BongseonjangTvSection } from "../BongseonjangTvSection";
 import { BongcookSection } from "../BongcookSection";
@@ -33,6 +34,9 @@ export default function DefaultHomeContent() {
     onViewAllFreshFoods,
     mdPicks,
     isMdPicksLoading,
+    weeklyProducts,
+    isWeeklyProductsLoading,
+    onViewAllWeeklyProducts,
     badameunProducts,
     isBadameunLoading,
     onViewAllBadameun,
@@ -71,6 +75,14 @@ export default function DefaultHomeContent() {
         <MdPickSection
           products={mdPicks}
           isLoading={isMdPicksLoading}
+        />
+      </LazySection>
+      <Spacer height={20} />
+      <LazySection minHeight={300}>
+        <WeeklyProductSection
+          products={weeklyProducts}
+          isLoading={isWeeklyProductsLoading}
+          onViewAll={onViewAllWeeklyProducts}
         />
       </LazySection>
       <Spacer height={20} />
