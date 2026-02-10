@@ -277,7 +277,20 @@ export class SocialAuthService {
     const baseUrl = process.env.SOCIAL_REDIRECT_BASE_URL || process.env.VITE_SOCIAL_REDIRECT_BASE_URL;
     const redirectUri = `${baseUrl}${callbackPath || '/api/auth/apple/callback'}`;
 
+    console.log('[AppleAuth] === getAppleUserInfo START ===');
+    console.log('[AppleAuth] client_id:', clientId);
+    console.log('[AppleAuth] team_id:', teamId);
+    console.log('[AppleAuth] key_id:', keyId);
+    console.log('[AppleAuth] privateKey exists:', !!privateKey, 'length:', privateKey?.length);
+    console.log('[AppleAuth] baseUrl:', baseUrl);
+    console.log('[AppleAuth] redirect_uri:', redirectUri);
+    console.log('[AppleAuth] callbackPath:', callbackPath);
+    console.log('[AppleAuth] has code:', !!code, 'code length:', code?.length);
+    console.log('[AppleAuth] has idToken:', !!idToken);
+    console.log('[AppleAuth] userName:', userName);
+
     if (!clientId || !teamId || !keyId || !privateKey) {
+      console.error('[AppleAuth] Missing config - clientId:', !!clientId, 'teamId:', !!teamId, 'keyId:', !!keyId, 'privateKey:', !!privateKey);
       throw new Error('Apple OAuth configuration is missing');
     }
 
@@ -286,26 +299,36 @@ export class SocialAuthService {
     }
 
     const clientSecret = this.generateAppleClientSecret(clientId, teamId, keyId, privateKey);
+    console.log('[AppleAuth] Generated client_secret, length:', clientSecret.length);
+
+    const tokenRequestBody = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: clientId,
+      client_secret: clientSecret,
+      redirect_uri: redirectUri,
+      code,
+    });
+
+    console.log('[AppleAuth] Token request - grant_type: authorization_code, client_id:', clientId, 'redirect_uri:', redirectUri);
 
     const tokenResponse = await fetch('https://appleid.apple.com/auth/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        client_id: clientId,
-        client_secret: clientSecret,
-        redirect_uri: redirectUri,
-        code,
-      }),
+      body: tokenRequestBody,
     });
+
+    console.log('[AppleAuth] Token response status:', tokenResponse.status);
 
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.text();
-      console.error('Apple token error:', tokenResponse.status, errorData);
+      console.error('[AppleAuth] Token exchange FAILED:', tokenResponse.status, errorData);
+      console.error('[AppleAuth] Used redirect_uri:', redirectUri);
       throw new Error(`Failed to get Apple access token: ${errorData}`);
     }
+
+    console.log('[AppleAuth] Token exchange SUCCESS');
 
     const tokenData = await tokenResponse.json() as AppleTokenResponse;
     

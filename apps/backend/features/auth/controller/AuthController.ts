@@ -618,7 +618,10 @@ export class AuthController {
         socialUserInfo = await socialAuthService.getAppleUserInfo(code, id_token, userName);
         console.log('[Apple Callback] Got user info - provider:', socialUserInfo.provider, 'email:', socialUserInfo.email ? 'present' : 'missing', 'name:', socialUserInfo.name);
       } catch (tokenError) {
-        console.error('[Apple Callback] Token exchange error:', tokenError);
+        const errorMsg = tokenError instanceof Error ? tokenError.message : String(tokenError);
+        const errorStack = tokenError instanceof Error ? tokenError.stack : '';
+        console.error('[Apple Callback] Token exchange error:', errorMsg);
+        console.error('[Apple Callback] Token exchange stack:', errorStack);
         const sessionKey = await oauthSessionStore.save({ error: 'token_exchange_failed', state: originalState });
         await handleAppleRedirect(sessionKey, originalState);
         return;
@@ -660,13 +663,19 @@ export class AuthController {
         });
         await handleAppleRedirect(sessionKey, originalState);
       } catch (loginError) {
-        console.error('[Apple Callback] Social login error:', loginError);
+        const loginErrorMsg = loginError instanceof Error ? loginError.message : String(loginError);
+        const loginErrorStack = loginError instanceof Error ? loginError.stack : '';
+        console.error('[Apple Callback] Social login error:', loginErrorMsg);
+        console.error('[Apple Callback] Social login stack:', loginErrorStack);
         const errorMessage = loginError instanceof Error ? loginError.message : 'login_failed';
         const sessionKey = await oauthSessionStore.save({ error: errorMessage, state: originalState });
         await handleAppleRedirect(sessionKey, originalState);
       }
     } catch (error) {
-      console.error('[Apple Callback] Unexpected error:', error);
+      const unexpectedMsg = error instanceof Error ? error.message : String(error);
+      const unexpectedStack = error instanceof Error ? error.stack : '';
+      console.error('[Apple Callback] Unexpected error:', unexpectedMsg);
+      console.error('[Apple Callback] Unexpected stack:', unexpectedStack);
       const { state } = req.body;
       const { originalState } = extractAppSchemeFromState(state);
       const sessionKey = await oauthSessionStore.save({ error: 'callback_failed', state: originalState });
