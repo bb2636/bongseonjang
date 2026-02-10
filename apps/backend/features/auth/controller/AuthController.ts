@@ -700,20 +700,6 @@ export class AuthController {
 
       console.log('[Apple Native] User info:', JSON.stringify(socialUserInfo));
 
-      if (!socialUserInfo.email) {
-        res.status(200).json({
-          success: false,
-          requiresEmail: true,
-          tempData: {
-            provider: socialUserInfo.provider,
-            providerUserId: socialUserInfo.providerUserId,
-            name: socialUserInfo.name,
-            profileImage: socialUserInfo.profileImage,
-          }
-        });
-        return;
-      }
-
       const result = await userService.socialLogin({
         provider: socialUserInfo.provider as any,
         providerUserId: socialUserInfo.providerUserId,

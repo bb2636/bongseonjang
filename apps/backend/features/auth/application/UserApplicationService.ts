@@ -27,7 +27,7 @@ interface LoginInput {
 interface SocialLoginInput {
   provider: SocialProvider;
   providerUserId: string;
-  email: string;
+  email: string | null;
   name: string;
   profileImage?: string | null;
 }
@@ -210,33 +210,35 @@ export class UserApplicationService {
       };
     }
 
-    const existingUser = await this.userRepository.findByEmail(input.email);
+    if (input.email) {
+      const existingUser = await this.userRepository.findByEmail(input.email);
 
-    if (existingUser) {
-      if (existingUser.isSuspended) {
-        throw new Error('ACCOUNT_SUSPENDED');
+      if (existingUser) {
+        if (existingUser.isSuspended) {
+          throw new Error('ACCOUNT_SUSPENDED');
+        }
+        await this.socialAccountRepository.create({
+          userId: existingUser.id,
+          provider: input.provider,
+          providerUserId: input.providerUserId,
+          emailFromProvider: input.email,
+          displayName: input.name,
+          profileImage: input.profileImage,
+        });
+
+        await this.userRepository.update(existingUser.id, { lastLoginAt: new Date() });
+
+        const token = this.authService.generateToken(existingUser.id);
+        return {
+          user: toUserResponse(existingUser),
+          token,
+          isNewUser: false,
+        };
       }
-      await this.socialAccountRepository.create({
-        userId: existingUser.id,
-        provider: input.provider,
-        providerUserId: input.providerUserId,
-        emailFromProvider: input.email,
-        displayName: input.name,
-        profileImage: input.profileImage,
-      });
-
-      await this.userRepository.update(existingUser.id, { lastLoginAt: new Date() });
-
-      const token = this.authService.generateToken(existingUser.id);
-      return {
-        user: toUserResponse(existingUser),
-        token,
-        isNewUser: false,
-      };
     }
 
     const newUser = await this.userRepository.create({
-      email: input.email,
+      email: input.email || `apple.${input.providerUserId}@apple-signin.invalid`,
       name: input.name,
       password: null,
       profileImage: input.profileImage,

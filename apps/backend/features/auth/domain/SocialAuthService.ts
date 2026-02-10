@@ -66,6 +66,10 @@ interface AppleIdTokenPayload {
   sub: string;
   email?: string;
   email_verified?: string | boolean;
+  iss?: string;
+  aud?: string;
+  exp?: number;
+  iat?: number;
 }
 
 export interface SocialUserInfo {
@@ -325,6 +329,14 @@ export class SocialAuthService {
         audience: clientId,
       });
 
+      console.log('[AppleAuth] id_token verified payload:', {
+        iss: payload.iss,
+        aud: payload.aud,
+        sub: payload.sub,
+        email: payload.email,
+        email_verified: payload.email_verified,
+      });
+
       if (!payload.sub) {
         throw new Error('Apple ID token missing sub claim');
       }
@@ -367,6 +379,12 @@ export class SocialAuthService {
     }
 
     const clientSecret = this.generateAppleClientSecret(BUNDLE_ID, teamId, keyId, privateKey);
+
+    console.log('[AppleNative] Token exchange params:', {
+      grant_type: 'authorization_code',
+      client_id: BUNDLE_ID,
+      code_length: authorizationCode?.length,
+    });
 
     const tokenResponse = await fetch('https://appleid.apple.com/auth/token', {
       method: 'POST',
