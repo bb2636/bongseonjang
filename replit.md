@@ -114,6 +114,9 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 -   **찜**: `wishlists` 테이블로 관리.
 -   **고객센터**: `support_tickets` 테이블로 관리.
 -   **비회원 결제**: localStorage에 장바구니/찜 데이터를 저장하고, 로그인 시 서버로 자동 병합됩니다. 비회원 주문 상세 정보는 `guest_order_details` 테이블에 저장되며, 전화번호는 해시 처리됩니다.
+-   **관리자 리뷰 관리**: 리뷰 목록 조회 (검색, 별점 필터), 상세 보기 (이미지 포함), 삭제 기능.
+-   **관리자 카테고리 관리**: 노출 카테고리, 전시 카테고리, 상품 카테고리 3종의 CRUD 관리 (탭 UI).
+-   **관리자 설정**: 서버 캐시 관리 (홈/리뷰 캐시 상태 조회 및 초기화), 시스템 정보 표시.
 
 ### Database Schema Principles
 주문 시점의 가격/옵션 스냅샷 저장, 상태 변경 이력 관리 (`order_status_history`, `shipment_events`), 포인트 만료 관리 (`point_transactions.expiresAt`), Soft Delete를 위한 `isActive` 플래그 사용.
