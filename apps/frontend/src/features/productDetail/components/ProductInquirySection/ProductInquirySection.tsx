@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { ProductInquiry } from '../../types/productInquiry';
+import ImageLightbox from '../../../../components/ImageLightbox/ImageLightbox';
 import './ProductInquirySection.css';
 
 interface ProductInquirySectionProps {
@@ -188,17 +189,11 @@ export default function ProductInquirySection({ inquiries, onCreateInquiry }: Pr
       </div>
 
       {lightboxImage && (
-        <div className="inquiry-lightbox" onClick={handleCloseLightbox}>
-          <button className="inquiry-lightbox__close" onClick={handleCloseLightbox} aria-label="닫기">
-            ×
-          </button>
-          <img
-            src={lightboxImage}
-            alt="확대 이미지"
-            className="inquiry-lightbox__image"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+        <ImageLightbox
+          imageUrls={[lightboxImage]}
+          initialIndex={0}
+          onClose={handleCloseLightbox}
+        />
       )}
     </section>
   );

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { MyInquiry, InquiryType, SortOrder } from "../types/myInquiry";
 import { INQUIRY_TYPE_OPTIONS, SORT_OPTIONS } from "../types/myInquiry";
 import AppBar, { AppBarSpacer } from "../../../components/AppBar/AppBar";
+import ImageLightbox from "../../../components/ImageLightbox/ImageLightbox";
 import "./MyInquiriesView.css";
 
 import { useMyInquiriesPage } from '../hooks/useMyInquiriesPage';
@@ -326,21 +327,11 @@ export default function MyInquiriesView({ state, actions }: MyInquiriesViewProps
       </main>
 
       {lightboxImage && (
-        <div className="inquiry-lightbox" onClick={handleCloseLightbox}>
-          <button 
-            type="button"
-            className="inquiry-lightbox__close"
-            onClick={handleCloseLightbox}
-          >
-            &times;
-          </button>
-          <img
-            src={lightboxImage}
-            alt="확대 이미지"
-            className="inquiry-lightbox__image"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+        <ImageLightbox
+          imageUrls={[lightboxImage]}
+          initialIndex={0}
+          onClose={handleCloseLightbox}
+        />
       )}
     </div>
   );

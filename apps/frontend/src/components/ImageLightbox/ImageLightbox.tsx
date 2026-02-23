@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import './ImageLightbox.css';
 
 interface ImageLightboxProps {
@@ -75,7 +76,7 @@ export default function ImageLightbox({ imageUrls, initialIndex, onClose }: Imag
 
   const hasMultiple = imageUrls.length > 1;
 
-  return (
+  return createPortal(
     <div className={`image-lightbox ${visible ? 'image-lightbox--visible' : ''}`}>
       <button className="image-lightbox__close" onClick={handleClose} type="button">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -118,6 +119,7 @@ export default function ImageLightbox({ imageUrls, initialIndex, onClose }: Imag
           {currentIndex + 1} / {imageUrls.length}
         </div>
       )}
-    </div>
+    </div>,
+    document.body
   );
 }
