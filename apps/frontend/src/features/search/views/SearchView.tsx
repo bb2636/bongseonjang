@@ -17,8 +17,8 @@ interface SearchViewProps {
 export default function SearchView({ state, actions }: SearchViewProps) {
   return (
     <div className="search-view">
-      <AppBar variant="subpage" />
-      <AppBarSpacer variant="subpage" />
+      <AppBar />
+      <AppBarSpacer />
       
       <main className="search-view__content">
         <section className="search-view__search-section">
