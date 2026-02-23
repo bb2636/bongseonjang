@@ -1,5 +1,5 @@
 import { PointWallet, PointHistoryGroup } from '../types/point';
-import AppBar, { AppBarSpacer } from '@/components/AppBar';
+import { AppBar, AppBarSpacer } from '@/components/AppBar';
 import PointBalanceCard from '../components/PointBalanceCard/PointBalanceCard';
 import PointHistoryList from '../components/PointHistoryList/PointHistoryList';
 import PointSkeleton from '../components/PointSkeleton';
