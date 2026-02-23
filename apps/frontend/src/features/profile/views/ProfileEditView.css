@@ -78,7 +78,7 @@
   flex-direction: column;
   align-items: center;
   padding: 20px 16px;
-  padding-bottom: 120px;
+  padding-bottom: calc(100px + var(--safe-area-bottom, 0px));
   gap: 34px;
 }
 
@@ -149,9 +149,14 @@
 }
 
 .profile-edit__submit-container {
-  width: 100%;
-  padding: 24px 0 0 0;
-  margin-top: 8px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  padding-bottom: calc(16px + var(--safe-area-bottom, 0px));
+  background: #FFFFFF;
+  z-index: 100;
 }
 
 .profile-edit__submit-button {
