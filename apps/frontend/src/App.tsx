@@ -203,6 +203,15 @@ const TermsManagementPage = lazy(() =>
 const UserManagementPage = lazy(() =>
   import("./features/admin").then((m) => ({ default: m.UserManagementPage }))
 );
+const ReviewManagementPage = lazy(() =>
+  import("./features/admin").then((m) => ({ default: m.ReviewManagementPage }))
+);
+const CategoryManagementPage = lazy(() =>
+  import("./features/admin").then((m) => ({ default: m.CategoryManagementPage }))
+);
+const SettingsPage = lazy(() =>
+  import("./features/admin").then((m) => ({ default: m.SettingsPage }))
+);
 
 function PageLoader() {
   return (
@@ -499,16 +508,16 @@ function AppContent() {
         <Route path="/admin/orders/*" element={<ProtectedAdminRoute><OrderManagementPage /></ProtectedAdminRoute>} />
         <Route path="/admin/users" element={<ProtectedAdminRoute><UserManagementPage /></ProtectedAdminRoute>} />
         <Route path="/admin/users/*" element={<ProtectedAdminRoute><UserManagementPage /></ProtectedAdminRoute>} />
-        <Route path="/admin/reviews" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
-        <Route path="/admin/reviews/*" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/reviews" element={<ProtectedAdminRoute><ReviewManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/reviews/*" element={<ProtectedAdminRoute><ReviewManagementPage /></ProtectedAdminRoute>} />
         <Route path="/admin/coupons" element={<ProtectedAdminRoute><CouponManagementPage /></ProtectedAdminRoute>} />
         <Route path="/admin/coupons/*" element={<ProtectedAdminRoute><CouponManagementPage /></ProtectedAdminRoute>} />
         <Route path="/admin/banners" element={<ProtectedAdminRoute><BannerManagementPage /></ProtectedAdminRoute>} />
         <Route path="/admin/banners/*" element={<ProtectedAdminRoute><BannerManagementPage /></ProtectedAdminRoute>} />
-        <Route path="/admin/categories" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
-        <Route path="/admin/categories/*" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
-        <Route path="/admin/settings" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
-        <Route path="/admin/settings/*" element={<ProtectedAdminRoute><AdminPlaceholderPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/categories" element={<ProtectedAdminRoute><CategoryManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/categories/*" element={<ProtectedAdminRoute><CategoryManagementPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/settings" element={<ProtectedAdminRoute><SettingsPage /></ProtectedAdminRoute>} />
+        <Route path="/admin/settings/*" element={<ProtectedAdminRoute><SettingsPage /></ProtectedAdminRoute>} />
         <Route path="/admin/support" element={<ProtectedAdminRoute><AdminSupportPage /></ProtectedAdminRoute>} />
         <Route path="/admin/support/*" element={<ProtectedAdminRoute><AdminSupportPage /></ProtectedAdminRoute>} />
         <Route path="/admin/terms" element={<ProtectedAdminRoute><TermsManagementPage /></ProtectedAdminRoute>} />

@@ -7,3 +7,6 @@ export { CouponManagementPage } from './CouponManagement';
 export { ProductManagementPage } from './ProductManagement';
 export { UserManagementPage } from './UserManagement';
 export { TermsManagementPage } from './TermsManagement';
+export { ReviewManagementPage } from './ReviewManagement';
+export { CategoryManagementPage } from './CategoryManagement';
+export { SettingsPage } from './SettingsManagement';

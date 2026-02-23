@@ -25,6 +25,9 @@ import { adminBannerRoutes, publicHeroRoutes, publicMiddleBannerRoutes, publicBo
 import { adminProductRoutes } from '../features/admin/routes/adminProductRoutes';
 import { adminUserRoutes } from '../features/admin/routes/adminUserRoutes';
 import { adminOrderRoutes } from '../features/admin/routes/adminOrderRoutes';
+import { adminReviewRoutes } from '../features/admin/routes/adminReviewRoutes';
+import { adminCategoryRoutes } from '../features/admin/routes/adminCategoryRoutes';
+import { adminSettingsRoutes } from '../features/admin/routes/adminSettingsRoutes';
 import { userRoutes } from '../features/user';
 import { termsRoutes, adminTermsRoutes } from '../features/terms';
 import homeDataRoutes from '../features/home/routes/homeDataRoutes';
@@ -72,7 +75,10 @@ adminRouter.use('/', adminCouponRoutes);
 adminRouter.use('/products', adminProductRoutes);
 adminRouter.use('/users', adminUserRoutes);
 adminRouter.use('/orders', adminOrderRoutes);
+adminRouter.use('/reviews', adminReviewRoutes);
 adminRouter.use('/terms', adminTermsRoutes);
+adminRouter.use('/categories', adminCategoryRoutes);
+adminRouter.use('/settings', adminSettingsRoutes);
 
 router.use('/admin', adminRouter);
 

@@ -19,8 +19,11 @@ const menuItems: MenuItem[] = [
   { path: '/admin/products', label: '상품관리' },
   { path: '/admin/coupons', label: '쿠폰관리' },
   { path: '/admin/banners', label: '배너관리' },
+  { path: '/admin/reviews', label: '리뷰 관리' },
+  { path: '/admin/categories', label: '카테고리 관리' },
   { path: '/admin/support', label: '고객센터 관리' },
   { path: '/admin/terms', label: '약관 관리' },
+  { path: '/admin/settings', label: '설정' },
 ];
 
 const pageInfo: Record<string, { title: string; description: string }> = {

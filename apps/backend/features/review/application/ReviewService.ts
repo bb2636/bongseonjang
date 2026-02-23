@@ -9,9 +9,11 @@ import { MemoryCache } from '../../../common/utils/memoryCache.js';
 
 const REVIEW_STATS_CACHE_TTL_MS = 600000;
 
+const REVIEW_STATS_CACHE_MAX_SIZE = 50;
+export const reviewStatsCache = new MemoryCache<Map<string, { reviewCount: number; averageRating: number }>>(REVIEW_STATS_CACHE_MAX_SIZE);
+
 export class ReviewService implements ReviewStatsProvider {
-  private static readonly REVIEW_STATS_CACHE_MAX_SIZE = 50;
-  private static reviewStatsCache = new MemoryCache<Map<string, { reviewCount: number; averageRating: number }>>(ReviewService.REVIEW_STATS_CACHE_MAX_SIZE);
+  private static reviewStatsCache = reviewStatsCache;
 
   constructor(
     private readonly reviewRepository: ReviewRepository,
