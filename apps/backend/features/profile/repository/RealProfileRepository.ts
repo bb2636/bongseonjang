@@ -236,7 +236,9 @@ export class RealProfileRepository implements ProfileRepository {
       updateData.password = data.password;
     }
 
-    await userRepository.update({ id: userId }, updateData);
+    console.log('[ProfileRepo] Updating userId:', userId, 'with:', JSON.stringify(updateData, (key, value) => key === 'password' ? '***' : value));
+    const result = await userRepository.update({ id: userId }, updateData);
+    console.log('[ProfileRepo] Update result - affected:', result.affected);
   }
 
   async deleteUser(userId: string): Promise<void> {

@@ -102,6 +102,8 @@ export class ProfileController {
         return;
       }
 
+      console.log('[ProfileUpdate] userId:', userId, 'body:', JSON.stringify({ name, phone, birthDate, gender, isMarketingEmail, isMarketingSms }));
+
       await this.profileService.updateProfile(userId, {
         name: name.trim(),
         phone,
@@ -114,6 +116,7 @@ export class ProfileController {
         newPassword,
       });
       
+      console.log('[ProfileUpdate] Success for userId:', userId);
       res.json({ success: true });
     } catch (error) {
       console.error('Error updating profile:', error);
