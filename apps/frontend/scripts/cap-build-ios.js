@@ -119,15 +119,28 @@ console.log('=== Capacitor iOS Build ===');
 console.log(`Mode: ${mode}`);
 
 if (mode === 'full') {
-  console.log('\n=== Full build: reinstalling dependencies ===');
-  run('rm -rf node_modules package-lock.json && npm install', ROOT_DIR);
+  console.log('\n=== Full build: cleaning all node_modules ===');
+  const dirsToClean = [
+    path.join(ROOT_DIR, 'node_modules'),
+    path.join(ROOT_DIR, 'package-lock.json'),
+    path.join(FRONTEND_DIR, 'node_modules'),
+    path.join(ROOT_DIR, 'apps', 'backend', 'node_modules'),
+  ];
+  for (const dir of dirsToClean) {
+    if (fs.existsSync(dir)) {
+      console.log(`  Removing ${path.relative(ROOT_DIR, dir)}`);
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }
+  console.log('\n=== Installing dependencies ===');
+  run('npm install', ROOT_DIR);
 } else {
   ensureDependencies();
 }
 
+ensureiOSPlatform();
 generateAssets();
 buildFrontend();
-ensureiOSPlatform();
 syncAndFix();
 openXcode();
 
