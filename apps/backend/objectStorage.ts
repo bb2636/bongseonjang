@@ -16,7 +16,7 @@ import {
 } from "./common/utils/imageOptimizer";
 
 const DEFAULT_BUCKET_NAME = "app-storage";
-const CACHE_MAX_AGE_SECONDS = 604800;
+const CACHE_MAX_AGE_SECONDS = 86400;
 
 let storageClient: Client | null = null;
 

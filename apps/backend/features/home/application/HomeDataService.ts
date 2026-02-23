@@ -6,6 +6,11 @@ import { TypeORMProductRepository } from '../../product/repository/TypeORMProduc
 import { ReviewService, TypeORMReviewRepository, TypeORMReviewImageRepository } from '../../review';
 import { TypeORMReviewableOrderItemRepository } from '../../review/repository/TypeORMReviewableOrderItemRepository';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
+import { MemoryCache } from '../../../common/utils/memoryCache.js';
+
+const HOME_CACHE_TTL_MS = 300000;
+const CACHE_KEY_ABOVE_FOLD = 'above-fold';
+const CACHE_KEY_BELOW_FOLD = 'below-fold';
 
 export interface HomeDataResponse {
   heroImages: Array<{ id: number; imageUrl: string; linkUrl: string | null }>;
@@ -22,6 +27,8 @@ export interface HomeDataResponse {
 }
 
 export class HomeDataService {
+  private static homeCache = new MemoryCache<any>();
+
   private bongseonjangTvService: BongseonjangTvService;
   private productService: ProductService;
 
@@ -97,16 +104,28 @@ export class HomeDataService {
   }
 
   async getAboveFoldData(): Promise<Pick<HomeDataResponse, 'heroImages' | 'timeDeals' | 'bestProducts'>> {
+    const cached = HomeDataService.homeCache.get(CACHE_KEY_ABOVE_FOLD);
+    if (cached) {
+      return cached;
+    }
+
     const [heroImages, timeDeals, allBestProducts] = await Promise.all([
       this.getBannersByPosition('HOME_HERO'),
       this.productService.getTimeDeals(10),
       this.productService.getProductsByDisplayCategory('베스트'),
     ]);
 
-    return { heroImages, timeDeals, bestProducts: allBestProducts.slice(0, 10) };
+    const result = { heroImages, timeDeals, bestProducts: allBestProducts.slice(0, 10) };
+    HomeDataService.homeCache.set(CACHE_KEY_ABOVE_FOLD, result, HOME_CACHE_TTL_MS);
+    return result;
   }
 
   async getBelowFoldData(): Promise<Omit<HomeDataResponse, 'heroImages' | 'timeDeals' | 'bestProducts'>> {
+    const cached = HomeDataService.homeCache.get(CACHE_KEY_BELOW_FOLD);
+    if (cached) {
+      return cached;
+    }
+
     const [
       middleBanners,
       allFreshProducts,
@@ -127,7 +146,7 @@ export class HomeDataService {
       this.getBannersByPosition('HOME_BOTTOM'),
     ]);
 
-    return {
+    const result = {
       middleBanners,
       freshProducts: allFreshProducts.slice(0, 10),
       mdPicks: allMdPicks.slice(0, 10),
@@ -137,5 +156,11 @@ export class HomeDataService {
       bongcookProducts: allBongcookProducts.slice(0, 10),
       bottomBanners,
     };
+    HomeDataService.homeCache.set(CACHE_KEY_BELOW_FOLD, result, HOME_CACHE_TTL_MS);
+    return result;
+  }
+
+  static invalidateCache(): void {
+    HomeDataService.homeCache.invalidateAll();
   }
 }

@@ -64,4 +64,17 @@ router.get('/below-fold', async (_req: Request, res: Response) => {
   }
 });
 
+router.post('/invalidate-cache', async (_req: Request, res: Response) => {
+  try {
+    HomeDataService.invalidateCache();
+    cache.aboveFold = undefined;
+    cache.belowFold = undefined;
+    cache.fullData = undefined;
+    res.json({ success: true, message: 'Home data cache invalidated' });
+  } catch (error) {
+    console.error('Failed to invalidate cache:', error);
+    res.status(500).json({ success: false, message: 'Failed to invalidate cache' });
+  }
+});
+
 export default router;

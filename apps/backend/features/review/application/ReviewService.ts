@@ -5,8 +5,14 @@ import type { ReviewImageRepository } from '../repository/ReviewImageRepository'
 import type { ReviewableOrderItemRepository } from '../repository/ReviewableOrderItemRepository';
 import type { ReviewStatsProvider } from '../../product/application/ProductService';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
+import { MemoryCache } from '../../../common/utils/memoryCache.js';
+
+const REVIEW_STATS_CACHE_TTL_MS = 600000;
 
 export class ReviewService implements ReviewStatsProvider {
+  private static readonly REVIEW_STATS_CACHE_MAX_SIZE = 50;
+  private static reviewStatsCache = new MemoryCache<Map<string, { reviewCount: number; averageRating: number }>>(ReviewService.REVIEW_STATS_CACHE_MAX_SIZE);
+
   constructor(
     private readonly reviewRepository: ReviewRepository,
     private readonly reviewImageRepository: ReviewImageRepository,
@@ -33,7 +39,15 @@ export class ReviewService implements ReviewStatsProvider {
   }
 
   async getReviewStatsByProductIds(productIds: string[]): Promise<Map<string, { reviewCount: number; averageRating: number }>> {
-    return this.reviewRepository.getStatsByProductIds(productIds);
+    const cacheKey = [...productIds].sort().join(',');
+    const cached = ReviewService.reviewStatsCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const result = await this.reviewRepository.getStatsByProductIds(productIds);
+    ReviewService.reviewStatsCache.set(cacheKey, result, REVIEW_STATS_CACHE_TTL_MS);
+    return result;
   }
 
   async createReview(userId: string, request: CreateReviewRequest): Promise<ReviewDto> {
@@ -75,6 +89,7 @@ export class ReviewService implements ReviewStatsProvider {
       throw new Error('Failed to save review');
     }
 
+    ReviewService.reviewStatsCache.invalidateAll();
     return this.toDto(savedReview, imageUrls);
   }
 
@@ -90,6 +105,7 @@ export class ReviewService implements ReviewStatsProvider {
     }
 
     await this.reviewRepository.delete(id);
+    ReviewService.reviewStatsCache.invalidateAll();
   }
 
   async updateReview(id: string, userId: string, request: UpdateReviewRequest): Promise<ReviewDto> {
@@ -121,6 +137,7 @@ export class ReviewService implements ReviewStatsProvider {
       content: request.content,
     });
 
+    ReviewService.reviewStatsCache.invalidateAll();
     return this.toDto(updatedReview, imageUrls);
   }
 
