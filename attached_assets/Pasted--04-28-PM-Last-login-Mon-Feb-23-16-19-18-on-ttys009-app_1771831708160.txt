@@ -1,0 +1,112 @@
+
+김민서
+04:28 PM
+
+번역 보기
+Last login: Mon Feb 23 16:19:18 on ttys009
+
+apple@apples-MacBook-Air bongseonjang 2 % npm i            
+
+npm error code ENOTEMPTY
+
+npm error syscall rename
+
+npm error path /Users/apple/Downloads/bongseonjang 2/apps/backend/node_modules/typeorm
+
+npm error dest /Users/apple/Downloads/bongseonjang 2/apps/backend/node_modules/.typeorm-vKdz3Ho4
+
+npm error errno -66
+
+npm error ENOTEMPTY: directory not empty, rename '/Users/apple/Downloads/bongseonjang 2/apps/backend/node_modules/typeorm' -> '/Users/apple/Downloads/bongseonjang 2/apps/backend/node_modules/.typeorm-vKdz3Ho4'
+
+npm error A complete log of this run can be found in: /Users/apple/.npm/_logs/2026-02-23T07_27_43_114Z-debug-0.log
+
+apple@apples-MacBook-Air bongseonjang 2 % cd apps/frontend
+
+npm run cap:build:ios
+
+> @bongkru/frontend@1.0.0 cap:build:ios
+
+> node scripts/cap-build-ios.js full
+
+=== Capacitor iOS Build ===
+
+Mode: full
+
+=== Full build: reinstalling dependencies ===
+
+> rm -rf node_modules package-lock.json && npm install
+
+npm error code ENOTEMPTY
+
+npm error syscall rename
+
+npm error path /Users/apple/Downloads/bongseonjang 2/apps/backend/node_modules/typeorm
+
+npm error dest /Users/apple/Downloads/bongseonjang 2/apps/backend/node_modules/.typeorm-vKdz3Ho4
+
+npm error errno -66
+
+npm error ENOTEMPTY: directory not empty, rename '/Users/apple/Downloads/bongseonjang 2/apps/backend/node_modules/typeorm' -> '/Users/apple/Downloads/bongseonjang 2/apps/backend/node_modules/.typeorm-vKdz3Ho4'
+
+npm error A complete log of this run can be found in: /Users/apple/.npm/_logs/2026-02-23T07_27_52_590Z-debug-0.log
+
+node:internal/errors:985
+
+  const err = new Error(message);
+
+              ^
+
+Error: Command failed: rm -rf node_modules package-lock.json && npm install
+
+    at genericNodeError (node:internal/errors:985:15)
+
+    at wrappedFn (node:internal/errors:539:14)
+
+    at checkExecSyncError (node:child_process:925:11)
+
+    at execSync (node:child_process:997:15)
+
+    at run (file:///Users/apple/Downloads/bongseonjang%202/apps/frontend/scripts/cap-build-ios.js:18:3)
+
+    at file:///Users/apple/Downloads/bongseonjang%202/apps/frontend/scripts/cap-build-ios.js:123:3
+
+    at ModuleJob.run (node:internal/modules/esm/module_job:413:25)
+
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:660:26)
+
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+
+  status: 190,
+
+  signal: null,
+
+  output: [ null, null, null ],
+
+  pid: 64238,
+
+  stdout: null,
+
+  stderr: null
+
+}
+
+Node.js v24.13.0
+
+npm error Lifecycle script `cap:build:ios` failed with error:
+
+npm error code 1
+
+npm error path /Users/apple/Downloads/bongseonjang 2/apps/frontend
+
+npm error workspace @bongkru/frontend@1.0.0
+
+npm error location /Users/apple/Downloads/bongseonjang 2/apps/frontend
+
+npm error command failed
+
+npm error command sh -c node scripts/cap-build-ios.js full
+
+apple@apples-MacBook-Air frontend % cd apps/frontend
+
+npm run cap:build:ios
