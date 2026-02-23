@@ -26,10 +26,8 @@ export interface HomeDataResponse {
   bottomBanners: Array<{ id: number; imageUrl: string; linkUrl: string | null }>;
 }
 
-export const homeDataCache = new MemoryCache<any>();
-
 export class HomeDataService {
-  private static homeCache = homeDataCache;
+  private static homeCache = new MemoryCache<any>();
 
   private bongseonjangTvService: BongseonjangTvService;
   private productService: ProductService;

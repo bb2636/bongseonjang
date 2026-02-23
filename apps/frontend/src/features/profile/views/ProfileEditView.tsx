@@ -85,7 +85,7 @@ export default function ProfileEditView({
   onVerifyCode,
 }: ProfileEditViewProps) {
 
-  const handleSubmit = (e: React.FormEvent | React.MouseEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit();
   };
@@ -349,18 +349,17 @@ export default function ProfileEditView({
             </button>
           </div>
 
+          <div className="profile-edit__submit-container">
+            <button
+              type="submit"
+              className="profile-edit__submit-button"
+              disabled={isSubmitting}
+              onClick={handleSubmit}
+            >
+              {isSubmitting ? '저장 중...' : '저장'}
+            </button>
+          </div>
         </form>
-      </div>
-
-      <div className="profile-edit__submit-container">
-        <button
-          type="button"
-          className="profile-edit__submit-button"
-          disabled={isSubmitting}
-          onClick={handleSubmit}
-        >
-          {isSubmitting ? '저장 중...' : '저장'}
-        </button>
       </div>
 
       <AlertModal

@@ -141,7 +141,7 @@ export function AddressFormPage() {
     },
   });
 
-  const handleSubmit = async (event: React.FormEvent | React.MouseEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!formData.recipientName.trim()) {
@@ -268,18 +268,14 @@ export function AddressFormPage() {
           </label>
         </div>
 
-      </form>
-
-      <div className="address-form-submit-container">
         <button
-          type="button"
+          type="submit"
           className="address-form-submit-button"
           disabled={isSubmitting}
-          onClick={handleSubmit}
         >
           {isSubmitting ? '저장 중...' : '저장하기'}
         </button>
-      </div>
+      </form>
     </div>
   );
 }

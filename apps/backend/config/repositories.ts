@@ -1,6 +1,7 @@
 import { MockReferralRepository } from '../features/referral/repository/MockReferralRepository';
 import { TypeORMReferralRepository } from '../features/referral/repository/TypeORMReferralRepository';
 import { MockHeroImageRepository } from '../features/home/repository/MockHeroImageRepository';
+import { TypeORMHeroImageRepository } from '../features/home/repository/TypeORMHeroImageRepository';
 import { MockBestProductRepository } from '../features/bestProduct/repository/MockBestProductRepository';
 import { TypeORMBestProductRepository } from '../features/bestProduct/repository/TypeORMBestProductRepository';
 import { MockBongseonjangTvRepository } from '../features/bongseonjangTv/repository/MockBongseonjangTvRepository';
@@ -50,7 +51,7 @@ const repositoryMap: RepositoryMap = {
   },
   heroImage: {
     [REPOSITORY_TYPE.MOCK]: () => new MockHeroImageRepository(),
-    [REPOSITORY_TYPE.REAL]: () => new MockHeroImageRepository(),
+    [REPOSITORY_TYPE.REAL]: () => new TypeORMHeroImageRepository(),
   },
   bestProduct: {
     [REPOSITORY_TYPE.MOCK]: () => new MockBestProductRepository(),

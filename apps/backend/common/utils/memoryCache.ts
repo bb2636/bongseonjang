@@ -13,14 +13,6 @@ export class MemoryCache<T> {
     this.maxSize = maxSize;
   }
 
-  get size(): number {
-    return this.cache.size;
-  }
-
-  get maxSizeValue(): number {
-    return this.maxSize;
-  }
-
   get(key: string): T | null {
     const item = this.cache.get(key);
     if (!item) {
