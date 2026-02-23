@@ -1,9 +1,8 @@
 import { PointWallet, PointHistoryGroup } from '../types/point';
-import PointAppBar from '../components/PointAppBar/PointAppBar';
+import AppBar, { AppBarSpacer } from '@/components/AppBar';
 import PointBalanceCard from '../components/PointBalanceCard/PointBalanceCard';
 import PointHistoryList from '../components/PointHistoryList/PointHistoryList';
 import PointSkeleton from '../components/PointSkeleton';
-import { useCart } from '../../../contexts/CartContext';
 import './PointView.css';
 
 interface PointViewProps {
@@ -23,16 +22,17 @@ interface PointViewProps {
 }
 
 export default function PointView({ state, actions }: PointViewProps) {
-  const { cartCount } = useCart();
-
   if (state.isLoading) {
     return (
       <div className="point-view">
-        <PointAppBar
+        <AppBar
+          variant="subpage"
+          title="포인트"
+          showBackButton
           onBackClick={actions.onBackClick}
           onCartClick={actions.onCartClick}
-          cartCount={cartCount}
         />
+        <AppBarSpacer variant="subpage" />
         <PointSkeleton />
       </div>
     );
@@ -41,11 +41,14 @@ export default function PointView({ state, actions }: PointViewProps) {
   if (state.error) {
     return (
       <div className="point-view">
-        <PointAppBar
+        <AppBar
+          variant="subpage"
+          title="포인트"
+          showBackButton
           onBackClick={actions.onBackClick}
           onCartClick={actions.onCartClick}
-          cartCount={cartCount}
         />
+        <AppBarSpacer variant="subpage" />
         <div className="point-view__error">
           <p className="point-view__error-message">{state.error}</p>
           <button
@@ -62,11 +65,14 @@ export default function PointView({ state, actions }: PointViewProps) {
 
   return (
     <div className="point-view">
-      <PointAppBar
+      <AppBar
+        variant="subpage"
+        title="포인트"
+        showBackButton
         onBackClick={actions.onBackClick}
         onCartClick={actions.onCartClick}
-        cartCount={cartCount}
       />
+      <AppBarSpacer variant="subpage" />
       
       <PointBalanceCard balance={state.wallet?.balance || 0} />
       
