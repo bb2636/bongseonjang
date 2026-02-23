@@ -44,6 +44,7 @@ export function InProgressOrdersView({
           )}
         </button>
       </header>
+      <div className="order-history__header-spacer" />
 
       <div className="order-history__content">
         {isLoading ? (

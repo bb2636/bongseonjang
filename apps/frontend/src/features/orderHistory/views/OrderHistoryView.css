@@ -10,9 +10,18 @@
   align-items: center;
   padding: calc(10px + var(--safe-area-top, 0px)) 8px 10px 8px;
   background: #fff;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.order-history__header-spacer {
+  height: calc(64px + var(--safe-area-top, 0px));
+  flex-shrink: 0;
 }
 
 .order-history__back-button {

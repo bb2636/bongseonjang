@@ -49,8 +49,10 @@ export function OrderHistoryView({
           )}
         </button>
       </header>
+      <div className="order-history__header-spacer" />
 
       <OrderStatusTabs activeTab={activeTab} onTabChange={onTabChange} />
+      <div className="order-status-tabs-spacer" />
 
       <div className="order-history__content">
         {isLoading ? (

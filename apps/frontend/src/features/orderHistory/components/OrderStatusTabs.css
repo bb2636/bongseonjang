@@ -6,6 +6,18 @@
   gap: 8px;
   border-bottom: 1px solid rgba(12, 12, 12, 0.1);
   background: #fff;
+  position: fixed;
+  top: calc(64px + var(--safe-area-top, 0px));
+  left: 0;
+  right: 0;
+  z-index: 99;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.order-status-tabs-spacer {
+  height: 46px;
+  flex-shrink: 0;
 }
 
 .order-status-tabs__tab {
