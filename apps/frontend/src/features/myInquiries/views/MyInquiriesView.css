@@ -59,8 +59,7 @@
   flex-direction: row;
   align-items: center;
   padding: 0px;
-  width: 122px;
-  height: 37px;
+  gap: 0;
 }
 
 .my-inquiries__sort-btn {
