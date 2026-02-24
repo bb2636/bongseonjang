@@ -108,14 +108,21 @@ export default function SearchView({ state, actions }: SearchViewProps) {
                 onChange={actions.onSortChange}
               />
             </div>
-            {!state.isSearching && state.searchResults.length === 0 ? (
+            {state.isSearching ? (
+              <ProductGridContent
+                products={[]}
+                isLoading={true}
+                error={null}
+                onProductClick={actions.onProductClick}
+              />
+            ) : state.searchResults.length === 0 ? (
               <div className="search-view__empty">
                 <p>검색 결과가 없습니다.</p>
               </div>
             ) : (
               <ProductGridContent
                 products={state.searchResults}
-                isLoading={state.isSearching}
+                isLoading={false}
                 error={null}
                 onProductClick={actions.onProductClick}
               />
