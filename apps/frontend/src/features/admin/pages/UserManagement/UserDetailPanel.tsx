@@ -62,6 +62,9 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
 
   useEffect(() => {
     if (isOpen && userId) {
+      setUser(null);
+      setOrders([]);
+      setInquiries([]);
       setActiveTab('basic');
       fetchUserDetail();
       fetchOrders();
@@ -77,6 +80,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
+        cache: 'no-store',
       });
       if (response.ok) {
         const data = await response.json();
@@ -97,6 +101,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
+        cache: 'no-store',
       });
       if (response.ok) {
         const data = await response.json();
@@ -117,6 +122,7 @@ export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProp
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
+        cache: 'no-store',
       });
       if (response.ok) {
         const data = await response.json();

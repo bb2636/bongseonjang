@@ -126,6 +126,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
         : defaultAddress.address;
     }
 
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     return res.json({
       id: user.id,
       name: user.name,
