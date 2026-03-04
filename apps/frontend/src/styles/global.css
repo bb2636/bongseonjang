@@ -125,6 +125,8 @@ html.platform-android body.capacitor-app #root {
   touch-action: pan-y;
 }
 
+html.platform-android .home-shell,
+html.platform-android .home-shell__content,
 html.platform-android .product-detail-view,
 html.platform-android .product-detail-view__content,
 html.platform-android .category-page__content,
