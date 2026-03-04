@@ -192,6 +192,7 @@ export interface PrepareGuestPaymentRequest {
   addressDetail?: string;
   deliveryRequest?: string;
   paymentMethod: 'card' | 'bank' | 'vbank';
+  shippingFee: number;
 }
 
 export async function prepareGuestPayment(data: PrepareGuestPaymentRequest): Promise<PreparePaymentResponse> {

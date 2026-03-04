@@ -336,6 +336,7 @@ export function GuestCheckoutPage() {
         addressDetail: addressDetail || undefined,
         deliveryRequest: finalDeliveryRequest || undefined,
         paymentMethod,
+        shippingFee: 0,
       });
 
       setPaymentStep('connecting');
@@ -552,7 +553,8 @@ export function GuestCheckoutPage() {
       });
     } catch (error) {
       console.error('Payment preparation failed:', error);
-      showToast('결제 준비 중 오류가 발생했습니다', 'error');
+      const errorMessage = error instanceof Error ? error.message : '결제 준비 중 오류가 발생했습니다';
+      showToast(errorMessage, 'error');
       setIsProcessing(false);
     }
   };

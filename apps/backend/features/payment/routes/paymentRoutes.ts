@@ -1666,23 +1666,42 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
       shippingFee = 0
     } = req.body;
 
+    console.log('[PrepareGuest] Request fields:', {
+      hasCartItems: !!cartItems && Array.isArray(cartItems) && cartItems.length,
+      hasGuestName: !!guestName,
+      hasGuestPhone: !!guestPhone,
+      orderPasswordLength: orderPassword?.length,
+      hasRecipientName: !!recipientName,
+      hasRecipientPhone: !!recipientPhone,
+      hasPostalCode: !!postalCode,
+      hasAddress: !!address,
+      hasReturnUrl: !!clientReturnUrl,
+      paymentMethod,
+      shippingFee,
+    });
+
     if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+      console.log('[PrepareGuest] Validation failed: cartItems empty or invalid');
       return res.status(400).json({ error: '결제할 상품을 선택해주세요' });
     }
 
     if (!guestName || !guestPhone) {
+      console.log('[PrepareGuest] Validation failed: guestName or guestPhone missing');
       return res.status(400).json({ error: '주문자 정보를 입력해주세요' });
     }
 
     if (!orderPassword || orderPassword.length < 4 || orderPassword.length > 6) {
+      console.log('[PrepareGuest] Validation failed: orderPassword invalid, length:', orderPassword?.length);
       return res.status(400).json({ error: '주문 비밀번호는 4~6자리로 입력해주세요' });
     }
 
     if (!recipientName || !recipientPhone || !postalCode || !address) {
+      console.log('[PrepareGuest] Validation failed: shipping info missing', { recipientName: !!recipientName, recipientPhone: !!recipientPhone, postalCode: !!postalCode, address: !!address });
       return res.status(400).json({ error: '배송지 정보를 입력해주세요' });
     }
 
     if (!clientReturnUrl) {
+      console.log('[PrepareGuest] Validation failed: returnUrl missing');
       return res.status(400).json({ error: '콜백 URL이 필요합니다' });
     }
 
