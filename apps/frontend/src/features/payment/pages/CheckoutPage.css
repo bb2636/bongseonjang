@@ -1,7 +1,7 @@
 .checkout-page {
   min-height: 100vh;
   background-color: #ffffff;
-  padding-bottom: 80px;
+  padding-bottom: calc(84px + var(--safe-area-bottom, 0px));
 }
 
 .checkout-loading {
