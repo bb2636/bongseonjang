@@ -14,6 +14,8 @@ export class TypeORMBestProductRepository implements BestProductRepository {
       .leftJoinAndSelect('product.images', 'images', 'images.isThumbnail = :isThumbnail', { isThumbnail: true })
       .leftJoin('order_items', 'oi', 'oi."productId" = product.id');
 
+    queryBuilder.andWhere('(product.saleEndDate IS NULL OR product.saleEndDate > :now)', { now: new Date() });
+
     if (filter?.productCategoryId) {
       queryBuilder.andWhere('product.productCategoryId = :categoryId', { categoryId: filter.productCategoryId });
     }
