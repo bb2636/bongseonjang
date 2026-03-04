@@ -1,14 +1,10 @@
 import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
-import { Browser } from '@capacitor/browser';
-import { App as CapacitorApp } from '@capacitor/app';
-import { checkIsCapacitor, getApiBaseUrlDynamic, getAbsoluteApiUrl, CAPACITOR_APP_SCHEME } from '@/shared/config/apiConfig';
+import { checkIsCapacitor, getApiBaseUrlDynamic, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
 
 function getBackendBaseUrl(): string {
   const apiUrl = getAbsoluteApiUrl();
   return apiUrl.replace(/\/api$/, '');
 }
-
-let googleOAuthResolver: ((result: OAuthResult) => void) | null = null;
 
 export interface OAuthResult {
   token?: string;
@@ -56,15 +52,14 @@ async function fetchSessionData(key: string): Promise<OAuthResult> {
   }
 }
 
-let googleOAuthTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let googlePollingIntervalId: ReturnType<typeof setInterval> | null = null;
+let googlePollingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
+async function openInAppBrowserForGoogleOAuth(): Promise<OAuthResult> {
   const apiUrl = getApiBaseUrlDynamic();
-  
-  console.log('[GoogleOAuth] === Starting Google OAuth with Polling Flow ===');
-  
-  // Step 1: Create polling session
+
+  console.log('[GoogleOAuth] === Starting Google OAuth with InAppBrowser + Polling ===');
+
   let pollingSessionId: string;
   try {
     const createResponse = await fetch(`${apiUrl}/auth/polling-session`, {
@@ -82,8 +77,7 @@ async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
     console.error('[GoogleOAuth] Error creating polling session:', e);
     return { error: 'session_create_failed' };
   }
-  
-  // Step 2: Get auth URL with polling session
+
   let authUrl: string;
   try {
     const startResponse = await fetch(`${apiUrl}/auth/start-polling/google?pollingSessionId=${encodeURIComponent(pollingSessionId)}`);
@@ -100,35 +94,53 @@ async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
   }
 
   return new Promise(async (resolve) => {
-    googleOAuthResolver = resolve;
-    
-    // Clear any existing timeout/interval
-    if (googleOAuthTimeoutId) {
-      clearTimeout(googleOAuthTimeoutId);
-    }
+    let resolved = false;
+
     if (googlePollingIntervalId) {
       clearInterval(googlePollingIntervalId);
     }
-    
-    // Step 3: Start polling for result
+    if (googlePollingTimeoutId) {
+      clearTimeout(googlePollingTimeoutId);
+    }
+
+    const cleanup = async () => {
+      if (googlePollingIntervalId) {
+        clearInterval(googlePollingIntervalId);
+        googlePollingIntervalId = null;
+      }
+      if (googlePollingTimeoutId) {
+        clearTimeout(googlePollingTimeoutId);
+        googlePollingTimeoutId = null;
+      }
+      try {
+        await InAppBrowser.removeAllListeners();
+        await InAppBrowser.close();
+      } catch (e) {
+        console.log('[GoogleOAuth] InAppBrowser close error (may be already closed):', e);
+      }
+    };
+
     const pollForResult = async () => {
+      if (resolved) return;
       try {
         const checkResponse = await fetch(`${apiUrl}/auth/polling-session/${pollingSessionId}`);
         if (!checkResponse.ok) {
           if (checkResponse.status === 404) {
             console.log('[GoogleOAuth] Polling session expired');
-            cleanup();
+            resolved = true;
+            await cleanup();
             resolve({ error: 'session_expired' });
           }
           return;
         }
-        
+
         const data = await checkResponse.json();
         console.log('[GoogleOAuth] Poll result:', data.status);
-        
+
         if (data.status === 'completed') {
           console.log('[GoogleOAuth] Login successful via polling!');
-          cleanup();
+          resolved = true;
+          await cleanup();
           resolve({
             token: data.token,
             isNewUser: data.isNewUser,
@@ -136,115 +148,96 @@ async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
           });
         } else if (data.status === 'error') {
           console.log('[GoogleOAuth] Login error via polling:', data.error);
-          cleanup();
+          resolved = true;
+          await cleanup();
           resolve({ error: data.error || 'login_failed' });
         }
-        // status === 'pending' means keep polling
       } catch (e) {
         console.error('[GoogleOAuth] Polling error:', e);
       }
     };
-    
-    const cleanup = async () => {
+
+    const handleUrlChange = async (event: UrlEvent) => {
+      const url = event.url;
+      console.log('[GoogleOAuth] URL changed:', url);
+
+      if (url.includes('/social-callback') && !resolved) {
+        try {
+          const urlObj = new URL(url);
+          const key = urlObj.searchParams.get('key');
+
+          if (key) {
+            resolved = true;
+            console.log('[GoogleOAuth] Detected callback with key:', key);
+            await cleanup();
+            const result = await fetchSessionData(key);
+            resolve(result);
+          }
+        } catch (e) {
+          console.error('[GoogleOAuth] Error parsing callback URL:', e);
+        }
+      }
+    };
+
+    const handleClose = () => {
+      console.log('[GoogleOAuth] InAppBrowser closed');
+      if (!resolved) {
+        resolved = true;
+        if (googlePollingIntervalId) {
+          clearInterval(googlePollingIntervalId);
+          googlePollingIntervalId = null;
+        }
+        if (googlePollingTimeoutId) {
+          clearTimeout(googlePollingTimeoutId);
+          googlePollingTimeoutId = null;
+        }
+        InAppBrowser.removeAllListeners();
+        resolve({ error: 'cancelled' });
+      }
+    };
+
+    await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
+    await InAppBrowser.addListener('closeEvent', handleClose);
+
+    googlePollingIntervalId = setInterval(pollForResult, 2000);
+
+    googlePollingTimeoutId = setTimeout(async () => {
+      if (!resolved) {
+        console.log('[GoogleOAuth] Timeout reached (5 min)');
+        resolved = true;
+        await cleanup();
+        resolve({ error: 'timeout' });
+      }
+    }, 5 * 60 * 1000);
+
+    try {
+      await InAppBrowser.openWebView({
+        url: authUrl,
+        title: '구글 로그인',
+        isPresentAfterPageLoad: true,
+        activeNativeNavigationForWebview: true,
+      });
+      console.log('[GoogleOAuth] InAppBrowser opened');
+    } catch (err) {
+      console.error('[GoogleOAuth] Failed to open InAppBrowser:', err);
+      resolved = true;
       if (googlePollingIntervalId) {
         clearInterval(googlePollingIntervalId);
         googlePollingIntervalId = null;
       }
-      if (googleOAuthTimeoutId) {
-        clearTimeout(googleOAuthTimeoutId);
-        googleOAuthTimeoutId = null;
+      if (googlePollingTimeoutId) {
+        clearTimeout(googlePollingTimeoutId);
+        googlePollingTimeoutId = null;
       }
-      googleOAuthResolver = null;
-      try {
-        await Browser.close();
-      } catch (e) {
-        console.log('[GoogleOAuth] Browser close error (may be already closed):', e);
-      }
-    };
-    
-    // Poll every 2 seconds
-    googlePollingIntervalId = setInterval(pollForResult, 2000);
-    
-    // Timeout after 5 minutes
-    googleOAuthTimeoutId = setTimeout(async () => {
-      console.log('[GoogleOAuth] Timeout reached (5 min)');
-      cleanup();
-      resolve({ error: 'timeout' });
-    }, 5 * 60 * 1000);
-
-    // Step 4: Open browser
-    try {
-      await Browser.open({ url: authUrl, windowName: '_blank' });
-      console.log('[GoogleOAuth] System browser opened successfully');
-    } catch (err) {
-      console.error('[GoogleOAuth] Failed to open system browser:', err);
-      cleanup();
+      await InAppBrowser.removeAllListeners();
       resolve({ error: 'browser_open_failed' });
     }
   });
 }
 
 export async function handleGoogleOAuthDeepLink(url: string): Promise<boolean> {
-  console.log('[GoogleOAuth] handleGoogleOAuthDeepLink called:', url);
-  console.log('[GoogleOAuth] googleOAuthResolver exists:', !!googleOAuthResolver);
-  
-  try {
-    console.log('[GoogleOAuth] Closing system browser...');
-    await Browser.close();
-    console.log('[GoogleOAuth] Browser closed');
-  } catch (e) {
-    console.log('[GoogleOAuth] Browser close error (non-fatal):', e);
-  }
-  
-  if (!googleOAuthResolver) {
-    console.log('[GoogleOAuth] No resolver found, will navigate to social-callback');
-    return false;
-  }
-
-  const schemePrefix = `${CAPACITOR_APP_SCHEME}://oauth/google/callback`;
-  if (!url.startsWith(schemePrefix)) {
-    console.log('[GoogleOAuth] URL does not match Google OAuth callback pattern');
-    return false;
-  }
-
-  const resolver = googleOAuthResolver;
-  googleOAuthResolver = null;
-  
-  if (googleOAuthTimeoutId) {
-    clearTimeout(googleOAuthTimeoutId);
-    googleOAuthTimeoutId = null;
-    console.log('[GoogleOAuth] Timeout cleared');
-  }
-
-  try {
-    const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
-    const key = urlObj.searchParams.get('key');
-    const error = urlObj.searchParams.get('error');
-
-    console.log('[GoogleOAuth] Parsed URL - key:', key, 'error:', error);
-
-    if (error) {
-      console.log('[GoogleOAuth] OAuth error:', error);
-      resolver({ error });
-      return true;
-    }
-
-    if (key) {
-      console.log('[GoogleOAuth] Fetching session data for key:', key);
-      const result = await fetchSessionData(key);
-      console.log('[GoogleOAuth] Session data result:', JSON.stringify(result));
-      resolver(result);
-      return true;
-    }
-
-    console.log('[GoogleOAuth] No key in callback URL');
-    resolver({ error: 'no_key' });
-    return true;
-  } catch (e) {
-    console.error('[GoogleOAuth] Error handling callback:', e);
-    resolver({ error: 'callback_parse_failed' });
-    return true;
-  }
+  console.log('[GoogleOAuth] handleGoogleOAuthDeepLink called (no-op with InAppBrowser):', url);
+  return false;
 }
 
 async function openInAppBrowserForOAuth(provider: string): Promise<OAuthResult> {
@@ -379,7 +372,7 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
   console.log('[GoogleOAuth] googleAuthorize called, isCapacitor:', isCapacitor);
   
   if (isCapacitor) {
-    return await openSystemBrowserForGoogleOAuth();
+    return await openInAppBrowserForGoogleOAuth();
   }
   
   redirectToWebOAuth('google');
@@ -407,18 +400,9 @@ async function openNativeAppleSignIn(): Promise<OAuthResult> {
     });
 
     console.log('[AppleOAuth] Native sign in successful');
-    console.log('[AppleOAuth] Full result keys:', Object.keys(result));
-    console.log('[AppleOAuth] Response keys:', result.response ? Object.keys(result.response) : 'no response');
     console.log('[AppleOAuth] Has identityToken:', !!result.response.identityToken);
-    console.log('[AppleOAuth] identityToken type:', typeof result.response.identityToken);
-    console.log('[AppleOAuth] identityToken length:', result.response.identityToken?.length);
-    console.log('[AppleOAuth] identityToken first 50 chars:', result.response.identityToken?.substring(0, 50));
-    console.log('[AppleOAuth] identityToken dot count:', result.response.identityToken?.split('.').length);
     console.log('[AppleOAuth] Has authorizationCode:', !!result.response.authorizationCode);
     console.log('[AppleOAuth] Has email:', !!result.response.email);
-    console.log('[AppleOAuth] Has givenName:', !!result.response.givenName);
-    console.log('[AppleOAuth] Has familyName:', !!result.response.familyName);
-    console.log('[AppleOAuth] user (sub):', result.response.user);
 
     const response = await fetch(`${apiUrl}/auth/apple/native-callback`, {
       method: 'POST',
@@ -466,14 +450,13 @@ async function openNativeAppleSignIn(): Promise<OAuthResult> {
   }
 }
 
-let appleOAuthResolver: ((result: OAuthResult) => void) | null = null;
-let appleOAuthTimeoutId: ReturnType<typeof setTimeout> | null = null;
 let applePollingIntervalId: ReturnType<typeof setInterval> | null = null;
+let applePollingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-async function openSystemBrowserForAppleOAuth(): Promise<OAuthResult> {
+async function openInAppBrowserForAppleOAuth(): Promise<OAuthResult> {
   const apiUrl = getApiBaseUrlDynamic();
 
-  console.log('[AppleOAuth] === Starting Apple OAuth with Polling Flow ===');
+  console.log('[AppleOAuth] === Starting Apple OAuth with InAppBrowser + Polling ===');
 
   let pollingSessionId: string;
   try {
@@ -509,22 +492,41 @@ async function openSystemBrowserForAppleOAuth(): Promise<OAuthResult> {
   }
 
   return new Promise(async (resolve) => {
-    appleOAuthResolver = resolve;
+    let resolved = false;
 
-    if (appleOAuthTimeoutId) {
-      clearTimeout(appleOAuthTimeoutId);
-    }
     if (applePollingIntervalId) {
       clearInterval(applePollingIntervalId);
     }
+    if (applePollingTimeoutId) {
+      clearTimeout(applePollingTimeoutId);
+    }
+
+    const cleanup = async () => {
+      if (applePollingIntervalId) {
+        clearInterval(applePollingIntervalId);
+        applePollingIntervalId = null;
+      }
+      if (applePollingTimeoutId) {
+        clearTimeout(applePollingTimeoutId);
+        applePollingTimeoutId = null;
+      }
+      try {
+        await InAppBrowser.removeAllListeners();
+        await InAppBrowser.close();
+      } catch (e) {
+        console.log('[AppleOAuth] InAppBrowser close error (may be already closed):', e);
+      }
+    };
 
     const pollForResult = async () => {
+      if (resolved) return;
       try {
         const checkResponse = await fetch(`${apiUrl}/auth/polling-session/${pollingSessionId}`);
         if (!checkResponse.ok) {
           if (checkResponse.status === 404) {
             console.log('[AppleOAuth] Polling session expired');
-            cleanup();
+            resolved = true;
+            await cleanup();
             resolve({ error: 'session_expired' });
           }
           return;
@@ -535,7 +537,8 @@ async function openSystemBrowserForAppleOAuth(): Promise<OAuthResult> {
 
         if (data.status === 'completed') {
           console.log('[AppleOAuth] Login successful via polling!');
-          cleanup();
+          resolved = true;
+          await cleanup();
           if (data.requiresEmail) {
             resolve({
               requiresEmail: true,
@@ -552,7 +555,8 @@ async function openSystemBrowserForAppleOAuth(): Promise<OAuthResult> {
           }
         } else if (data.status === 'error') {
           console.log('[AppleOAuth] Login error via polling:', data.error);
-          cleanup();
+          resolved = true;
+          await cleanup();
           resolve({ error: data.error || 'login_failed' });
         }
       } catch (e) {
@@ -560,37 +564,79 @@ async function openSystemBrowserForAppleOAuth(): Promise<OAuthResult> {
       }
     };
 
-    const cleanup = async () => {
+    const handleUrlChange = async (event: UrlEvent) => {
+      const url = event.url;
+      console.log('[AppleOAuth] URL changed:', url);
+
+      if (url.includes('/social-callback') && !resolved) {
+        try {
+          const urlObj = new URL(url);
+          const key = urlObj.searchParams.get('key');
+
+          if (key) {
+            resolved = true;
+            console.log('[AppleOAuth] Detected callback with key:', key);
+            await cleanup();
+            const result = await fetchSessionData(key);
+            resolve(result);
+          }
+        } catch (e) {
+          console.error('[AppleOAuth] Error parsing callback URL:', e);
+        }
+      }
+    };
+
+    const handleClose = () => {
+      console.log('[AppleOAuth] InAppBrowser closed');
+      if (!resolved) {
+        resolved = true;
+        if (applePollingIntervalId) {
+          clearInterval(applePollingIntervalId);
+          applePollingIntervalId = null;
+        }
+        if (applePollingTimeoutId) {
+          clearTimeout(applePollingTimeoutId);
+          applePollingTimeoutId = null;
+        }
+        InAppBrowser.removeAllListeners();
+        resolve({ error: 'cancelled' });
+      }
+    };
+
+    await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
+    await InAppBrowser.addListener('closeEvent', handleClose);
+
+    applePollingIntervalId = setInterval(pollForResult, 2000);
+
+    applePollingTimeoutId = setTimeout(async () => {
+      if (!resolved) {
+        console.log('[AppleOAuth] Timeout reached (5 min)');
+        resolved = true;
+        await cleanup();
+        resolve({ error: 'timeout' });
+      }
+    }, 5 * 60 * 1000);
+
+    try {
+      await InAppBrowser.openWebView({
+        url: authUrl,
+        title: '애플 로그인',
+        isPresentAfterPageLoad: true,
+        activeNativeNavigationForWebview: true,
+      });
+      console.log('[AppleOAuth] InAppBrowser opened');
+    } catch (err) {
+      console.error('[AppleOAuth] Failed to open InAppBrowser:', err);
+      resolved = true;
       if (applePollingIntervalId) {
         clearInterval(applePollingIntervalId);
         applePollingIntervalId = null;
       }
-      if (appleOAuthTimeoutId) {
-        clearTimeout(appleOAuthTimeoutId);
-        appleOAuthTimeoutId = null;
+      if (applePollingTimeoutId) {
+        clearTimeout(applePollingTimeoutId);
+        applePollingTimeoutId = null;
       }
-      appleOAuthResolver = null;
-      try {
-        await Browser.close();
-      } catch (e) {
-        console.log('[AppleOAuth] Browser close error (may be already closed):', e);
-      }
-    };
-
-    applePollingIntervalId = setInterval(pollForResult, 2000);
-
-    appleOAuthTimeoutId = setTimeout(async () => {
-      console.log('[AppleOAuth] Timeout reached (5 min)');
-      cleanup();
-      resolve({ error: 'timeout' });
-    }, 5 * 60 * 1000);
-
-    try {
-      await Browser.open({ url: authUrl, windowName: '_blank' });
-      console.log('[AppleOAuth] System browser opened successfully');
-    } catch (err) {
-      console.error('[AppleOAuth] Failed to open system browser:', err);
-      cleanup();
+      await InAppBrowser.removeAllListeners();
       resolve({ error: 'browser_open_failed' });
     }
   });
@@ -601,7 +647,7 @@ export async function appleAuthorize(): Promise<OAuthResult | void> {
   console.log('[AppleOAuth] appleAuthorize called, isCapacitor:', isCapacitor);
 
   if (isCapacitor) {
-    return await openSystemBrowserForAppleOAuth();
+    return await openInAppBrowserForAppleOAuth();
   }
 
   redirectToWebOAuth('apple');
