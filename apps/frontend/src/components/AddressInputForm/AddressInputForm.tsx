@@ -135,7 +135,7 @@ export function AddressInputForm({
             url: searchUrl, 
             title: '주소 검색',
             isPresentAfterPageLoad: true,
-            activeNativeNavigationForWebview: true,
+            showArrow: true,
           });
           console.log('[AddressSearch] InAppBrowser opened');
         } catch (err) {
