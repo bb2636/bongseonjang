@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, cpSync, existsSync, rmSync } from 'fs';
+import { readFileSync, writeFileSync, cpSync, existsSync, rmSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -9,7 +9,9 @@ const frontendDir = join(__dirname, '..');
 const androidDir = join(frontendDir, 'android');
 const nodeModulesDir = join(frontendDir, 'node_modules');
 
-const plugins = [
+const CAPACITOR_VERSION = '7.4.4';
+
+const ANDROID_PLUGINS = [
   { name: 'capacitor-app', source: '@capacitor/app/android' },
   { name: 'capacitor-browser', source: '@capacitor/browser/android' },
   { name: 'capacitor-camera', source: '@capacitor/camera/android' },
@@ -17,64 +19,108 @@ const plugins = [
   { name: 'capgo-inappbrowser', source: '@capgo/inappbrowser/android' },
 ];
 
-const IOS_ONLY_PLUGINS = [
-  'capacitor-community-apple-sign-in',
-];
+const VALID_GRADLE_PROJECTS = new Set([
+  ...ANDROID_PLUGINS.map(p => p.name),
+  'capacitor-android',
+  'capacitor-cordova-android-plugins',
+]);
 
-try {
-  for (const plugin of plugins) {
+function copyPlugins() {
+  for (const plugin of ANDROID_PLUGINS) {
     const sourcePath = join(nodeModulesDir, plugin.source);
     const destPath = join(androidDir, plugin.name);
 
-    if (existsSync(sourcePath)) {
-      if (existsSync(destPath)) {
-        rmSync(destPath, { recursive: true, force: true });
-      }
-      cpSync(sourcePath, destPath, { recursive: true });
-      console.log(`✔ Copied ${plugin.name}`);
-    } else {
+    if (!existsSync(sourcePath)) {
       console.error(`✖ Source not found: ${sourcePath}`);
+      continue;
     }
+
+    if (existsSync(destPath)) {
+      rmSync(destPath, { recursive: true, force: true });
+    }
+    cpSync(sourcePath, destPath, { recursive: true });
+    console.log(`✔ Copied ${plugin.name}`);
+
+    patchPluginBuildGradle(destPath, plugin.name);
+  }
+}
+
+function patchPluginBuildGradle(pluginDir, pluginName) {
+  const buildGradlePath = join(pluginDir, 'build.gradle');
+  if (!existsSync(buildGradlePath)) return;
+
+  let content = readFileSync(buildGradlePath, 'utf8');
+  let patched = false;
+
+  if (content.includes("System.getenv('CAPACITOR_VERSION')")) {
+    content = content.replace(
+      /capacitorVersion\s*=\s*System\.getenv\('CAPACITOR_VERSION'\)/g,
+      `capacitorVersion = System.getenv('CAPACITOR_VERSION') ?: '${CAPACITOR_VERSION}'`
+    );
+    patched = true;
   }
 
+  if (patched) {
+    writeFileSync(buildGradlePath, content, 'utf8');
+    console.log(`  ✔ Patched ${pluginName}/build.gradle (capacitorVersion fallback)`);
+  }
+}
+
+function writeSettingsGradle() {
   const settingsGradlePath = join(androidDir, 'settings.gradle');
-  const pluginIncludes = plugins
-    .map(p => `include ':${p.name}'\nproject(':${p.name}').projectDir = new File('./${p.name}')`)
-    .join('\n\n');
 
-  const settingsContent = `include ':app'
-include ':capacitor-cordova-android-plugins'
-project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
+  const lines = [
+    "include ':app'",
+    "include ':capacitor-cordova-android-plugins'",
+    "project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')",
+    "",
+    "include ':capacitor-android'",
+    "project(':capacitor-android').projectDir = new File('./capacitor-android')",
+  ];
 
-include ':capacitor-android'
-project(':capacitor-android').projectDir = new File('./capacitor-android')
-
-${pluginIncludes}
-`;
-
-  writeFileSync(settingsGradlePath, settingsContent, 'utf8');
-  console.log('✔ Updated settings.gradle with local plugin paths');
-
-  const buildGradlePath = join(androidDir, 'app', 'capacitor.build.gradle');
-  if (existsSync(buildGradlePath)) {
-    let buildGradleContent = readFileSync(buildGradlePath, 'utf8');
-    let cleaned = false;
-
-    for (const iosPlugin of IOS_ONLY_PLUGINS) {
-      const regex = new RegExp(`.*${iosPlugin}.*\\n?`, 'g');
-      if (regex.test(buildGradleContent)) {
-        buildGradleContent = buildGradleContent.replace(regex, '');
-        cleaned = true;
-        console.log(`✔ Removed iOS-only plugin reference: ${iosPlugin}`);
-      }
-    }
-
-    if (cleaned) {
-      writeFileSync(buildGradlePath, buildGradleContent, 'utf8');
-      console.log('✔ Cleaned capacitor.build.gradle');
-    }
+  for (const plugin of ANDROID_PLUGINS) {
+    lines.push('');
+    lines.push(`include ':${plugin.name}'`);
+    lines.push(`project(':${plugin.name}').projectDir = new File('./${plugin.name}')`);
   }
+  lines.push('');
 
+  writeFileSync(settingsGradlePath, lines.join('\n'), 'utf8');
+  console.log('✔ Updated settings.gradle');
+}
+
+function cleanCapacitorBuildGradle() {
+  const buildGradlePath = join(androidDir, 'app', 'capacitor.build.gradle');
+  if (!existsSync(buildGradlePath)) return;
+
+  let content = readFileSync(buildGradlePath, 'utf8');
+  const originalContent = content;
+
+  const lines = content.split('\n');
+  const cleanedLines = lines.filter(line => {
+    const projectMatch = line.match(/project\(':([^']+)'\)/);
+    if (!projectMatch) return true;
+
+    const projectName = projectMatch[1];
+    if (VALID_GRADLE_PROJECTS.has(projectName)) return true;
+
+    console.log(`  ✔ Removed invalid project reference: ${projectName}`);
+    return false;
+  });
+
+  content = cleanedLines.join('\n');
+
+  if (content !== originalContent) {
+    writeFileSync(buildGradlePath, content, 'utf8');
+    console.log('✔ Cleaned capacitor.build.gradle');
+  }
+}
+
+try {
+  console.log('--- Fixing Android Capacitor build ---');
+  copyPlugins();
+  writeSettingsGradle();
+  cleanCapacitorBuildGradle();
   console.log('✔ Android build is now standalone - no node_modules required');
 } catch (error) {
   console.error('Failed to fix capacitor build:', error.message);
