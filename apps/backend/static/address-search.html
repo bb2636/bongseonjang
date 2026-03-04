@@ -31,12 +31,21 @@
       oncomplete: function(data) {
         var address = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
         var zonecode = data.zonecode;
-        
-        var resultUrl = window.location.origin + '/address-callback?' +
-          'zonecode=' + encodeURIComponent(zonecode) +
-          '&address=' + encodeURIComponent(address);
-        
-        window.location.href = resultUrl;
+
+        if (window.mobileApp && typeof window.mobileApp.postMessage === 'function') {
+          window.mobileApp.postMessage({
+            detail: {
+              type: 'address-result',
+              zonecode: zonecode,
+              address: address
+            }
+          });
+        } else {
+          var resultUrl = window.location.origin + '/address-callback?' +
+            'zonecode=' + encodeURIComponent(zonecode) +
+            '&address=' + encodeURIComponent(address);
+          window.location.href = resultUrl;
+        }
       },
       width: '100%',
       height: '100%'

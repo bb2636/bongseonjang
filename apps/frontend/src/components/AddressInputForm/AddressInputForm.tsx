@@ -61,6 +61,31 @@ export function AddressInputForm({
       let resolved = false;
       let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
+      const cleanup = async () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+        await InAppBrowser.removeAllListeners();
+      };
+
+      const handleResult = async (zonecode: string, addressValue: string) => {
+        if (resolved) return;
+        resolved = true;
+        console.log('[AddressSearch] Detected address result:', { zonecode, address: addressValue });
+        await cleanup();
+        await InAppBrowser.close().catch(() => {});
+        resolve({ zonecode, address: addressValue });
+      };
+
+      const handleMessage = async (event: { detail?: { type?: string; zonecode?: string; address?: string } }) => {
+        console.log('[AddressSearch] Message from webview:', event);
+        const detail = event?.detail;
+        if (detail?.type === 'address-result' && detail.zonecode && detail.address) {
+          await handleResult(detail.zonecode, detail.address);
+        }
+      };
+
       const handleUrlChange = async (event: UrlEvent) => {
         const url = event.url;
         console.log('[AddressSearch] URL changed:', url);
@@ -71,19 +96,8 @@ export function AddressInputForm({
             const zonecode = urlObj.searchParams.get('zonecode');
             const addressValue = urlObj.searchParams.get('address');
 
-            if (zonecode && addressValue && !resolved) {
-              resolved = true;
-              console.log('[AddressSearch] Detected address result:', { zonecode, address: addressValue });
-
-              if (timeoutId) {
-                clearTimeout(timeoutId);
-                timeoutId = null;
-              }
-
-              await InAppBrowser.removeAllListeners();
-              await InAppBrowser.close();
-
-              resolve({ zonecode, address: addressValue });
+            if (zonecode && addressValue) {
+              await handleResult(zonecode, addressValue);
             }
           } catch (e) {
             console.error('[AddressSearch] Error parsing callback URL:', e);
@@ -96,16 +110,13 @@ export function AddressInputForm({
 
         if (!resolved) {
           resolved = true;
-          if (timeoutId) {
-            clearTimeout(timeoutId);
-            timeoutId = null;
-          }
-          InAppBrowser.removeAllListeners();
+          cleanup();
           resolve(null);
         }
       };
 
       (async () => {
+        await InAppBrowser.addListener('messageFromWebview', handleMessage);
         await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
         await InAppBrowser.addListener('closeEvent', handleClose);
 
