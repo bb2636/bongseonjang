@@ -1,7 +1,27 @@
-import { useCallback } from 'react';
-import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
-import { checkIsCapacitor, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { checkIsCapacitor } from '@/shared/config/apiConfig';
 import './AddressInputForm.css';
+
+declare global {
+  interface Window {
+    daum?: {
+      Postcode: new (options: {
+        oncomplete: (data: {
+          zonecode: string;
+          roadAddress: string;
+          jibunAddress: string;
+          userSelectedType: 'R' | 'J';
+        }) => void;
+        onclose?: () => void;
+        width?: string | number;
+        height?: string | number;
+      }) => {
+        open: () => void;
+        embed: (element: HTMLElement) => void;
+      };
+    };
+  }
+}
 
 export interface AddressData {
   addressName: string;
@@ -29,9 +49,29 @@ interface AddressInputFormProps {
   label?: string;
 }
 
-function getBackendBaseUrl(): string {
-  const apiUrl = getAbsoluteApiUrl();
-  return apiUrl.replace(/\/api$/, '');
+const DAUM_POSTCODE_SCRIPT_URL = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+
+function loadDaumPostcodeScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (window.daum?.Postcode) {
+      resolve();
+      return;
+    }
+
+    const existing = document.querySelector(`script[src*="postcode.v2.js"]`);
+    if (existing) {
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', () => reject(new Error('Failed to load Daum Postcode script')));
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = DAUM_POSTCODE_SCRIPT_URL;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Daum Postcode script'));
+    document.head.appendChild(script);
+  });
 }
 
 export function AddressInputForm({
@@ -50,113 +90,74 @@ export function AddressInputForm({
   label = '배송지',
 }: AddressInputFormProps) {
   const isCapacitor = checkIsCapacitor();
+  const [showModal, setShowModal] = useState(false);
+  const embedRef = useRef<HTMLDivElement>(null);
 
-  const openAddressSearchInAppBrowser = useCallback(async () => {
-    const backendUrl = getBackendBaseUrl();
-    const searchUrl = `${backendUrl}/static/address-search.html`;
+  const historyPushedRef = useRef(false);
 
-    console.log('[AddressSearch] Opening InAppBrowser:', searchUrl);
-
-    return new Promise<{ zonecode: string; address: string } | null>((resolve) => {
-      let resolved = false;
-      let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-      const cleanup = async () => {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-          timeoutId = null;
-        }
-        await InAppBrowser.removeAllListeners();
-      };
-
-      const handleResult = async (zonecode: string, addressValue: string) => {
-        if (resolved) return;
-        resolved = true;
-        console.log('[AddressSearch] Detected address result:', { zonecode, address: addressValue });
-        await cleanup();
-        await InAppBrowser.close().catch(() => {});
-        resolve({ zonecode, address: addressValue });
-      };
-
-      const handleMessage = async (event: { detail?: { type?: string; zonecode?: string; address?: string } }) => {
-        console.log('[AddressSearch] Message from webview:', event);
-        const detail = event?.detail;
-        if (detail?.type === 'address-result' && detail.zonecode && detail.address) {
-          await handleResult(detail.zonecode, detail.address);
-        }
-      };
-
-      const handleUrlChange = async (event: UrlEvent) => {
-        const url = event.url;
-        console.log('[AddressSearch] URL changed:', url);
-
-        if (url.includes('/address-callback')) {
-          try {
-            const urlObj = new URL(url);
-            const zonecode = urlObj.searchParams.get('zonecode');
-            const addressValue = urlObj.searchParams.get('address');
-
-            if (zonecode && addressValue) {
-              await handleResult(zonecode, addressValue);
-            }
-          } catch (e) {
-            console.error('[AddressSearch] Error parsing callback URL:', e);
-          }
-        }
-      };
-
-      const handleClose = () => {
-        console.log('[AddressSearch] InAppBrowser closed');
-
-        if (!resolved) {
-          resolved = true;
-          cleanup();
-          resolve(null);
-        }
-      };
-
-      (async () => {
-        await InAppBrowser.addListener('messageFromWebview', handleMessage);
-        await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
-        await InAppBrowser.addListener('closeEvent', handleClose);
-
-        timeoutId = setTimeout(async () => {
-          if (!resolved) {
-            console.log('[AddressSearch] Timeout reached');
-            resolved = true;
-            await InAppBrowser.removeAllListeners();
-            await InAppBrowser.close().catch(() => {});
-            resolve(null);
-          }
-        }, 5 * 60 * 1000);
-
-        try {
-          await InAppBrowser.openWebView({ 
-            url: searchUrl, 
-            title: '주소 검색',
-            isPresentAfterPageLoad: true,
-            showArrow: true,
-          });
-          console.log('[AddressSearch] InAppBrowser opened');
-        } catch (err) {
-          console.error('[AddressSearch] Failed to open InAppBrowser:', err);
-          if (timeoutId) {
-            clearTimeout(timeoutId);
-          }
-          await InAppBrowser.removeAllListeners();
-          resolved = true;
-          resolve(null);
-        }
-      })();
-    });
+  const closeModal = useCallback(() => {
+    if (historyPushedRef.current) {
+      historyPushedRef.current = false;
+      window.history.back();
+    }
+    setShowModal(false);
   }, []);
+
+  useEffect(() => {
+    if (!showModal || !isCapacitor) return;
+
+    let mounted = true;
+
+    const initPostcode = async () => {
+      try {
+        await loadDaumPostcodeScript();
+      } catch {
+        if (mounted) {
+          onSearchError?.('주소 검색 서비스를 불러오지 못했습니다.');
+          setShowModal(false);
+        }
+        return;
+      }
+
+      if (!mounted || !embedRef.current || !window.daum?.Postcode) return;
+
+      embedRef.current.innerHTML = '';
+
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          const selectedAddress = data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress;
+          onAddressSearch(data.zonecode, selectedAddress);
+          if (historyPushedRef.current) {
+            historyPushedRef.current = false;
+            window.history.back();
+          }
+          setShowModal(false);
+        },
+        width: '100%',
+        height: '100%',
+      }).embed(embedRef.current);
+    };
+
+    initPostcode();
+
+    const handleBackButton = () => {
+      historyPushedRef.current = false;
+      if (mounted) setShowModal(false);
+    };
+
+    historyPushedRef.current = true;
+    window.history.pushState({ addressModal: true }, '');
+    window.addEventListener('popstate', handleBackButton);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, [showModal, isCapacitor, onAddressSearch, onSearchError]);
 
   const handleAddressSearch = useCallback(async () => {
     if (isCapacitor) {
-      const result = await openAddressSearchInAppBrowser();
-      if (result) {
-        onAddressSearch(result.zonecode, result.address);
-      }
+      setShowModal(true);
     } else {
       if (!window.daum?.Postcode) {
         onSearchError?.('주소 검색 서비스를 불러오지 못했습니다. 페이지를 새로고침 해주세요.');
@@ -170,7 +171,7 @@ export function AddressInputForm({
         },
       }).open();
     }
-  }, [isCapacitor, onAddressSearch, onSearchError, openAddressSearchInAppBrowser]);
+  }, [isCapacitor, onAddressSearch, onSearchError]);
 
   const getInputBoxClass = (hasError: boolean, isFull = false) => {
     let className = 'address-input-form__input-box';
@@ -237,6 +238,23 @@ export function AddressInputForm({
           <span className="address-input-form__error">{errors.address}</span>
         )}
       </div>
+
+      {showModal && isCapacitor && (
+        <div className="address-modal-overlay" onClick={closeModal}>
+          <div className="address-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="address-modal__header">
+              <button type="button" className="address-modal__back" onClick={closeModal}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 18L9 12L15 6" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <span className="address-modal__title">주소 검색</span>
+              <div style={{ width: 24 }} />
+            </div>
+            <div className="address-modal__content" ref={embedRef} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
