@@ -11,7 +11,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 2px 8px;
+  padding: 10px 8px 10px 16px;
   height: 48px;
   position: fixed;
   top: var(--safe-area-top, 0px);
@@ -19,6 +19,7 @@
   right: 0;
   z-index: 1000;
   background: #ffffff;
+  box-sizing: border-box;
 }
 
 .profile-withdraw__header::before {
@@ -31,26 +32,20 @@
   background: #ffffff;
 }
 
-.profile-withdraw__header-left {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  width: 44px;
-  height: 44px;
-}
-
 .profile-withdraw__back-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 44px;
   height: 44px;
-  background: none;
-  border: none;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-left: -8px;
+  flex-shrink: 0;
 }
 
 .profile-withdraw__header-center {

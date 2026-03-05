@@ -11,14 +11,20 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 2px 8px;
+  padding: 10px 8px 10px 16px;
   height: 48px;
+  box-sizing: border-box;
   position: fixed;
   top: var(--safe-area-top, 0px);
   left: 0;
   right: 0;
   z-index: 1000;
   background: #ffffff;
+  flex-shrink: 0;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .guest-order-detail__header::before {
@@ -28,7 +34,7 @@
   left: 0;
   right: 0;
   height: var(--safe-area-top, 0px);
-  background: #ffffff;
+  background: inherit;
 }
 
 .guest-order-detail__back-button {
@@ -37,9 +43,12 @@
   align-items: center;
   width: 44px;
   height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   background: transparent;
   border: none;
   cursor: pointer;
+  margin-left: -8px;
 }
 
 .guest-order-detail__title {

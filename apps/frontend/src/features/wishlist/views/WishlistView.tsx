@@ -1,4 +1,4 @@
-import { WishlistAppBar } from '../components/WishlistAppBar';
+import { WishlistAppBar, WishlistAppBarSpacer } from '../components/WishlistAppBar';
 import { WishlistProductCard } from '../components/WishlistProductCard';
 import WishlistSkeleton from '../components/WishlistSkeleton';
 import type { WishlistItem } from '../api/wishlistApi';
@@ -35,6 +35,7 @@ export default function WishlistView({
           onCartClick={onCartClick}
           cartCount={cartCount}
         />
+        <WishlistAppBarSpacer />
         <WishlistSkeleton />
       </div>
     );
@@ -47,6 +48,7 @@ export default function WishlistView({
         onCartClick={onCartClick}
         cartCount={cartCount}
       />
+      <WishlistAppBarSpacer />
 
       <div className="wishlist__count">
         전체 {count}개

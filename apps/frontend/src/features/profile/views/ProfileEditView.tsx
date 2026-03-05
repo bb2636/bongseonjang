@@ -122,8 +122,7 @@ export default function ProfileEditView({
   return (
     <div className="profile-edit">
       <header className="profile-edit__header">
-        <div className="profile-edit__header-left">
-          <button
+        <button
             type="button"
             className="profile-edit__back-button"
             onClick={onBack}
@@ -139,7 +138,6 @@ export default function ProfileEditView({
               />
             </svg>
           </button>
-        </div>
         <h1 className="profile-edit__title">프로필 수정</h1>
         <div className="profile-edit__header-placeholder" />
       </header>

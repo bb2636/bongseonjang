@@ -74,6 +74,7 @@ export default function CouponView({
         <h1 className="coupon-header-title">쿠폰</h1>
         <div className="coupon-header-spacer" />
       </header>
+      <div className="coupon-header-spacer-block" />
 
       <div className="coupon-summary">
         <span className="coupon-summary-text">전체 {totalCount}장</span>

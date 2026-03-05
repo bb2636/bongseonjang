@@ -777,7 +777,7 @@ export function CheckoutPage() {
           </svg>
         </button>
         <h1 className="checkout-title">주문/결제</h1>
-        <div style={{ width: 24 }} />
+        <div style={{ width: 44 }} />
       </header>
       <div className="checkout-header-spacer" />
 

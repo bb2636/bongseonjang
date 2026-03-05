@@ -1,1 +1,1 @@
-export { default as WishlistAppBar } from './WishlistAppBar';
+export { default as WishlistAppBar, WishlistAppBarSpacer } from './WishlistAppBar';

@@ -1,16 +1,16 @@
 .detail-app-bar {
   position: fixed;
-  top: 0;
+  top: var(--safe-area-top, 0px);
   left: 0;
   right: 0;
-  height: calc(48px + var(--safe-area-top, 0px));
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--safe-area-top, 0px) 12px 0 12px;
+  padding: 10px 8px 10px 16px;
   box-sizing: border-box;
   background: #ffffff;
-  z-index: 100;
+  z-index: 1000;
   border-bottom: none;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -18,18 +18,35 @@
   -webkit-backface-visibility: hidden;
 }
 
+.detail-app-bar::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--safe-area-top, 0px));
+  left: 0;
+  right: 0;
+  height: var(--safe-area-top, 0px);
+  background: inherit;
+}
+
 .detail-app-bar__back,
 .detail-app-bar__cart {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
   position: relative;
+  flex-shrink: 0;
+}
+
+.detail-app-bar__back {
+  margin-left: -8px;
 }
 
 .detail-app-bar__title {
@@ -49,17 +66,18 @@
 
 .detail-app-bar__cart-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: 3px;
+  right: 3px;
   min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
+  height: 15px;
+  padding: 0 6px;
   background: #3B9BD5;
-  border-radius: 9px;
+  border-radius: 40px;
   font-family: 'Pretendard', sans-serif;
-  font-weight: 600;
-  font-size: 11px;
-  line-height: 18px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
   text-align: center;
-  color: #ffffff;
+  letter-spacing: -0.01em;
+  color: #FDFDFD;
 }

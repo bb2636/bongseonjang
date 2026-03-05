@@ -51,8 +51,7 @@ export default function ProfileWithdrawView({
   return (
     <div className="profile-withdraw">
       <header className="profile-withdraw__header">
-        <div className="profile-withdraw__header-left">
-          <button
+        <button
             type="button"
             className="profile-withdraw__back-button"
             onClick={onBack}
@@ -68,7 +67,6 @@ export default function ProfileWithdrawView({
               />
             </svg>
           </button>
-        </div>
         <div className="profile-withdraw__header-center" />
         <div className="profile-withdraw__header-placeholder" />
       </header>

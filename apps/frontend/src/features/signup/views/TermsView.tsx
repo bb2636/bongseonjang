@@ -60,18 +60,9 @@ export default function TermsView({ state, actions }: TermsViewProps) {
           </svg>
         </button>
         <h1 className="terms-title">약관보기</h1>
-        <button className="terms-cart-button" type="button" aria-label="장바구니">
-          <span className="terms-cart-icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-              <path d="M8 8.5L7 6H4" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M10 11H17M10 14H17" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M6.5 8.5H19.5L18.5 19.5H7.5L6.5 8.5Z" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M16 11V7C16 5.89543 15.1046 5 14 5H12C10.8954 5 10 5.89543 10 7V11" stroke="#0C0C0C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-          <span className="terms-cart-badge" aria-label="장바구니에 1개의 상품이 있습니다.">1</span>
-        </button>
+        <div className="terms-header-placeholder" />
       </header>
+      <div className="terms-header-spacer" />
 
       <main className="terms-body">
         <section className="terms-selector" aria-label={`${termsTitle} 선택`}>

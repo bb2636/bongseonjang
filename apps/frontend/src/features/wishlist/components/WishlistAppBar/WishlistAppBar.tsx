@@ -7,6 +7,10 @@ interface WishlistAppBarProps {
   cartCount?: number;
 }
 
+export function WishlistAppBarSpacer() {
+  return <div className="wishlist-app-bar-spacer" />;
+}
+
 export default function WishlistAppBar({ onBackClick, onCartClick, cartCount = 0 }: WishlistAppBarProps) {
   const goBack = useGoBack();
 

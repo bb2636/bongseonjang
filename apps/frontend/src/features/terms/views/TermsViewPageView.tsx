@@ -102,6 +102,7 @@ export default function TermsViewPageView({ state, actions }: TermsViewPageViewP
         <h1 className="terms-view__title">약관보기</h1>
         <div className="terms-view__header-placeholder" />
       </header>
+      <div className="terms-view__header-spacer" />
 
       <main className="terms-view__body">
         <TermsDropdown

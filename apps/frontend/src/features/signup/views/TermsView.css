@@ -10,65 +10,67 @@
 
 .terms-app-bar {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(12, 12, 12, 0.08);
-  position: sticky;
-  top: 0;
+  padding: 10px 8px 10px 16px;
+  height: 48px;
+  position: fixed;
+  top: var(--safe-area-top, 0px);
+  left: 0;
+  right: 0;
+  z-index: 1000;
   background: #FFFFFF;
-  z-index: 10;
+  box-sizing: border-box;
 }
 
-.terms-back-button,
-.terms-cart-button {
-  display: inline-flex;
+.terms-app-bar::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--safe-area-top, 0px));
+  left: 0;
+  right: 0;
+  height: var(--safe-area-top, 0px);
+  background: #FFFFFF;
+}
+
+.terms-back-button {
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border: none;
-  background: #FFFFFF;
-  border-radius: 12px;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08);
+  background: transparent;
   cursor: pointer;
   padding: 0;
+  margin-left: -8px;
+  flex-shrink: 0;
 }
 
 .terms-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   margin: 0;
   font-weight: 600;
   font-size: 16px;
   line-height: 138%;
   letter-spacing: -0.02em;
+  color: #0C0C0C;
 }
 
-.terms-cart-button {
-  position: relative;
+.terms-header-placeholder {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
 }
 
-.terms-cart-icon {
-  display: inline-flex;
-  width: 26px;
-  height: 26px;
-}
-
-.terms-cart-badge {
-  position: absolute;
-  top: -4px;
-  right: -6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 2px 6px;
-  background: #3B9BD5;
-  color: #FDFDFD;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 12px;
-  line-height: 1.1;
+.terms-header-spacer {
+  height: calc(48px + var(--safe-area-top, 0px));
+  flex-shrink: 0;
 }
 
 .terms-body {
@@ -179,9 +181,5 @@
 @media (min-width: 768px) {
   .terms-body {
     padding-top: 32px;
-  }
-
-  .terms-app-bar {
-    padding: 16px 20px;
   }
 }

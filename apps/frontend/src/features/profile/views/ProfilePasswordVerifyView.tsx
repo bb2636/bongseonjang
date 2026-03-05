@@ -31,8 +31,7 @@ export default function ProfilePasswordVerifyView({
   return (
     <div className="profile-password-verify">
       <header className="profile-password-verify__header">
-        <div className="profile-password-verify__header-left">
-          <button
+        <button
             type="button"
             className="profile-password-verify__back-button"
             onClick={onBack}
@@ -48,7 +47,6 @@ export default function ProfilePasswordVerifyView({
               />
             </svg>
           </button>
-        </div>
         <h1 className="profile-password-verify__title">프로필 수정</h1>
         <div className="profile-password-verify__header-placeholder" />
       </header>

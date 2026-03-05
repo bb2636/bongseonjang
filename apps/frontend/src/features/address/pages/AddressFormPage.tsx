@@ -213,6 +213,7 @@ export function AddressFormPage() {
           </svg>
         </button>
       </header>
+      <div className="address-form-header-spacer" />
 
       <form className="address-form-content" onSubmit={handleSubmit} noValidate>
         <div className="address-form-field">
