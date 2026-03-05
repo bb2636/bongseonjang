@@ -106,6 +106,7 @@ function ensureAppModule() {
 
   if (existsSync(join(appDir, 'build.gradle'))) {
     console.log('✔ app/ module exists');
+    ensureColorsXml();
     ensureCapacitorBuildGradle();
     return;
   }
@@ -142,6 +143,7 @@ function ensureAppModule() {
   patchAndroidManifest();
   patchMainActivity();
   patchStringsXml();
+  ensureColorsXml();
   ensureCapacitorBuildGradle();
   mkdirSync(join(appDir, 'src', 'main', 'assets', 'public'), { recursive: true });
 
@@ -270,6 +272,24 @@ function patchStringsXml() {
   content = content.replace(/<string name="custom_url_scheme">[^<]*<\/string>/, `<string name="custom_url_scheme">${APP_ID}</string>`);
   writeFileSync(stringsPath, content, 'utf8');
   console.log('  ✔ Patched strings.xml');
+}
+
+function ensureColorsXml() {
+  const colorsPath = join(androidDir, 'app', 'src', 'main', 'res', 'values', 'colors.xml');
+
+  if (existsSync(colorsPath)) return;
+
+  const content = `<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FF6200EE</color>
+    <color name="colorPrimaryDark">#FF3700B3</color>
+    <color name="colorAccent">#FF03DAC5</color>
+</resources>
+`;
+
+  mkdirSync(dirname(colorsPath), { recursive: true });
+  writeFileSync(colorsPath, content, 'utf8');
+  console.log('  ✔ Created colors.xml');
 }
 
 function ensureCapacitorBuildGradle() {
