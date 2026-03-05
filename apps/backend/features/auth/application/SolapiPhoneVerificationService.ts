@@ -33,12 +33,18 @@ export class SolapiPhoneVerificationService implements PhoneVerificationService 
     const code = this.generateCode();
     const expiresAt = new Date(Date.now() + CODE_EXPIRY_MINUTES * 60 * 1000);
 
+    console.log('[SMS] sendCode called', { phone: normalizedPhone });
+
     try {
-      await this.messageService.send({
+      console.log('[SMS] before solapi request', { to: normalizedPhone, from: this.senderPhone });
+
+      await this.messageService.sendOne({
         to: normalizedPhone,
         from: this.senderPhone,
         text: `[봉선장]\n인증번호는 ${code}입니다.\n타인에게 절대 공유하지 마세요.`,
       });
+
+      console.log('[SMS] solapi response success');
 
       this.codes.set(normalizedPhone, { code, expiresAt, attempts: 0 });
 
@@ -47,7 +53,7 @@ export class SolapiPhoneVerificationService implements PhoneVerificationService 
         message: '인증번호가 발송되었습니다',
       };
     } catch (error) {
-      console.error('SMS 발송 실패:', error);
+      console.error('[SMS ERROR]', error);
       return {
         success: false,
         message: 'SMS 발송에 실패했습니다. 잠시 후 다시 시도해주세요.',

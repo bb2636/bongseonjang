@@ -459,6 +459,7 @@ export class AuthController {
 
   async sendPhoneVerificationCode(req: Request, res: Response): Promise<void> {
     try {
+      console.log('[SMS] endpoint hit', req.body);
       const { phone } = req.body;
 
       if (!phone) {
@@ -474,6 +475,7 @@ export class AuthController {
       const result = await phoneVerificationService.sendCode(phone.replace(/-/g, ''));
       res.json(result);
     } catch (error) {
+      console.error('[SMS ERROR] controller catch:', error);
       res.status(500).json({ success: false, message: '인증번호 발송에 실패했습니다' });
     }
   }
