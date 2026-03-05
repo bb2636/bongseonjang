@@ -106,7 +106,8 @@ html.platform-android body.capacitor-app {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
-  overscroll-behavior-y: none;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
 }
 
 html.platform-android body.capacitor-app #root {
@@ -117,7 +118,7 @@ html.platform-android body.capacitor-app #root {
   bottom: auto;
   min-height: 100%;
   overflow-y: visible;
-  overscroll-behavior: none;
+  overscroll-behavior: contain;
   touch-action: pan-y;
 }
 
