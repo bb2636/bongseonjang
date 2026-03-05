@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useQuery } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
 import { DeliveryRequestBottomSheet } from '../components/DeliveryRequestBottomSheet';
 import { API_BASE_URL, IS_CAPACITOR, CAPACITOR_APP_SCHEME, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
 import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
+import '@components/AddressInputForm/AddressInputForm.css';
 import './CheckoutPage.css';
 
 interface DirectPurchaseItem {
@@ -96,6 +97,9 @@ export function GuestCheckoutPage() {
   const [deliveryRequest, setDeliveryRequest] = useState('');
   const [customDeliveryRequest, setCustomDeliveryRequest] = useState('');
   const [isDeliverySheetOpen, setIsDeliverySheetOpen] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const addressEmbedRef = useRef<HTMLDivElement>(null);
+  const addressHistoryPushedRef = useRef(false);
   const [isProductsExpanded, setIsProductsExpanded] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
@@ -239,7 +243,79 @@ export function GuestCheckoutPage() {
     }
   };
 
+  const closeAddressModal = useCallback(() => {
+    if (addressHistoryPushedRef.current) {
+      addressHistoryPushedRef.current = false;
+      window.history.back();
+    }
+    setShowAddressModal(false);
+  }, []);
+
+  useEffect(() => {
+    if (!showAddressModal || !IS_CAPACITOR) return;
+
+    let mounted = true;
+
+    const loadAndEmbed = async () => {
+      if (!window.daum?.Postcode) {
+        const script = document.createElement('script');
+        script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+        script.async = true;
+        await new Promise<void>((resolve, reject) => {
+          script.onload = () => resolve();
+          script.onerror = () => reject();
+          document.head.appendChild(script);
+        }).catch(() => {
+          if (mounted) {
+            showToast('주소 검색 서비스를 불러오지 못했습니다.', 'error');
+            setShowAddressModal(false);
+          }
+          return;
+        });
+      }
+
+      if (!mounted || !addressEmbedRef.current || !window.daum?.Postcode) return;
+
+      addressEmbedRef.current.innerHTML = '';
+
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          setPostalCode(data.zonecode);
+          setAddress(data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress);
+          if (addressHistoryPushedRef.current) {
+            addressHistoryPushedRef.current = false;
+            window.history.back();
+          }
+          setShowAddressModal(false);
+        },
+        width: '100%',
+        height: '100%',
+      }).embed(addressEmbedRef.current);
+    };
+
+    loadAndEmbed();
+
+    const handleBackButton = () => {
+      addressHistoryPushedRef.current = false;
+      if (mounted) setShowAddressModal(false);
+    };
+
+    addressHistoryPushedRef.current = true;
+    window.history.pushState({ addressModal: true }, '');
+    window.addEventListener('popstate', handleBackButton);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, [showAddressModal, showToast]);
+
   const handleAddressSearch = () => {
+    if (IS_CAPACITOR) {
+      setShowAddressModal(true);
+      return;
+    }
+
     const daumWindow = window as unknown as { daum?: { Postcode: new (options: { oncomplete: (data: DaumPostcodeData) => void }) => { open: () => void } } };
     if (!daumWindow.daum?.Postcode) {
       showToast('주소 검색 기능을 불러오는 중입니다. 잠시 후 다시 시도해주세요.', 'error');
@@ -874,6 +950,23 @@ export function GuestCheckoutPage() {
         options={DELIVERY_REQUEST_OPTIONS}
         onSelect={handleDeliveryRequestChange}
       />
+
+      {showAddressModal && IS_CAPACITOR && (
+        <div className="address-modal-overlay" onClick={closeAddressModal}>
+          <div className="address-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="address-modal__header">
+              <button type="button" className="address-modal__back" onClick={closeAddressModal}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 18L9 12L15 6" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <span className="address-modal__title">주소 검색</span>
+              <div style={{ width: 24 }} />
+            </div>
+            <div className="address-modal__content" ref={addressEmbedRef} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
