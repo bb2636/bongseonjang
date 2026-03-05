@@ -4,12 +4,14 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { wishlistApi, WishlistItem } from '../api/wishlistApi';
 import { useToast } from '../../../contexts/ToastContext';
 import { useCart } from '../../../contexts/CartContext';
+import { useQuickCart } from '../../../contexts/QuickCartContext';
 import { guestWishlistStorage, GuestWishlistItem } from '../../../utils/guestStorage';
 
 export function useWishlist() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { cartCount } = useCart();
+  const { openQuickCart } = useQuickCart();
   const { isAuthenticated } = useAuth();
   
   const [items, setItems] = useState<WishlistItem[]>([]);
@@ -74,8 +76,8 @@ export function useWishlist() {
   }, [isAuthenticated, showToast]);
 
   const handleAddToCart = useCallback((productId: string) => {
-    navigate(`/product/${productId}`);
-  }, [navigate]);
+    openQuickCart(productId);
+  }, [openQuickCart]);
 
   const handleBack = useCallback(() => {
     navigate('/profile');
