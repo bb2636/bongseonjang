@@ -1,7 +1,7 @@
 .product-detail-skeleton {
   min-height: 100vh;
   background: #FFFFFF;
-  padding-bottom: 80px;
+  padding-bottom: calc(64px + var(--safe-area-bottom, 0px));
 }
 
 .product-detail-skeleton__header {

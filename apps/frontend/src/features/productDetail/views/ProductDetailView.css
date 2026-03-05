@@ -11,7 +11,7 @@
 .product-detail-view__content {
   flex: 1;
   padding-top: calc(48px + var(--safe-area-top, 0px));
-  padding-bottom: 80px;
+  padding-bottom: calc(64px + var(--safe-area-bottom, 0px));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }

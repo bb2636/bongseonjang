@@ -4,11 +4,10 @@
   right: 0;
   bottom: 0;
   background: #FDFDFD;
-  padding: 8px 0 0;
+  padding: 8px 0 calc(8px + var(--safe-area-bottom, 0px));
   z-index: 100;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 .bottom-action-bar__container {
@@ -66,19 +65,3 @@
   background: #9E9E9E;
 }
 
-.bottom-action-bar__home-indicator {
-  width: 100%;
-  height: 34px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding-bottom: 8px;
-  box-sizing: border-box;
-}
-
-.bottom-action-bar__home-indicator-bar {
-  width: 134px;
-  height: 5px;
-  background: #111111;
-  border-radius: 100px;
-}

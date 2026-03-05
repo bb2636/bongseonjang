@@ -61,10 +61,6 @@ export default function BottomActionBar({
           {isSoldOut ? '품절' : '구매하기'}
         </button>
       </div>
-
-      <div className="bottom-action-bar__home-indicator">
-        <div className="bottom-action-bar__home-indicator-bar" />
-      </div>
     </div>
   );
 }
