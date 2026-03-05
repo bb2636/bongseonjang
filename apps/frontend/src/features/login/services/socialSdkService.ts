@@ -1,4 +1,5 @@
 import { InAppBrowser, UrlEvent } from '@capgo/inappbrowser';
+import { Browser } from '@capacitor/browser';
 import { checkIsCapacitor, getApiBaseUrlDynamic, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
 
 function getBackendBaseUrl(): string {
@@ -55,10 +56,10 @@ async function fetchSessionData(key: string): Promise<OAuthResult> {
 let googlePollingIntervalId: ReturnType<typeof setInterval> | null = null;
 let googlePollingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-async function openInAppBrowserForGoogleOAuth(): Promise<OAuthResult> {
+async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
   const apiUrl = getApiBaseUrlDynamic();
 
-  console.log('[GoogleOAuth] === Starting Google OAuth with InAppBrowser + Polling ===');
+  console.log('[GoogleOAuth] === Starting Google OAuth with System Browser (Chrome Custom Tabs) + Polling ===');
 
   let pollingSessionId: string;
   try {
@@ -113,10 +114,9 @@ async function openInAppBrowserForGoogleOAuth(): Promise<OAuthResult> {
         googlePollingTimeoutId = null;
       }
       try {
-        await InAppBrowser.removeAllListeners();
-        await InAppBrowser.close();
+        await Browser.removeAllListeners();
       } catch (e) {
-        console.log('[GoogleOAuth] InAppBrowser close error (may be already closed):', e);
+        console.log('[GoogleOAuth] Browser cleanup error:', e);
       }
     };
 
@@ -157,47 +157,23 @@ async function openInAppBrowserForGoogleOAuth(): Promise<OAuthResult> {
       }
     };
 
-    const handleUrlChange = async (event: UrlEvent) => {
-      const url = event.url;
-      console.log('[GoogleOAuth] URL changed:', url);
-
-      if (url.includes('/social-callback') && !resolved) {
-        try {
-          const urlObj = new URL(url);
-          const key = urlObj.searchParams.get('key');
-
-          if (key) {
-            resolved = true;
-            console.log('[GoogleOAuth] Detected callback with key:', key);
-            await cleanup();
-            const result = await fetchSessionData(key);
-            resolve(result);
-          }
-        } catch (e) {
-          console.error('[GoogleOAuth] Error parsing callback URL:', e);
-        }
-      }
-    };
-
-    const handleClose = () => {
-      console.log('[GoogleOAuth] InAppBrowser closed');
+    const handleBrowserFinished = () => {
+      console.log('[GoogleOAuth] System browser closed');
       if (!resolved) {
-        resolved = true;
-        if (googlePollingIntervalId) {
-          clearInterval(googlePollingIntervalId);
-          googlePollingIntervalId = null;
-        }
-        if (googlePollingTimeoutId) {
-          clearTimeout(googlePollingTimeoutId);
-          googlePollingTimeoutId = null;
-        }
-        InAppBrowser.removeAllListeners();
-        resolve({ error: 'cancelled' });
+        setTimeout(async () => {
+          if (!resolved) {
+            await pollForResult();
+            if (!resolved) {
+              resolved = true;
+              await cleanup();
+              resolve({ error: 'cancelled' });
+            }
+          }
+        }, 1500);
       }
     };
 
-    await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
-    await InAppBrowser.addListener('closeEvent', handleClose);
+    await Browser.addListener('browserFinished', handleBrowserFinished);
 
     googlePollingIntervalId = setInterval(pollForResult, 2000);
 
@@ -211,25 +187,12 @@ async function openInAppBrowserForGoogleOAuth(): Promise<OAuthResult> {
     }, 5 * 60 * 1000);
 
     try {
-      await InAppBrowser.openWebView({
-        url: authUrl,
-        title: '구글 로그인',
-        isPresentAfterPageLoad: true,
-        activeNativeNavigationForWebview: true,
-      });
-      console.log('[GoogleOAuth] InAppBrowser opened');
+      await Browser.open({ url: authUrl });
+      console.log('[GoogleOAuth] System browser opened');
     } catch (err) {
-      console.error('[GoogleOAuth] Failed to open InAppBrowser:', err);
+      console.error('[GoogleOAuth] Failed to open system browser:', err);
       resolved = true;
-      if (googlePollingIntervalId) {
-        clearInterval(googlePollingIntervalId);
-        googlePollingIntervalId = null;
-      }
-      if (googlePollingTimeoutId) {
-        clearTimeout(googlePollingTimeoutId);
-        googlePollingTimeoutId = null;
-      }
-      await InAppBrowser.removeAllListeners();
+      await cleanup();
       resolve({ error: 'browser_open_failed' });
     }
   });
@@ -372,7 +335,7 @@ export async function googleAuthorize(): Promise<OAuthResult | void> {
   console.log('[GoogleOAuth] googleAuthorize called, isCapacitor:', isCapacitor);
   
   if (isCapacitor) {
-    return await openInAppBrowserForGoogleOAuth();
+    return await openSystemBrowserForGoogleOAuth();
   }
   
   redirectToWebOAuth('google');

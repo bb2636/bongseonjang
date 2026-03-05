@@ -51,6 +51,31 @@ function copyCapacitorAndroid() {
   console.log('✔ Copied capacitor-android');
 }
 
+function patchBridgeOverScroll() {
+  const bridgePath = join(androidDir, 'capacitor-android', 'src', 'main', 'java', 'com', 'getcapacitor', 'Bridge.java');
+  if (!existsSync(bridgePath)) return;
+
+  let content = readFileSync(bridgePath, 'utf8');
+
+  if (content.includes('OVER_SCROLL_NEVER')) return;
+
+  const importLine = 'import android.view.View;';
+  if (!content.includes(importLine)) {
+    content = content.replace(
+      'import android.webkit.WebSettings;',
+      `import android.view.View;\nimport android.webkit.WebSettings;`
+    );
+  }
+
+  content = content.replace(
+    'private void initWebView() {\n        WebSettings settings = webView.getSettings();',
+    'private void initWebView() {\n        webView.setOverScrollMode(View.OVER_SCROLL_NEVER);\n        WebSettings settings = webView.getSettings();'
+  );
+
+  writeFileSync(bridgePath, content, 'utf8');
+  console.log('✔ Patched Bridge.java: disabled overscroll');
+}
+
 function copyPlugins() {
   for (const plugin of ANDROID_PLUGINS) {
     const sourcePath = join(nodeModulesDir, plugin.source);
@@ -716,6 +741,7 @@ try {
 
   console.log('--- Step 1: Copy native modules ---');
   copyCapacitorAndroid();
+  patchBridgeOverScroll();
   copyPlugins();
 
   console.log('\n--- Step 2: Ensure app module ---');

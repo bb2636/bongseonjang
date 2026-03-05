@@ -20,6 +20,7 @@ import android.webkit.ServiceWorkerController;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import androidx.activity.result.ActivityResultCallback;
@@ -583,6 +584,7 @@ public class Bridge {
      */
     @SuppressLint("SetJavaScriptEnabled")
     private void initWebView() {
+        webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
