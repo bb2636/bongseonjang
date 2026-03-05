@@ -1,6 +1,7 @@
-import { readFileSync, writeFileSync, cpSync, existsSync, rmSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, cpSync, existsSync, rmSync, mkdirSync, readdirSync, renameSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,6 +16,10 @@ const KOTLIN_VERSION = '1.9.25';
 const COMPILE_SDK = 35;
 const MIN_SDK = 23;
 const TARGET_SDK = 35;
+
+const APP_ID = 'com.bongseongjang.app';
+const APP_NAME = '봉선장';
+const TEMPLATE_PACKAGE = 'com.getcapacitor.myapp';
 
 const ANDROID_PLUGINS = [
   { name: 'capacitor-app', source: '@capacitor/app/android' },
@@ -94,6 +99,196 @@ function patchPluginBuildGradle(pluginDir, pluginName) {
     writeFileSync(buildGradlePath, content, 'utf8');
     console.log(`  ✔ Patched ${pluginName}/build.gradle`);
   }
+}
+
+function ensureAppModule() {
+  const appDir = join(androidDir, 'app');
+
+  if (existsSync(join(appDir, 'build.gradle'))) {
+    console.log('✔ app/ module exists');
+    ensureCapacitorBuildGradle();
+    return;
+  }
+
+  const templateTar = join(nodeModulesDir, '@capacitor/cli/assets/android-template.tar.gz');
+  if (!existsSync(templateTar)) {
+    console.error('✖ android-template.tar.gz not found');
+    process.exit(1);
+  }
+
+  const tmpDir = join(androidDir, '__template_tmp__');
+  if (existsSync(tmpDir)) {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+  mkdirSync(tmpDir, { recursive: true });
+
+  execSync(`tar -xzf "${templateTar}" -C "${tmpDir}"`, { stdio: 'pipe' });
+
+  const templateAppDir = join(tmpDir, 'app');
+  if (!existsSync(templateAppDir)) {
+    console.error('✖ Template does not contain app/ directory');
+    rmSync(tmpDir, { recursive: true, force: true });
+    process.exit(1);
+  }
+
+  if (existsSync(appDir)) {
+    rmSync(appDir, { recursive: true, force: true });
+  }
+  cpSync(templateAppDir, appDir, { recursive: true });
+
+  rmSync(tmpDir, { recursive: true, force: true });
+
+  patchAppBuildGradle();
+  patchAndroidManifest();
+  patchMainActivity();
+  patchStringsXml();
+  ensureCapacitorBuildGradle();
+  mkdirSync(join(appDir, 'src', 'main', 'assets', 'public'), { recursive: true });
+
+  console.log('✔ Created app/ module from template');
+}
+
+function patchAppBuildGradle() {
+  const buildGradlePath = join(androidDir, 'app', 'build.gradle');
+  let content = readFileSync(buildGradlePath, 'utf8');
+
+  content = content.replace(
+    /namespace\s+"[^"]+"/,
+    `namespace "${APP_ID}"`
+  );
+
+  content = content.replace(
+    /applicationId\s+"[^"]+"/,
+    `applicationId "${APP_ID}"`
+  );
+
+  content = content.replace(
+    /compileSdk rootProject\.ext\.compileSdkVersion/,
+    `compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : ${COMPILE_SDK}`
+  );
+
+  content = content.replace(
+    /minSdkVersion rootProject\.ext\.minSdkVersion/,
+    `minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : ${MIN_SDK}`
+  );
+
+  content = content.replace(
+    /targetSdkVersion rootProject\.ext\.targetSdkVersion/,
+    `targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : ${TARGET_SDK}`
+  );
+
+  writeFileSync(buildGradlePath, content, 'utf8');
+  console.log('  ✔ Patched app/build.gradle');
+}
+
+function patchAndroidManifest() {
+  const manifestPath = join(androidDir, 'app', 'src', 'main', 'AndroidManifest.xml');
+  if (!existsSync(manifestPath)) return;
+
+  let content = readFileSync(manifestPath, 'utf8');
+
+  if (!content.includes('android.permission.CAMERA')) {
+    content = content.replace(
+      '<uses-permission android:name="android.permission.INTERNET" />',
+      `<uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />`
+    );
+  }
+
+  writeFileSync(manifestPath, content, 'utf8');
+  console.log('  ✔ Patched AndroidManifest.xml');
+}
+
+function patchMainActivity() {
+  const appPackagePath = APP_ID.replace(/\./g, '/');
+  const templatePackagePath = TEMPLATE_PACKAGE.replace(/\./g, '/');
+
+  const oldJavaDir = join(androidDir, 'app', 'src', 'main', 'java', ...templatePackagePath.split('/'));
+  const newJavaDir = join(androidDir, 'app', 'src', 'main', 'java', ...appPackagePath.split('/'));
+
+  if (existsSync(oldJavaDir) && !existsSync(newJavaDir)) {
+    mkdirSync(newJavaDir, { recursive: true });
+
+    const mainActivityPath = join(oldJavaDir, 'MainActivity.java');
+    if (existsSync(mainActivityPath)) {
+      let content = readFileSync(mainActivityPath, 'utf8');
+      content = content.replace(
+        new RegExp(TEMPLATE_PACKAGE.replace(/\./g, '\\.'), 'g'),
+        APP_ID
+      );
+      writeFileSync(join(newJavaDir, 'MainActivity.java'), content, 'utf8');
+    }
+
+    const oldTestDir = join(androidDir, 'app', 'src', 'androidTest', 'java', ...templatePackagePath.split('/'));
+    const newTestDir = join(androidDir, 'app', 'src', 'androidTest', 'java', ...appPackagePath.split('/'));
+    if (existsSync(oldTestDir)) {
+      mkdirSync(newTestDir, { recursive: true });
+      const files = readdirSync(oldTestDir);
+      for (const file of files) {
+        let content = readFileSync(join(oldTestDir, file), 'utf8');
+        content = content.replace(
+          new RegExp(TEMPLATE_PACKAGE.replace(/\./g, '\\.'), 'g'),
+          APP_ID
+        );
+        writeFileSync(join(newTestDir, file), content, 'utf8');
+      }
+    }
+
+    const oldUnitTestDir = join(androidDir, 'app', 'src', 'test', 'java', ...templatePackagePath.split('/'));
+    const newUnitTestDir = join(androidDir, 'app', 'src', 'test', 'java', ...appPackagePath.split('/'));
+    if (existsSync(oldUnitTestDir)) {
+      mkdirSync(newUnitTestDir, { recursive: true });
+      const files = readdirSync(oldUnitTestDir);
+      for (const file of files) {
+        let content = readFileSync(join(oldUnitTestDir, file), 'utf8');
+        content = content.replace(
+          new RegExp(TEMPLATE_PACKAGE.replace(/\./g, '\\.'), 'g'),
+          APP_ID
+        );
+        writeFileSync(join(newUnitTestDir, file), content, 'utf8');
+      }
+    }
+
+    rmSync(join(androidDir, 'app', 'src', 'main', 'java', 'com', 'getcapacitor'), { recursive: true, force: true });
+    rmSync(join(androidDir, 'app', 'src', 'androidTest', 'java', 'com', 'getcapacitor'), { recursive: true, force: true });
+    rmSync(join(androidDir, 'app', 'src', 'test', 'java', 'com', 'getcapacitor'), { recursive: true, force: true });
+  }
+
+  console.log('  ✔ Patched MainActivity package path');
+}
+
+function patchStringsXml() {
+  const stringsPath = join(androidDir, 'app', 'src', 'main', 'res', 'values', 'strings.xml');
+  if (!existsSync(stringsPath)) return;
+
+  let content = readFileSync(stringsPath, 'utf8');
+  content = content.replace(/<string name="app_name">[^<]*<\/string>/, `<string name="app_name">${APP_NAME}</string>`);
+  content = content.replace(/<string name="title_activity_main">[^<]*<\/string>/, `<string name="title_activity_main">${APP_NAME}</string>`);
+  content = content.replace(/<string name="package_name">[^<]*<\/string>/, `<string name="package_name">${APP_ID}</string>`);
+  content = content.replace(/<string name="custom_url_scheme">[^<]*<\/string>/, `<string name="custom_url_scheme">${APP_ID}</string>`);
+  writeFileSync(stringsPath, content, 'utf8');
+  console.log('  ✔ Patched strings.xml');
+}
+
+function ensureCapacitorBuildGradle() {
+  const capBuildGradlePath = join(androidDir, 'app', 'capacitor.build.gradle');
+
+  if (existsSync(capBuildGradlePath)) return;
+
+  const depLines = ANDROID_PLUGINS.map(p => `    implementation project(':${p.name}')`);
+
+  const content = `
+dependencies {
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-cordova-android-plugins')
+${depLines.join('\n')}
+}
+`.trim() + '\n';
+
+  writeFileSync(capBuildGradlePath, content, 'utf8');
+  console.log('  ✔ Created capacitor.build.gradle');
 }
 
 function ensureCordovaPlugins() {
@@ -182,6 +377,14 @@ function ensureRootBuildGradle() {
       patched = true;
     }
 
+    if (!content.includes('variables.gradle')) {
+      content = content.replace(
+        /buildscript\s*\{/,
+        `apply from: "variables.gradle"\n\nbuildscript {`
+      );
+      patched = true;
+    }
+
     if (patched) {
       writeFileSync(rootBuildGradlePath, content, 'utf8');
       console.log('✔ Patched root build.gradle');
@@ -192,6 +395,8 @@ function ensureRootBuildGradle() {
   }
 
   const content = `
+apply from: "variables.gradle"
+
 buildscript {
     repositories {
         google()
@@ -223,7 +428,23 @@ function ensureVariablesGradle() {
   const variablesPath = join(androidDir, 'variables.gradle');
 
   if (existsSync(variablesPath)) {
-    console.log('✔ variables.gradle exists');
+    let content = readFileSync(variablesPath, 'utf8');
+    let modified = false;
+
+    if (!content.includes('coreSplashScreenVersion')) {
+      content = content.replace(
+        /\}\s*$/,
+        `    coreSplashScreenVersion = '1.0.1'\n}\n`
+      );
+      modified = true;
+    }
+
+    if (modified) {
+      writeFileSync(variablesPath, content, 'utf8');
+      console.log('✔ Patched variables.gradle');
+    } else {
+      console.log('✔ variables.gradle exists');
+    }
     return;
   }
 
@@ -244,6 +465,7 @@ ext {
     androidxWebkitVersion = '1.12.1'
     androidxBrowserVersion = '1.8.0'
     androidxMaterialVersion = '1.12.0'
+    coreSplashScreenVersion = '1.0.1'
     kotlin_version = '${KOTLIN_VERSION}'
 }
 `.trim() + '\n';
@@ -365,11 +587,15 @@ function validateStructure() {
     { path: 'settings.gradle', required: true },
     { path: 'gradle.properties', required: true },
     { path: 'build.gradle', required: true },
-    { path: 'app/build.gradle', required: false },
-    { path: 'app/capacitor.build.gradle', required: false },
-    { path: 'app/src/main/AndroidManifest.xml', required: false },
-    { path: 'gradle/wrapper/gradle-wrapper.properties', required: false },
-    { path: 'variables.gradle', required: false },
+    { path: 'variables.gradle', required: true },
+    { path: 'app/build.gradle', required: true },
+    { path: 'app/capacitor.build.gradle', required: true },
+    { path: 'app/src/main/AndroidManifest.xml', required: true },
+    { path: `app/src/main/java/${APP_ID.replace(/\./g, '/')}/MainActivity.java`, required: true },
+    { path: 'app/src/main/res/values/strings.xml', required: true },
+    { path: 'app/src/main/res/values/styles.xml', required: true },
+    { path: 'app/src/main/res/layout/activity_main.xml', required: true },
+    { path: 'gradle/wrapper/gradle-wrapper.properties', required: true },
   ];
 
   for (const plugin of ANDROID_PLUGINS) {
@@ -380,22 +606,15 @@ function validateStructure() {
   for (const check of checks) {
     const fullPath = join(androidDir, check.path);
     const exists = existsSync(fullPath);
-    const icon = exists ? '✔' : (check.required ? '✖' : '⚠');
-    const label = exists ? 'OK' : (check.required ? 'MISSING (REQUIRED)' : 'MISSING (cap sync creates this)');
+    const icon = exists ? '✔' : '✖';
+    const label = exists ? 'OK' : 'MISSING';
     console.log(`  ${icon} ${check.path} — ${label}`);
-    if (!exists && check.required) hasErrors = true;
+    if (!exists) hasErrors = true;
   }
 
   if (hasErrors) {
-    console.error('\n✖ Required files are missing. Run "npx cap sync android" first, then re-run this script.');
+    console.error('\n✖ Some required files are missing. Check errors above.');
     process.exit(1);
-  }
-
-  const appDir = join(androidDir, 'app');
-  if (!existsSync(appDir)) {
-    console.log('\n⚠ android/app/ directory not found.');
-    console.log('  This is created by "npx cap sync android" or "npx cap add android".');
-    console.log('  The fix script has set up all other modules. Run "npx cap sync android" if app/ is missing.');
   }
 
   console.log('');
@@ -408,20 +627,23 @@ try {
   copyCapacitorAndroid();
   copyPlugins();
 
-  console.log('\n--- Step 2: Ensure supporting files ---');
+  console.log('\n--- Step 2: Ensure app module ---');
+  ensureAppModule();
+
+  console.log('\n--- Step 3: Ensure supporting files ---');
   ensureCordovaPlugins();
   ensureRootBuildGradle();
   ensureVariablesGradle();
   ensureGradleProperties();
   ensureGradleWrapper();
 
-  console.log('\n--- Step 3: Configure Gradle project ---');
+  console.log('\n--- Step 4: Configure Gradle project ---');
   writeSettingsGradle();
   cleanCapacitorBuildGradle();
 
   validateStructure();
 
-  console.log('✔ Android build is now standalone — ready for Android Studio');
+  console.log('✔ Android build is complete — ready for Android Studio APK build');
 } catch (error) {
   console.error('Failed to fix capacitor build:', error.message);
   process.exit(1);

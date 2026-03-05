@@ -121,6 +121,18 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 ### Object Storage (App Storage)
 프로젝트는 `@replit/object-storage` SDK를 사용하여 파일 저장을 관리합니다. Replit 환경에서 자동 인증되며, `objectStorage.ts`, `objectAcl.ts`, `imageUrl.ts` 파일에서 관련 로직을 처리합니다. 이미지 URL은 배포 환경에서 작동하도록 절대 URL로 변환됩니다.
 
+### Android Capacitor Build Pipeline
+`npm run cap:build` 실행 시: assets 생성 → Vite 빌드 → `cap sync android` → `fix-capacitor-paths.js` 순으로 실행됩니다. `fix-capacitor-paths.js`는 완전 독립형 Android 프로젝트를 생성합니다:
+-   `capacitor-android`: `@capacitor/android`에서 복사
+-   `app/`: `android-template.tar.gz`에서 추출 후 패키지명(`com.bongseongjang.app`)/앱이름(`봉선장`) 치환
+-   `capacitor-cordova-android-plugins`: 빈 stub 자동 생성
+-   5개 플러그인(app, browser, camera, share, inappbrowser): node_modules에서 복사 + AGP 버전 통일(8.7.2)
+-   `variables.gradle`: SDK/라이브러리 버전 중앙 관리 (coreSplashScreenVersion 포함)
+-   `root build.gradle`: AGP + Kotlin 플러그인 + variables.gradle 로드
+-   `gradle.properties`: AndroidX 활성화
+-   `settings.gradle`: 모든 모듈 화이트리스트 등록
+-   `capacitor.build.gradle`: 플러그인 의존성 선언
+
 ## External Dependencies
 -   **React 18**: 프론트엔드 라이브러리
 -   **Vite**: 빌드 도구

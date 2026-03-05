@@ -1,0 +1,9 @@
+dependencies {
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-cordova-android-plugins')
+    implementation project(':capacitor-app')
+    implementation project(':capacitor-browser')
+    implementation project(':capacitor-camera')
+    implementation project(':capacitor-share')
+    implementation project(':capgo-inappbrowser')
+}
