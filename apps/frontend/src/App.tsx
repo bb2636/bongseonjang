@@ -312,8 +312,17 @@ function AppContent() {
 
     const listener = CapacitorApp.addListener('appUrlOpen', handleAppUrlOpen);
 
+    const backButtonListener = CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+      if (canGoBack) {
+        window.history.back();
+      } else {
+        CapacitorApp.minimizeApp();
+      }
+    });
+
     return () => {
       listener.then(l => l.remove());
+      backButtonListener.then(l => l.remove());
     };
   }, [navigate]);
 
