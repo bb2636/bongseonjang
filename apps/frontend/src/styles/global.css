@@ -131,6 +131,14 @@ html.platform-android .category-products-page {
   overscroll-behavior: contain;
 }
 
+html.platform-android *::-webkit-scrollbar {
+  display: none;
+}
+
+html.platform-android * {
+  scrollbar-width: none;
+}
+
 a {
   color: var(--color-primary);
   text-decoration: none;
