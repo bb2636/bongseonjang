@@ -10,6 +10,7 @@ const androidDir = join(frontendDir, 'android');
 const nodeModulesDir = join(frontendDir, 'node_modules');
 
 const CAPACITOR_VERSION = '7.4.4';
+const ANDROID_GRADLE_PLUGIN_VERSION = '8.7.2';
 
 const ANDROID_PLUGINS = [
   { name: 'capacitor-app', source: '@capacitor/app/android' },
@@ -60,9 +61,18 @@ function patchPluginBuildGradle(pluginDir, pluginName) {
     patched = true;
   }
 
+  const gradlePluginRegex = /com\.android\.tools\.build:gradle:[\d.]+/g;
+  if (gradlePluginRegex.test(content)) {
+    content = content.replace(
+      /com\.android\.tools\.build:gradle:[\d.]+/g,
+      `com.android.tools.build:gradle:${ANDROID_GRADLE_PLUGIN_VERSION}`
+    );
+    patched = true;
+  }
+
   if (patched) {
     writeFileSync(buildGradlePath, content, 'utf8');
-    console.log(`  ✔ Patched ${pluginName}/build.gradle (capacitorVersion fallback)`);
+    console.log(`  ✔ Patched ${pluginName}/build.gradle`);
   }
 }
 
