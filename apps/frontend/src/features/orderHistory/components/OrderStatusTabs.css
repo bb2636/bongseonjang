@@ -7,7 +7,7 @@
   border-bottom: 1px solid rgba(12, 12, 12, 0.1);
   background: #fff;
   position: fixed;
-  top: calc(64px + var(--safe-area-top, 0px));
+  top: calc(48px + var(--safe-area-top, 0px));
   left: 0;
   right: 0;
   z-index: 99;
