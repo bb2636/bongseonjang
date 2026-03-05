@@ -10,7 +10,6 @@ const config: CapacitorConfig = {
     allowNavigation: [
       '*.daumcdn.net',
       '*.daum.net',
-      '*.kakao.com',
     ]
   },
   android: {
