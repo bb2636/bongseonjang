@@ -628,6 +628,48 @@ function cleanCapacitorBuildGradle() {
   }
 }
 
+function cleanPluginsJson() {
+  const pluginsJsonPath = join(androidDir, 'app', 'src', 'main', 'assets', 'capacitor.plugins.json');
+  if (!existsSync(pluginsJsonPath)) return;
+
+  try {
+    const plugins = JSON.parse(readFileSync(pluginsJsonPath, 'utf8'));
+    if (!Array.isArray(plugins)) return;
+
+    const allowedSources = new Set();
+    for (const plugin of ANDROID_PLUGINS) {
+      const pluginSrcDir = join(androidDir, plugin.name, 'src', 'main', 'java');
+      if (existsSync(pluginSrcDir)) {
+        allowedSources.add(plugin.name);
+      }
+    }
+
+    const filtered = plugins.filter(entry => {
+      if (!entry.classpath) return false;
+
+      for (const pluginName of allowedSources) {
+        const pluginSrcDir = join(androidDir, pluginName, 'src', 'main', 'java');
+        const classPath = entry.classpath.replace(/\./g, '/') + '.java';
+        const classPathKt = entry.classpath.replace(/\./g, '/') + '.kt';
+
+        if (existsSync(join(pluginSrcDir, classPath)) || existsSync(join(pluginSrcDir, classPathKt))) {
+          return true;
+        }
+      }
+
+      console.log(`  ✔ Removed plugin from capacitor.plugins.json: ${entry.classpath}`);
+      return false;
+    });
+
+    if (filtered.length !== plugins.length) {
+      writeFileSync(pluginsJsonPath, JSON.stringify(filtered, null, '\t'), 'utf8');
+      console.log(`✔ Cleaned capacitor.plugins.json (${filtered.length} plugins kept, ${plugins.length - filtered.length} removed)`);
+    }
+  } catch (e) {
+    console.warn('⚠ Could not parse capacitor.plugins.json:', e.message);
+  }
+}
+
 function validateStructure() {
   console.log('\n--- Validating Android project structure ---');
   const checks = [
@@ -689,6 +731,7 @@ try {
   console.log('\n--- Step 4: Configure Gradle project ---');
   writeSettingsGradle();
   cleanCapacitorBuildGradle();
+  cleanPluginsJson();
 
   validateStructure();
 
