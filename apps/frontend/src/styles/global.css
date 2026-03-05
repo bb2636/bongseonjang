@@ -117,7 +117,7 @@ html.platform-android body.capacitor-app #root {
   bottom: auto;
   min-height: 100%;
   overflow-y: visible;
-  overscroll-behavior: auto;
+  overscroll-behavior: none;
   touch-action: pan-y;
 }
 
@@ -128,7 +128,7 @@ html.platform-android .product-detail-view__content,
 html.platform-android .category-page__content,
 html.platform-android .category-products-page {
   overflow-y: visible;
-  overscroll-behavior: auto;
+  overscroll-behavior: contain;
 }
 
 a {

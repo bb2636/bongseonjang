@@ -10,6 +10,10 @@ const config: CapacitorConfig = {
     // TODO: 원격 URL 사용 시 아래 주석 해제
     // url: 'https://bongseonjang--tkfkdgowjdakfas.replit.app'
   },
+  android: {
+    overScrollMode: 'never',
+    backgroundColor: '#FFFFFF'
+  },
   ios: {
     contentInset: 'never',
     allowsLinkPreview: false,
