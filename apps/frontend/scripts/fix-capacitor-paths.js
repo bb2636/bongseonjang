@@ -275,8 +275,6 @@ function patchStringsXml() {
 function ensureCapacitorBuildGradle() {
   const capBuildGradlePath = join(androidDir, 'app', 'capacitor.build.gradle');
 
-  if (existsSync(capBuildGradlePath)) return;
-
   const depLines = ANDROID_PLUGINS.map(p => `    implementation project(':${p.name}')`);
 
   const content = `
@@ -287,8 +285,14 @@ ${depLines.join('\n')}
 }
 `.trim() + '\n';
 
+  const existed = existsSync(capBuildGradlePath);
   writeFileSync(capBuildGradlePath, content, 'utf8');
-  console.log('  ✔ Created capacitor.build.gradle');
+
+  if (existed) {
+    console.log('  ✔ Rewrote capacitor.build.gradle (removed iOS-only plugins)');
+  } else {
+    console.log('  ✔ Created capacitor.build.gradle');
+  }
 }
 
 function ensureCordovaPlugins() {
