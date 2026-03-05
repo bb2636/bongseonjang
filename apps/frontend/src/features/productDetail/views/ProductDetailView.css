@@ -3,7 +3,6 @@
   flex-direction: column;
   min-height: 100vh;
   background: #FFFFFF;
-  overflow-x: hidden;
 }
 
 .product-detail-view__content {

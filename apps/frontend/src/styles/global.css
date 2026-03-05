@@ -127,7 +127,7 @@ html.platform-android .product-detail-view,
 html.platform-android .product-detail-view__content,
 html.platform-android .category-page__content,
 html.platform-android .category-products-page {
-  overflow-y: visible;
+  overflow: visible;
   overscroll-behavior: contain;
 }
 
