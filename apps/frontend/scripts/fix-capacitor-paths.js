@@ -179,6 +179,31 @@ function patchAppBuildGradle() {
     `targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : ${TARGET_SDK}`
   );
 
+  const SAFE_CAP_BUILD_GRADLE = `def capBuildFile = file('capacitor.build.gradle')
+if (capBuildFile.exists()) {
+    def safeDeps = []
+    capBuildFile.eachLine { line ->
+        def m = (line =~ /implementation\\s+project\\(':(.+?)'\\)/)
+        if (m.find()) {
+            if (findProject(":\${m.group(1)}") != null) {
+                safeDeps.add(m.group(1))
+            } else {
+                logger.warn("Skipping missing project :\${m.group(1)}")
+            }
+        }
+    }
+    dependencies {
+        safeDeps.each { name ->
+            implementation project(":\${name}")
+        }
+    }
+}`;
+
+  content = content.replace(
+    /apply from: 'capacitor\.build\.gradle'/,
+    SAFE_CAP_BUILD_GRADLE
+  );
+
   writeFileSync(buildGradlePath, content, 'utf8');
   console.log('  ✔ Patched app/build.gradle');
 }

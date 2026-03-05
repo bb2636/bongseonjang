@@ -42,7 +42,25 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
 }
 
-apply from: 'capacitor.build.gradle'
+def capBuildFile = file('capacitor.build.gradle')
+if (capBuildFile.exists()) {
+    def safeDeps = []
+    capBuildFile.eachLine { line ->
+        def m = (line =~ /implementation\s+project\(':(.+?)'\)/)
+        if (m.find()) {
+            if (findProject(":${m.group(1)}") != null) {
+                safeDeps.add(m.group(1))
+            } else {
+                logger.warn("Skipping missing project :${m.group(1)}")
+            }
+        }
+    }
+    dependencies {
+        safeDeps.each { name ->
+            implementation project(":${name}")
+        }
+    }
+}
 
 try {
     def servicesJSON = file('google-services.json')
