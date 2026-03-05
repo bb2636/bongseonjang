@@ -75,7 +75,7 @@
 
 .terms-view__body {
   flex: 1;
-  padding: 64px 16px 24px;
+  padding: calc(68px + var(--safe-area-top, 0px)) 16px 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
