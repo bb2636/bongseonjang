@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, cpSync, existsSync, rmSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, cpSync, existsSync, rmSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -25,6 +25,22 @@ const VALID_GRADLE_PROJECTS = new Set([
   'capacitor-android',
   'capacitor-cordova-android-plugins',
 ]);
+
+function copyCapacitorAndroid() {
+  const sourcePath = join(nodeModulesDir, '@capacitor/android/capacitor');
+  const destPath = join(androidDir, 'capacitor-android');
+
+  if (!existsSync(sourcePath)) {
+    console.error('✖ capacitor-android source not found:', sourcePath);
+    return;
+  }
+
+  if (existsSync(destPath)) {
+    rmSync(destPath, { recursive: true, force: true });
+  }
+  cpSync(sourcePath, destPath, { recursive: true });
+  console.log('✔ Copied capacitor-android');
+}
 
 function copyPlugins() {
   for (const plugin of ANDROID_PLUGINS) {
@@ -73,6 +89,34 @@ function patchPluginBuildGradle(pluginDir, pluginName) {
   if (patched) {
     writeFileSync(buildGradlePath, content, 'utf8');
     console.log(`  ✔ Patched ${pluginName}/build.gradle`);
+  }
+}
+
+function ensureGradleProperties() {
+  const gradlePropsPath = join(androidDir, 'gradle.properties');
+
+  const requiredProps = {
+    'android.useAndroidX': 'true',
+    'android.enableJetifier': 'true',
+  };
+
+  let content = '';
+  if (existsSync(gradlePropsPath)) {
+    content = readFileSync(gradlePropsPath, 'utf8');
+  }
+
+  let modified = false;
+  for (const [key, value] of Object.entries(requiredProps)) {
+    const regex = new RegExp(`^${key.replace('.', '\\.')}\\s*=`, 'm');
+    if (!regex.test(content)) {
+      content += `\n${key}=${value}`;
+      modified = true;
+    }
+  }
+
+  if (modified) {
+    writeFileSync(gradlePropsPath, content.trim() + '\n', 'utf8');
+    console.log('✔ Updated gradle.properties (AndroidX enabled)');
   }
 }
 
@@ -128,8 +172,10 @@ function cleanCapacitorBuildGradle() {
 
 try {
   console.log('--- Fixing Android Capacitor build ---');
+  copyCapacitorAndroid();
   copyPlugins();
   writeSettingsGradle();
+  ensureGradleProperties();
   cleanCapacitorBuildGradle();
   console.log('✔ Android build is now standalone - no node_modules required');
 } catch (error) {
