@@ -285,7 +285,7 @@ async function openInAppBrowserForOAuth(provider: string): Promise<OAuthResult> 
       await InAppBrowser.openWebView({ 
       url: authUrl, 
       title,
-      isPresentAfterPageLoad: true,
+      isPresentAfterPageLoad: false,
       activeNativeNavigationForWebview: true,
     });
       console.log('[OAuth] InAppBrowser opened');
@@ -584,7 +584,7 @@ async function openInAppBrowserForAppleOAuth(): Promise<OAuthResult> {
       await InAppBrowser.openWebView({
         url: authUrl,
         title: '애플 로그인',
-        isPresentAfterPageLoad: true,
+        isPresentAfterPageLoad: false,
         activeNativeNavigationForWebview: true,
       });
       console.log('[AppleOAuth] InAppBrowser opened');
