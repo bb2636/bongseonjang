@@ -19,12 +19,13 @@
 
 .image-lightbox__close {
   position: absolute;
-  top: calc(12px + env(safe-area-inset-top));
+  top: calc(16px + env(safe-area-inset-top));
   right: 16px;
-  width: 40px;
-  height: 40px;
-  background: none;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.45);
   border: none;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;

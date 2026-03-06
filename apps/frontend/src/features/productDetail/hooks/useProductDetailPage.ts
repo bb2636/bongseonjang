@@ -135,27 +135,40 @@ export function useProductDetailPage(productId: string) {
   const handleShare = async () => {
     const webBaseUrl = 'https://bongseonjang--tkfkdgowjdakfas.replit.app';
     const shareUrl = `${webBaseUrl}/product/${productId}`;
-    
+    const shareTitle = product?.name || '봉선장 상품';
+    const shareText = product?.name ? `${product.name} - 봉선장에서 확인해보세요!` : '봉선장에서 상품을 확인해보세요!';
+
     if (Capacitor.isNativePlatform()) {
       try {
         await Share.share({
-          title: product?.name || '봉선장 상품',
-          text: product?.name ? `${product.name} - 봉선장에서 확인해보세요!` : '봉선장에서 상품을 확인해보세요!',
+          title: shareTitle,
+          text: shareText,
           url: shareUrl,
           dialogTitle: '공유하기',
         });
+        return;
       } catch (err) {
-        if ((err as Error).message !== 'Share canceled') {
-          await copyToClipboard(shareUrl);
+        const errorMessage = (err as Error).message || '';
+        if (errorMessage === 'Share canceled' || errorMessage.includes('cancel')) {
+          return;
+        }
+        console.warn('[Share] Capacitor Share failed, trying navigator.share:', errorMessage);
+      }
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+          return;
+        } catch (err) {
+          if ((err as Error).name === 'AbortError') return;
+          console.warn('[Share] navigator.share also failed:', (err as Error).message);
         }
       }
+
+      await copyToClipboard(shareUrl);
     } else if (navigator.share) {
       try {
-        await navigator.share({
-          title: product?.name || '봉선장 상품',
-          text: product?.name ? `${product.name} - 봉선장에서 확인해보세요!` : '봉선장에서 상품을 확인해보세요!',
-          url: shareUrl,
-        });
+        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
       } catch (err) {
         if ((err as Error).name !== 'AbortError') {
           await copyToClipboard(shareUrl);

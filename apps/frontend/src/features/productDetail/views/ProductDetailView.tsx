@@ -8,7 +8,7 @@ import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
 import DetailAppBar from '../components/DetailAppBar';
 import ProductDetailTabs, { ProductDetailTabsSpacer } from '../components/ProductDetailTabs';
-import CountdownTimer from '../components/CountdownTimer';
+
 import { ProductInquirySection } from '../components/ProductInquirySection';
 import type { TabType } from '../components/ProductDetailTabs';
 import type { ProductDetail, Review } from '../types/productDetail';
@@ -78,8 +78,6 @@ export default function ProductDetailView({
               images={sliderImages}
               thumbnailUrl={product.thumbnailUrl}
             />
-
-            <CountdownTimer saleStartAt={product.saleStartAt} saleEndAt={product.saleEndAt} />
           </>
         )}
 
