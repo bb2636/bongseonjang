@@ -170,35 +170,81 @@ class BridgeViewController: CAPBridgeViewController {
 
 function updateSceneDelegate() {
   const sceneDelegatePath = path.join(IOS_APP_DIR, 'SceneDelegate.swift');
-  if (!fs.existsSync(sceneDelegatePath)) {
-    console.log('  SceneDelegate.swift not found. Skipping.');
-    return;
-  }
 
-  let content = fs.readFileSync(sceneDelegatePath, 'utf8');
+  const sceneDelegateContent = `import UIKit
+import Capacitor
 
-  if (content.includes('BridgeViewController')) {
-    console.log('  SceneDelegate already uses BridgeViewController.');
-    return;
-  }
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
-  if (content.includes('CAPBridgeViewController')) {
-    content = content.replace(/CAPBridgeViewController\s*\(\s*\)/g, 'BridgeViewController()');
-    fs.writeFileSync(sceneDelegatePath, content, 'utf8');
-    console.log('  Replaced CAPBridgeViewController with BridgeViewController in SceneDelegate.');
-    return;
-  }
+    var window: UIWindow?
+    private let privacyScreenTag = 99999
 
-  const rootVcPattern = /\.rootViewController\s*=\s*\w+\(\)/g;
-  if (rootVcPattern.test(content)) {
-    content = content.replace(/\.rootViewController\s*=\s*\w+\(\)/, '.rootViewController = BridgeViewController()');
-    fs.writeFileSync(sceneDelegatePath, content, 'utf8');
-    console.log('  Replaced rootViewController with BridgeViewController in SceneDelegate.');
-    return;
-  }
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard let windowScene = scene as? UIWindowScene else { return }
+        let window = UIWindow(windowScene: windowScene)
+        window.rootViewController = BridgeViewController()
+        self.window = window
+        window.makeKeyAndVisible()
+    }
 
-  console.log('  Could not auto-update SceneDelegate. Please manually set:');
-  console.log('    window.rootViewController = BridgeViewController()');
+    func sceneWillResignActive(_ scene: UIScene) {
+        guard let window = self.window else { return }
+        if window.viewWithTag(privacyScreenTag) != nil { return }
+
+        let coverView = UIView(frame: window.bounds)
+        coverView.tag = privacyScreenTag
+        coverView.backgroundColor = .white
+        coverView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        let iconSize: CGFloat = 80
+        let iconImageView = UIImageView(frame: CGRect(
+            x: (window.bounds.width - iconSize) / 2,
+            y: (window.bounds.height - iconSize) / 2,
+            width: iconSize,
+            height: iconSize
+        ))
+        iconImageView.autoresizingMask = [
+            .flexibleTopMargin, .flexibleBottomMargin,
+            .flexibleLeftMargin, .flexibleRightMargin
+        ]
+        iconImageView.contentMode = .scaleAspectFit
+        iconImageView.layer.cornerRadius = 16
+        iconImageView.clipsToBounds = true
+
+        if let appIcon = UIImage(named: "AppIcon") {
+            iconImageView.image = appIcon
+        } else if let iconsDictionary = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
+                  let primaryIconsDictionary = iconsDictionary["CFBundlePrimaryIcon"] as? [String: Any],
+                  let iconFiles = primaryIconsDictionary["CFBundleIconFiles"] as? [String],
+                  let lastIcon = iconFiles.last {
+            iconImageView.image = UIImage(named: lastIcon)
+        }
+
+        coverView.addSubview(iconImageView)
+        window.addSubview(coverView)
+    }
+
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        guard let window = self.window,
+              let coverView = window.viewWithTag(privacyScreenTag) else { return }
+        UIView.animate(withDuration: 0.2, animations: {
+            coverView.alpha = 0
+        }) { _ in
+            coverView.removeFromSuperview()
+        }
+    }
+
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else { return }
+        NotificationCenter.default.post(name: .capacitorOpenURL, object: [
+            "url": url
+        ])
+    }
+}
+`;
+
+  fs.writeFileSync(sceneDelegatePath, sceneDelegateContent, 'utf8');
+  console.log('  Created SceneDelegate.swift with BridgeViewController + privacy screen.');
 }
 
 function removeOldSwipeBackFiles() {
