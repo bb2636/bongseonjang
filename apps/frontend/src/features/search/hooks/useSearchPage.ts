@@ -88,6 +88,7 @@ export function useSearchPage() {
   const [sortBy, setSortBy] = useState<SortBy>(urlSort);
   const [currentSearchTerm, setCurrentSearchTerm] = useState(urlQuery);
   const initialSearchDone = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -115,6 +116,12 @@ export function useSearchPage() {
   const executeSearch = useCallback(async (term: string, sort: SortBy) => {
     if (!term.trim()) return;
 
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setIsSearching(true);
 
     try {
@@ -122,7 +129,10 @@ export function useSearchPage() {
       params.set('search', term);
       params.set('sortBy', sort);
       
-      const response = await fetch(`${API_BASE_URL}/products?${params.toString()}`);
+      const response = await fetch(`${API_BASE_URL}/products?${params.toString()}`, {
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted) return;
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data.map((p: any) => ({
@@ -134,11 +144,14 @@ export function useSearchPage() {
           discountedPrice: p.discountedPrice || p.originalPrice || 0,
         })));
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.name === 'AbortError') return;
       console.error('Search failed:', error);
       setSearchResults([]);
     } finally {
-      setIsSearching(false);
+      if (!controller.signal.aborted) {
+        setIsSearching(false);
+      }
     }
   }, []);
 
@@ -147,7 +160,7 @@ export function useSearchPage() {
       initialSearchDone.current = true;
       executeSearch(urlQuery, urlSort);
     }
-  }, [urlQuery, urlSort, executeSearch]);
+  }, []);
 
   const performSearch = useCallback(async (term: string, sort: SortBy = sortBy, isNewSearch: boolean = true) => {
     if (!term.trim()) return;
@@ -165,16 +178,15 @@ export function useSearchPage() {
     setSearchParams(newParams, { replace: true });
 
     if (isNewSearch && isAuthenticated) {
-      await addUserSearchHistoryToServer(term);
-      const updatedRecent = [
+      addUserSearchHistoryToServer(term);
+      setRecentSearches(prev => [
         term,
-        ...recentSearches.filter(s => s !== term)
-      ].slice(0, 10);
-      setRecentSearches(updatedRecent);
+        ...prev.filter(s => s !== term)
+      ].slice(0, 10));
     }
 
     await executeSearch(term, sort);
-  }, [recentSearches, sortBy, setSearchParams, executeSearch, isAuthenticated]);
+  }, [sortBy, setSearchParams, executeSearch, isAuthenticated]);
 
   const handleSearchChange = useCallback((value: string) => {
     setSearchQuery(value);
