@@ -28,8 +28,7 @@
   background: inherit;
 }
 
-.detail-app-bar__back,
-.detail-app-bar__cart {
+.detail-app-bar__back {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,16 +36,29 @@
   height: 44px;
   min-width: 44px;
   min-height: 44px;
+  padding: 0;
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
   position: relative;
   flex-shrink: 0;
+  margin-left: -8px;
 }
 
-.detail-app-bar__back {
-  margin-left: -8px;
+.detail-app-bar__cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .detail-app-bar__title {

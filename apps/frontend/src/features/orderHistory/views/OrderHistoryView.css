@@ -71,15 +71,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
-  margin-right: 4px;
+  padding: 10px;
+  margin-right: 0;
 }
 
 .order-history__cart-badge {

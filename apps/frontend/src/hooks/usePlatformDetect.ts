@@ -134,5 +134,36 @@ export function usePlatformDetect(): PlatformInfo {
     }
   }, [platformInfo.isCapacitorAndroid]);
 
+  useEffect(() => {
+    if (!platformInfo.isCapacitorIOS) return;
+
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const rootElement = document.getElementById('root');
+    if (!rootElement) return;
+
+    const handleViewportResize = () => {
+      const keyboardHeight = window.innerHeight - viewport.height;
+      if (keyboardHeight > 50) {
+        rootElement.style.height = `${viewport.height}px`;
+        rootElement.style.bottom = 'auto';
+      } else {
+        rootElement.style.height = '';
+        rootElement.style.bottom = '0';
+      }
+    };
+
+    viewport.addEventListener('resize', handleViewportResize);
+    viewport.addEventListener('scroll', handleViewportResize);
+
+    return () => {
+      viewport.removeEventListener('resize', handleViewportResize);
+      viewport.removeEventListener('scroll', handleViewportResize);
+      rootElement.style.height = '';
+      rootElement.style.bottom = '0';
+    };
+  }, [platformInfo.isCapacitorIOS]);
+
   return platformInfo;
 }
