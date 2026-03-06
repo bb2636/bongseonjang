@@ -171,29 +171,6 @@
   color: rgba(12, 12, 12, 0.8);
 }
 
-.faq-chat-button {
-  position: fixed;
-  right: 16px;
-  bottom: 50px;
-  width: 51px;
-  height: 52px;
-  border: none;
-  border-radius: 16px;
-  background: #0579CA;
-  box-shadow: 2px 2px 36px rgba(0, 0, 0, 0.16);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.faq-chat-button__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-}
-
 @media (max-width: 400px) {
   .faq-page__content {
     padding: 16px 12px;
