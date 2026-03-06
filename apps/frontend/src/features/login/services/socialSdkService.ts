@@ -159,18 +159,28 @@ async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
 
     const handleBrowserFinished = () => {
       console.log('[GoogleOAuth] System browser closed');
-      if (!resolved) {
-        setTimeout(async () => {
-          if (!resolved) {
-            await pollForResult();
-            if (!resolved) {
-              resolved = true;
-              await cleanup();
-              resolve({ error: 'cancelled' });
-            }
-          }
-        }, 1500);
-      }
+      if (resolved) return;
+
+      let retryCount = 0;
+      const MAX_RETRIES = 10;
+      const RETRY_INTERVAL = 1000;
+
+      const retryPoll = async () => {
+        if (resolved) return;
+        retryCount++;
+        console.log(`[GoogleOAuth] Post-close poll attempt ${retryCount}/${MAX_RETRIES}`);
+        await pollForResult();
+        if (!resolved && retryCount < MAX_RETRIES) {
+          setTimeout(retryPoll, RETRY_INTERVAL);
+        } else if (!resolved) {
+          console.log('[GoogleOAuth] All post-close polls exhausted');
+          resolved = true;
+          await cleanup();
+          resolve({ error: 'cancelled' });
+        }
+      };
+
+      setTimeout(retryPoll, 500);
     };
 
     await Browser.addListener('browserFinished', handleBrowserFinished);
@@ -551,19 +561,28 @@ async function openInAppBrowserForAppleOAuth(): Promise<OAuthResult> {
 
     const handleClose = () => {
       console.log('[AppleOAuth] InAppBrowser closed');
-      if (!resolved) {
-        resolved = true;
-        if (applePollingIntervalId) {
-          clearInterval(applePollingIntervalId);
-          applePollingIntervalId = null;
+      if (resolved) return;
+
+      let retryCount = 0;
+      const MAX_RETRIES = 10;
+      const RETRY_INTERVAL = 1000;
+
+      const retryPoll = async () => {
+        if (resolved) return;
+        retryCount++;
+        console.log(`[AppleOAuth] Post-close poll attempt ${retryCount}/${MAX_RETRIES}`);
+        await pollForResult();
+        if (!resolved && retryCount < MAX_RETRIES) {
+          setTimeout(retryPoll, RETRY_INTERVAL);
+        } else if (!resolved) {
+          console.log('[AppleOAuth] All post-close polls exhausted');
+          resolved = true;
+          await cleanup();
+          resolve({ error: 'cancelled' });
         }
-        if (applePollingTimeoutId) {
-          clearTimeout(applePollingTimeoutId);
-          applePollingTimeoutId = null;
-        }
-        InAppBrowser.removeAllListeners();
-        resolve({ error: 'cancelled' });
-      }
+      };
+
+      setTimeout(retryPoll, 500);
     };
 
     await InAppBrowser.addListener('urlChangeEvent', handleUrlChange);
