@@ -82,6 +82,14 @@
   margin-right: 0;
 }
 
+.order-history__cart-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  flex-shrink: 0;
+}
+
 .order-history__cart-badge {
   position: absolute;
   right: 3px;

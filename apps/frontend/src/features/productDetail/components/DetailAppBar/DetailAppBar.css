@@ -61,6 +61,14 @@
   flex-shrink: 0;
 }
 
+.detail-app-bar__cart-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  flex-shrink: 0;
+}
+
 .detail-app-bar__title {
   flex: 1;
   text-align: center;
