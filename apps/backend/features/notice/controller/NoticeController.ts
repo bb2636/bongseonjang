@@ -1,6 +1,13 @@
 import type { Request, Response } from 'express';
 import type { NoticeService } from '../application/NoticeService';
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
@@ -10,7 +17,7 @@ export class NoticeController {
       const result = await this.noticeService.getNoticesForAdmin(keyword);
       res.json(result);
     } catch (error) {
-      console.error('Error fetching notices:', error);
+      console.error('[NoticeController.getNotices] Error:', error);
       res.status(500).json({ error: 'Failed to fetch notices' });
     }
   }
@@ -31,7 +38,7 @@ export class NoticeController {
 
       res.json(notice);
     } catch (error) {
-      console.error('Error fetching notice:', error);
+      console.error('[NoticeController.getNoticeById] Error:', error);
       res.status(500).json({ error: 'Failed to fetch notice' });
     }
   }
@@ -39,13 +46,15 @@ export class NoticeController {
   async createNotice(req: Request, res: Response): Promise<void> {
     try {
       const { title, content, typeId, isVisible } = req.body;
+      const contentPreview = typeof content === 'string' ? content.slice(0, 50) : content;
+      console.log('[NoticeController.createNotice] Request body:', { title, content: contentPreview, typeId, isVisible });
 
       if (!title || !content) {
         res.status(400).json({ error: 'Title and content are required' });
         return;
       }
 
-      if (!typeId || isNaN(parseInt(typeId, 10))) {
+      if (!typeId || isNaN(parseInt(String(typeId), 10))) {
         res.status(400).json({ error: 'Valid typeId is required' });
         return;
       }
@@ -53,13 +62,13 @@ export class NoticeController {
       const notice = await this.noticeService.createNotice({
         title,
         content,
-        typeId: parseInt(typeId, 10),
+        typeId: parseInt(String(typeId), 10),
         isVisible: isVisible !== undefined ? Boolean(isVisible) : true,
       });
 
       res.status(201).json(notice);
     } catch (error) {
-      console.error('Error creating notice:', error);
+      console.error('[NoticeController.createNotice] Error:', error);
       res.status(500).json({ error: 'Failed to create notice' });
     }
   }
@@ -77,7 +86,7 @@ export class NoticeController {
       const notice = await this.noticeService.updateNotice(id, {
         title,
         content,
-        typeId: typeId ? parseInt(typeId, 10) : undefined,
+        typeId: typeId ? parseInt(String(typeId), 10) : undefined,
         isVisible: isVisible !== undefined ? Boolean(isVisible) : undefined,
       });
 
@@ -88,7 +97,7 @@ export class NoticeController {
 
       res.json(notice);
     } catch (error) {
-      console.error('Error updating notice:', error);
+      console.error('[NoticeController.updateNotice] Error:', error);
       res.status(500).json({ error: 'Failed to update notice' });
     }
   }
@@ -109,7 +118,7 @@ export class NoticeController {
 
       res.status(204).send();
     } catch (error) {
-      console.error('Error deleting notice:', error);
+      console.error('[NoticeController.deleteNotice] Error:', error);
       res.status(500).json({ error: 'Failed to delete notice' });
     }
   }
