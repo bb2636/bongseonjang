@@ -82,9 +82,16 @@ export class CouponService {
       return { success: false, message: canIssueResult.reason || '발급 대상이 아닙니다' };
     }
 
-    const existingCoupon = await this.repository.findUserCoupon(couponId, userId);
-    if (existingCoupon) {
-      return { success: false, message: '이미 발급받은 쿠폰입니다' };
+    if (coupon.usageLimitEnabled && coupon.maxUsagePerUser !== null) {
+      const totalIssuedCount = await this.repository.countUserCoupons(couponId, userId);
+      if (totalIssuedCount >= coupon.maxUsagePerUser) {
+        return { success: false, message: `이 쿠폰은 1인당 최대 ${coupon.maxUsagePerUser}회까지 발급 가능합니다` };
+      }
+    } else {
+      const existingCoupon = await this.repository.findUserCoupon(couponId, userId);
+      if (existingCoupon) {
+        return { success: false, message: '이미 발급받은 쿠폰입니다' };
+      }
     }
 
     const { validFrom, validTo } = await this.repository.calculateValidityDates(couponId);

@@ -42,18 +42,22 @@ export function PaymentInfoSection({
           <span className="payment-info-section__label">상품 금액</span>
           <span className="payment-info-section__value">{formatPrice(totalProductPrice)}</span>
         </div>
-        <div className="payment-info-section__row">
-          <span className="payment-info-section__label">포인트 할인</span>
-          <span className="payment-info-section__value payment-info-section__value--discount">
-            {formatDiscount(usedPoints)}
-          </span>
-        </div>
-        <div className="payment-info-section__row">
-          <span className="payment-info-section__label">쿠폰 할인</span>
-          <span className="payment-info-section__value payment-info-section__value--discount">
-            {formatDiscount(couponDiscountAmount)}
-          </span>
-        </div>
+        {usedPoints > 0 && (
+          <div className="payment-info-section__row">
+            <span className="payment-info-section__label">포인트 할인</span>
+            <span className="payment-info-section__value payment-info-section__value--discount">
+              {formatDiscount(usedPoints)}
+            </span>
+          </div>
+        )}
+        {couponDiscountAmount > 0 && (
+          <div className="payment-info-section__row">
+            <span className="payment-info-section__label">쿠폰 할인</span>
+            <span className="payment-info-section__value payment-info-section__value--discount">
+              {formatDiscount(couponDiscountAmount)}
+            </span>
+          </div>
+        )}
         <div className="payment-info-section__row">
           <span className="payment-info-section__label">배송비</span>
           <span className="payment-info-section__value">

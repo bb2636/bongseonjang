@@ -2,6 +2,7 @@ import { useRef, useState, ChangeEvent, useEffect } from 'react';
 import { BannerPosition, Banner } from './useBannerManagement';
 import { useBannerForm, LinkType } from './useBannerForm';
 import { ConfirmModal } from '../../../../components';
+import { useToast } from '../../../../contexts/ToastContext';
 import './BannerFormDialog.css';
 
 interface BannerFormDialogProps {
@@ -26,6 +27,7 @@ export function BannerFormDialog({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const isEditing = !!editingBanner;
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (isOpen) {
@@ -74,6 +76,7 @@ export function BannerFormDialog({
       const success = await submitForm();
       if (success) {
         onSuccess();
+        showToast(isEditing ? '배너가 수정되었습니다' : '배너가 등록되었습니다', 'success');
         onClose();
       }
     } finally {

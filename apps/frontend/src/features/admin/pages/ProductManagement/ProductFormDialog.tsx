@@ -1,6 +1,7 @@
 import { useRef, useEffect, useLayoutEffect, ChangeEvent, useState } from 'react';
 import { useProductForm, ProductOption, ProductInfo, ShippingDetail } from './useProductForm';
 import { ConfirmModal, Select, MultiSelect, DateRangePicker } from '../../../../components';
+import { useToast } from '../../../../contexts/ToastContext';
 import './ProductFormDialog.css';
 
 interface ProductFormDialogProps {
@@ -39,6 +40,7 @@ export function ProductFormDialog({
   const initializedRef = useRef(false);
   const lastProductIdRef = useRef<string | undefined>(undefined);
   const hasSubmittedRef = useRef(false);
+  const { showToast } = useToast();
 
   const {
     formData,
@@ -144,6 +146,7 @@ export function ProductFormDialog({
     if (success) {
       hasSubmittedRef.current = true;
       onSuccess();
+      showToast(isEditMode ? '상품이 수정되었습니다' : '상품이 등록되었습니다', 'success');
       onClose();
     }
   };

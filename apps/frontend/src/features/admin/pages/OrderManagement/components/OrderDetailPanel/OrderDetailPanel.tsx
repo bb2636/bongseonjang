@@ -234,16 +234,22 @@ export function OrderDetailPanel({ orderId, isOpen, onClose }: OrderDetailPanelP
                     <div className="order-detail-info-value">{formatPrice(order.shippingFee)}</div>
                   </div>
                 </div>
-                <div className="order-detail-info-grid">
-                  <div className="order-detail-info-row-item">
-                    <div className="order-detail-info-label">쿠폰 할인</div>
-                    <div className="order-detail-info-value">-{formatPrice(order.couponDiscountAmount)}</div>
+                {(order.couponDiscountAmount > 0 || order.usedPoints > 0) && (
+                  <div className="order-detail-info-grid">
+                    {order.couponDiscountAmount > 0 && (
+                      <div className="order-detail-info-row-item">
+                        <div className="order-detail-info-label">쿠폰 할인</div>
+                        <div className="order-detail-info-value">-{formatPrice(order.couponDiscountAmount)}</div>
+                      </div>
+                    )}
+                    {order.usedPoints > 0 && (
+                      <div className="order-detail-info-row-item">
+                        <div className="order-detail-info-label">포인트 사용</div>
+                        <div className="order-detail-info-value">-{formatPrice(order.usedPoints)}</div>
+                      </div>
+                    )}
                   </div>
-                  <div className="order-detail-info-row-item">
-                    <div className="order-detail-info-label">포인트 사용</div>
-                    <div className="order-detail-info-value">-{formatPrice(order.usedPoints)}</div>
-                  </div>
-                </div>
+                )}
                 <div className="order-detail-info-grid">
                   <div className="order-detail-info-row-item">
                     <div className="order-detail-info-label">결제수단</div>
