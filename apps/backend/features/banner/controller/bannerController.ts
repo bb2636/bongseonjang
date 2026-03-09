@@ -84,9 +84,9 @@ export class BannerController {
         return;
       }
 
-      const { title, imageUrl, linkUrl, isActive, startedAt, endedAt, description } = req.body;
+      const { title, imageUrl, linkUrl, isActive, startedAt, endedAt, description, bannerPositionId } = req.body;
 
-      const banner = await bannerRepository.updateBanner(id, {
+      const updateData: Record<string, unknown> = {
         title,
         imageUrl,
         linkUrl,
@@ -94,7 +94,13 @@ export class BannerController {
         startedAt: startedAt ? new Date(startedAt) : null,
         endedAt: endedAt ? new Date(endedAt) : null,
         description: description !== undefined ? (description || null) : undefined,
-      });
+      };
+
+      if (bannerPositionId !== undefined) {
+        updateData.bannerPositionId = bannerPositionId;
+      }
+
+      const banner = await bannerRepository.updateBanner(id, updateData);
 
       if (!banner) {
         res.status(404).json({ message: '배너를 찾을 수 없습니다' });

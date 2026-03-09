@@ -260,6 +260,27 @@ export async function runProductionSeed(): Promise<void> {
     }
     console.log('Seeded banners');
 
+    const sequenceResets = [
+      { table: 'notices', column: 'id' },
+      { table: 'notice_types', column: 'id' },
+      { table: 'banners', column: 'id' },
+      { table: 'banner_positions', column: 'id' },
+      { table: 'faq_categories', column: 'id' },
+      { table: 'faqs', column: 'id' },
+      { table: 'shipping_policies', column: 'id' },
+      { table: 'exposure_categories', column: 'id' },
+      { table: 'product_options', column: 'id' },
+    ];
+    for (const { table, column } of sequenceResets) {
+      try {
+        await queryRunner.query(
+          `SELECT setval(pg_get_serial_sequence('${table}', '${column}'), COALESCE((SELECT MAX(${column}) FROM ${table}), 0))`
+        );
+      } catch {
+      }
+    }
+    console.log('Reset sequences to match seeded data');
+
     await queryRunner.commitTransaction();
     console.log('Production seed completed successfully!');
   } catch (error) {

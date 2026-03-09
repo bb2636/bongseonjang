@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, RelationId } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { BannerPosition } from './BannerPosition';
 
 @Entity('banners')
@@ -10,7 +10,7 @@ export class Banner {
   @JoinColumn({ name: 'banner_position_id' })
   position!: BannerPosition;
 
-  @RelationId((banner: Banner) => banner.position)
+  @Column({ type: 'int', name: 'banner_position_id' })
   bannerPositionId!: number;
 
   @Column({ type: 'varchar', length: 200, nullable: true })
