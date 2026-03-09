@@ -2,7 +2,6 @@ import { useRef, useState, ChangeEvent, useEffect } from 'react';
 import { BannerPosition, Banner } from './useBannerManagement';
 import { useBannerForm, LinkType } from './useBannerForm';
 import { ConfirmModal } from '../../../../components';
-import { Snackbar } from '../../components/Snackbar';
 import './BannerFormDialog.css';
 
 interface BannerFormDialogProps {
@@ -25,13 +24,11 @@ export function BannerFormDialog({
 }: BannerFormDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const isEditing = !!editingBanner;
 
   useEffect(() => {
     if (isOpen) {
-      setShowSnackbar(false);
       setShowConfirmModal(false);
       setIsConfirming(false);
     }
@@ -77,16 +74,11 @@ export function BannerFormDialog({
       const success = await submitForm();
       if (success) {
         onSuccess();
-        setShowSnackbar(true);
+        onClose();
       }
     } finally {
       setIsConfirming(false);
     }
-  };
-
-  const handleSnackbarClose = () => {
-    setShowSnackbar(false);
-    onClose();
   };
 
   const handleReset = () => {
@@ -337,11 +329,6 @@ export function BannerFormDialog({
         confirmText="확인"
       />
 
-      <Snackbar
-        isOpen={showSnackbar}
-        title={isEditing ? "배너가 수정되었습니다" : "배너가 등록되었습니다"}
-        onClose={handleSnackbarClose}
-      />
     </div>
   );
 }

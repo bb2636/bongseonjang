@@ -16,9 +16,19 @@ function transformBannerToEventDto(banner: Banner): EventDto {
 }
 
 export class EventService {
+  private isWithinDateRange(banner: Banner): boolean {
+    const now = new Date();
+    if (banner.startedAt && banner.startedAt > now) return false;
+    if (banner.endedAt && banner.endedAt < now) return false;
+    return true;
+  }
+
   async getActiveEvents(): Promise<EventDto[]> {
     const banners = await bannerRepository.findBannersByPositionCode('HOME_EVENT');
-    const activeBanners = banners.filter(banner => banner.isActive);
+    const activeBanners = banners.filter(banner => {
+      if (!banner.isActive) return false;
+      return this.isWithinDateRange(banner);
+    });
     return activeBanners.map(transformBannerToEventDto);
   }
 
@@ -30,6 +40,10 @@ export class EventService {
     
     const banner = await bannerRepository.findBannerById(bannerId);
     if (!banner || !banner.isActive || banner.position?.code !== 'HOME_EVENT') {
+      return null;
+    }
+
+    if (!this.isWithinDateRange(banner)) {
       return null;
     }
     

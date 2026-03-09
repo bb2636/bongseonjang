@@ -1,7 +1,6 @@
 import { useRef, useEffect, useLayoutEffect, ChangeEvent, useState } from 'react';
 import { useProductForm, ProductOption, ProductInfo, ShippingDetail } from './useProductForm';
 import { ConfirmModal, Select, MultiSelect, DateRangePicker } from '../../../../components';
-import { Snackbar } from '../../components/Snackbar';
 import './ProductFormDialog.css';
 
 interface ProductFormDialogProps {
@@ -37,7 +36,6 @@ export function ProductFormDialog({
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
   const detailInputRef = useRef<HTMLInputElement>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const initializedRef = useRef(false);
   const lastProductIdRef = useRef<string | undefined>(undefined);
   const hasSubmittedRef = useRef(false);
@@ -96,7 +94,6 @@ export function ProductFormDialog({
 
   useLayoutEffect(() => {
     if (!isOpen) {
-      setShowSnackbar(false);
       setShowConfirmModal(false);
       hasSubmittedRef.current = false;
       initializedRef.current = false;
@@ -104,7 +101,6 @@ export function ProductFormDialog({
       return;
     }
 
-    setShowSnackbar(false);
     setShowConfirmModal(false);
     hasSubmittedRef.current = false;
   }, [isOpen]);
@@ -143,20 +139,13 @@ export function ProductFormDialog({
   };
 
   const handleConfirmSubmit = async () => {
-    console.log('[DEBUG handleConfirmSubmit] Called, productId:', productId, 'isEditMode:', isEditMode);
     setShowConfirmModal(false);
     const success = await submitForm();
-    console.log('[DEBUG handleConfirmSubmit] submitForm result:', success);
     if (success) {
       hasSubmittedRef.current = true;
       onSuccess();
-      setShowSnackbar(true);
+      onClose();
     }
-  };
-
-  const handleSnackbarClose = () => {
-    setShowSnackbar(false);
-    onClose();
   };
 
   const handleReset = () => {
@@ -800,11 +789,6 @@ export function ProductFormDialog({
         confirmText="확인"
       />
 
-      <Snackbar
-        isOpen={showSnackbar && hasSubmittedRef.current}
-        title={isEditMode ? '상품이 수정되었습니다' : '상품이 등록되었습니다'}
-        onClose={handleSnackbarClose}
-      />
     </div>
   );
 }
