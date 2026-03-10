@@ -14,6 +14,7 @@ interface ImageUploaderProps {
   openFilePicker: () => void;
   handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   removeImage: (index: number) => void;
+  pickImage?: () => void;
   pickFromCamera?: () => void;
   pickFromGallery?: () => void;
   isCapacitorEnvironment?: boolean;
@@ -45,48 +46,22 @@ export function ImageUploader({
   isUploading,
   canAddMore,
   fileInputRef,
-  openFilePicker,
   handleFileChange,
   removeImage,
-  pickFromCamera,
-  pickFromGallery,
-  isCapacitorEnvironment,
+  pickImage,
 }: ImageUploaderProps) {
   return (
     <div className="image-uploader">
       {hint && <span className="image-uploader__hint">{hint}</span>}
       <div className="image-uploader__list">
-        {isCapacitorEnvironment && pickFromCamera && pickFromGallery ? (
-          <>
-            <button
-              type="button"
-              className="image-uploader__add-btn"
-              onClick={pickFromCamera}
-              disabled={!canAddMore || isUploading}
-              title="카메라로 촬영"
-            >
-              <CameraIcon />
-            </button>
-            <button
-              type="button"
-              className="image-uploader__add-btn"
-              onClick={pickFromGallery}
-              disabled={!canAddMore || isUploading}
-              title="갤러리에서 선택"
-            >
-              <ImageUploadIcon />
-            </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            className="image-uploader__add-btn"
-            onClick={openFilePicker}
-            disabled={!canAddMore || isUploading}
-          >
-            <ImageUploadIcon />
-          </button>
-        )}
+        <button
+          type="button"
+          className="image-uploader__add-btn"
+          onClick={pickImage ?? openFilePicker}
+          disabled={!canAddMore || isUploading}
+        >
+          <ImageUploadIcon />
+        </button>
         <input
           ref={fileInputRef}
           type="file"

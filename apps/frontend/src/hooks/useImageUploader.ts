@@ -134,6 +134,20 @@ export function useImageUploader(options: UseImageUploaderOptions) {
     setIsUploading(false);
   }, [purpose]);
 
+  const pickImage = useCallback(async () => {
+    if (!IS_CAPACITOR) {
+      openFilePicker();
+      return;
+    }
+
+    if (images.length >= maxImages) return;
+
+    const file = await pickImageWithCapacitor(CameraSource.Prompt);
+    if (file) {
+      await uploadSingleFile(file);
+    }
+  }, [images.length, maxImages, openFilePicker, uploadSingleFile]);
+
   const pickFromCamera = useCallback(async () => {
     if (!IS_CAPACITOR) {
       openFilePicker();
@@ -251,6 +265,7 @@ export function useImageUploader(options: UseImageUploaderOptions) {
     removeImage,
     clearImages,
     getUploadedUrls,
+    pickImage,
     pickFromCamera,
     pickFromGallery,
     isCapacitorEnvironment,

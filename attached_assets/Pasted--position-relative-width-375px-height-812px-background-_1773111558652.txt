@@ -1,0 +1,459 @@
+/* 결제완료 */
+
+position: relative;
+width: 375px;
+height: 812px;
+
+background: #FFFFFF;
+
+
+/* https://lottiefiles.com/animations/confetti-0ATT1OaJ6c */
+
+position: absolute;
+width: 352px;
+height: 316px;
+left: 16px;
+top: 92px;
+
+background: url(.png);
+opacity: 0.2;
+
+
+/* 홈인디케이터 */
+
+position: absolute;
+width: 375px;
+height: 34px;
+left: 0px;
+bottom: 0px;
+
+border-radius: 0px;
+
+
+/* Home Indicator */
+
+position: absolute;
+width: 134px;
+height: 5px;
+left: calc(50% - 134px/2 + 0.5px);
+bottom: 8px;
+
+/* BG/Black_Color */
+background: #111111;
+border-radius: 100px;
+
+
+/* button */
+
+/* 오토레이아웃 */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 8px 14px;
+gap: 6px;
+
+position: absolute;
+width: 343px;
+height: 50px;
+left: calc(50% - 343px/2);
+bottom: 46px;
+
+background: #3B9BD5;
+border-radius: 4px;
+
+
+/* Component 1 */
+
+display: none;
+width: 24px;
+height: 24px;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 0;
+flex-grow: 0;
+
+
+/* 로그인 */
+
+width: 41px;
+height: 20px;
+
+/* pretendard/semibold/16 */
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 600;
+font-size: 16px;
+line-height: 128%;
+/* 또는 20px */
+letter-spacing: -0.02em;
+
+/* white */
+color: #FFFFFF;
+
+
+/* 내부 오토레이아웃 */
+flex: none;
+order: 1;
+flex-grow: 0;
+
+
+/* Group 11 */
+
+position: absolute;
+width: 123.76px;
+height: 134px;
+left: calc(50% - 123.76px/2 + 0.38px);
+top: 265.17px;
+
+
+
+/* Union */
+
+position: absolute;
+width: 120.04px;
+height: 107.48px;
+left: 127.86px;
+top: 290.29px;
+
+background: #FDFDFD;
+
+
+/* Ellipse 571 */
+
+position: absolute;
+width: 104.22px;
+height: 107.48px;
+left: 136.24px;
+top: 290.29px;
+
+background: #D9D9D9;
+
+
+/* Ellipse 572 */
+
+position: absolute;
+width: 22.33px;
+height: 30.71px;
+left: 127.86px;
+top: 323.79px;
+
+background: #D9D9D9;
+
+
+/* Ellipse 573 */
+
+position: absolute;
+width: 22.33px;
+height: 30.71px;
+left: 225.57px;
+top: 323.79px;
+
+background: #D9D9D9;
+
+
+/* 아이콘 */
+
+position: absolute;
+left: 33.6%;
+right: 33.4%;
+top: 32.66%;
+bottom: 50.84%;
+
+
+
+/* Vector */
+
+position: absolute;
+left: 0%;
+right: -0.01%;
+top: 0%;
+bottom: 0%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 4.18%;
+right: 93.22%;
+top: 51.6%;
+bottom: 38.41%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 92.88%;
+right: 3.78%;
+top: 51.24%;
+bottom: 38.07%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 18.42%;
+right: 17.35%;
+top: 38.11%;
+bottom: 35.58%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 29.88%;
+right: 56.44%;
+top: 31.52%;
+bottom: 62.48%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 56.45%;
+right: 29.86%;
+top: 31.52%;
+bottom: 62.48%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 34.53%;
+right: 34.4%;
+top: 70.21%;
+bottom: 21.47%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 46.76%;
+right: 46.77%;
+top: 79.92%;
+bottom: 17.66%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 36.53%;
+right: 58.34%;
+top: 46.5%;
+bottom: 50.89%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 28.21%;
+right: 58.34%;
+top: 48.56%;
+bottom: 48.25%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 58.32%;
+right: 36.55%;
+top: 46.52%;
+bottom: 50.87%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 58.34%;
+right: 28.19%;
+top: 48.59%;
+bottom: 48.24%;
+
+background: #3B9BD5;
+
+
+/* Vector */
+
+position: absolute;
+left: 45.21%;
+right: 45.2%;
+top: 63.63%;
+bottom: 33.37%;
+
+background: #3B9BD5;
+
+
+/* 회원가입 완료! 신선한 바다를 집에서 만나보세요 */
+
+position: absolute;
+width: 288px;
+height: 58px;
+left: calc(50% - 288px/2 + 0.5px);
+top: 415.17px;
+
+font-family: 'Pretendard';
+font-style: normal;
+font-weight: 500;
+font-size: 23px;
+line-height: 128%;
+/* 또는 29px */
+text-align: center;
+letter-spacing: -0.02em;
+
+color: #0C0C0C;
+
+
+
+/* 스테이터스바 */
+
+position: absolute;
+width: 375px;
+height: 44px;
+left: calc(50% - 375px/2);
+top: 0px;
+
+
+
+/* Group 3 */
+
+position: absolute;
+width: 339.33px;
+height: 20px;
+left: 18px;
+top: 12px;
+
+
+
+/* Right Side */
+
+position: absolute;
+width: 66.66px;
+height: 11.34px;
+left: 290.67px;
+top: 16.33px;
+
+
+
+/* Battery */
+
+position: absolute;
+left: 88.8%;
+right: 4.71%;
+top: 37.13%;
+bottom: 37.12%;
+
+
+
+/* Rectangle */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 22px;
+height: 11.33px;
+right: 20px;
+top: 16.34px;
+
+mix-blend-mode: normal;
+opacity: 0.35;
+/* BG/Black_Color */
+border: 1px solid #111111;
+border-radius: 2.66667px;
+
+
+/* Combined Shape */
+
+position: absolute;
+width: 1.33px;
+height: 4px;
+right: 17.67px;
+top: 20px;
+
+/* BG/Black_Color */
+background: #111111;
+mix-blend-mode: normal;
+opacity: 0.4;
+
+
+/* Rectangle */
+
+position: absolute;
+width: 18px;
+height: 7.33px;
+right: 22px;
+top: 18.34px;
+
+/* BG/Black_Color */
+background: #111111;
+border-radius: 1.1px;
+
+
+/* Wifi */
+
+position: absolute;
+width: 15.27px;
+height: 10.97px;
+right: 47.03px;
+top: 16.33px;
+
+/* BG/Black_Color */
+background: #111111;
+
+
+/* Mobile Signal */
+
+position: absolute;
+width: 17px;
+height: 10.67px;
+right: 67.33px;
+top: 16.67px;
+
+/* BG/Black_Color */
+background: #111111;
+
+
+/* 9:41 */
+
+position: absolute;
+width: 54px;
+height: 20px;
+left: 18px;
+top: 12px;
+
+/* Default/Bold/Subheadline */
+font-family: 'SF Pro Text';
+font-style: normal;
+font-weight: 600;
+font-size: 15px;
+line-height: 20px;
+/* 상자 높이와 동일 또는 133% */
+text-align: center;
+letter-spacing: -0.5px;
+
+/* BG/Black_Color */
+color: #111111;
+

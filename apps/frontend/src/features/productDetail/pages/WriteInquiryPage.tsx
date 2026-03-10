@@ -111,14 +111,11 @@ export default function WriteInquiryPage() {
     images,
     canAddMore,
     hasUploadingImages,
-    openFilePicker,
     handleFileChange,
     fileInputRef,
     removeImage,
     getUploadedUrls,
-    pickFromCamera,
-    pickFromGallery,
-    isCapacitorEnvironment,
+    pickImage,
   } = useImageUploader({ purpose: 'inquiry', maxImages: 10 });
 
   const createInquiryMutation = useMutation({
@@ -201,17 +198,21 @@ export default function WriteInquiryPage() {
         )}
 
         <section className="write-inquiry-page__section">
-          <div className="write-inquiry-page__select" onClick={() => setIsTypeOpen((prev) => !prev)} role="button" tabIndex={0}>
+          <div className="write-inquiry-page__select" onClick={() => setIsTypeOpen(true)} role="button" tabIndex={0}>
             <span>{INQUIRY_OPTIONS.find((option) => option.value === selectedType)?.label || '문의 유형 선택'}</span>
             <ChevronDownIcon />
           </div>
-          {isTypeOpen && (
-            <div className="write-inquiry-page__select-menu">
+        </section>
+
+        {isTypeOpen && (
+          <div className="write-inquiry-page__bottomsheet-overlay" onClick={() => setIsTypeOpen(false)}>
+            <div className="write-inquiry-page__bottomsheet" onClick={(e) => e.stopPropagation()}>
+              <div className="write-inquiry-page__bottomsheet-handle" />
               {INQUIRY_OPTIONS.map((option) => (
                 <button
                   key={option.value}
                   type="button"
-                  className="write-inquiry-page__select-option"
+                  className={`write-inquiry-page__bottomsheet-option${selectedType === option.value ? ' write-inquiry-page__bottomsheet-option--selected' : ''}`}
                   onClick={() => {
                     setSelectedType(option.value);
                     setIsTypeOpen(false);
@@ -221,8 +222,8 @@ export default function WriteInquiryPage() {
                 </button>
               ))}
             </div>
-          )}
-        </section>
+          </div>
+        )}
 
         <section className="write-inquiry-page__section">
           <div className="write-inquiry-page__field-label">문의 작성</div>
@@ -259,37 +260,14 @@ export default function WriteInquiryPage() {
           <div className="write-inquiry-page__field-label">사진 첨부(선택)</div>
           <p className="write-inquiry-page__helper">사진은 최대 10장, jpg, png 파일만 가능해요</p>
           <div className="write-inquiry-page__images">
-            {isCapacitorEnvironment ? (
-              <>
-                <button
-                  className="write-inquiry-page__image-add"
-                  type="button"
-                  onClick={pickFromCamera}
-                  disabled={!canAddMore}
-                  title="카메라로 촬영"
-                >
-                  <CameraIcon />
-                </button>
-                <button
-                  className="write-inquiry-page__image-add"
-                  type="button"
-                  onClick={pickFromGallery}
-                  disabled={!canAddMore}
-                  title="갤러리에서 선택"
-                >
-                  <AddPhotoIcon />
-                </button>
-              </>
-            ) : (
-              <button
-                className="write-inquiry-page__image-add"
-                type="button"
-                onClick={openFilePicker}
-                disabled={!canAddMore}
-              >
-                <AddPhotoIcon />
-              </button>
-            )}
+            <button
+              className="write-inquiry-page__image-add"
+              type="button"
+              onClick={pickImage}
+              disabled={!canAddMore}
+            >
+              <AddPhotoIcon />
+            </button>
             {images.map((image, index) => (
               <div key={image.previewUrl} className="write-inquiry-page__image-item">
                 <img src={image.previewUrl} alt={`첨부 이미지 ${index + 1}`} className="write-inquiry-page__image-preview" />

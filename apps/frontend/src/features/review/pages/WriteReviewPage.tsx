@@ -126,13 +126,10 @@ export default function WriteReviewPage() {
     hasUploadingImages,
     canAddMore,
     fileInputRef,
-    openFilePicker,
     handleFileChange,
     removeImage,
     getUploadedUrls,
-    pickFromCamera,
-    pickFromGallery,
-    isCapacitorEnvironment,
+    pickImage,
   } = useImageUploader({ purpose: 'review', maxImages: MAX_IMAGES });
 
   const createReviewMutation = useMutation({
@@ -254,37 +251,14 @@ export default function WriteReviewPage() {
             </span>
           </div>
           <div className="write-review-page__photo-list">
-            {isCapacitorEnvironment ? (
-              <>
-                <button 
-                  type="button" 
-                  className="write-review-page__photo-add-btn"
-                  onClick={pickFromCamera}
-                  disabled={!canAddMore || isUploading}
-                  title="카메라로 촬영"
-                >
-                  <CameraIcon />
-                </button>
-                <button 
-                  type="button" 
-                  className="write-review-page__photo-add-btn"
-                  onClick={pickFromGallery}
-                  disabled={!canAddMore || isUploading}
-                  title="갤러리에서 선택"
-                >
-                  <ImageUploadIcon />
-                </button>
-              </>
-            ) : (
-              <button 
-                type="button" 
-                className="write-review-page__photo-add-btn"
-                onClick={openFilePicker}
-                disabled={!canAddMore || isUploading}
-              >
-                <ImageUploadIcon />
-              </button>
-            )}
+            <button 
+              type="button" 
+              className="write-review-page__photo-add-btn"
+              onClick={pickImage}
+              disabled={!canAddMore || isUploading}
+            >
+              <ImageUploadIcon />
+            </button>
             <input
               ref={fileInputRef}
               type="file"
