@@ -3,14 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { wishlistApi, WishlistItem } from '../api/wishlistApi';
 import { useToast } from '../../../contexts/ToastContext';
-import { useCart } from '../../../contexts/CartContext';
 import { useQuickCart } from '../../../contexts/QuickCartContext';
 import { guestWishlistStorage, GuestWishlistItem } from '../../../utils/guestStorage';
 
 export function useWishlist() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { cartCount } = useCart();
   const { openQuickCart } = useQuickCart();
   const { isAuthenticated } = useAuth();
   
@@ -95,7 +93,6 @@ export function useWishlist() {
     items,
     count,
     isLoading,
-    cartCount,
     isGuest: !isAuthenticated,
     handleRemoveFromWishlist,
     handleAddToCart,

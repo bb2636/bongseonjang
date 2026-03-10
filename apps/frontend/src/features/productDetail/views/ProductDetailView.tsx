@@ -6,7 +6,7 @@ import ProductDetailContent from '../components/ProductDetailContent';
 import RelatedProducts from '../components/RelatedProducts';
 import ReviewSection from '../components/ReviewSection';
 import BottomActionBar from '../components/BottomActionBar';
-import DetailAppBar from '../components/DetailAppBar';
+import { AppBar } from '../../../components/AppBar';
 import ProductDetailTabs, { ProductDetailTabsSpacer } from '../components/ProductDetailTabs';
 
 import { ProductInquirySection } from '../components/ProductInquirySection';
@@ -62,7 +62,7 @@ export default function ProductDetailView({
 
   return (
     <div className="product-detail-view">
-      <DetailAppBar productName={product.name} />
+      <AppBar variant="subpage" title={product.name} />
       
       <div className="product-detail-view__content">
         <ProductDetailTabs

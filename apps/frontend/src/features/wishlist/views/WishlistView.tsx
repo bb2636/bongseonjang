@@ -1,4 +1,4 @@
-import { WishlistAppBar, WishlistAppBarSpacer } from '../components/WishlistAppBar';
+import { AppBar, AppBarSpacer } from '../../../components/AppBar';
 import { WishlistProductCard } from '../components/WishlistProductCard';
 import WishlistSkeleton from '../components/WishlistSkeleton';
 import type { WishlistItem } from '../api/wishlistApi';
@@ -7,7 +7,6 @@ import './WishlistView.css';
 interface WishlistViewProps {
   items: WishlistItem[];
   count: number;
-  cartCount: number;
   isLoading: boolean;
   onBack: () => void;
   onCartClick: () => void;
@@ -19,7 +18,6 @@ interface WishlistViewProps {
 export default function WishlistView({
   items,
   count,
-  cartCount,
   isLoading,
   onBack,
   onCartClick,
@@ -30,12 +28,8 @@ export default function WishlistView({
   if (isLoading) {
     return (
       <div className="wishlist">
-        <WishlistAppBar 
-          onBackClick={onBack} 
-          onCartClick={onCartClick}
-          cartCount={cartCount}
-        />
-        <WishlistAppBarSpacer />
+        <AppBar variant="subpage" title="찜" onBackClick={onBack} onCartClick={onCartClick} />
+        <AppBarSpacer variant="subpage" />
         <WishlistSkeleton />
       </div>
     );
@@ -43,12 +37,8 @@ export default function WishlistView({
 
   return (
     <div className="wishlist">
-      <WishlistAppBar 
-        onBackClick={onBack} 
-        onCartClick={onCartClick}
-        cartCount={cartCount}
-      />
-      <WishlistAppBarSpacer />
+      <AppBar variant="subpage" title="찜" onBackClick={onBack} onCartClick={onCartClick} />
+      <AppBarSpacer variant="subpage" />
 
       <div className="wishlist__count">
         전체 {count}개
