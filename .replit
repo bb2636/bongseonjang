@@ -18,8 +18,8 @@ language = "nodejs"
 
 [deployment]
 deploymentTarget = "autoscale"
-build = ["sh", "-c", "npm run build"]
-run = ["sh", "-c", "cd apps/backend && npm run start"]
+build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
 
 [[ports]]
 localPort = 3001
