@@ -141,6 +141,11 @@ async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
           console.log('[GoogleOAuth] Login successful via polling!');
           resolved = true;
           await cleanup();
+          try {
+            await Browser.close();
+          } catch (e) {
+            console.log('[GoogleOAuth] Browser.close() after polling success:', e);
+          }
           resolve({
             token: data.token,
             isNewUser: data.isNewUser,
@@ -150,6 +155,11 @@ async function openSystemBrowserForGoogleOAuth(): Promise<OAuthResult> {
           console.log('[GoogleOAuth] Login error via polling:', data.error);
           resolved = true;
           await cleanup();
+          try {
+            await Browser.close();
+          } catch (e) {
+            console.log('[GoogleOAuth] Browser.close() after polling error:', e);
+          }
           resolve({ error: data.error || 'login_failed' });
         }
       } catch (e) {
