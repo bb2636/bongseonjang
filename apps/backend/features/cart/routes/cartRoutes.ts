@@ -165,9 +165,29 @@ router.post('/items', authMiddleware, async (req: Request, res: Response) => {
     const productRepository = AppDataSource.getRepository(Product);
     const productOptionRepository = AppDataSource.getRepository(ProductOption);
 
-    const product = await productRepository.findOne({ where: { id: productId } });
+    const product = await productRepository.findOne({
+      where: { id: productId },
+      relations: ['images'],
+    });
     if (!product) {
       return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
+    }
+
+    const hasThumbnail = product.images?.some(img => img.isThumbnail);
+    if (!hasThumbnail) {
+      return res.status(400).json({ error: '품절된 상품입니다' });
+    }
+
+    if (product.basePrice <= 0) {
+      return res.status(400).json({ error: '품절된 상품입니다' });
+    }
+
+    const now = new Date();
+    if (product.saleStartDate && new Date(product.saleStartDate) > now) {
+      return res.status(400).json({ error: '품절된 상품입니다' });
+    }
+    if (product.saleEndDate && new Date(product.saleEndDate) < now) {
+      return res.status(400).json({ error: '품절된 상품입니다' });
     }
 
     if (product.stockQuantity === 0) {
@@ -436,8 +456,19 @@ router.post('/merge', authMiddleware, async (req: Request, res: Response) => {
     for (const item of items) {
       if (!item.productId) continue;
 
-      const product = await productRepository.findOne({ where: { id: item.productId } });
+      const product = await productRepository.findOne({
+        where: { id: item.productId },
+        relations: ['images'],
+      });
       if (!product) continue;
+
+      const hasThumbnail = product.images?.some(img => img.isThumbnail);
+      if (!hasThumbnail) continue;
+      if (product.basePrice <= 0) continue;
+
+      const now = new Date();
+      if (product.saleStartDate && new Date(product.saleStartDate) > now) continue;
+      if (product.saleEndDate && new Date(product.saleEndDate) < now) continue;
 
       if (product.stockQuantity === 0) continue;
 

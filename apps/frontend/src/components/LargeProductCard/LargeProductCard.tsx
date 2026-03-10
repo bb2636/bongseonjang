@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LargeProduct } from './types';
 import { useQuickCart } from '@/contexts/QuickCartContext';
+import { useToast } from '@/contexts/ToastContext';
+import { checkProductSoldOut } from '@/utils/productSoldOut';
 import './LargeProductCard.css';
 
 interface LargeProductCardProps {
@@ -15,7 +17,10 @@ function formatPrice(price: number): string {
 export default function LargeProductCard({ product }: LargeProductCardProps) {
   const navigate = useNavigate();
   const { openQuickCart } = useQuickCart();
+  const { showToast } = useToast();
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  const isSoldOut = useMemo(() => checkProductSoldOut(product), [product]);
 
   const handleCardClick = () => {
     navigate(`/product/${product.id}`);
@@ -23,6 +28,10 @@ export default function LargeProductCard({ product }: LargeProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isSoldOut) {
+      showToast('품절된 상품입니다', 'error');
+      return;
+    }
     openQuickCart(product.id);
   };
 
@@ -36,12 +45,16 @@ export default function LargeProductCard({ product }: LargeProductCardProps) {
     <div className="large-product-card" onClick={handleCardClick}>
       <div className={imageContainerClass}>
         {product.imageUrl && (
-          <img 
-            src={product.imageUrl} 
-            alt={product.name} 
-            loading="lazy" 
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className={isSoldOut ? 'large-product-card__img--sold-out' : ''}
+            loading="lazy"
             onLoad={handleImageLoad}
           />
+        )}
+        {isSoldOut && (
+          <div className="large-product-card__sold-out-badge">품절</div>
         )}
       </div>
 
@@ -58,7 +71,7 @@ export default function LargeProductCard({ product }: LargeProductCardProps) {
 
         <button
           type="button"
-          className="large-product-card__add-button"
+          className={`large-product-card__add-button${isSoldOut ? ' large-product-card__add-button--sold-out' : ''}`}
           onClick={handleAddToCart}
         >
           <svg
@@ -74,7 +87,7 @@ export default function LargeProductCard({ product }: LargeProductCardProps) {
               fill="currentColor"
             />
           </svg>
-          <span>담기</span>
+          <span>{isSoldOut ? '품절' : '담기'}</span>
         </button>
       </div>
     </div>

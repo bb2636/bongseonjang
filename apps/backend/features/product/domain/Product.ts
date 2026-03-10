@@ -11,6 +11,9 @@ export interface ProductDto {
   reviewCount?: number;
   averageRating?: number;
   mainOptions?: MainOptionDto[];
+  stockQuantity?: number;
+  saleStartAt?: string | null;
+  saleEndAt?: string | null;
 }
 
 export interface TimeDealProductDto extends ProductDto {

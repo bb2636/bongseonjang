@@ -12,6 +12,7 @@ import type { ProductOption } from '../types/productDetail';
 import type { TabType } from '../components/ProductDetailTabs';
 import { useProductInquiries } from './useProductInquiries';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
+import { checkProductSoldOut } from '@/utils/productSoldOut';
 
 export function useProductDetailPage(productId: string) {
   const navigate = useNavigate();
@@ -196,24 +197,7 @@ export function useProductDetailPage(productId: string) {
 
   const isSoldOut = useMemo(() => {
     if (!product) return false;
-    
-    const now = new Date();
-    if (product.saleStartAt && new Date(product.saleStartAt) > now) {
-      return true;
-    }
-    if (product.saleEndAt && new Date(product.saleEndAt) < now) {
-      return true;
-    }
-    
-    if (product.options && product.options.length > 0) {
-      return product.options.every(option => option.stockQty === 0);
-    }
-    
-    if (product.stockQuantity === undefined || product.stockQuantity === null) {
-      return false;
-    }
-    
-    return product.stockQuantity === 0;
+    return checkProductSoldOut(product);
   }, [product]);
 
   const handleTabChange = (tab: TabType) => {

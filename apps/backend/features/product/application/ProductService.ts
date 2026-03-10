@@ -147,6 +147,9 @@ export class ProductService {
       reviewCount: reviewStats?.reviewCount ?? 0,
       averageRating: reviewStats?.averageRating ?? 0,
       mainOptions: mainOptions.length > 0 ? mainOptions : undefined,
+      stockQuantity: product.stockQuantity ?? 0,
+      saleStartAt: product.saleStartDate ? new Date(product.saleStartDate).toISOString() : null,
+      saleEndAt: product.saleEndDate ? new Date(product.saleEndDate).toISOString() : null,
     };
   }
 
