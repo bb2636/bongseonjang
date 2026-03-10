@@ -3,6 +3,7 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
+import PhotoPickerBottomSheet from '../../../components/PhotoPickerBottomSheet/PhotoPickerBottomSheet';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { AlertModal, AppBar } from '@components';
@@ -116,6 +117,9 @@ export default function WriteInquiryPage() {
     removeImage,
     getUploadedUrls,
     pickImage,
+    isPhotoPickerOpen,
+    closePhotoPicker,
+    handlePhotoPickerSelect,
   } = useImageUploader({ purpose: 'inquiry', maxImages: 10 });
 
   const createInquiryMutation = useMutation({
@@ -291,6 +295,12 @@ export default function WriteInquiryPage() {
             onChange={handleFileChange}
           />
         </section>
+
+        <PhotoPickerBottomSheet
+          isOpen={isPhotoPickerOpen}
+          onClose={closePhotoPicker}
+          onSelect={handlePhotoPickerSelect}
+        />
       </main>
 
       <footer className="write-inquiry-page__footer">

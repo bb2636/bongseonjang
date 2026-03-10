@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useImageUploader } from '../../../hooks/useImageUploader';
+import PhotoPickerBottomSheet from '../../../components/PhotoPickerBottomSheet/PhotoPickerBottomSheet';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useAuth } from '../../../contexts/AuthContext';
 import { AlertModal, AppBar } from '@components';
@@ -130,6 +131,9 @@ export default function WriteReviewPage() {
     removeImage,
     getUploadedUrls,
     pickImage,
+    isPhotoPickerOpen,
+    closePhotoPicker,
+    handlePhotoPickerSelect,
   } = useImageUploader({ purpose: 'review', maxImages: MAX_IMAGES });
 
   const createReviewMutation = useMutation({
@@ -290,6 +294,12 @@ export default function WriteReviewPage() {
             ))}
           </div>
         </section>
+
+        <PhotoPickerBottomSheet
+          isOpen={isPhotoPickerOpen}
+          onClose={closePhotoPicker}
+          onSelect={handlePhotoPickerSelect}
+        />
 
         <section className="write-review-page__content-section">
           <h2 className="write-review-page__section-title">리뷰 작성</h2>

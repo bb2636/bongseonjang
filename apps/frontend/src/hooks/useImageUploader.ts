@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { IS_CAPACITOR, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
+import type { PhotoPickerSource } from '@/components/PhotoPickerBottomSheet/PhotoPickerBottomSheet';
 
 export type UploadPurpose = 'review' | 'inquiry' | 'profile' | 'support';
 export type ImageSourceType = 'camera' | 'gallery';
@@ -95,6 +96,7 @@ export function useImageUploader(options: UseImageUploaderOptions) {
   const { purpose, maxImages = 10, onUploadComplete } = options;
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isPhotoPickerOpen, setIsPhotoPickerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const openFilePicker = useCallback(() => {
@@ -134,19 +136,39 @@ export function useImageUploader(options: UseImageUploaderOptions) {
     setIsUploading(false);
   }, [purpose]);
 
-  const pickImage = useCallback(async () => {
+  const openPhotoPicker = useCallback(() => {
+    if (images.length >= maxImages) return;
+
     if (!IS_CAPACITOR) {
       openFilePicker();
       return;
     }
 
+    setIsPhotoPickerOpen(true);
+  }, [images.length, maxImages, openFilePicker]);
+
+  const closePhotoPicker = useCallback(() => {
+    setIsPhotoPickerOpen(false);
+  }, []);
+
+  const handlePhotoPickerSelect = useCallback(async (source: PhotoPickerSource) => {
     if (images.length >= maxImages) return;
 
-    const file = await pickImageWithCapacitor(CameraSource.Prompt);
+    if (source === 'file') {
+      openFilePicker();
+      return;
+    }
+
+    const cameraSource = source === 'camera' ? CameraSource.Camera : CameraSource.Photos;
+    const file = await pickImageWithCapacitor(cameraSource);
     if (file) {
       await uploadSingleFile(file);
     }
   }, [images.length, maxImages, openFilePicker, uploadSingleFile]);
+
+  const pickImage = useCallback(async () => {
+    openPhotoPicker();
+  }, [openPhotoPicker]);
 
   const pickFromCamera = useCallback(async () => {
     if (!IS_CAPACITOR) {
@@ -269,5 +291,9 @@ export function useImageUploader(options: UseImageUploaderOptions) {
     pickFromCamera,
     pickFromGallery,
     isCapacitorEnvironment,
+    isPhotoPickerOpen,
+    openPhotoPicker,
+    closePhotoPicker,
+    handlePhotoPickerSelect,
   };
 }

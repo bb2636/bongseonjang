@@ -1,4 +1,6 @@
 import { useImageUploader, UploadPurpose, UploadedImage } from '../../hooks/useImageUploader';
+import PhotoPickerBottomSheet from '../PhotoPickerBottomSheet/PhotoPickerBottomSheet';
+import type { PhotoPickerSource } from '../PhotoPickerBottomSheet/PhotoPickerBottomSheet';
 import './ImageUploader.css';
 
 interface ImageUploaderProps {
@@ -18,6 +20,9 @@ interface ImageUploaderProps {
   pickFromCamera?: () => void;
   pickFromGallery?: () => void;
   isCapacitorEnvironment?: boolean;
+  isPhotoPickerOpen?: boolean;
+  closePhotoPicker?: () => void;
+  handlePhotoPickerSelect?: (source: PhotoPickerSource) => void;
 }
 
 function ImageUploadIcon() {
@@ -49,6 +54,9 @@ export function ImageUploader({
   handleFileChange,
   removeImage,
   pickImage,
+  isPhotoPickerOpen = false,
+  closePhotoPicker,
+  handlePhotoPickerSelect,
 }: ImageUploaderProps) {
   return (
     <div className="image-uploader">
@@ -92,6 +100,13 @@ export function ImageUploader({
           </div>
         ))}
       </div>
+      {closePhotoPicker && handlePhotoPickerSelect && (
+        <PhotoPickerBottomSheet
+          isOpen={isPhotoPickerOpen}
+          onClose={closePhotoPicker}
+          onSelect={handlePhotoPickerSelect}
+        />
+      )}
     </div>
   );
 }
