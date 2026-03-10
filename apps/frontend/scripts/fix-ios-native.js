@@ -40,6 +40,9 @@ const PAYMENT_APP_SCHEMES = [
   'kb-acp',
   'kb-bankpay',
   'liivbank',
+  'kbstar',
+  'newliiv',
+  'com.kbcard.cxh.appcard',
   'hdcardappcardansimclick',
   'smhyundaiansimclick',
   'lotteappcard',
@@ -48,6 +51,7 @@ const PAYMENT_APP_SCHEMES = [
   'nhappcardansimclick',
   'nhallonepayansimclick',
   'nonghyupcardansimclick',
+  'nhallonepayhansimclick',
   'citimobileapp',
   'ciaborncardansimclick',
   'mpocket.online.ansimclick',
@@ -62,13 +66,24 @@ const PAYMENT_APP_SCHEMES = [
   'naverscheme',
   'samsungpay',
   'scardcertiapp',
+  'ansimclickscard',
+  'ansimclickipcollect',
+  'vguardstart',
   'shinsaborncardansimclick',
   'haborncardansimclick',
   'hanaborncardansimclick',
+  'hanawalletmembers',
+  'tswansimclick',
+  'taaborncardansimclick',
+  'chaaborncardansimclick',
+  'laborncardansimclick',
+  'lguthepay-xpay',
   'ukbanksmartbanknonloginpay',
   'com.ssg.serviceapp.android.egiftcertificate',
   'uppay',
   'nice_payments',
+  'nicepay-auth',
+  'itms-apps',
 ];
 
 function fixInfoPlist() {
@@ -230,7 +245,6 @@ function fixSwiftFiles() {
 function patchInAppBrowserPaymentSchemes() {
   console.log('\n=== InAppBrowser Payment Scheme Patch ===');
 
-  const inAppBrowserDir = path.join(FRONTEND_DIR, 'ios/App/Pods/Development Pods') ;
   const possiblePaths = [
     path.join(FRONTEND_DIR, 'ios/App/Pods/CapgoInappbrowser/ios/Sources/InAppBrowserPlugin/WKWebViewController.swift'),
     path.join(FRONTEND_DIR, 'node_modules/@capgo/inappbrowser/ios/Sources/InAppBrowserPlugin/WKWebViewController.swift'),
@@ -260,21 +274,52 @@ function patchInAppBrowserPaymentSchemes() {
   }
 
   let content = fs.readFileSync(swiftPath, 'utf8');
+  let patchCount = 0;
 
-  const oldPattern = `        // Cannot open scheme: notify and still block WebView (avoid rendering garbage / errors)
-        self.capBrowserPlugin?.notifyListeners("pageLoadError", data: [:])
-        return true`;
-  const newPattern = `        // Cannot open scheme: allow WebView to continue (for payment apps that may handle via JS)
-        return false`;
+  const PATCHED_MARKER = '// [Bongseonjang] Patched tryOpenCustomScheme for Korean payment apps';
 
-  if (content.includes(oldPattern)) {
-    content = content.replace(oldPattern, newPattern);
-    fs.writeFileSync(swiftPath, content, 'utf8');
-    console.log('  Patched tryOpenCustomScheme: canOpenURL failure now returns false (allows WebView fallback).');
-  } else if (content.includes('return false') && content.includes('Cannot open scheme: allow WebView')) {
-    console.log('  tryOpenCustomScheme already patched.');
+  if (content.includes(PATCHED_MARKER)) {
+    console.log('  tryOpenCustomScheme already fully patched.');
+    return;
+  }
+
+  const originalFuncRegex = /private func tryOpenCustomScheme\(_ url: URL\) -> Bool \{[\s\S]*?\n    \}/;
+  const match = content.match(originalFuncRegex);
+
+  if (match) {
+    const replacementFunc = `private func tryOpenCustomScheme(_ url: URL) -> Bool {
+        ${PATCHED_MARKER}
+        let app = UIApplication.shared
+
+        if app.canOpenURL(url) {
+            print("[InAppBrowser] canOpenURL succeeded for: \\(url.scheme ?? "")")
+            app.open(url, options: [:]) { success in
+                print("[InAppBrowser] open result for \\(url.scheme ?? ""): \\(success)")
+            }
+            return true
+        }
+
+        print("[InAppBrowser] canOpenURL failed for: \\(url.scheme ?? ""). Attempting direct open...")
+        app.open(url, options: [:]) { success in
+            if success {
+                print("[InAppBrowser] Direct open succeeded for: \\(url.scheme ?? "")")
+            } else {
+                print("[InAppBrowser] Direct open also failed for: \\(url.scheme ?? "")")
+            }
+        }
+        return true
+    }`;
+
+    content = content.replace(originalFuncRegex, replacementFunc);
+    patchCount++;
+    console.log('  Replaced tryOpenCustomScheme with enhanced payment app handler.');
   } else {
-    console.log('  Warning: Could not find expected pattern in tryOpenCustomScheme. Manual review needed.');
+    console.log('  Warning: Could not find tryOpenCustomScheme function. Manual review needed.');
+  }
+
+  if (patchCount > 0) {
+    fs.writeFileSync(swiftPath, content, 'utf8');
+    console.log(`  Applied ${patchCount} patch(es) to WKWebViewController.swift`);
   }
 }
 
