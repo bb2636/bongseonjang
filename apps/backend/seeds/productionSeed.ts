@@ -158,10 +158,34 @@ const seedData: SeedData = {
   ],
 };
 
+async function syncSequences(): Promise<void> {
+  const sequenceResets = [
+    { table: 'notices', column: 'id' },
+    { table: 'notice_types', column: 'id' },
+    { table: 'banners', column: 'id' },
+    { table: 'banner_positions', column: 'id' },
+    { table: 'faq_categories', column: 'id' },
+    { table: 'faqs', column: 'id' },
+    { table: 'shipping_policies', column: 'id' },
+    { table: 'exposure_categories', column: 'id' },
+    { table: 'product_options', column: 'id' },
+  ];
+  for (const { table, column } of sequenceResets) {
+    try {
+      await AppDataSource.manager.query(
+        `SELECT setval(pg_get_serial_sequence('${table}', '${column}'), COALESCE((SELECT MAX(${column}) FROM ${table}), 0))`
+      );
+    } catch {
+    }
+  }
+  console.log('Sequences synced');
+}
+
 export async function runProductionSeed(): Promise<void> {
   const productCount = await AppDataSource.manager.query('SELECT COUNT(*) as count FROM products');
   if (parseInt(productCount[0].count) > 0) {
     console.log('Database already has data, skipping seed');
+    await syncSequences();
     return;
   }
 
@@ -260,28 +284,8 @@ export async function runProductionSeed(): Promise<void> {
     }
     console.log('Seeded banners');
 
-    const sequenceResets = [
-      { table: 'notices', column: 'id' },
-      { table: 'notice_types', column: 'id' },
-      { table: 'banners', column: 'id' },
-      { table: 'banner_positions', column: 'id' },
-      { table: 'faq_categories', column: 'id' },
-      { table: 'faqs', column: 'id' },
-      { table: 'shipping_policies', column: 'id' },
-      { table: 'exposure_categories', column: 'id' },
-      { table: 'product_options', column: 'id' },
-    ];
-    for (const { table, column } of sequenceResets) {
-      try {
-        await queryRunner.query(
-          `SELECT setval(pg_get_serial_sequence('${table}', '${column}'), COALESCE((SELECT MAX(${column}) FROM ${table}), 0))`
-        );
-      } catch {
-      }
-    }
-    console.log('Reset sequences to match seeded data');
-
     await queryRunner.commitTransaction();
+    await syncSequences();
     console.log('Production seed completed successfully!');
   } catch (error) {
     await queryRunner.rollbackTransaction();
