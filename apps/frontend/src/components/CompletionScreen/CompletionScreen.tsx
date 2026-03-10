@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import successImage from '@assets/image/sucess.svg';
+import completionMascot from '@assets/image/completion-mascot.svg';
 import { COMPLETION_CONTENT, CompletionVariant } from './constants';
 import './CompletionScreen.css';
 
@@ -62,13 +62,13 @@ export default function CompletionScreen({
       <div className="completion-screen__content">
         <img
           className="completion-screen__mascot-image"
-          src={successImage}
+          src={completionMascot}
           alt={displayTitle}
         />
 
         <div className="completion-screen__message-container">
           <h1 className="completion-screen__title">{displayTitle}</h1>
-          <p className="completion-screen__subtitle">{displaySubtitle}</p>
+          {displaySubtitle && <p className="completion-screen__subtitle">{displaySubtitle}</p>}
         </div>
       </div>
 

@@ -13,9 +13,9 @@ interface CompletionContent {
 
 export const COMPLETION_CONTENT: Record<CompletionVariant, CompletionContent> = {
   [COMPLETION_VARIANT.SIGNUP_COMPLETE]: {
-    title: '회원가입 완료!',
-    subtitle: '신선한 바다를 집에서 만나보세요',
-    buttonText: '홈으로',
+    title: '회원가입 완료!\n신선한 바다를 집에서 만나보세요',
+    subtitle: '',
+    buttonText: '로그인',
   },
   [COMPLETION_VARIANT.PASSWORD_RESET]: {
     title: '비밀번호 변경 완료!',
