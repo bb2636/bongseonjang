@@ -103,7 +103,7 @@ export function GuestCheckoutPage() {
   const [isProductsExpanded, setIsProductsExpanded] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
+  const paymentMethod = 'card' as const;
   const [termsAgreed, setTermsAgreed] = useState(false);
 
   useEffect(() => {
@@ -445,28 +445,19 @@ export function GuestCheckoutPage() {
             await InAppBrowser.removeAllListeners();
             await InAppBrowser.close();
             
+            setIsProcessing(false);
+            
             try {
               const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
               
-              const completeMatch = url.match(/\/payment\/complete\/([a-zA-Z0-9-]+)/);
-              if (completeMatch) {
-                const orderId = completeMatch[1];
-                navigate(`/payment/complete/${orderId}`);
-                return;
-              }
-              
-              const orderId = urlObj.searchParams.get('orderId') || paymentData.orderId;
-              
-              if (url.includes('/payment/success') || url.includes('payment-success')) {
-                navigate(`/payment/success?orderId=${orderId}`);
-              } else if (url.includes('/payment/fail') || url.includes('payment-fail')) {
+              if (url.includes('/payment/fail') || url.includes('payment-fail')) {
                 const message = urlObj.searchParams.get('message') || '결제에 실패했습니다';
                 navigate(`/payment/fail?message=${encodeURIComponent(message)}`);
               } else {
-                navigate(`/payment/complete/${paymentData.orderId}`);
+                navigate(`/payment/success?orderNumber=${paymentData.orderNumber}&guest=true`);
               }
             } catch {
-              navigate(`/payment/complete/${paymentData.orderId}`);
+              navigate(`/payment/success?orderNumber=${paymentData.orderNumber}&guest=true`);
             }
           }
         };
@@ -490,8 +481,8 @@ export function GuestCheckoutPage() {
               if (orderDetail) {
                 const orderStatus = orderDetail.status;
                 if (orderStatus === 'paid' || orderStatus === 'shipping' || orderStatus === 'delivered') {
-                  console.log('[GuestPayment] Order was paid, navigating to complete page');
-                  navigate(`/payment/complete/${paymentData.orderId}`);
+                  console.log('[GuestPayment] Order was paid, navigating to success page');
+                  navigate(`/payment/success?orderNumber=${paymentData.orderNumber}&guest=true`);
                   return;
                 }
               }
@@ -533,8 +524,8 @@ export function GuestCheckoutPage() {
               if (orderDetail) {
                 const orderStatus = orderDetail.status;
                 if (orderStatus === 'paid' || orderStatus === 'shipping' || orderStatus === 'delivered') {
-                  console.log('[GuestPayment] Order was actually paid, navigating to complete');
-                  navigate(`/payment/complete/${paymentData.orderId}`);
+                  console.log('[GuestPayment] Order was actually paid, navigating to success');
+                  navigate(`/payment/success?orderNumber=${paymentData.orderNumber}&guest=true`);
                   return;
                 }
               }
@@ -599,10 +590,10 @@ export function GuestCheckoutPage() {
         amount: paymentData.amount,
         goodsName: paymentData.goodsName,
         returnUrl: paymentData.returnUrl,
-        ...(paymentMethod === 'vbank' && { vbankHolder: recipientName }),
         fnError: async (result) => {
           console.error('[Payment] fnError:', result);
           showToast(`결제 오류: ${result.errorMsg}`, 'error');
+          setPaymentStep('preparing');
           setIsProcessing(false);
           
           if (currentOrderId) {
@@ -890,7 +881,7 @@ export function GuestCheckoutPage() {
                 name="paymentMethod"
                 value="card"
                 checked={paymentMethod === 'card'}
-                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+                readOnly
               />
               <span className="checkout-payment-method-radio"></span>
               <span className="checkout-payment-method-label">카드</span>

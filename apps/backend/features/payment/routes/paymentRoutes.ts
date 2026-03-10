@@ -659,14 +659,7 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
       ? `${orderItems[0].productName} 외 ${orderItems.length - 1}건`
       : orderItems[0]?.productName || '상품';
 
-    const methodMap: Record<string, string> = {
-      'card': 'card',
-      'bank': 'bank',
-      'vbank': 'vbank',
-      'bank_transfer': 'bank',
-      'virtual_account': 'vbank',
-    };
-    const paymentMethod = methodMap[payment.method] || 'card';
+    const paymentMethod = 'card';
 
     const returnUrl = getBackendCallbackUrl(req, appScheme);
     const deletionToken = generateDeletionToken(orderId);
@@ -686,7 +679,6 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>결제 진행중</title>
-  <script src="https://pay.nicepay.co.kr/v1/js/"></script>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -735,8 +727,25 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
   <div id="error-container"></div>
   
   <script>
-    (function() {
-      const paymentConfig = {
+    var sdkLoaded = false;
+    
+    function onNicePayReady() {
+      sdkLoaded = true;
+      startPayment();
+    }
+    
+    function showError(msg) {
+      document.querySelector('.loading').style.display = 'none';
+      document.getElementById('error-container').innerHTML = '<div class="error">' + msg + '</div>';
+    }
+    
+    function startPayment() {
+      if (!window.AUTHNICE || !window.AUTHNICE.requestPay) {
+        showError('결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+        return;
+      }
+      
+      var paymentConfig = {
         clientId: '${NICEPAY_CLIENT_KEY}',
         method: '${paymentMethod}',
         orderId: '${orderId}',
@@ -746,26 +755,14 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
         buyerTel: '${buyerTel.replace(/[^0-9-]/g, "")}',
         buyerEmail: '${buyerEmail.replace(/['"\\]/g, "")}',
         returnUrl: '${returnUrl}',
-        ${paymentMethod === 'vbank' ? `vbankHolder: '${buyerName.replace(/['"\\]/g, "")}',` : ''}
         fnError: function(result) {
           console.error('[NicePay Error] Full result:', JSON.stringify(result));
-          console.error('[NicePay Error] errorCode:', result.errorCode);
-          console.error('[NicePay Error] errorMsg:', result.errorMsg);
-          console.error('[NicePay Error] resultCode:', result.resultCode);
-          console.error('[NicePay Error] resultMsg:', result.resultMsg);
-          console.error('[NicePay Error] tid:', result.tid);
           
-          document.querySelector('.loading').style.display = 'none';
-          var errorDetails = 'Code: ' + (result.errorCode || result.resultCode || 'N/A') + 
-                            ', Msg: ' + (result.errorMsg || result.resultMsg || '결제를 진행할 수 없습니다');
-          document.getElementById('error-container').innerHTML = 
-            '<div class="error">' +
-            '<strong>결제 오류</strong><br>' +
-            errorDetails +
-            '</div>';
+          showError('<strong>결제 오류</strong><br>Code: ' + 
+            (result.errorCode || result.resultCode || 'N/A') + 
+            ', Msg: ' + (result.errorMsg || result.resultMsg || '결제를 진행할 수 없습니다'));
           
-          // Send error to server for logging and delete pending order
-          fetch('/api/payment/log-error', {
+          fetch('${getBackendBaseUrl(req)}/api/payment/log-error', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -780,18 +777,17 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
           }).catch(function(e) { console.error('Failed to log error:', e); });
         }
       };
-
-      setTimeout(function() {
-        if (window.AUTHNICE && window.AUTHNICE.requestPay) {
-          window.AUTHNICE.requestPay(paymentConfig);
-        } else {
-          document.querySelector('.loading').style.display = 'none';
-          document.getElementById('error-container').innerHTML = 
-            '<div class="error">결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</div>';
-        }
-      }, 500);
-    })();
+      
+      window.AUTHNICE.requestPay(paymentConfig);
+    }
+    
+    setTimeout(function() {
+      if (!sdkLoaded) {
+        showError('결제 모듈을 불러오지 못했습니다. 네트워크 상태를 확인 후 다시 시도해주세요.');
+      }
+    }, 10000);
   </script>
+  <script src="https://pay.nicepay.co.kr/v1/js/" onload="onNicePayReady()" onerror="showError('결제 모듈을 불러올 수 없습니다. 네트워크를 확인해주세요.')"></script>
 </body>
 </html>`;
 
@@ -883,14 +879,9 @@ async function handlePaymentCallback(req: Request, res: Response) {
     if (authResultCode && authResultCode !== '0000') {
       console.error('[NicePay Callback] Authentication failed, returning error page');
       
-      // Delete pending order only for CARD payments
-      // Bank transfer (BANK) and virtual account (VBANK) orders should remain for later payment
-      // If no payMethod, user cancelled before selecting - delete the order
-      if (orderId && (!payMethod || payMethod === 'CARD')) {
+      if (orderId) {
         await deletePendingOrder(orderId);
-        console.log('[NicePay Callback] Deleted pending order for CARD/cancelled:', orderId);
-      } else if (orderId && payMethod) {
-        console.log('[NicePay Callback] Keeping order for non-CARD method:', payMethod);
+        console.log('[NicePay Callback] Deleted pending order:', orderId);
       }
       
       const errorMsg = authResultMsg || '결제 인증에 실패했습니다';
@@ -939,8 +930,11 @@ async function handlePaymentCallback(req: Request, res: Response) {
     const payment = await paymentRepository.findOne({ where: { orderId } });
     
     if (order.status === 'paid' || payment?.status === 'completed') {
-      console.log('[NicePay Callback] Order already paid, redirecting to complete');
-      return sendRedirectPage(res, buildOrderRedirectUrl(`/payment/complete/${orderId}`), appScheme);
+      console.log('[NicePay Callback] Order already paid, redirecting');
+      const alreadyPaidUrl = !order.userId
+        ? buildOrderRedirectUrl('/payment/success', { orderNumber: order.orderNumber, guest: 'true' })
+        : buildOrderRedirectUrl(`/payment/complete/${orderId}`);
+      return sendRedirectPage(res, alreadyPaidUrl, appScheme);
     }
     
     let isAlreadyPaid = false;
@@ -1013,16 +1007,9 @@ async function handlePaymentCallback(req: Request, res: Response) {
       } else {
         console.log('[NicePay Callback] Approval failed:', approvalResult.resultMsg);
         
-        // For card payments, delete the order when approval fails
-        // Bank transfer and virtual account orders should remain for later payment
-        const isCardMethod = payment?.method?.toLowerCase() === 'card';
-        if (payment && isCardMethod) {
-          console.log('[NicePay Callback] Card payment approval failed, deleting pending order:', orderId);
+        if (orderId) {
+          console.log('[NicePay Callback] Payment approval failed, deleting pending order:', orderId);
           await deletePendingOrder(orderId);
-        } else if (payment) {
-          payment.status = 'failed';
-          payment.failReason = approvalResult.resultMsg || '결제 승인 실패';
-          await paymentRepository.save(payment);
         }
         return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId, message: approvalResult.resultMsg || '결제 승인 실패' }), appScheme);
       }
@@ -1217,30 +1204,19 @@ async function handlePaymentCallback(req: Request, res: Response) {
         console.error('[NicePay Callback] Failed to delete cart items:', cartError);
       }
 
-      const successUrl = buildOrderRedirectUrl(`/payment/complete/${order.id}`);
-      console.log('[NicePay Callback] Redirecting to success:', successUrl);
+      const isGuestOrder = !order.userId;
+      const successUrl = isGuestOrder
+        ? buildOrderRedirectUrl('/payment/success', { orderNumber: order.orderNumber, guest: 'true' })
+        : buildOrderRedirectUrl(`/payment/complete/${order.id}`);
+      console.log('[NicePay Callback] Redirecting to success:', successUrl, 'isGuest:', isGuestOrder);
       return sendRedirectPage(res, successUrl, appScheme);
     }
     
     console.log('[NicePay Callback] Unexpected state - approvalSuccess is false');
     const failReason = approvalResult?.resultMsg || '결제 처리 실패';
     
-    // For card payments, delete the order when payment fails unexpectedly
-    // Bank transfer and virtual account orders should remain for later payment
-    const isUnexpectedCardMethod = payment?.method?.toLowerCase() === 'card';
-    if (payment && isUnexpectedCardMethod) {
-      console.log('[NicePay Callback] Card payment failed unexpectedly, deleting pending order:', order.id);
-      await deletePendingOrder(order.id);
-    } else {
-      order.status = 'payment_failed';
-      await orderRepository.save(order);
-
-      if (payment) {
-        payment.status = 'failed';
-        payment.failReason = failReason;
-        await paymentRepository.save(payment);
-      }
-    }
+    console.log('[NicePay Callback] Payment failed unexpectedly, deleting pending order:', order.id);
+    await deletePendingOrder(order.id);
 
     return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: failReason }), appScheme);
   } catch (error) {
@@ -1275,15 +1251,10 @@ router.post('/log-error', optionalAuthMiddleware, async (req: Request, res: Resp
   console.error('[NicePay Payment Error] ========================');
   
   // Delete pending order if requested (from payment cancellation)
-  // Only for CARD payments - bank transfer/virtual account orders should remain for later payment
   // Security: Requires valid deletion token OR authenticated user ownership
   let orderDeleted = false;
-  const isCardPayment = method?.toUpperCase() === 'CARD';
-  if (deleteOrder && orderId && isCardPayment) {
-    // Security check: Guest users MUST provide a valid deletion token
-    // Authenticated users are verified by userId in deletePendingOrder
+  if (deleteOrder && orderId) {
     if (!userId) {
-      // Guest user - require deletion token
       if (!deletionToken) {
         console.error('[NicePay Payment Error] Missing deletion token for guest orderId:', orderId);
         return res.status(403).json({ logged: true, orderDeleted: false, error: 'Deletion token required' });
@@ -1294,8 +1265,6 @@ router.post('/log-error', optionalAuthMiddleware, async (req: Request, res: Resp
       }
     }
     orderDeleted = await deletePendingOrder(orderId, userId);
-  } else if (deleteOrder && orderId && !isCardPayment) {
-    console.log('[NicePay Payment Error] Skipping order deletion for non-CARD method:', method);
   }
   
   res.status(200).json({ logged: true, orderDeleted });

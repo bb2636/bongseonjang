@@ -45,8 +45,7 @@ declare global {
         amount: number;
         goodsName: string;
         returnUrl: string;
-        vbankHolder?: string;
-        fnError: (result: { errorMsg: string }) => void;
+        fnError: (result: { errorMsg: string; errorCode?: string }) => void;
       }) => void;
     };
   }
@@ -137,7 +136,7 @@ export function CheckoutPage() {
   const [usedPoints, setUsedPoints] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
+  const paymentMethod = 'card' as const;
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [selectedCouponIds, setSelectedCouponIds] = useState<number[]>([]);
   const [isCouponDropdownOpen, setIsCouponDropdownOpen] = useState(false);
@@ -560,6 +559,8 @@ export function CheckoutPage() {
             await InAppBrowser.removeAllListeners();
             await InAppBrowser.close();
             
+            setIsProcessing(false);
+            
             try {
               const urlObj = new URL(url.replace(`${CAPACITOR_APP_SCHEME}://`, 'https://app/'));
               
@@ -570,11 +571,7 @@ export function CheckoutPage() {
                 return;
               }
               
-              const orderId = urlObj.searchParams.get('orderId') || paymentData.orderId;
-              
-              if (url.includes('/payment/success') || url.includes('payment-success')) {
-                navigate(`/payment/success?orderId=${orderId}`);
-              } else if (url.includes('/payment/fail') || url.includes('payment-fail')) {
+              if (url.includes('/payment/fail') || url.includes('payment-fail')) {
                 const message = urlObj.searchParams.get('message') || '결제에 실패했습니다';
                 navigate(`/payment/fail?message=${encodeURIComponent(message)}`);
               } else {
@@ -714,10 +711,10 @@ export function CheckoutPage() {
         amount: paymentData.amount,
         goodsName: paymentData.goodsName,
         returnUrl: paymentData.returnUrl,
-        ...(paymentMethod === 'vbank' && { vbankHolder: currentAddress.recipientName }),
         fnError: async (result) => {
           console.error('[Payment] fnError:', result);
           showToast(`결제 오류: ${result.errorMsg}`, 'error');
+          setPaymentStep('preparing');
           setIsProcessing(false);
           
           if (currentOrderId) {
@@ -1130,7 +1127,7 @@ export function CheckoutPage() {
                 name="paymentMethod"
                 value="card"
                 checked={paymentMethod === 'card'}
-                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+                readOnly
               />
               <span className="checkout-payment-method-radio"></span>
               <span className="checkout-payment-method-label">카드</span>

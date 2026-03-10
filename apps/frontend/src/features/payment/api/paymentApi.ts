@@ -25,7 +25,7 @@ interface PreparePaymentRequest {
   address: string;
   addressDetail?: string;
   deliveryRequest?: string;
-  paymentMethod: 'card' | 'bank' | 'vbank';
+  paymentMethod: 'card';
   shippingFee: number;
   userCouponIds?: number[];
   usedPoints?: number;
@@ -45,7 +45,7 @@ export interface PrepareDirectPaymentRequest {
   address: string;
   addressDetail?: string;
   deliveryRequest?: string;
-  paymentMethod: 'card' | 'bank' | 'vbank';
+  paymentMethod: 'card';
   shippingFee: number;
   userCouponIds?: number[];
   usedPoints?: number;
@@ -58,6 +58,7 @@ interface PreparePaymentResponse {
   amount: number;
   goodsName: string;
   returnUrl: string;
+  deletionToken: string;
 }
 
 function getCallbackUrl(): string {
@@ -191,7 +192,7 @@ export interface PrepareGuestPaymentRequest {
   address: string;
   addressDetail?: string;
   deliveryRequest?: string;
-  paymentMethod: 'card' | 'bank' | 'vbank';
+  paymentMethod: 'card';
   shippingFee: number;
 }
 
