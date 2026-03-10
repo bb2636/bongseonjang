@@ -33,6 +33,44 @@ const PRIVACY_DESCRIPTIONS = {
 const URL_SCHEME = 'bongseonjang';
 const BUNDLE_ID = 'com.bongseongjang.app';
 
+const PAYMENT_APP_SCHEMES = [
+  'kftc-bankpay',
+  'ispmobile',
+  'shinhan-sr-ansimclick',
+  'kb-acp',
+  'kb-bankpay',
+  'liivbank',
+  'hdcardappcardansimclick',
+  'smhyundaiansimclick',
+  'lotteappcard',
+  'lottesmartpay',
+  'cloudpay',
+  'nhappcardansimclick',
+  'nhallonepayansimclick',
+  'nonghyupcardansimclick',
+  'citimobileapp',
+  'ciaborncardansimclick',
+  'mpocket.online.ansimclick',
+  'wooripay',
+  'com.wooricard.wcard',
+  'newsmartpib',
+  'supertoss',
+  'kakaotalk',
+  'payco',
+  'lpayapp',
+  'naverbankauth',
+  'naverscheme',
+  'samsungpay',
+  'scardcertiapp',
+  'shinsaborncardansimclick',
+  'haborncardansimclick',
+  'hanaborncardansimclick',
+  'ukbanksmartbanknonloginpay',
+  'com.ssg.serviceapp.android.egiftcertificate',
+  'uppay',
+  'nice_payments',
+];
+
 function fixInfoPlist() {
   console.log('\n=== Info.plist ===');
 
@@ -66,6 +104,7 @@ function fixInfoPlist() {
   }
 
   content = ensureUrlScheme(content);
+  content = ensurePaymentAppSchemes(content);
 
   fs.writeFileSync(PLIST_PATH, content, 'utf8');
   console.log(`  Total privacy keys added: ${addedCount}`);
@@ -101,6 +140,42 @@ function ensureUrlScheme(content) {
       const urlSchemeEntry = `\t<key>CFBundleURLTypes</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>CFBundleURLName</key>\n\t\t\t<string>${BUNDLE_ID}</string>\n\t\t\t<key>CFBundleURLSchemes</key>\n\t\t\t<array>\n\t\t\t\t<string>${URL_SCHEME}</string>\n\t\t\t</array>\n\t\t</dict>\n\t</array>\n`;
       content = content.slice(0, insertPoint) + urlSchemeEntry + content.slice(insertPoint);
       console.log(`  Added CFBundleURLTypes with scheme "${URL_SCHEME}".`);
+    }
+  }
+
+  return content;
+}
+
+function ensurePaymentAppSchemes(content) {
+  if (content.includes('<key>LSApplicationQueriesSchemes</key>')) {
+    const keyStart = content.indexOf('<key>LSApplicationQueriesSchemes</key>');
+    const arrayStart = content.indexOf('<array>', keyStart);
+    const arrayEnd = content.indexOf('</array>', arrayStart);
+    if (arrayStart !== -1 && arrayEnd !== -1) {
+      const existingBlock = content.slice(arrayStart, arrayEnd);
+      let schemesAdded = 0;
+      let insertAt = arrayEnd;
+      for (const scheme of PAYMENT_APP_SCHEMES) {
+        if (!existingBlock.includes(`<string>${scheme}</string>`)) {
+          const entry = `\t\t<string>${scheme}</string>\n`;
+          content = content.slice(0, insertAt) + entry + content.slice(insertAt);
+          insertAt += entry.length;
+          schemesAdded++;
+        }
+      }
+      if (schemesAdded > 0) {
+        console.log(`  Added ${schemesAdded} payment app schemes to existing LSApplicationQueriesSchemes.`);
+      } else {
+        console.log('  LSApplicationQueriesSchemes already has all payment schemes.');
+      }
+    }
+  } else {
+    const insertPoint = findRootDictEnd(content);
+    if (insertPoint !== -1) {
+      const schemesEntries = PAYMENT_APP_SCHEMES.map(s => `\t\t<string>${s}</string>`).join('\n');
+      const entry = `\t<key>LSApplicationQueriesSchemes</key>\n\t<array>\n${schemesEntries}\n\t</array>\n`;
+      content = content.slice(0, insertPoint) + entry + content.slice(insertPoint);
+      console.log(`  Added LSApplicationQueriesSchemes with ${PAYMENT_APP_SCHEMES.length} payment app schemes.`);
     }
   }
 
@@ -149,6 +224,76 @@ function fixSwiftFiles() {
   updateSceneDelegate();
   removeOldSwipeBackFiles();
   cleanAppDelegate();
+  patchInAppBrowserPaymentSchemes();
+}
+
+function patchInAppBrowserPaymentSchemes() {
+  console.log('\n=== InAppBrowser Payment Scheme Patch ===');
+
+  const inAppBrowserDir = path.join(FRONTEND_DIR, 'ios/App/Pods/Development Pods') ;
+  const possiblePaths = [
+    path.join(FRONTEND_DIR, 'ios/App/Pods/CapgoInappbrowser/ios/Sources/InAppBrowserPlugin/WKWebViewController.swift'),
+    path.join(FRONTEND_DIR, 'node_modules/@capgo/inappbrowser/ios/Sources/InAppBrowserPlugin/WKWebViewController.swift'),
+  ];
+
+  let swiftPath = null;
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      swiftPath = p;
+      break;
+    }
+  }
+
+  if (!swiftPath) {
+    const iosDir = path.join(FRONTEND_DIR, 'ios');
+    if (fs.existsSync(iosDir)) {
+      const findResult = findFileRecursive(iosDir, 'WKWebViewController.swift');
+      if (findResult) {
+        swiftPath = findResult;
+      }
+    }
+  }
+
+  if (!swiftPath) {
+    console.log('  WKWebViewController.swift not found. Skipping InAppBrowser patch.');
+    return;
+  }
+
+  let content = fs.readFileSync(swiftPath, 'utf8');
+
+  const oldPattern = `        // Cannot open scheme: notify and still block WebView (avoid rendering garbage / errors)
+        self.capBrowserPlugin?.notifyListeners("pageLoadError", data: [:])
+        return true`;
+  const newPattern = `        // Cannot open scheme: allow WebView to continue (for payment apps that may handle via JS)
+        return false`;
+
+  if (content.includes(oldPattern)) {
+    content = content.replace(oldPattern, newPattern);
+    fs.writeFileSync(swiftPath, content, 'utf8');
+    console.log('  Patched tryOpenCustomScheme: canOpenURL failure now returns false (allows WebView fallback).');
+  } else if (content.includes('return false') && content.includes('Cannot open scheme: allow WebView')) {
+    console.log('  tryOpenCustomScheme already patched.');
+  } else {
+    console.log('  Warning: Could not find expected pattern in tryOpenCustomScheme. Manual review needed.');
+  }
+}
+
+function findFileRecursive(dir, filename) {
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name === 'node_modules' || entry.name === '.git') continue;
+        const result = findFileRecursive(fullPath, filename);
+        if (result) return result;
+      } else if (entry.name === filename) {
+        return fullPath;
+      }
+    }
+  } catch {
+  }
+  return null;
 }
 
 function createBridgeViewController() {
