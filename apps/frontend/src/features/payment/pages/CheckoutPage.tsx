@@ -1135,6 +1135,7 @@ export function CheckoutPage() {
               <span className="checkout-payment-method-radio"></span>
               <span className="checkout-payment-method-label">카드</span>
             </label>
+            {/* 계좌이체/무통장입금 임시 비활성화
             <label className="checkout-payment-method">
               <input
                 type="radio"
@@ -1157,6 +1158,7 @@ export function CheckoutPage() {
               <span className="checkout-payment-method-radio"></span>
               <span className="checkout-payment-method-label">무통장입금</span>
             </label>
+            */}
           </div>
         </section>
 
