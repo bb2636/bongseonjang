@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CustomDropdown } from '../../../../components';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './InvestmentInfoDetailPanel.css';
 
@@ -30,6 +31,7 @@ interface InvestmentInfoDetail {
 }
 
 export function InvestmentInfoDetailPanel({ investmentInfoId, investmentInfoTypes, isOpen, onClose, onSaved }: InvestmentInfoDetailPanelProps) {
+  useBodyScrollLock(isOpen);
   const [investmentInfo, setInvestmentInfo] = useState<InvestmentInfoDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

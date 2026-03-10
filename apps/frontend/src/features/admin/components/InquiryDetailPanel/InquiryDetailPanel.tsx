@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ConfirmDialog } from '../ConfirmDialog';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './InquiryDetailPanel.css';
 
@@ -41,6 +42,7 @@ const INQUIRY_TYPE_LABELS: Record<InquiryType, string> = {
 };
 
 export function InquiryDetailPanel({ inquiryId, isOpen, onClose, onSaved, onSuccess, onError }: InquiryDetailPanelProps) {
+  useBodyScrollLock(isOpen);
   const [inquiry, setInquiry] = useState<InquiryDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAnswering, setIsAnswering] = useState(false);

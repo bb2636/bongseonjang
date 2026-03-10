@@ -3,6 +3,7 @@ import { BannerPosition, Banner } from './useBannerManagement';
 import { useBannerForm, LinkType } from './useBannerForm';
 import { ConfirmModal } from '../../../../components';
 import { useToast } from '../../../../contexts/ToastContext';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import './BannerFormDialog.css';
 
 interface BannerFormDialogProps {
@@ -28,6 +29,7 @@ export function BannerFormDialog({
   const [isConfirming, setIsConfirming] = useState(false);
   const isEditing = !!editingBanner;
   const { showToast } = useToast();
+  useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (isOpen) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './UserDetailPanel.css';
 
@@ -50,6 +51,7 @@ interface UserDetailPanelProps {
 type TabType = 'basic' | 'orders' | 'inquiries';
 
 export function UserDetailPanel({ userId, isOpen, onClose }: UserDetailPanelProps) {
+  useBodyScrollLock(isOpen);
   const [user, setUser] = useState<UserDetail | null>(null);
   const [orders, setOrders] = useState<OrderItem[]>([]);
   const [inquiries, setInquiries] = useState<InquiryItem[]>([]);

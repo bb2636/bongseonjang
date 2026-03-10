@@ -2,6 +2,7 @@ import { useRef, useEffect, useLayoutEffect, ChangeEvent, useState } from 'react
 import { useProductForm, ProductOption, ProductInfo, ShippingDetail } from './useProductForm';
 import { ConfirmModal, Select, MultiSelect, DateRangePicker } from '../../../../components';
 import { useToast } from '../../../../contexts/ToastContext';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import './ProductFormDialog.css';
 
 interface ProductFormDialogProps {
@@ -41,6 +42,7 @@ export function ProductFormDialog({
   const lastProductIdRef = useRef<string | undefined>(undefined);
   const hasSubmittedRef = useRef(false);
   const { showToast } = useToast();
+  useBodyScrollLock(isOpen);
 
   const {
     formData,

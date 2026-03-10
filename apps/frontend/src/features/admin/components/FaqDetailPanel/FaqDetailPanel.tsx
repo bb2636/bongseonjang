@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ConfirmDialog } from '../ConfirmDialog';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import { CustomDropdown } from '../../../../components';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './FaqDetailPanel.css';
@@ -32,6 +33,7 @@ interface FaqDetail {
 }
 
 export function FaqDetailPanel({ faqId, faqCategories, isOpen, onClose, onSaved, onSuccess, onError }: FaqDetailPanelProps) {
+  useBodyScrollLock(isOpen);
   const [faq, setFaq] = useState<FaqDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);

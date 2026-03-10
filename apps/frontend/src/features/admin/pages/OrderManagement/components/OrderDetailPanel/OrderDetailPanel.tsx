@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchAdminOrderDetail, updateAdminOrderMemo, AdminOrderDetailDto } from '../../api/adminOrderApi';
+import { useBodyScrollLock } from '../../../../hooks/useBodyScrollLock';
 import './OrderDetailPanel.css';
 
 interface OrderDetailPanelProps {
@@ -57,6 +58,7 @@ const paymentMethodLabelMap: Record<string, string> = {
 export function OrderDetailPanel({ orderId, isOpen, onClose }: OrderDetailPanelProps) {
   const [order, setOrder] = useState<AdminOrderDetailDto | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  useBodyScrollLock(isOpen);
   const [adminMemo, setAdminMemo] = useState('');
   const [isSavingMemo, setIsSavingMemo] = useState(false);
   const [memoSaveSuccess, setMemoSaveSuccess] = useState(false);

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useBodyScrollLock } from '../../../../hooks/useBodyScrollLock';
 import './TrackingNumberDialog.css';
 
 interface TrackingNumberDialogProps {
@@ -17,6 +18,7 @@ export function TrackingNumberDialog({
   isSaving = false,
 }: TrackingNumberDialogProps) {
   const [trackingNumber, setTrackingNumber] = useState('');
+  useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (isOpen) {

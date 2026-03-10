@@ -1,4 +1,5 @@
 import { AdminCoupon } from './useCouponManagement';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import './CouponDetailDialog.css';
 
 interface CouponDetailDialogProps {
@@ -26,6 +27,7 @@ export function CouponDetailDialog({
   getConditionLabel,
   getPeriodLabel,
 }: CouponDetailDialogProps) {
+  useBodyScrollLock(isOpen);
   if (!isOpen || !coupon) return null;
 
   return (

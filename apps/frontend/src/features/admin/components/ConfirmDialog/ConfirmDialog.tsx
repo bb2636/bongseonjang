@@ -1,3 +1,4 @@
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import './ConfirmDialog.css';
 
 interface ConfirmDialogProps {
@@ -19,6 +20,7 @@ export function ConfirmDialog({
   onCancel,
   onConfirm,
 }: ConfirmDialogProps) {
+  useBodyScrollLock(isOpen);
   if (!isOpen) return null;
 
   const handleOverlayClick = (e: React.MouseEvent) => {

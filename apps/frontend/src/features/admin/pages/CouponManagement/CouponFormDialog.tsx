@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { AdminCoupon, DiscountType } from './useCouponManagement';
 import { DateRangePicker } from '../../../../components/DateRangePicker';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import './CouponFormDialog.css';
 
 interface CouponFormDialogProps {
@@ -94,6 +95,7 @@ export function CouponFormDialog({ isOpen, coupon, onClose, onSuccess }: CouponF
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
+  useBodyScrollLock(isOpen);
 
   const isEditing = !!coupon;
 

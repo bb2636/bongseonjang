@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CustomDropdown } from '../../../../components';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
 import './NoticeDetailPanel.css';
 
@@ -30,6 +31,7 @@ interface NoticeDetail {
 }
 
 export function NoticeDetailPanel({ noticeId, noticeTypes, isOpen, onClose, onSaved }: NoticeDetailPanelProps) {
+  useBodyScrollLock(isOpen);
   const [notice, setNotice] = useState<NoticeDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
