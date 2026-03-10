@@ -76,18 +76,9 @@
 }
 
 .login-logo-image {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  margin-bottom: 16px;
-  object-fit: cover;
-}
-
-.login-logo-text {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--color-primary);
-  letter-spacing: -0.02em;
+  width: 97px;
+  height: auto;
+  object-fit: contain;
 }
 
 .login-button-section {
