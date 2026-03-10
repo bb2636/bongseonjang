@@ -11,6 +11,7 @@ import { MemoryCache } from '../../../common/utils/memoryCache.js';
 const HOME_CACHE_TTL_MS = 300000;
 const CACHE_KEY_ABOVE_FOLD = 'above-fold';
 const CACHE_KEY_BELOW_FOLD = 'below-fold';
+const HOME_SECTION_PRODUCT_LIMIT = 10;
 
 export interface HomeDataResponse {
   heroImages: Array<{ id: number; imageUrl: string; linkUrl: string | null }>;
@@ -65,40 +66,40 @@ export class HomeDataService {
     const [
       heroImages,
       timeDeals,
-      allBestProducts,
+      bestProducts,
       middleBanners,
-      allFreshProducts,
-      allMdPicks,
-      allWeeklyProducts,
-      allBadameunProducts,
+      freshProducts,
+      mdPicks,
+      weeklyProducts,
+      badameunProducts,
       bongseonjangTv,
-      allBongcookProducts,
+      bongcookProducts,
       bottomBanners,
     ] = await Promise.all([
       this.getBannersByPosition('HOME_HERO'),
       this.productService.getTimeDeals(10),
-      this.productService.getProductsByDisplayCategory('베스트'),
+      this.productService.getProductsByDisplayCategory('베스트', undefined, HOME_SECTION_PRODUCT_LIMIT),
       this.getBannersByPosition('HOME_MIDDLE'),
-      this.productService.getProductsByDisplayCategory('신선식품'),
-      this.productService.getProductsByDisplayCategory('MD추천!'),
-      this.productService.getProductsByDisplayCategory('이주의 상품'),
-      this.productService.getProductsByDisplayCategory('바담은 제품'),
+      this.productService.getProductsByDisplayCategory('신선식품', undefined, HOME_SECTION_PRODUCT_LIMIT),
+      this.productService.getProductsByDisplayCategory('MD추천!', undefined, HOME_SECTION_PRODUCT_LIMIT),
+      this.productService.getProductsByDisplayCategory('이주의 상품', undefined, HOME_SECTION_PRODUCT_LIMIT),
+      this.productService.getProductsByDisplayCategory('바담은 제품', undefined, HOME_SECTION_PRODUCT_LIMIT),
       this.bongseonjangTvService.getAllImages(),
-      this.productService.getProductsByDisplayCategory('봉쿡 제품'),
+      this.productService.getProductsByDisplayCategory('봉쿡 제품', undefined, HOME_SECTION_PRODUCT_LIMIT),
       this.getBannersByPosition('HOME_BOTTOM'),
     ]);
 
     return {
       heroImages,
       timeDeals,
-      bestProducts: allBestProducts.slice(0, 10),
+      bestProducts,
       middleBanners,
-      freshProducts: allFreshProducts.slice(0, 10),
-      mdPicks: allMdPicks.slice(0, 10),
-      weeklyProducts: allWeeklyProducts.slice(0, 10),
-      badameunProducts: allBadameunProducts.slice(0, 10),
+      freshProducts,
+      mdPicks,
+      weeklyProducts,
+      badameunProducts,
       bongseonjangTv,
-      bongcookProducts: allBongcookProducts.slice(0, 10),
+      bongcookProducts,
       bottomBanners,
     };
   }
@@ -109,13 +110,13 @@ export class HomeDataService {
       return cached;
     }
 
-    const [heroImages, timeDeals, allBestProducts] = await Promise.all([
+    const [heroImages, timeDeals, bestProducts] = await Promise.all([
       this.getBannersByPosition('HOME_HERO'),
       this.productService.getTimeDeals(10),
-      this.productService.getProductsByDisplayCategory('베스트'),
+      this.productService.getProductsByDisplayCategory('베스트', undefined, HOME_SECTION_PRODUCT_LIMIT),
     ]);
 
-    const result = { heroImages, timeDeals, bestProducts: allBestProducts.slice(0, 10) };
+    const result = { heroImages, timeDeals, bestProducts };
     HomeDataService.homeCache.set(CACHE_KEY_ABOVE_FOLD, result, HOME_CACHE_TTL_MS);
     return result;
   }
@@ -128,32 +129,32 @@ export class HomeDataService {
 
     const [
       middleBanners,
-      allFreshProducts,
-      allMdPicks,
-      allWeeklyProducts,
-      allBadameunProducts,
+      freshProducts,
+      mdPicks,
+      weeklyProducts,
+      badameunProducts,
       bongseonjangTv,
-      allBongcookProducts,
+      bongcookProducts,
       bottomBanners,
     ] = await Promise.all([
       this.getBannersByPosition('HOME_MIDDLE'),
-      this.productService.getProductsByDisplayCategory('신선식품'),
-      this.productService.getProductsByDisplayCategory('MD추천!'),
-      this.productService.getProductsByDisplayCategory('이주의 상품'),
-      this.productService.getProductsByDisplayCategory('바담은 제품'),
+      this.productService.getProductsByDisplayCategory('신선식품', undefined, HOME_SECTION_PRODUCT_LIMIT),
+      this.productService.getProductsByDisplayCategory('MD추천!', undefined, HOME_SECTION_PRODUCT_LIMIT),
+      this.productService.getProductsByDisplayCategory('이주의 상품', undefined, HOME_SECTION_PRODUCT_LIMIT),
+      this.productService.getProductsByDisplayCategory('바담은 제품', undefined, HOME_SECTION_PRODUCT_LIMIT),
       this.bongseonjangTvService.getAllImages(),
-      this.productService.getProductsByDisplayCategory('봉쿡 제품'),
+      this.productService.getProductsByDisplayCategory('봉쿡 제품', undefined, HOME_SECTION_PRODUCT_LIMIT),
       this.getBannersByPosition('HOME_BOTTOM'),
     ]);
 
     const result = {
       middleBanners,
-      freshProducts: allFreshProducts.slice(0, 10),
-      mdPicks: allMdPicks.slice(0, 10),
-      weeklyProducts: allWeeklyProducts.slice(0, 10),
-      badameunProducts: allBadameunProducts.slice(0, 10),
+      freshProducts,
+      mdPicks,
+      weeklyProducts,
+      badameunProducts,
       bongseonjangTv,
-      bongcookProducts: allBongcookProducts.slice(0, 10),
+      bongcookProducts,
       bottomBanners,
     };
     HomeDataService.homeCache.set(CACHE_KEY_BELOW_FOLD, result, HOME_CACHE_TTL_MS);

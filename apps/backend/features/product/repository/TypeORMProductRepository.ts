@@ -3,7 +3,7 @@ import { Product } from '../../../entity/Product';
 import type { ProductRepository, ProductFilter } from './ProductRepository';
 
 export class TypeORMProductRepository implements ProductRepository {
-  async findByDisplayCategory(displayCategoryName: string, filter?: ProductFilter): Promise<Product[]> {
+  async findByDisplayCategory(displayCategoryName: string, filter?: ProductFilter, limit?: number): Promise<Product[]> {
     const productRepository = AppDataSource.getRepository(Product);
     const now = new Date();
     
@@ -20,9 +20,13 @@ export class TypeORMProductRepository implements ProductRepository {
       queryBuilder.andWhere('product.productCategoryId = :productCategoryId', { productCategoryId: filter.productCategory });
     }
 
-    return queryBuilder
-      .orderBy('product.createdAt', 'DESC')
-      .getMany();
+    queryBuilder.orderBy('product.createdAt', 'DESC');
+
+    if (limit) {
+      queryBuilder.take(limit);
+    }
+
+    return queryBuilder.getMany();
   }
 
   async findAll(filter?: ProductFilter): Promise<Product[]> {

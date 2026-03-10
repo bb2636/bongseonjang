@@ -21,8 +21,8 @@ export class ProductService {
     private readonly reviewStatsProvider?: ReviewStatsProvider,
   ) {}
 
-  async getProductsByDisplayCategory(displayCategoryName: string, filter?: ProductFilter): Promise<ProductDto[]> {
-    const products = await this.productRepository.findByDisplayCategory(displayCategoryName, filter);
+  async getProductsByDisplayCategory(displayCategoryName: string, filter?: ProductFilter, limit?: number): Promise<ProductDto[]> {
+    const products = await this.productRepository.findByDisplayCategory(displayCategoryName, filter, limit);
     
     const productIds = products.map(p => p.id);
     const reviewStatsMap = this.reviewStatsProvider 
