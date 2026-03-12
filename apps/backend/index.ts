@@ -204,23 +204,22 @@ app.use((req, res, next) => {
 async function prewarmImageCache(): Promise<void> {
   try {
     const { AppDataSource } = await import('./config/database.js');
+    const { Banner } = await import('./entity/Banner.js');
+    const { ProductImage } = await import('./entity/ProductImage.js');
 
-    const bannerImages: Array<{ image_url: string }> = await AppDataSource.query(
-      `SELECT image_url FROM banners WHERE is_active = true`
-    );
+    const banners = await AppDataSource.getRepository(Banner).find({
+      where: { isActive: true },
+      select: ['imageUrl'],
+    });
 
-    const productImages: Array<{ thumbnail_url: string }> = await AppDataSource.query(
-      `SELECT DISTINCT thumbnail_url FROM products WHERE is_active = true AND thumbnail_url IS NOT NULL LIMIT 100`
-    );
-
-    const productDetailImages: Array<{ image_url: string }> = await AppDataSource.query(
-      `SELECT image_url FROM product_images WHERE image_url IS NOT NULL LIMIT 200`
-    );
+    const productImages = await AppDataSource.getRepository(ProductImage).find({
+      select: ['imageUrl'],
+      take: 200,
+    });
 
     const allPaths = [
-      ...bannerImages.map(b => b.image_url),
-      ...productImages.map(p => p.thumbnail_url),
-      ...productDetailImages.map(p => p.image_url),
+      ...banners.map(b => b.imageUrl),
+      ...productImages.map(p => p.imageUrl),
     ].filter(p => p && p.startsWith("/objects/"));
 
     if (allPaths.length > 0) {
