@@ -17,6 +17,32 @@ import {
 
 const DEFAULT_BUCKET_NAME = "app-storage";
 const CACHE_MAX_AGE_SECONDS = 86400;
+const MEMORY_CACHE_MAX_ENTRIES = 200;
+const MEMORY_CACHE_MAX_BYTES = 100 * 1024 * 1024;
+
+interface CachedObject {
+  buffer: Buffer;
+  mimeType: string;
+  isPublic: boolean;
+  etag: string;
+  cachedAt: number;
+}
+
+const objectMemoryCache = new Map<string, CachedObject>();
+let memoryCacheTotalBytes = 0;
+
+function evictCacheIfNeeded(incomingBytes: number): void {
+  while (
+    (memoryCacheTotalBytes + incomingBytes > MEMORY_CACHE_MAX_BYTES ||
+      objectMemoryCache.size >= MEMORY_CACHE_MAX_ENTRIES) &&
+    objectMemoryCache.size > 0
+  ) {
+    const oldestKey = objectMemoryCache.keys().next().value as string;
+    const entry = objectMemoryCache.get(oldestKey)!;
+    memoryCacheTotalBytes -= entry.buffer.length;
+    objectMemoryCache.delete(oldestKey);
+  }
+}
 
 let storageClient: Client | null = null;
 
@@ -48,22 +74,12 @@ export class ObjectStorageService {
     storagePath: string = "uploads",
     isPublic: boolean = true
   ): Promise<string> {
-    console.log('[DEBUG uploadFile] originalFilename:', originalFilename);
-    console.log('[DEBUG uploadFile] storagePath:', storagePath);
-    console.log('[DEBUG uploadFile] buffer length:', buffer.length);
-    console.log('[DEBUG uploadFile] buffer type:', typeof buffer);
-    console.log('[DEBUG uploadFile] isBuffer:', Buffer.isBuffer(buffer));
-    
     const objectId = randomUUID();
     const extension = originalFilename.split(".").pop() || "bin";
     const normalizedPath = storagePath.replace(/^\/+|\/+$/g, "");
     const objectName = `${normalizedPath}/${objectId}.${extension}`;
-    
-    console.log('[DEBUG uploadFile] objectName:', objectName);
 
     const result = await this.client.uploadFromBytes(objectName, buffer);
-    console.log('[DEBUG uploadFile] uploadResult:', JSON.stringify(result));
-    
     if (!result.ok) {
       throw new Error(`Failed to upload file: ${result.error}`);
     }
@@ -90,9 +106,6 @@ export class ObjectStorageService {
       return this.uploadFile(buffer, originalFilename, storagePath, isPublic);
     }
 
-    console.log('[DEBUG uploadOptimizedImage] imageType:', imageType);
-    console.log('[DEBUG uploadOptimizedImage] original size:', buffer.length);
-
     let optimizedResult;
     try {
       switch (imageType) {
@@ -107,10 +120,6 @@ export class ObjectStorageService {
           optimizedResult = await optimizeThumbnailImage(buffer);
           break;
       }
-
-      console.log('[DEBUG uploadOptimizedImage] optimized size:', optimizedResult.optimizedSize);
-      console.log('[DEBUG uploadOptimizedImage] compression ratio:', 
-        ((1 - optimizedResult.optimizedSize / optimizedResult.originalSize) * 100).toFixed(1) + '%');
 
       const newFilename = originalFilename.replace(/\.[^.]+$/, `.${optimizedResult.format}`);
       return this.uploadFile(optimizedResult.buffer, newFilename, storagePath, isPublic);
@@ -135,55 +144,69 @@ export class ObjectStorageService {
   }
 
   async downloadObjectByPath(objectPath: string, res: Response): Promise<void> {
-    console.log('[DEBUG downloadObjectByPath] objectPath:', objectPath);
-    
     if (!objectPath.startsWith("/objects/")) {
-      console.log('[DEBUG downloadObjectByPath] Invalid path - does not start with /objects/');
       throw new ObjectNotFoundError();
     }
 
     const objectName = objectPath.slice("/objects/".length);
-    console.log('[DEBUG downloadObjectByPath] objectName:', objectName);
+    const etag = `"${objectName}"`;
+
+    const ifNoneMatch = res.req?.headers['if-none-match'];
+    if (ifNoneMatch === etag) {
+      res.status(304).end();
+      return;
+    }
+
+    const cached = objectMemoryCache.get(objectName);
+    if (cached) {
+      objectMemoryCache.delete(objectName);
+      objectMemoryCache.set(objectName, cached);
+
+      res.set({
+        "Content-Type": cached.mimeType,
+        "Content-Length": String(cached.buffer.length),
+        "Cache-Control": `${cached.isPublic ? "public" : "private"}, max-age=${CACHE_MAX_AGE_SECONDS}`,
+        "ETag": cached.etag,
+      });
+      res.send(cached.buffer);
+      return;
+    }
 
     const existsResult = await this.client.exists(objectName);
-    console.log('[DEBUG downloadObjectByPath] existsResult:', JSON.stringify(existsResult));
-    
     if (!existsResult.ok || !existsResult.value) {
-      console.log('[DEBUG downloadObjectByPath] Object does not exist');
       throw new ObjectNotFoundError();
     }
 
     const downloadResult = await this.client.downloadAsBytes(objectName);
-    console.log('[DEBUG downloadObjectByPath] downloadResult.ok:', downloadResult.ok);
-    
     if (!downloadResult.ok) {
-      console.log('[DEBUG downloadObjectByPath] Download failed');
       throw new ObjectNotFoundError();
     }
 
-    // SDK returns Array with Buffer at index 0
     const fileBuffer = Array.isArray(downloadResult.value) 
       ? downloadResult.value[0] 
       : downloadResult.value;
-    
-    console.log('[DEBUG downloadObjectByPath] fileBuffer length:', fileBuffer.length);
 
     const mimeType = this.getMimeTypeFromPath(objectName);
     const aclPolicy = await getObjectAclPolicy(this.client, objectName);
     const isPublic = aclPolicy?.visibility === "public";
 
-    console.log('[DEBUG downloadObjectByPath] mimeType:', mimeType);
-    console.log('[DEBUG downloadObjectByPath] Content-Length:', fileBuffer.length);
+    evictCacheIfNeeded(fileBuffer.length);
+    objectMemoryCache.set(objectName, {
+      buffer: fileBuffer,
+      mimeType,
+      isPublic,
+      etag,
+      cachedAt: Date.now(),
+    });
+    memoryCacheTotalBytes += fileBuffer.length;
 
     res.set({
       "Content-Type": mimeType,
-      "Content-Length": fileBuffer.length,
+      "Content-Length": String(fileBuffer.length),
       "Cache-Control": `${isPublic ? "public" : "private"}, max-age=${CACHE_MAX_AGE_SECONDS}`,
-      "ETag": `"${objectName}-${fileBuffer.length}"`,
+      "ETag": etag,
     });
-
     res.send(fileBuffer);
-    console.log('[DEBUG downloadObjectByPath] Response sent successfully');
   }
 
   async getObjectEntityFile(objectPath: string): Promise<{ objectName: string; exists: boolean }> {

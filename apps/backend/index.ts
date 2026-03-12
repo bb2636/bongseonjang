@@ -13,6 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const objectStorageService = new ObjectStorageService();
 
 app.use(compression());
 
@@ -74,16 +75,11 @@ app.use("/objects", async (req, res, next) => {
     return next();
   }
 
-  const objectStorageService = new ObjectStorageService();
   const objectPath = `/objects${req.path}`;
-
-  console.log("[DEBUG /objects] Request path:", req.path);
-  console.log("[DEBUG /objects] Full object path:", objectPath);
 
   try {
     await objectStorageService.downloadObjectByPath(objectPath, res);
   } catch (error) {
-    console.error("[DEBUG /objects] Error serving object:", error);
     res.status(404).json({ error: "Object not found" });
   }
 });
