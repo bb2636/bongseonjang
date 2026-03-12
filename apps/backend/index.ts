@@ -201,6 +201,36 @@ app.use((req, res, next) => {
   }
 });
 
+async function prewarmImageCache(): Promise<void> {
+  try {
+    const { AppDataSource } = await import('./config/database.js');
+
+    const bannerImages: Array<{ image_url: string }> = await AppDataSource.query(
+      `SELECT image_url FROM banners WHERE is_active = true`
+    );
+
+    const productImages: Array<{ thumbnail_url: string }> = await AppDataSource.query(
+      `SELECT DISTINCT thumbnail_url FROM products WHERE is_active = true AND thumbnail_url IS NOT NULL LIMIT 100`
+    );
+
+    const productDetailImages: Array<{ image_url: string }> = await AppDataSource.query(
+      `SELECT image_url FROM product_images WHERE image_url IS NOT NULL LIMIT 200`
+    );
+
+    const allPaths = [
+      ...bannerImages.map(b => b.image_url),
+      ...productImages.map(p => p.thumbnail_url),
+      ...productDetailImages.map(p => p.image_url),
+    ].filter(p => p && p.startsWith("/objects/"));
+
+    if (allPaths.length > 0) {
+      await objectStorageService.prewarmCache(allPaths);
+    }
+  } catch (error) {
+    console.warn('[Cache Prewarm] Failed:', error);
+  }
+}
+
 async function startServer(): Promise<void> {
   app.listen(config.port, "0.0.0.0", () => {
     console.log(`Server is running on port ${config.port}`);
@@ -210,6 +240,7 @@ async function startServer(): Promise<void> {
     await initializeDatabase();
     await runProductionSeed();
     console.log("Database ready");
+    prewarmImageCache();
   } catch (error) {
     console.error("Failed to initialize database:", error);
     process.exit(1);

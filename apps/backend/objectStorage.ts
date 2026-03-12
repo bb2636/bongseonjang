@@ -306,6 +306,53 @@ export class ObjectStorageService {
     return result.value.map((obj) => `/objects/${obj.name}`);
   }
 
+  async prewarmCache(objectPaths: string[]): Promise<void> {
+    const validPaths = objectPaths
+      .filter(p => p && p.startsWith("/objects/"))
+      .map(p => p.slice("/objects/".length));
+
+    const uniquePaths = [...new Set(validPaths)];
+    let loaded = 0;
+    let failed = 0;
+
+    const batchSize = 10;
+    for (let i = 0; i < uniquePaths.length; i += batchSize) {
+      const batch = uniquePaths.slice(i, i + batchSize);
+      const results = await Promise.allSettled(
+        batch.map(async (objectName) => {
+          if (objectMemoryCache.has(objectName)) return;
+
+          const downloadResult = await this.client.downloadAsBytes(objectName);
+          if (!downloadResult.ok) return;
+
+          const fileBuffer = Array.isArray(downloadResult.value)
+            ? downloadResult.value[0]
+            : downloadResult.value;
+
+          const mimeType = this.getMimeTypeFromPath(objectName);
+          const aclPolicy = await getObjectAclPolicy(this.client, objectName);
+          const isPublic = aclPolicy?.visibility === "public";
+          const etag = `"${objectName}"`;
+
+          evictCacheIfNeeded(fileBuffer.length);
+          objectMemoryCache.set(objectName, {
+            buffer: fileBuffer,
+            mimeType,
+            isPublic,
+            etag,
+            cachedAt: Date.now(),
+          });
+          memoryCacheTotalBytes += fileBuffer.length;
+          loaded++;
+        })
+      );
+
+      results.forEach(r => { if (r.status === 'rejected') failed++; });
+    }
+
+    console.log(`[Cache Prewarm] Loaded ${loaded} objects, ${failed} failed, ${objectMemoryCache.size} total cached (${(memoryCacheTotalBytes / 1024 / 1024).toFixed(1)}MB)`);
+  }
+
   private getMimeTypeFromPath(objectPath: string): string {
     const extension = objectPath.split(".").pop()?.toLowerCase();
     const mimeTypes: Record<string, string> = {
