@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace "com.bongseongjang.app"
     compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 35
@@ -16,11 +22,54 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
+    }
+}
+
+tasks.register('printSigningSha') {
+    doLast {
+        def variants = ['debug', 'release']
+        variants.each { variantName ->
+            def config = android.signingConfigs.findByName(variantName)
+            if (config?.storeFile?.exists()) {
+                println "\n========== ${variantName.toUpperCase()} SIGNING ==========="
+                println "Store: ${config.storeFile.absolutePath}"
+                println "Alias: ${config.keyAlias}"
+                def proc = ['keytool', '-list', '-v',
+                            '-keystore', config.storeFile.absolutePath,
+                            '-alias', config.keyAlias,
+                            '-storepass', config.storePassword].execute()
+                proc.waitFor()
+                proc.in.eachLine { line ->
+                    if (line.contains('SHA1:') || line.contains('SHA-256:') || line.contains('SHA256:')) {
+                        println line.trim()
+                    }
+                }
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.matching { it.name == 'assembleRelease' || it.name == 'bundleRelease' }.all { task ->
+        task.finalizedBy 'printSigningSha'
     }
 }
 

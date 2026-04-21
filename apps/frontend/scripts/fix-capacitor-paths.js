@@ -229,8 +229,85 @@ if (capBuildFile.exists()) {
     SAFE_CAP_BUILD_GRADLE
   );
 
+  if (!content.includes('keystorePropertiesFile')) {
+    const KEYSTORE_LOADER = `
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+`;
+    content = content.replace(
+      /apply plugin: 'com\.android\.application'\n/,
+      `apply plugin: 'com.android.application'\n${KEYSTORE_LOADER}`
+    );
+
+    const SIGNING_CONFIGS_BLOCK = `    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }`;
+
+    content = content.replace(
+      /buildTypes\s*\{\s*release\s*\{[^}]*\}\s*\}/,
+      SIGNING_CONFIGS_BLOCK
+    );
+
+    const PRINT_SHA_TASK = `
+tasks.register('printSigningSha') {
+    doLast {
+        def variants = ['debug', 'release']
+        variants.each { variantName ->
+            def config = android.signingConfigs.findByName(variantName)
+            if (config?.storeFile?.exists()) {
+                println "\\n========== \${variantName.toUpperCase()} SIGNING ==========="
+                println "Store: \${config.storeFile.absolutePath}"
+                println "Alias: \${config.keyAlias}"
+                def proc = ['keytool', '-list', '-v',
+                            '-keystore', config.storeFile.absolutePath,
+                            '-alias', config.keyAlias,
+                            '-storepass', config.storePassword].execute()
+                proc.waitFor()
+                proc.in.eachLine { line ->
+                    if (line.contains('SHA1:') || line.contains('SHA-256:') || line.contains('SHA256:')) {
+                        println line.trim()
+                    }
+                }
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.matching { it.name == 'assembleRelease' || it.name == 'bundleRelease' }.all { task ->
+        task.finalizedBy 'printSigningSha'
+    }
+}
+`;
+
+    content = content.replace(
+      /(repositories\s*\{)/,
+      `${PRINT_SHA_TASK}\n$1`
+    );
+  }
+
   writeFileSync(buildGradlePath, content, 'utf8');
-  console.log('  ✔ Patched app/build.gradle');
+  console.log('  ✔ Patched app/build.gradle (with keystore signing config)');
 }
 
 function patchAndroidManifest() {
