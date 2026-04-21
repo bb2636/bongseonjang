@@ -1,0 +1,38 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+새로운 기능 및 개선 사항에 대 한 최신 PowerShell을 설치 하세요! https://aka.ms/PSWindows
+
+PS C:\Users\user\Downloads\bongseonjang\bongseonjang\apps\frontend\android> cd android
+cd : 'C:\Users\user\Downloads\bongseonjang\bongseonjang\apps\frontend\android\android' 경로는 존재하지 않으므로 찾을 수 없습니다.
+위치 줄:1 문자:1
++ cd android
++ ~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\user\D...android\android:String) [Set-Location], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+ 
+PS C:\Users\user\Downloads\bongseonjang\bongseonjang\apps\frontend\android> gradlew signingReport
+gradlew : 'gradlew' 용어가 cmdlet, 함수, 스크립트 파일 또는 실행할 수 있는 프로그램 이름으로 인식되지 않습니다. 이름이 정확한지 확인하고 경로가 포함된 경우 경로가 올바른지 검증한 다음 다시 시도하십시오.
+위치 줄:1 문자:1
++ gradlew signingReport
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (gradlew:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\user\Downloads\bongseonjang\bongseonjang\apps\frontend\android> .\gradlew signingReport
+.\gradlew : '.\gradlew' 용어가 cmdlet, 함수, 스크립트 파일 또는 실행할 수 있는 프로그램 이름으로 인식되지 않습니다. 이름이 정확한지 확인하고 경로가 포함된 경우 경로가 올바른지 검증한 다음 다시 시도하십시오.
+위치 줄:1 문자:1
++ .\gradlew signingReport
++ ~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.\gradlew:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\user\Downloads\bongseonjang\bongseonjang\apps\frontend\android> .\gradlew.bat signingReport
+.\gradlew.bat : '.\gradlew.bat' 용어가 cmdlet, 함수, 스크립트 파일 또는 실행할 수 있는 프로그램 이름으로 인식되지 않습니다. 이름이 정확한지 확인하고 경로가 포함된 경우 경로가 올바른지 검증한 다음 다시 시도하십시오.
+위치 줄:1 문자:1
++ .\gradlew.bat signingReport
++ ~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (.\gradlew.bat:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+PS C:\Users\user\Downloads\bongseonjang\bongseonjang\apps\frontend\android> 
