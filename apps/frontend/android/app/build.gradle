@@ -6,6 +6,17 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def versionPropsFile = file("version.properties")
+def versionProps = new Properties()
+if (versionPropsFile.exists()) {
+    versionProps.load(new FileInputStream(versionPropsFile))
+} else {
+    versionProps['versionCode'] = '1'
+    versionProps['versionName'] = '1.0.0'
+}
+def appVersionCode = (versionProps['versionCode'] as String).toInteger()
+def appVersionName = versionProps['versionName'] as String
+
 android {
     namespace "com.bongseongjang.app"
     compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 35
@@ -13,8 +24,8 @@ android {
         applicationId "com.bongseongjang.app"
         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 23
         targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 35
-        versionCode 2
-        versionName "1.0.1"
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -67,9 +78,31 @@ tasks.register('printSigningSha') {
     }
 }
 
+tasks.register('bumpVersion') {
+    doLast {
+        if (!versionPropsFile.exists()) return
+        def props = new Properties()
+        props.load(new FileInputStream(versionPropsFile))
+        def oldCode = (props['versionCode'] as String).toInteger()
+        def oldName = props['versionName'] as String
+        def newCode = oldCode + 1
+        def parts = oldName.split('\\.').collect { it.toInteger() }
+        while (parts.size() < 3) parts.add(0)
+        parts[2] = parts[2] + 1
+        def newName = parts.join('.')
+        props['versionCode'] = newCode.toString()
+        props['versionName'] = newName
+        props.store(new FileOutputStream(versionPropsFile), null)
+        println "\n========== VERSION BUMP ==========="
+        println "versionCode: ${oldCode} -> ${newCode}"
+        println "versionName: ${oldName} -> ${newName}"
+        println "(next build will use the bumped version)"
+    }
+}
+
 afterEvaluate {
     tasks.matching { it.name == 'assembleRelease' || it.name == 'bundleRelease' }.all { task ->
-        task.finalizedBy 'printSigningSha'
+        task.finalizedBy 'printSigningSha', 'bumpVersion'
     }
 }
 

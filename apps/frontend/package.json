@@ -11,7 +11,7 @@
     "cap:sync": "npx cap sync && node scripts/fix-ios-native.js",
     "cap:sync:ios": "node scripts/cap-ensure-ios.js && npx cap sync ios && node scripts/fix-ios-native.js",
     "cap:sync:android": "npx cap sync android && node scripts/fix-capacitor-paths.js",
-    "cap:build": "vite build --mode capacitor && npm run cap:sync:android && npm run assets && node scripts/bump-version.js",
+    "cap:build": "vite build --mode capacitor && npm run cap:sync:android && npm run assets",
     "cap:build:ios": "node scripts/cap-build-ios.js full",
     "cap:build:ios:quick": "node scripts/cap-build-ios.js quick",
     "cap:open": "npx cap open android",
