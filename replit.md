@@ -124,7 +124,7 @@ CSS 변수를 활용한 일관된 테마 적용, 전역 토스트 알림, 공통
 ### Android Capacitor Build Pipeline
 `npm run cap:build` 실행 시: assets 생성 → Vite 빌드 → `cap sync android` → `fix-capacitor-paths.js` 순으로 실행됩니다. `fix-capacitor-paths.js`는 완전 독립형 Android 프로젝트를 생성합니다:
 -   `capacitor-android`: `@capacitor/android`에서 복사
--   `app/`: `android-template.tar.gz`에서 추출 후 패키지명(`com.bongseongjang.app`)/앱이름(`봉선장`) 치환
+-   `app/`: `android-template.tar.gz`에서 추출 후 패키지명(`com.bongkru.app`)/앱이름(`봉선장`) 치환
 -   `capacitor-cordova-android-plugins`: 빈 stub 자동 생성
 -   5개 플러그인(app, browser, camera, share, inappbrowser): node_modules에서 복사 + AGP 버전 통일(8.7.2)
 -   `variables.gradle`: SDK/라이브러리 버전 중앙 관리 (coreSplashScreenVersion 포함)

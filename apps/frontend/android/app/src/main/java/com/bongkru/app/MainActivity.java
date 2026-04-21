@@ -1,4 +1,4 @@
-package com.bongseongjang.app;
+package com.bongkru.app;
 
 import com.getcapacitor.BridgeActivity;
 

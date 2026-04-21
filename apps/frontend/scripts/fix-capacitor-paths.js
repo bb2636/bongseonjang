@@ -17,7 +17,7 @@ const COMPILE_SDK = 35;
 const MIN_SDK = 23;
 const TARGET_SDK = 35;
 
-const APP_ID = 'com.bongseongjang.app';
+const APP_ID = 'com.bongkru.app';
 const APP_NAME = '봉선장';
 const TEMPLATE_PACKAGE = 'com.getcapacitor.myapp';
 

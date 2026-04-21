@@ -18,10 +18,10 @@ def appVersionCode = (versionProps['versionCode'] as String).toInteger()
 def appVersionName = versionProps['versionName'] as String
 
 android {
-    namespace "com.bongseongjang.app"
+    namespace "com.bongkru.app"
     compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 35
     defaultConfig {
-        applicationId "com.bongseongjang.app"
+        applicationId "com.bongkru.app"
         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 23
         targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 35
         versionCode appVersionCode

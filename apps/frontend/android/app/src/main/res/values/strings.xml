@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">봉선장</string>
     <string name="title_activity_main">봉선장</string>
-    <string name="package_name">com.bongseongjang.app</string>
-    <string name="custom_url_scheme">com.bongseongjang.app</string>
+    <string name="package_name">com.bongkru.app</string>
+    <string name="custom_url_scheme">com.bongkru.app</string>
 </resources>
