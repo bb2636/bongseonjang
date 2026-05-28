@@ -132,3 +132,6 @@ dist
 keystore.properties
 *.jks
 *.keystore
+
+# Attached assets (user uploads, screenshots — not part of source)
+attached_assets/
