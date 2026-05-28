@@ -326,6 +326,20 @@ function patchAndroidManifest() {
     );
   }
 
+  if (!content.includes('android:scheme="bongseonjang"')) {
+    content = content.replace(
+      /(<intent-filter>\s*<action android:name="android\.intent\.action\.MAIN" \/>\s*<category android:name="android\.intent\.category\.LAUNCHER" \/>\s*<\/intent-filter>)/,
+      `$1
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="bongseonjang" />
+            </intent-filter>`
+    );
+  }
+
   writeFileSync(manifestPath, content, 'utf8');
   console.log('  ✔ Patched AndroidManifest.xml');
 }

@@ -62,7 +62,7 @@ export function getApiBaseUrlDynamic(): string {
   return getApiBaseUrl();
 }
 
-export const CAPACITOR_APP_SCHEME = 'com.bongkru.app';
+export const CAPACITOR_APP_SCHEME = 'bongseonjang';
 
 export function getAbsoluteApiUrl(): string {
   if (import.meta.env.VITE_API_URL) {

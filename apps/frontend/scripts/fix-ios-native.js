@@ -30,7 +30,7 @@ const PRIVACY_DESCRIPTIONS = {
   ITSAppUsesNonExemptEncryption: 'false'
 };
 
-const URL_SCHEME = 'com.bongkru.app';
+const URL_SCHEME = 'bongseonjang';
 const BUNDLE_ID = 'com.bongkru.app';
 
 const PAYMENT_APP_SCHEMES = [
