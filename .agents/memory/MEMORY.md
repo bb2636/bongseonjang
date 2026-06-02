@@ -1,0 +1,1 @@
+- [iOS/Android bundle IDs](ios-bundle-id.md) — correct iOS id is com.bongseonjang.app (seon, single g); seong typo broke ASC uploads; Android stays com.bongkru.app
