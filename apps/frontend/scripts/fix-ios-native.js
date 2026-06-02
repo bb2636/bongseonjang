@@ -451,6 +451,26 @@ function removeOldSwipeBackFiles() {
   }
 
   removeSwipeBackFromPbxproj();
+  setBundleIdentifierInPbxproj();
+}
+
+function setBundleIdentifierInPbxproj() {
+  const pbxprojPath = path.join(FRONTEND_DIR, 'ios', 'App', 'App.xcodeproj', 'project.pbxproj');
+  if (!fs.existsSync(pbxprojPath)) {
+    return;
+  }
+
+  let content = fs.readFileSync(pbxprojPath, 'utf8');
+  const bundleIdPattern = /PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/g;
+
+  if (!bundleIdPattern.test(content)) {
+    console.log('  PRODUCT_BUNDLE_IDENTIFIER not found in project.pbxproj');
+    return;
+  }
+
+  content = content.replace(bundleIdPattern, `PRODUCT_BUNDLE_IDENTIFIER = ${BUNDLE_ID};`);
+  fs.writeFileSync(pbxprojPath, content, 'utf8');
+  console.log(`  Set PRODUCT_BUNDLE_IDENTIFIER to ${BUNDLE_ID} in project.pbxproj`);
 }
 
 function removeSwipeBackFromPbxproj() {
