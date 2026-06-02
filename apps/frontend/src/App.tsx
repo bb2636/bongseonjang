@@ -168,6 +168,9 @@ const BongseonStoryPage = lazy(() =>
 const TermsViewPage = lazy(() =>
   import("./features/terms").then((m) => ({ default: m.TermsViewPage }))
 );
+const PrivacyPolicyPage = lazy(() =>
+  import("./features/privacyPolicy").then((m) => ({ default: m.PrivacyPolicyPage }))
+);
 const EventDetailPage = lazy(() =>
   import("./features/event").then((m) => ({ default: m.EventDetailPage }))
 );
@@ -497,6 +500,7 @@ function AppContent() {
         />
         <Route path="/about" element={<BongseonStoryPage />} />
         <Route path="/terms" element={<TermsViewPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/event/:id" element={<EventDetailPage />} />
 
         {/* Admin Routes */}

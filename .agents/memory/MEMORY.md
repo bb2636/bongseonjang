@@ -1,1 +1,1 @@
-- [iOS/Android bundle IDs](ios-bundle-id.md) — iOS bundle ID is com.bongseongjang.app (seong, double-g, the ONLY portal Identifier); Android stays com.bongkru.app; URL scheme/API domain use seon spelling on purpose
+- [iOS/Android bundle IDs](ios-bundle-id.md) — iOS bundle ID is com.bongseongjang.app (seong); Android is com.bongkru.app; URL scheme/API domain use the seon spelling on purpose
