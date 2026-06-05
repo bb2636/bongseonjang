@@ -89,3 +89,7 @@ VITE_NAVER_CLIENT_ID = "3gieVh251O79fUraIJhx"
 
 [objectStorage]
 defaultBucketID = "replit-objstore-8b208dd8-505c-4b83-97d0-c78d38fe6527"
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 180000
