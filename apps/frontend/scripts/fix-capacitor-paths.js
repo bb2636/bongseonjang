@@ -131,6 +131,7 @@ function ensureAppModule() {
 
   if (existsSync(join(appDir, 'build.gradle'))) {
     console.log('✔ app/ module exists');
+    patchStylesXml();
     ensureColorsXml();
     ensureCapacitorBuildGradle();
     return;
@@ -168,6 +169,7 @@ function ensureAppModule() {
   patchAndroidManifest();
   patchMainActivity();
   patchStringsXml();
+  patchStylesXml();
   ensureColorsXml();
   ensureCapacitorBuildGradle();
   mkdirSync(join(appDir, 'src', 'main', 'assets', 'public'), { recursive: true });
@@ -413,6 +415,43 @@ function patchStringsXml() {
   content = content.replace(/<string name="custom_url_scheme">[^<]*<\/string>/, `<string name="custom_url_scheme">${APP_ID}</string>`);
   writeFileSync(stringsPath, content, 'utf8');
   console.log('  ✔ Patched strings.xml');
+}
+
+function patchStylesXml() {
+  const stylesPath = join(androidDir, 'app', 'src', 'main', 'res', 'values', 'styles.xml');
+  if (!existsSync(stylesPath)) return;
+
+  let content = readFileSync(stylesPath, 'utf8');
+
+  const optOutItem = '<item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>';
+  const themeNames = ['AppTheme.NoActionBar', 'AppTheme.NoActionBarLaunch'];
+  let patchedCount = 0;
+
+  for (const themeName of themeNames) {
+    const escapedName = themeName.replace(/\./g, '\\.');
+    const blockRegex = new RegExp(`(<style name="${escapedName}"[^>]*>)([\\s\\S]*?)(\\n\\s*<\\/style>)`);
+    const match = content.match(blockRegex);
+
+    if (!match) {
+      console.warn(`  ⚠ styles.xml: ${themeName} block not found, skipped`);
+      continue;
+    }
+
+    if (match[2].includes('windowOptOutEdgeToEdgeEnforcement')) {
+      continue;
+    }
+
+    content = content.replace(blockRegex, (whole, open, body, close) => `${open}${body}\n        ${optOutItem}${close}`);
+    patchedCount += 1;
+  }
+
+  if (patchedCount === 0) {
+    console.log('  ✔ styles.xml already opts out of edge-to-edge enforcement');
+    return;
+  }
+
+  writeFileSync(stylesPath, content, 'utf8');
+  console.log(`  ✔ Patched styles.xml (edge-to-edge opt-out, ${patchedCount} theme(s))`);
 }
 
 function ensureColorsXml() {

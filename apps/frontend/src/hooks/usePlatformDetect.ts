@@ -122,14 +122,7 @@ export function usePlatformDetect(): PlatformInfo {
 
   useEffect(() => {
     if (platformInfo.isCapacitorAndroid) {
-      const computedStyle = getComputedStyle(document.documentElement);
-      const envSafeArea = computedStyle.getPropertyValue('--safe-area-top').trim();
-      const envValue = parseInt(envSafeArea, 10) || 0;
-      
-      if (envValue === 0) {
-        const fallbackHeight = 28;
-        document.documentElement.style.setProperty('--safe-area-top', `${fallbackHeight}px`);
-      }
+      document.documentElement.style.setProperty('--safe-area-top', '0px');
       document.documentElement.style.setProperty('--safe-area-bottom', '0px');
     }
   }, [platformInfo.isCapacitorAndroid]);
