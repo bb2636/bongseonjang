@@ -1,1 +1,2 @@
 - [iOS/Android bundle IDs](ios-bundle-id.md) — iOS bundle ID is com.bongseongjang.app (seong); Android is com.bongkru.app; URL scheme/API domain use the seon spelling on purpose
+- [Android Capacitor scroll](android-capacitor-scroll.md) — Android must use viewport/document scroll (body/#root overflow:visible); body overflow:auto breaks scrolling on some WebViews

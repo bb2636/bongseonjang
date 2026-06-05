@@ -103,12 +103,15 @@ body.capacitor-app #root {
   overscroll-behavior: contain;
 }
 
+html.platform-android {
+  overflow-x: hidden;
+}
+
 html.platform-android body.capacitor-app {
   position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: visible;
+  min-height: 100%;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
   overscroll-behavior-y: contain;
 }
 
@@ -119,9 +122,8 @@ html.platform-android body.capacitor-app #root {
   right: auto;
   bottom: auto;
   min-height: 100%;
-  overflow-y: visible;
+  overflow: visible;
   overscroll-behavior: contain;
-  touch-action: pan-y;
 }
 
 html.platform-android .home-shell,
@@ -132,6 +134,11 @@ html.platform-android .category-page__content,
 html.platform-android .category-products-page {
   overflow: visible;
   overscroll-behavior: contain;
+}
+
+html.platform-android .brand-products-page {
+  height: auto;
+  overflow: visible;
 }
 
 html.platform-android,
