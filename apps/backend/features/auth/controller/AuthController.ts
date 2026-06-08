@@ -169,7 +169,7 @@ export class AuthController {
 
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password, name, phone, birthDate, gender, referralId, zonecode, address, addressDetail } = req.body;
+      const { email, password, name, phone, referralId, zonecode, address, addressDetail } = req.body;
 
       if (!email || !password || !name) {
         res.status(400).json({ message: 'Email, password, and name are required' });
@@ -181,8 +181,6 @@ export class AuthController {
         password, 
         name,
         phone,
-        birthDate,
-        gender,
         referralId,
         zonecode,
         address,
@@ -298,7 +296,7 @@ export class AuthController {
         return;
       }
 
-      if (!socialUserInfo.email) {
+      if (!socialUserInfo.email && provider !== 'apple') {
         res.status(200).json({ 
           success: false,
           requiresEmail: true,
@@ -315,7 +313,7 @@ export class AuthController {
       const result = await userService.socialLogin({
         provider: socialUserInfo.provider,
         providerUserId: socialUserInfo.providerUserId,
-        email: socialUserInfo.email,
+        email: socialUserInfo.email ?? null,
         name: socialUserInfo.name,
         profileImage: socialUserInfo.profileImage,
       });
@@ -629,24 +627,11 @@ export class AuthController {
         return;
       }
 
-      if (!socialUserInfo.email) {
-        console.log('[Apple Callback] No email from Apple, setting requiresEmail');
-        const sessionKey = await oauthSessionStore.save({
-          requiresEmail: true,
-          provider: socialUserInfo.provider,
-          providerId: socialUserInfo.providerUserId,
-          name: socialUserInfo.name,
-          state: originalState,
-        });
-        await handleAppleRedirect(sessionKey, originalState);
-        return;
-      }
-
       try {
         const result = await userService.socialLogin({
           provider: socialUserInfo.provider,
           providerUserId: socialUserInfo.providerUserId,
-          email: socialUserInfo.email,
+          email: socialUserInfo.email ?? null,
           name: socialUserInfo.name,
           profileImage: socialUserInfo.profileImage,
         });

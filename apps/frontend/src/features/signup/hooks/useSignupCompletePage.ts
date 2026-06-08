@@ -6,8 +6,6 @@ import { API_BASE_URL } from '@/shared/config/apiConfig';
 async function completeSocialProfile(token: string, profileData: {
   name: string;
   phone?: string;
-  birthDate?: string;
-  gender?: string;
   referralId?: string;
   addressName?: string;
   zonecode?: string;

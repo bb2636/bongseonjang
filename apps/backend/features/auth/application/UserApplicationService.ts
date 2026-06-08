@@ -10,8 +10,6 @@ interface RegisterInput {
   password: string;
   name: string;
   phone?: string;
-  birthDate?: string;
-  gender?: string;
   referralId?: string;
   addressName?: string;
   zonecode?: string;
@@ -108,8 +106,6 @@ export class UserApplicationService {
       password: hashedPassword,
       name: input.name,
       phone: input.phone || null,
-      birthDate: input.birthDate ? new Date(input.birthDate) : null,
-      gender: input.gender || null,
       referralId: input.referralId || null,
     });
 

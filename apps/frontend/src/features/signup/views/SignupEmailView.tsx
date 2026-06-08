@@ -63,10 +63,6 @@ interface ProfileStepProps {
   zonecode: string;
   address: string;
   addressDetail: string;
-  birthYear: string;
-  birthMonth: string;
-  birthDay: string;
-  gender: 'male' | 'female' | '';
   referralId: string;
   isReferralIdVerified: boolean;
   isOver14: boolean;
@@ -76,8 +72,6 @@ interface ProfileStepProps {
   isReferralVerifying: boolean;
   isNameValid: boolean;
   isPhoneValid: boolean;
-  isBirthDateValid: boolean;
-  isGenderValid: boolean;
   isReferralIdValid: boolean;
   isAddressNameValid: boolean;
   isAddressValid: boolean;
@@ -86,8 +80,6 @@ interface ProfileStepProps {
   errors: {
     name: string | null;
     phone: string | null;
-    birthDate: string | null;
-    gender: string | null;
     referralId: string | null;
     addressName: string | null;
     address: string | null;
@@ -119,11 +111,6 @@ interface ProfileStepProps {
   onAddressDetailBlur: () => void;
   onAddressNameChange: (value: string) => void;
   onAddressNameBlur: () => void;
-  onBirthYearChange: (value: string) => void;
-  onBirthMonthChange: (value: string) => void;
-  onBirthDayChange: (value: string) => void;
-  onBirthDateBlur: () => void;
-  onGenderChange: (value: 'male' | 'female') => void;
   onReferralIdChange: (value: string) => void;
   onReferralIdBlur: () => void;
   onReferralIdVerify: () => void;
@@ -474,80 +461,6 @@ function ProfileForm({ profileStep }: { profileStep: ProfileStepProps }) {
           address: profileStep.errors.address || undefined,
         }}
       />
-
-      <div className="signup-text-field">
-        <label className="signup-label">생년월일</label>
-        <div className="signup-birth-date-container">
-          <div className="signup-birth-date-row">
-            <div className="signup-birth-date-input-box">
-              <input
-                className="signup-birth-date-input"
-                type="text"
-                inputMode="numeric"
-                placeholder="YYYY"
-                value={profileStep.birthYear}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onBirthYearChange(e.target.value)}
-                onBlur={profileStep.onBirthDateBlur}
-                maxLength={4}
-              />
-            </div>
-            <span className="signup-birth-date-separator">.</span>
-            <div className="signup-birth-date-input-box">
-              <input
-                className="signup-birth-date-input"
-                type="text"
-                inputMode="numeric"
-                placeholder="MM"
-                value={profileStep.birthMonth}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onBirthMonthChange(e.target.value)}
-                onBlur={profileStep.onBirthDateBlur}
-                maxLength={2}
-              />
-            </div>
-            <span className="signup-birth-date-separator">.</span>
-            <div className="signup-birth-date-input-box">
-              <input
-                className="signup-birth-date-input"
-                type="text"
-                inputMode="numeric"
-                placeholder="DD"
-                value={profileStep.birthDay}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => profileStep.onBirthDayChange(e.target.value)}
-                onBlur={profileStep.onBirthDateBlur}
-                maxLength={2}
-              />
-            </div>
-          </div>
-          {profileStep.errors.birthDate && (
-            <span className="signup-error">{profileStep.errors.birthDate}</span>
-          )}
-        </div>
-      </div>
-
-      <div className="signup-text-field">
-        <label className="signup-label">성별</label>
-        <div className="signup-gender-container">
-          <div className="signup-gender-row">
-            <div
-              className={`signup-gender-option ${profileStep.gender === 'male' ? 'signup-gender-option--selected' : ''}`}
-              onClick={() => profileStep.onGenderChange('male')}
-            >
-              <div className={`signup-gender-radio ${profileStep.gender === 'male' ? 'signup-gender-radio--selected' : ''}`} />
-              <span className="signup-gender-label">남성</span>
-            </div>
-            <div
-              className={`signup-gender-option ${profileStep.gender === 'female' ? 'signup-gender-option--selected' : ''}`}
-              onClick={() => profileStep.onGenderChange('female')}
-            >
-              <div className={`signup-gender-radio ${profileStep.gender === 'female' ? 'signup-gender-radio--selected' : ''}`} />
-              <span className="signup-gender-label">여성</span>
-            </div>
-          </div>
-          {profileStep.errors.gender && (
-            <span className="signup-error">{profileStep.errors.gender}</span>
-          )}
-        </div>
-      </div>
 
       <div className="signup-text-field">
         <label className="signup-label">추천인 아이디(선택)</label>

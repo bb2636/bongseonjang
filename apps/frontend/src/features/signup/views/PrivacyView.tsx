@@ -32,7 +32,7 @@ export default function PrivacyView({ actions }: PrivacyViewProps) {
           <h2 className="privacy-section-title">1. 개인정보 수집 항목</h2>
           <p className="privacy-section-content">
             회사는 회원가입, 서비스 이용 등을 위해 아래와 같은 개인정보를 수집합니다.{'\n'}
-            - 필수항목: 이메일, 비밀번호, 이름, 휴대폰번호, 생년월일, 성별{'\n'}
+            - 필수항목: 이메일, 비밀번호, 이름, 휴대폰번호{'\n'}
             - 선택항목: 추천인 아이디
           </p>
         </div>

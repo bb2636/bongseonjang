@@ -10,8 +10,6 @@ const PHONE_CODE_EXPIRY_SECONDS = 180;
 interface TouchedFields {
   name: boolean;
   phone: boolean;
-  birthDate: boolean;
-  gender: boolean;
   referralId: boolean;
   addressName: boolean;
   address: boolean;
@@ -25,8 +23,6 @@ export function useSignupProfileStep() {
   const [touched, setTouched] = useState<TouchedFields>({
     name: false,
     phone: false,
-    birthDate: false,
-    gender: false,
     referralId: false,
     addressName: false,
     address: false,
@@ -110,10 +106,6 @@ export function useSignupProfileStep() {
       password: formData.password,
       name: formData.name,
       phone: formData.phone,
-      birthYear: formData.birthYear,
-      birthMonth: formData.birthMonth,
-      birthDay: formData.birthDay,
-      gender: formData.gender,
       referralId: formData.referralId || undefined,
       addressName: formData.addressName,
       zonecode: formData.zonecode,
@@ -158,33 +150,6 @@ export function useSignupProfileStep() {
     return null;
   }, []);
 
-  const validateBirthDate = useCallback((year: string, month: string, day: string): string | null => {
-    if (!year.trim() || !month.trim() || !day.trim()) {
-      return '생년월일을 입력해주세요';
-    }
-    const yearNum = parseInt(year, 10);
-    const monthNum = parseInt(month, 10);
-    const dayNum = parseInt(day, 10);
-    const currentYear = new Date().getFullYear();
-    if (yearNum < 1900 || yearNum > currentYear) {
-      return '올바른 연도를 입력해주세요';
-    }
-    if (monthNum < 1 || monthNum > 12) {
-      return '올바른 월을 입력해주세요';
-    }
-    if (dayNum < 1 || dayNum > 31) {
-      return '올바른 일을 입력해주세요';
-    }
-    return null;
-  }, []);
-
-  const validateGender = useCallback((value: string): string | null => {
-    if (!value) {
-      return '성별을 선택해주세요';
-    }
-    return null;
-  }, []);
-
   const validateReferralId = useCallback((value: string): string | null => {
     if (value.trim() && value.length < 3) {
       return '최소 3자 이상 입력해주세요';
@@ -212,8 +177,6 @@ export function useSignupProfileStep() {
   const errors = {
     name: touched.name ? validateName(formData.name) : null,
     phone: touched.phone ? validatePhone(formData.phone) : null,
-    birthDate: touched.birthDate ? validateBirthDate(formData.birthYear, formData.birthMonth, formData.birthDay) : null,
-    gender: touched.gender ? validateGender(formData.gender) : null,
     referralId: touched.referralId ? validateReferralId(formData.referralId) : null,
     addressName: touched.addressName ? validateAddressName(formData.addressName) : null,
     address: touched.address ? validateAddress(formData.zonecode, formData.address, formData.addressDetail) : null,
@@ -221,14 +184,12 @@ export function useSignupProfileStep() {
 
   const isNameValid = !validateName(formData.name);
   const isPhoneValid = !validatePhone(formData.phone);
-  const isBirthDateValid = !validateBirthDate(formData.birthYear, formData.birthMonth, formData.birthDay);
-  const isGenderValid = !validateGender(formData.gender);
   const isReferralIdValid = !validateReferralId(formData.referralId);
   const isAddressNameValid = !validateAddressName(formData.addressName);
   const isAddressValid = !validateAddress(formData.zonecode, formData.address, formData.addressDetail);
   const isAgreementValid = formData.isOver14 && formData.termsAgreed && formData.privacyAgreed;
   
-  const isValid = isNameValid && isPhoneValid && formData.isPhoneVerified && isBirthDateValid && isGenderValid && isReferralIdValid && isAddressNameValid && isAddressValid && isAgreementValid;
+  const isValid = isNameValid && isPhoneValid && formData.isPhoneVerified && isReferralIdValid && isAddressNameValid && isAddressValid && isAgreementValid;
 
   const onNameChange = useCallback((value: string) => {
     updateFormData({ name: value });
@@ -326,30 +287,6 @@ export function useSignupProfileStep() {
     setPhoneModalMessage('');
   }, []);
 
-  const onBirthYearChange = useCallback((value: string) => {
-    const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 4);
-    updateFormData({ birthYear: numbersOnly });
-  }, [updateFormData]);
-
-  const onBirthMonthChange = useCallback((value: string) => {
-    const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 2);
-    updateFormData({ birthMonth: numbersOnly });
-  }, [updateFormData]);
-
-  const onBirthDayChange = useCallback((value: string) => {
-    const numbersOnly = value.replace(/[^0-9]/g, '').slice(0, 2);
-    updateFormData({ birthDay: numbersOnly });
-  }, [updateFormData]);
-
-  const onBirthDateBlur = useCallback(() => {
-    setTouched(prev => ({ ...prev, birthDate: true }));
-  }, []);
-
-  const onGenderChange = useCallback((value: 'male' | 'female') => {
-    updateFormData({ gender: value });
-    setTouched(prev => ({ ...prev, gender: true }));
-  }, [updateFormData]);
-
   const onReferralIdChange = useCallback((value: string) => {
     updateFormData({ referralId: value, isReferralIdVerified: false });
   }, [updateFormData]);
@@ -436,22 +373,16 @@ export function useSignupProfileStep() {
   }, []);
 
   const onSubmit = useCallback(() => {
-    setTouched({ name: true, phone: true, birthDate: true, gender: true, referralId: true, addressName: true, address: true });
+    setTouched({ name: true, phone: true, referralId: true, addressName: true, address: true });
 
     if (!isValid || signupMutation.isPending) {
       return;
     }
 
     if (isSocialSignup) {
-      const birthDate = formData.birthYear && formData.birthMonth && formData.birthDay
-        ? `${formData.birthYear}-${formData.birthMonth.padStart(2, '0')}-${formData.birthDay.padStart(2, '0')}`
-        : undefined;
-      
       sessionStorage.setItem('pendingSocialProfileData', JSON.stringify({
         name: formData.name,
         phone: formData.phone || undefined,
-        birthDate,
-        gender: formData.gender || undefined,
         referralId: formData.referralId || undefined,
         addressName: formData.addressName || undefined,
         zonecode: formData.zonecode || undefined,
@@ -478,10 +409,6 @@ export function useSignupProfileStep() {
     zonecode: formData.zonecode,
     address: formData.address,
     addressDetail: formData.addressDetail,
-    birthYear: formData.birthYear,
-    birthMonth: formData.birthMonth,
-    birthDay: formData.birthDay,
-    gender: formData.gender,
     referralId: formData.referralId,
     isReferralIdVerified: formData.isReferralIdVerified,
     isOver14: formData.isOver14,
@@ -491,8 +418,6 @@ export function useSignupProfileStep() {
     isReferralVerifying: referralMutation.isPending,
     isNameValid,
     isPhoneValid,
-    isBirthDateValid,
-    isGenderValid,
     isReferralIdValid,
     isAddressNameValid,
     isAddressValid,
@@ -520,11 +445,6 @@ export function useSignupProfileStep() {
     onSendPhoneCode,
     onVerifyPhoneCode,
     onPhoneVerificationCodeChange,
-    onBirthYearChange,
-    onBirthMonthChange,
-    onBirthDayChange,
-    onBirthDateBlur,
-    onGenderChange,
     onReferralIdChange,
     onReferralIdBlur,
     onReferralIdVerify,

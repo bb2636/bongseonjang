@@ -21,10 +21,6 @@ export interface SignupData {
   password: string;
   name: string;
   phone: string;
-  birthYear: string;
-  birthMonth: string;
-  birthDay: string;
-  gender: string;
   referralId?: string;
   addressName: string;
   zonecode: string;
@@ -142,15 +138,11 @@ export const signupService = {
   },
 
   async signup(data: SignupData): Promise<SignupResult> {
-    const birthDate = `${data.birthYear}-${data.birthMonth.padStart(2, '0')}-${data.birthDay.padStart(2, '0')}`;
-    
     const requestBody = {
       email: data.email,
       password: data.password,
       name: data.name,
       phone: data.phone,
-      birthDate,
-      gender: data.gender,
       referralId: data.referralId || undefined,
       addressName: data.addressName,
       zonecode: data.zonecode,

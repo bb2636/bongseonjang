@@ -17,10 +17,6 @@ export interface SignupFormData {
   zonecode: string;
   address: string;
   addressDetail: string;
-  birthYear: string;
-  birthMonth: string;
-  birthDay: string;
-  gender: 'male' | 'female' | '';
   referralId: string;
   isReferralIdVerified: boolean;
   isOver14: boolean;
@@ -48,10 +44,6 @@ const defaultFormData: SignupFormData = {
   zonecode: '',
   address: '',
   addressDetail: '',
-  birthYear: '',
-  birthMonth: '',
-  birthDay: '',
-  gender: '',
   referralId: '',
   isReferralIdVerified: false,
   isOver14: false,
