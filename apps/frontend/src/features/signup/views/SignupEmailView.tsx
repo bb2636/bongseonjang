@@ -8,28 +8,16 @@ type CurrentStep = 'email' | 'password' | 'profile';
 
 interface EmailStepProps {
   email: string;
-  verificationCode: string;
-  isCodeSent: boolean;
-  isEmailVerified: boolean;
-  isVerifying: boolean;
-  isConfirming: boolean;
   isEmailValid: boolean;
-  isCodeValid: boolean;
+  isChecking: boolean;
   errors: {
     email: string | null;
-    verificationCode: string | null;
   };
   showErrorModal: boolean;
   errorModalMessage: string;
-  timer: string;
-  isTimerActive: boolean;
   onEmailChange: (value: string) => void;
-  onCodeChange: (value: string) => void;
   onEmailBlur: () => void;
-  onCodeBlur: () => void;
-  onVerifyEmail: () => void;
-  onResendCode: () => void;
-  onConfirmCode: () => void;
+  onNext: () => void;
   onCloseErrorModal: () => void;
 }
 
@@ -231,10 +219,11 @@ export default function SignupEmailView({
           </button>
         ) : (
           <button
-            className="signup-submit-button"
-            disabled
+            className={`signup-submit-button ${emailStep.isEmailValid ? 'signup-submit-button--active' : ''}`}
+            onClick={emailStep.onNext}
+            disabled={!emailStep.isEmailValid || emailStep.isChecking}
           >
-            다음
+            {emailStep.isChecking ? "확인 중..." : "다음"}
           </button>
         )}
       </footer>
@@ -243,9 +232,6 @@ export default function SignupEmailView({
 }
 
 function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
-  const verifyButtonClass = `signup-verify-button ${emailStep.email.trim().length > 0 && !emailStep.isCodeSent ? 'signup-verify-button--active' : ''}`;
-  const confirmButtonClass = `signup-confirm-button ${emailStep.verificationCode.length === 6 ? 'signup-confirm-button--active' : ''}`;
-
   return (
     <>
       <Input
@@ -257,62 +243,6 @@ function EmailForm({ emailStep }: { emailStep: EmailStepProps }) {
         onBlur={emailStep.onEmailBlur}
         error={emailStep.errors.email}
       />
-
-      <button
-        type="button"
-        className={verifyButtonClass}
-        onClick={emailStep.onVerifyEmail}
-        disabled={
-          emailStep.isVerifying ||
-          !emailStep.email.trim() ||
-          emailStep.isCodeSent
-        }
-      >
-        {emailStep.isVerifying ? "인증 중..." : "이메일 인증하기"}
-      </button>
-
-      {emailStep.isCodeSent && (
-        <div className="signup-verification-section">
-          <div className="signup-text-field">
-            <label className="signup-label">이메일 인증코드</label>
-            <div className={`signup-code-input-box ${emailStep.errors.verificationCode ? 'signup-code-input-box--error' : ''}`}>
-              <div className="signup-code-input-row">
-                <input
-                  className="signup-code-input"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="인증코드 6자리"
-                  value={emailStep.verificationCode}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    emailStep.onCodeChange(e.target.value.replace(/[^0-9]/g, ""))
-                  }
-                  onBlur={emailStep.onCodeBlur}
-                  maxLength={6}
-                />
-                <span className="signup-timer-text">{emailStep.timer}</span>
-                <button
-                  type="button"
-                  className={confirmButtonClass}
-                  onClick={emailStep.onConfirmCode}
-                  disabled={emailStep.isConfirming || emailStep.verificationCode.length !== 6}
-                >
-                  {emailStep.isConfirming ? "확인 중" : "확인"}
-                </button>
-              </div>
-              {emailStep.errors.verificationCode && (
-                <span className="signup-error">{emailStep.errors.verificationCode}</span>
-              )}
-            </div>
-          </div>
-
-          <div className="signup-resend-link">
-            인증코드를 받지 못하셨나요?
-            <button type="button" className="signup-resend-button" onClick={emailStep.onResendCode}>
-              인증코드 재전송하기
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 }
@@ -327,7 +257,7 @@ function PasswordForm({ passwordStep }: { passwordStep: PasswordStepProps }) {
             <span className="signup-verified-input-text">{passwordStep.email}</span>
           </div>
         </div>
-        <div className="signup-verified-button">이메일 인증 완료</div>
+        <div className="signup-verified-button">사용 가능한 이메일</div>
       </div>
 
       <div className="signup-password-section">
