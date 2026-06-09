@@ -38,6 +38,17 @@ export default defineConfig(({ mode }) => {
       'react-dom': path.resolve(__dirname, '../../node_modules/react-dom'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'query-vendor': ['@tanstack/react-query'],
+          'swiper-vendor': ['swiper'],
+        },
+      },
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 5000,

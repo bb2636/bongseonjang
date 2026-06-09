@@ -41,6 +41,10 @@ export default function BannerCarousel({
 }: BannerCarouselProps) {
   const style = { height: `${height}px` };
 
+  const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.setAttribute('data-loaded', 'true');
+  }, []);
+
   if (isLoading) {
     return <div className="banner-carousel banner-carousel--loading" style={style} />;
   }
@@ -53,10 +57,6 @@ export default function BannerCarousel({
   if (autoplay) swiperModules.push(Autoplay);
   if (pagination) swiperModules.push(Pagination);
 
-  const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.setAttribute('data-loaded', 'true');
-  }, []);
-
   const renderSlideContent = (image: BannerImage, index: number) => {
     const imgElement = (
       <img
@@ -64,6 +64,8 @@ export default function BannerCarousel({
         alt=""
         className="banner-carousel__image"
         loading={index === 0 ? "eager" : "lazy"}
+        fetchpriority={index === 0 ? "high" : "auto"}
+        decoding="async"
         onLoad={handleImageLoad}
       />
     );
