@@ -6,6 +6,8 @@ import { ProductImage, ImageType } from '../../../entity/ProductImage';
 import { ProductOption } from '../../../entity/ProductOption';
 import { ExposureCategory } from '../../../entity/ExposureCategory';
 import { ProductExposureCategory } from '../../../entity/ProductExposureCategory';
+import { Review } from '../../../entity/Review';
+import { ProductInquiry } from '../../../entity/ProductInquiry';
 
 const router = Router();
 
@@ -600,20 +602,19 @@ router.delete('/:productId', async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
 
-    const productRepository = AppDataSource.getRepository(Product);
-    const optionRepository = AppDataSource.getRepository(ProductOption);
-    const imageRepository = AppDataSource.getRepository(ProductImage);
-    const productExposureCategoryRepository = AppDataSource.getRepository(ProductExposureCategory);
-
-    const product = await productRepository.findOne({ where: { id: productId } });
+    const product = await AppDataSource.getRepository(Product).findOne({ where: { id: productId } });
     if (!product) {
       return res.status(404).json({ error: '상품을 찾을 수 없습니다' });
     }
 
-    await productExposureCategoryRepository.delete({ productId });
-    await optionRepository.delete({ productId });
-    await imageRepository.delete({ productId });
-    await productRepository.delete({ id: productId });
+    await AppDataSource.transaction(async (manager) => {
+      await manager.getRepository(Review).delete({ productId });
+      await manager.getRepository(ProductInquiry).delete({ productId });
+      await manager.getRepository(ProductExposureCategory).delete({ productId });
+      await manager.getRepository(ProductOption).delete({ productId });
+      await manager.getRepository(ProductImage).delete({ productId });
+      await manager.getRepository(Product).delete({ id: productId });
+    });
 
     return res.json({ success: true, message: '상품이 삭제되었습니다' });
   } catch (error) {
