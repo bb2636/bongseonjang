@@ -1,5 +1,6 @@
 - [iOS/Android bundle IDs](ios-bundle-id.md) — iOS bundle ID is com.bongseongjang.app (seong); Android is com.bongkru.app; URL scheme/API domain use the seon spelling on purpose
 - [Android Capacitor scroll](android-capacitor-scroll.md) — Android must use viewport/document scroll (body/#root overflow:visible); body overflow:auto breaks scrolling on some WebViews
 - [Signup identity verification](signup-identity-verification.md) — email step is uniqueness-only (Bubble email API dead); identity gate is SMS at profile step; backend register checks no email-verification flag
+- [Demo review phone bypass](demo-review-phone-bypass.md) — intentional SMS backdoor for App Review: demo number + fixed code 000000 passes; keep scoped, don't widen, retire after review
 - [Apple Sign In missing-email](apple-social-login-email.md) — Apple omits email on repeat sign-in; never gate Apple login on email in the controller, let socialLogin service resolve by providerUserId
 - [Capacitor cold-start](capacitor-cold-start.md) — backend home is fast; launch lag is render-blocking CDN font + bundle parse. Bundle fonts locally; fetchpriority must be lowercase in React 18.x

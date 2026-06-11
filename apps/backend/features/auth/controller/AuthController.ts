@@ -14,6 +14,13 @@ const userService = new UserApplicationService();
 const socialAuthService = new SocialAuthService();
 const phoneVerificationService = getPhoneVerificationService();
 
+const DEMO_REVIEW_PHONE = (process.env.DEMO_REVIEW_PHONE ?? '01000000000').replace(/-/g, '');
+const DEMO_REVIEW_CODE = '000000';
+
+function isDemoReviewPhone(phone: string): boolean {
+  return phone.replace(/-/g, '') === DEMO_REVIEW_PHONE;
+}
+
 function sendPollingCompleteHtml(res: Response, success: boolean, message: string): void {
   const html = `<!DOCTYPE html>
 <html lang="ko">
@@ -470,6 +477,11 @@ export class AuthController {
         return;
       }
 
+      if (isDemoReviewPhone(phone)) {
+        res.json({ success: true, message: '인증번호가 발송되었습니다' });
+        return;
+      }
+
       const result = await phoneVerificationService.sendCode(phone.replace(/-/g, ''));
       res.json(result);
     } catch (error) {
@@ -484,6 +496,11 @@ export class AuthController {
 
       if (!phone || !code) {
         res.status(400).json({ success: false, message: '휴대폰 번호와 인증번호를 입력해주세요' });
+        return;
+      }
+
+      if (isDemoReviewPhone(phone) && code === DEMO_REVIEW_CODE) {
+        res.json({ success: true, message: '인증이 완료되었습니다' });
         return;
       }
 
