@@ -87,6 +87,7 @@ SOCIAL_REDIRECT_BASE_URL = "https://bongseonjang--tkfkdgowjdakfas.replit.app"
 VITE_NAVER_CLIENT_ID = "3gieVh251O79fUraIJhx"
 
 [userenv.production]
+PORT = "5000"
 
 [objectStorage]
 defaultBucketID = "replit-objstore-8b208dd8-505c-4b83-97d0-c78d38fe6527"
