@@ -37,6 +37,7 @@ externalPort = 3000
 [agent]
 expertMode = true
 integrations = ["javascript_object_storage:2.0.0"]
+stack = "BEST_EFFORT_FALLBACK"
 
 [workflows]
 runButton = "Project"
