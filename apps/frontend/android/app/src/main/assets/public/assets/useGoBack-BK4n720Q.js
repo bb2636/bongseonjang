@@ -1,0 +1,1 @@
+import{a as t}from"./query-vendor-Cj6giYj5.js";import{u as s,b as i}from"./react-vendor-CunbtHG_.js";function u(e="/"){const a=s(),o=i();return t.useCallback(()=>{o==="POP"||window.history.length<=2?a(e,{replace:!0}):a(-1)},[a,o,e])}export{u};

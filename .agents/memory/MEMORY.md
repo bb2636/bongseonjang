@@ -5,5 +5,6 @@
 - [Product hard delete FK chain](product-hard-delete-fk.md) — deleting a product 500s if it has reviews/inquiries (NO ACTION FKs); clear those first in a txn before deleting product
 - [Apple Sign In missing-email](apple-social-login-email.md) — Apple omits email on repeat sign-in; never gate Apple login on email in the controller, let socialLogin service resolve by providerUserId
 - [Capacitor cold-start](capacitor-cold-start.md) — backend home is fast; launch lag is render-blocking CDN font + bundle parse. Bundle fonts locally; fetchpriority must be lowercase in React 18.x
+- [cap:build quirks](cap-build-quirks.md) — run long builds via temp workflow (bash kills bg procs); cap:build's final "assets" step fails on broken sharp but android project is already done — verify by grepping baked URL
 - [Social signup completion](social-signup-completion.md) — finish profile/address save + login synchronously in the profile submit handler, not via an auto-effect on the complete page; deferred sessionStorage handoff loses address + breaks login persistence
 - [Kakao OAuth scope](kakao-oauth-scope.md) — request only profile scopes (no account_email until 비즈앱) or Kakao returns KOE205; the no-email→requiresEmail gate must exempt kakao like apple
