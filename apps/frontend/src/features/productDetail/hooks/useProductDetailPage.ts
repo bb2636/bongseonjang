@@ -134,7 +134,7 @@ export function useProductDetailPage(productId: string) {
   };
 
   const handleShare = async () => {
-    const webBaseUrl = 'https://bongseonjang--tkfkdgowjdakfas.replit.app';
+    const webBaseUrl = 'https://bongseonjang.replit.app';
     const shareUrl = `${webBaseUrl}/product/${productId}`;
     const shareTitle = product?.name || '봉선장 상품';
     const shareText = product?.name ? `${product.name} - 봉선장에서 확인해보세요!` : '봉선장에서 상품을 확인해보세요!';

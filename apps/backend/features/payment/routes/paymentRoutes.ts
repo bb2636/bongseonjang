@@ -97,7 +97,7 @@ const router = Router();
 const NICEPAY_CLIENT_KEY = process.env.NICEPAY_CLIENT_KEY || '';
 const NICEPAY_SECRET_KEY = process.env.NICEPAY_SECRET_KEY || '';
 
-const DEFAULT_PRODUCTION_BACKEND_URL = 'https://bongseonjang--tkfkdgowjdakfas.replit.app';
+const DEFAULT_PRODUCTION_BACKEND_URL = 'https://bongseonjang.replit.app';
 
 function getBackendBaseUrl(req: Request): string {
   if (process.env.BACKEND_URL) {

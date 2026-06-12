@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.REPLIT_DEPLOYMENT_URL || process.env.SOCIAL_REDIRECT_BASE_URL || 'https://bongseonjang--tkfkdgowjdakfas.replit.app';
+const BACKEND_URL = process.env.REPLIT_DEPLOYMENT_URL || process.env.SOCIAL_REDIRECT_BASE_URL || 'https://bongseonjang.replit.app';
 
 async function pingServer(): Promise<void> {
   try {

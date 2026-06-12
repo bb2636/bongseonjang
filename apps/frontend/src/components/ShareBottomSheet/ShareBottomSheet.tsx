@@ -67,7 +67,7 @@ export default function ShareBottomSheet({
         content: {
           title: productName || '봉선장 상품',
           description: '봉선장에서 상품을 확인해보세요!',
-          imageUrl: 'https://bongseonjang--tkfkdgowjdakfas.replit.app/logo.png',
+          imageUrl: 'https://bongseonjang.replit.app/logo.png',
           link: {
             mobileWebUrl: shareUrl,
             webUrl: shareUrl,

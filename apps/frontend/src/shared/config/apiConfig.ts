@@ -1,4 +1,4 @@
-const PRODUCTION_API_URL = 'https://bongseonjang--tkfkdgowjdakfas.replit.app/api';
+const PRODUCTION_API_URL = 'https://bongseonjang.replit.app/api';
 
 declare global {
   interface Window {

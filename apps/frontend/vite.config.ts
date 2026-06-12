@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-const PRODUCTION_API_URL = 'https://bongseonjang--tkfkdgowjdakfas.replit.app/api';
+const PRODUCTION_API_URL = 'https://bongseonjang.replit.app/api';
 
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production' || mode === 'capacitor';
