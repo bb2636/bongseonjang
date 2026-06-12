@@ -1,0 +1,73 @@
+uploads = []
+
+[[generated]]
+id = "2p39O5f2gSfe1yX8fXQCm"
+uri = "file://attached_assets/generated_images/hero_banner_seafood_platter.png"
+type = "image"
+title = "hero banner seafood platter"
+
+[[generated]]
+id = "yy9DJdLD7oB5KtwDceL6t"
+uri = "file://attached_assets/generated_images/hero_banner_fresh_fish.png"
+type = "image"
+title = "hero banner fresh fish"
+
+[[generated]]
+id = "pI93VnkAcP-Hzk6Gch6hQ"
+uri = "file://attached_assets/generated_images/hero_banner_premium_crab.png"
+type = "image"
+title = "hero banner premium crab"
+
+[[generated]]
+id = "DZ7AtL1zxuToK5p7IJfR0"
+uri = "file://attached_assets/generated_images/strip_banner_promo_coral.png"
+type = "image"
+title = "strip banner promo coral"
+
+[[generated]]
+id = "XTQxur-z2ZHPgjaZGywAx"
+uri = "file://attached_assets/generated_images/strip_banner_promo_mint.png"
+type = "image"
+title = "strip banner promo mint"
+
+[[generated]]
+id = "dbERWWLepOvVe42fS8Urj"
+uri = "file://attached_assets/generated_images/notice_announcement.png"
+type = "image"
+title = "notice announcement banner"
+
+[[outputs]]
+id = "QkEctQHvV5GfW2JON5SE2"
+uri = "file://attached_assets/generated_images/hero_banner_seafood_platter.png"
+type = "image"
+title = "메인 배너 1 - 모둠 수산물 (16:9, Hero 247px용)"
+
+[[outputs]]
+id = "OlvYjr5ezEx9eWmr26BQK"
+uri = "file://attached_assets/generated_images/hero_banner_fresh_fish.png"
+type = "image"
+title = "메인 배너 2 - 신선한 생선 (16:9, Hero 247px용)"
+
+[[outputs]]
+id = "8chiI3LN9qbSsI1HJl0QA"
+uri = "file://attached_assets/generated_images/hero_banner_premium_crab.png"
+type = "image"
+title = "메인 배너 3 - 프리미엄 전복·대게 (16:9, Hero 247px용)"
+
+[[outputs]]
+id = "5ZYJw_m-ZzkaTts6PjYT4"
+uri = "file://attached_assets/generated_images/strip_banner_promo_coral.png"
+type = "image"
+title = "띠배너 1 - 코랄 프로모션 (중간/하단 94px용, 중앙구도)"
+
+[[outputs]]
+id = "anJqx1rOsoZbuT4MdWsp8"
+uri = "file://attached_assets/generated_images/strip_banner_promo_mint.png"
+type = "image"
+title = "띠배너 2 - 민트 프로모션 (중간/하단 94px용, 중앙구도)"
+
+[[outputs]]
+id = "-A3La5aQR5t6YuPKJZrgk"
+uri = "file://attached_assets/generated_images/notice_announcement.png"
+type = "image"
+title = "공지사항용 이미지 (16:9)"
