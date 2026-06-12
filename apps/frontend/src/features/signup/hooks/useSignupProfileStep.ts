@@ -79,6 +79,49 @@ export function useSignupProfileStep() {
     };
   }, [timerTrigger]);
 
+  const socialCompleteMutation = useMutation({
+    mutationFn: async () => {
+      const pendingLoginData = sessionStorage.getItem('pendingSocialLogin');
+      if (!pendingLoginData) {
+        throw new Error('소셜 로그인 정보를 확인할 수 없습니다. 다시 로그인해주세요.');
+      }
+
+      const pending = JSON.parse(pendingLoginData) as {
+        token: string;
+        user: { id: string; email: string; name: string };
+      };
+
+      await signupService.completeSocialProfile(pending.token, {
+        name: formData.name,
+        phone: formData.phone || undefined,
+        referralId: formData.referralId || undefined,
+        addressName: formData.addressName || undefined,
+        zonecode: formData.zonecode || undefined,
+        address: formData.address || undefined,
+        addressDetail: formData.addressDetail || undefined,
+      });
+
+      return pending;
+    },
+    onSuccess: (pending) => {
+      loginWithToken(pending.token, {
+        id: pending.user.id,
+        email: pending.user.email,
+        name: pending.user.name,
+      });
+
+      sessionStorage.removeItem('pendingSocialLogin');
+      sessionStorage.removeItem('pendingSocialProfileData');
+      clearFormDataFromStorage();
+
+      navigate('/signup/complete');
+    },
+    onError: (error: Error) => {
+      setErrorModalMessage(error.message || '프로필 저장에 실패했습니다. 다시 시도해주세요.');
+      setShowErrorModal(true);
+    },
+  });
+
   const referralMutation = useMutation({
     mutationFn: (referralId: string) => signupService.verifyReferralId(referralId),
     onSuccess: (result) => {
@@ -375,28 +418,25 @@ export function useSignupProfileStep() {
   const onSubmit = useCallback(() => {
     setTouched({ name: true, phone: true, referralId: true, addressName: true, address: true });
 
-    if (!isValid || signupMutation.isPending) {
+    if (!isValid) {
       return;
     }
 
     if (isSocialSignup) {
-      sessionStorage.setItem('pendingSocialProfileData', JSON.stringify({
-        name: formData.name,
-        phone: formData.phone || undefined,
-        referralId: formData.referralId || undefined,
-        addressName: formData.addressName || undefined,
-        zonecode: formData.zonecode || undefined,
-        address: formData.address || undefined,
-        addressDetail: formData.addressDetail || undefined,
-      }));
-      
-      clearFormDataFromStorage();
-      navigate('/signup/complete');
+      if (socialCompleteMutation.isPending) {
+        return;
+      }
+
+      socialCompleteMutation.mutate();
+      return;
+    }
+
+    if (signupMutation.isPending) {
       return;
     }
 
     signupMutation.mutate();
-  }, [isValid, signupMutation, isSocialSignup, navigate]);
+  }, [isValid, signupMutation, socialCompleteMutation, isSocialSignup]);
 
   return {
     email: formData.email,
@@ -414,7 +454,7 @@ export function useSignupProfileStep() {
     isOver14: formData.isOver14,
     termsAgreed: formData.termsAgreed,
     privacyAgreed: formData.privacyAgreed,
-    isLoading: signupMutation.isPending,
+    isLoading: signupMutation.isPending || socialCompleteMutation.isPending,
     isReferralVerifying: referralMutation.isPending,
     isNameValid,
     isPhoneValid,

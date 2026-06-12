@@ -165,4 +165,28 @@ export const signupService = {
 
     return result;
   },
+
+  async completeSocialProfile(token: string, profileData: {
+    name: string;
+    phone?: string;
+    referralId?: string;
+    addressName?: string;
+    zonecode?: string;
+    address?: string;
+    addressDetail?: string;
+  }): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/auth/social/complete-profile`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(translateErrorMessage(data.message || '프로필 저장에 실패했습니다'));
+    }
+  },
 };
