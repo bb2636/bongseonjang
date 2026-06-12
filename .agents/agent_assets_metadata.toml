@@ -36,6 +36,24 @@ uri = "file://attached_assets/generated_images/notice_announcement.png"
 type = "image"
 title = "notice announcement banner"
 
+[[generated]]
+id = "6tQ_Zk2Ye9GcPGfGoOCeW"
+uri = "file://attached_assets/generated_images/strip_src_coral.png"
+type = "image"
+title = "strip src coral"
+
+[[generated]]
+id = "tGJ4pIG8DLKF3E2Fw2JZ-"
+uri = "file://attached_assets/generated_images/strip_src_mint.png"
+type = "image"
+title = "strip src mint"
+
+[[generated]]
+id = "-difC2073hIFiN_jsUEy0"
+uri = "file://attached_assets/generated_images/notice_src.png"
+type = "image"
+title = "notice src"
+
 [[outputs]]
 id = "QkEctQHvV5GfW2JON5SE2"
 uri = "file://attached_assets/generated_images/hero_banner_seafood_platter.png"
@@ -71,3 +89,39 @@ id = "-A3La5aQR5t6YuPKJZrgk"
 uri = "file://attached_assets/generated_images/notice_announcement.png"
 type = "image"
 title = "공지사항용 이미지 (16:9)"
+
+[[outputs]]
+id = "diMMYLbgtpixgzOOvTnEg"
+uri = "file://attached_assets/generated_images/banner_hero_1_seafood.png"
+type = "image"
+title = "Hero 배너 1 - 모둠 수산물 (1264×800, 약 1.58:1 / 247px 슬롯)"
+
+[[outputs]]
+id = "-607cMofzQf7Ql6oXw6O6"
+uri = "file://attached_assets/generated_images/banner_hero_2_fish.png"
+type = "image"
+title = "Hero 배너 2 - 신선한 생선 (1264×800, 약 1.58:1 / 247px 슬롯)"
+
+[[outputs]]
+id = "VBF7RSVx1vX0UwL3CAcQI"
+uri = "file://attached_assets/generated_images/banner_hero_3_crab.png"
+type = "image"
+title = "Hero 배너 3 - 전복·대게 (1264×800, 약 1.58:1 / 247px 슬롯)"
+
+[[outputs]]
+id = "K2Qoha7JiHc0u7KujJhIB"
+uri = "file://attached_assets/generated_images/banner_strip_1_coral.png"
+type = "image"
+title = "띠배너 1 - 코랄 (1660×400, 약 4:1 / 94px 중간·하단 슬롯)"
+
+[[outputs]]
+id = "dXjBImARXvqHaLwSw9KvQ"
+uri = "file://attached_assets/generated_images/banner_strip_2_mint.png"
+type = "image"
+title = "띠배너 2 - 민트 (1660×400, 약 4:1 / 94px 중간·하단 슬롯)"
+
+[[outputs]]
+id = "pfcjpNCa5xs0KLcGkjZkk"
+uri = "file://attached_assets/generated_images/banner_notice.png"
+type = "image"
+title = "공지사항용 (1660×400, 약 4:1)"
