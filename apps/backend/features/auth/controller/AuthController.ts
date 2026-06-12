@@ -116,7 +116,7 @@ export class AuthController {
         client_id: clientId,
         redirect_uri: redirectUri,
         response_type: 'code',
-        scope: 'profile_nickname,profile_image,account_email',
+        scope: 'profile_nickname,profile_image',
         state,
       });
       authUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
@@ -303,7 +303,7 @@ export class AuthController {
         return;
       }
 
-      if (!socialUserInfo.email && provider !== 'apple') {
+      if (!socialUserInfo.email && provider !== 'apple' && provider !== 'kakao') {
         res.status(200).json({ 
           success: false,
           requiresEmail: true,
@@ -1034,7 +1034,7 @@ export class AuthController {
         return;
       }
 
-      if (!socialUserInfo.email) {
+      if (!socialUserInfo.email && provider !== 'kakao') {
         const sessionKey = await oauthSessionStore.save({
           requiresEmail: true,
           provider: socialUserInfo.provider,

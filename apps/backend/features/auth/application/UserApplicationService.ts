@@ -234,7 +234,7 @@ export class UserApplicationService {
     }
 
     const newUser = await this.userRepository.create({
-      email: input.email || `apple.${input.providerUserId}@apple-signin.invalid`,
+      email: input.email || `${input.provider}.${input.providerUserId}@social-signin.invalid`,
       name: input.name,
       password: null,
       profileImage: input.profileImage,
