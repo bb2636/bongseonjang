@@ -8,6 +8,7 @@ import { config, initializeDatabase } from "./config";
 import routes from "./routes";
 import { ObjectStorageService } from "./objectStorage";
 import { runProductionSeed } from "./seeds/productionSeed.js";
+import { ensureAdminUser } from "./seeds/ensureAdminUser.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -238,6 +239,7 @@ async function startServer(): Promise<void> {
   try {
     await initializeDatabase();
     await runProductionSeed();
+    await ensureAdminUser();
     console.log("Database ready");
     prewarmImageCache();
   } catch (error) {
