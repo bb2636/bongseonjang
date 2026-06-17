@@ -659,7 +659,12 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
       ? `${orderItems[0].productName} 외 ${orderItems.length - 1}건`
       : orderItems[0]?.productName || '상품';
 
-    const paymentMethod = 'card';
+    const nicePayMethodMap: Record<string, 'card' | 'bank' | 'vbank'> = {
+      card: 'card',
+      bank_transfer: 'bank',
+      virtual_account: 'vbank',
+    };
+    const paymentMethod = nicePayMethodMap[payment.method] || 'card';
 
     const returnUrl = getBackendCallbackUrl(req, appScheme);
     const deletionToken = generateDeletionToken(orderId);

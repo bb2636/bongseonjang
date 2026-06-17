@@ -25,7 +25,7 @@ interface PreparePaymentRequest {
   address: string;
   addressDetail?: string;
   deliveryRequest?: string;
-  paymentMethod: 'card';
+  paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
   userCouponIds?: number[];
   usedPoints?: number;
@@ -45,7 +45,7 @@ export interface PrepareDirectPaymentRequest {
   address: string;
   addressDetail?: string;
   deliveryRequest?: string;
-  paymentMethod: 'card';
+  paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
   userCouponIds?: number[];
   usedPoints?: number;
@@ -192,7 +192,7 @@ export interface PrepareGuestPaymentRequest {
   address: string;
   addressDetail?: string;
   deliveryRequest?: string;
-  paymentMethod: 'card';
+  paymentMethod: 'card' | 'bank' | 'vbank';
   shippingFee: number;
 }
 

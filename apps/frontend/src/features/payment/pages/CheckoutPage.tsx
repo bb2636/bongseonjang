@@ -136,7 +136,7 @@ export function CheckoutPage() {
   const [usedPoints, setUsedPoints] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('preparing');
-  const paymentMethod = 'card' as const;
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'vbank'>('card');
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [selectedCouponIds, setSelectedCouponIds] = useState<number[]>([]);
   const [isCouponDropdownOpen, setIsCouponDropdownOpen] = useState(false);
@@ -1127,10 +1127,32 @@ export function CheckoutPage() {
                 name="paymentMethod"
                 value="card"
                 checked={paymentMethod === 'card'}
-                readOnly
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
               />
               <span className="checkout-payment-method-radio"></span>
               <span className="checkout-payment-method-label">카드</span>
+            </label>
+            <label className="checkout-payment-method">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="bank"
+                checked={paymentMethod === 'bank'}
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+              />
+              <span className="checkout-payment-method-radio"></span>
+              <span className="checkout-payment-method-label">계좌이체</span>
+            </label>
+            <label className="checkout-payment-method">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="vbank"
+                checked={paymentMethod === 'vbank'}
+                onChange={(e) => setPaymentMethod(e.target.value as typeof paymentMethod)}
+              />
+              <span className="checkout-payment-method-radio"></span>
+              <span className="checkout-payment-method-label">무통장입금</span>
             </label>
           </div>
         </section>
