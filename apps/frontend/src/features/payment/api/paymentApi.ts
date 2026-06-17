@@ -1,4 +1,4 @@
-import { API_BASE_URL, IS_CAPACITOR, CAPACITOR_APP_SCHEME } from '@/shared/config/apiConfig';
+import { API_BASE_URL, IS_CAPACITOR, CAPACITOR_APP_SCHEME, getAbsoluteApiUrl } from '@/shared/config/apiConfig';
 
 export interface CouponDto {
   id: number;
@@ -62,7 +62,7 @@ interface PreparePaymentResponse {
 }
 
 function getCallbackUrl(): string {
-  const baseCallbackUrl = `${API_BASE_URL}/payment/callback`;
+  const baseCallbackUrl = `${getAbsoluteApiUrl()}/payment/callback`;
   if (IS_CAPACITOR) {
     return `${baseCallbackUrl}?appScheme=${CAPACITOR_APP_SCHEME}`;
   }
