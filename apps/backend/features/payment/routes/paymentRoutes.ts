@@ -759,6 +759,7 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
         buyerName: '${buyerName.replace(/['"\\]/g, "")}',
         buyerTel: '${buyerTel.replace(/[^0-9-]/g, "")}',
         buyerEmail: '${buyerEmail.replace(/['"\\]/g, "")}',
+        ${paymentMethod === 'vbank' ? `vbankHolder: '${buyerName.replace(/['"\\]/g, "")}',` : ''}
         returnUrl: '${returnUrl}',
         fnError: function(result) {
           console.error('[NicePay Error] Full result:', JSON.stringify(result));
