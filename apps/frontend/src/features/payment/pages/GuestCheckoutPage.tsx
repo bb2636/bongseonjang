@@ -590,6 +590,7 @@ export function GuestCheckoutPage() {
         amount: paymentData.amount,
         goodsName: paymentData.goodsName,
         returnUrl: paymentData.returnUrl,
+        ...(paymentMethod === 'vbank' ? { vbankHolder: guestName } : {}),
         fnError: async (result) => {
           console.error('[Payment] fnError:', result);
           showToast(`결제 오류: ${result.errorMsg}`, 'error');

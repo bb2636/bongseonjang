@@ -45,6 +45,7 @@ declare global {
         amount: number;
         goodsName: string;
         returnUrl: string;
+        vbankHolder?: string;
         fnError: (result: { errorMsg: string; errorCode?: string }) => void;
       }) => void;
     };
@@ -711,6 +712,7 @@ export function CheckoutPage() {
         amount: paymentData.amount,
         goodsName: paymentData.goodsName,
         returnUrl: paymentData.returnUrl,
+        ...(paymentMethod === 'vbank' ? { vbankHolder: currentAddress?.recipientName ?? '' } : {}),
         fnError: async (result) => {
           console.error('[Payment] fnError:', result);
           showToast(`결제 오류: ${result.errorMsg}`, 'error');
