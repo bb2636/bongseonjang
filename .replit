@@ -90,7 +90,7 @@ SOCIAL_REDIRECT_BASE_URL = "https://bongseonjang.replit.app"
 PORT = "5000"
 
 [objectStorage]
-defaultBucketID = "replit-objstore-8b208dd8-505c-4b83-97d0-c78d38fe6527"
+defaultBucketID = "replit-objstore-78d68974-fdc5-433a-9f28-b440fcba7f1e"
 
 [postMerge]
 path = "scripts/post-merge.sh"
