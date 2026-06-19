@@ -42,9 +42,6 @@ export interface ProductFormData {
   discountEnabled: boolean;
   discountRate: number;
   discountedPrice: number;
-  startDate: string;
-  endDate: string;
-  countdownDays: number | null;
   storageMethod: string;
   expirationInfo: string;
   description: string;
@@ -116,9 +113,6 @@ function createInitialFormData(): ProductFormData {
     discountEnabled: false,
     discountRate: 0,
     discountedPrice: 0,
-    startDate: '',
-    endDate: '',
-    countdownDays: null,
     storageMethod: '',
     expirationInfo: '',
     description: '',
@@ -158,8 +152,6 @@ export interface FieldErrors {
   exposureCategoryIds?: string;
   basePrice?: string;
   description?: string;
-  startDate?: string;
-  endDate?: string;
   thumbnailImages?: string;
   detailImages?: string;
 }
@@ -251,18 +243,6 @@ export function useProductForm() {
       const newDiscountedPrice = Math.round(prev.basePrice * (1 - validRate / 100));
       return { ...prev, discountRate: validRate, discountedPrice: newDiscountedPrice };
     });
-  }, []);
-
-  const handleStartDateChange = useCallback((value: string) => {
-    setFormData(prev => ({ ...prev, startDate: value }));
-  }, []);
-
-  const handleEndDateChange = useCallback((value: string) => {
-    setFormData(prev => ({ ...prev, endDate: value }));
-  }, []);
-
-  const handleCountdownDaysChange = useCallback((value: number | null) => {
-    setFormData(prev => ({ ...prev, countdownDays: value }));
   }, []);
 
   const handleDescriptionChange = useCallback((value: string) => {
@@ -479,12 +459,6 @@ export function useProductForm() {
 
       const data = await response.json();
 
-      const formatDate = (dateStr: string | null): string => {
-        if (!dateStr) return '';
-        const date = new Date(dateStr);
-        return date.toISOString().split('T')[0];
-      };
-
       const thumbnailImages: ImageFile[] = (data.thumbnailImages || []).map((img: { id: string; imageUrl: string }) => ({
         id: img.id || generateId(),
         file: null,
@@ -546,9 +520,6 @@ export function useProductForm() {
         discountEnabled: loadedDiscountEnabled,
         discountRate: loadedDiscountRate,
         discountedPrice: loadedDiscountedPrice,
-        startDate: formatDate(data.saleStartDate),
-        endDate: formatDate(data.saleEndDate),
-        countdownDays: data.countdownDays ?? null,
         storageMethod: data.storageMethod || '',
         expirationInfo: data.expirationInfo || '',
         description: data.description || '',
@@ -598,12 +569,6 @@ export function useProductForm() {
     if (!formData.description.trim()) {
       errors.description = '상품설명을 입력해주세요';
     }
-    if (!formData.startDate) {
-      errors.startDate = '판매 시작일을 선택해주세요';
-    }
-    if (!formData.endDate) {
-      errors.endDate = '판매 종료일을 선택해주세요';
-    }
     if (formData.thumbnailImages.length === 0) {
       errors.thumbnailImages = '썸네일 이미지를 최소 1장 업로드해주세요';
     }
@@ -618,8 +583,6 @@ export function useProductForm() {
       exposureCategoryIds: true,
       basePrice: true,
       description: true,
-      startDate: true,
-      endDate: true,
       thumbnailImages: true,
       detailImages: true,
     });
@@ -713,9 +676,6 @@ export function useProductForm() {
         exposureCategoryIds: formData.exposureCategoryIds,
         basePrice: formData.basePrice,
         discountRate: formData.discountEnabled ? formData.discountRate : 0,
-        startDate: formData.startDate || null,
-        endDate: formData.endDate || null,
-        countdownDays: formData.countdownDays,
         storageMethod: formData.storageMethod,
         expirationInfo: formData.expirationInfo,
         description: formData.description,
@@ -756,7 +716,6 @@ export function useProductForm() {
         : '/api/admin/products';
       
       console.log('[DEBUG submitForm] Sending request to:', url, 'method:', isUpdate ? 'PUT' : 'POST');
-      console.log('[DEBUG submitForm] productData dates:', { startDate: productData.startDate, endDate: productData.endDate });
       
       const token = sessionStorage.getItem('admin_token');
       const response = await fetch(url, {
@@ -805,9 +764,6 @@ export function useProductForm() {
     handleBasePriceChange,
     handleDiscountEnabledChange,
     handleDiscountRateChange,
-    handleStartDateChange,
-    handleEndDateChange,
-    handleCountdownDaysChange,
     handleDescriptionChange,
     handleCautionChange,
     handleStorageMethodChange,
