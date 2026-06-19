@@ -1,4 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
+import { AdminMobileBlock } from '../components/AdminMobileBlock';
+import { useIsDesktopViewport } from '../hooks/useIsDesktopViewport';
 import './AdminLayout.css';
 
 interface AdminLayoutProps {
@@ -38,6 +40,11 @@ const pageInfo: Record<string, { title: string; description: string }> = {
 
 export function AdminLayout({ children, title, description, hidePageHeader = false }: AdminLayoutProps) {
   const location = useLocation();
+  const isDesktop = useIsDesktopViewport();
+
+  if (!isDesktop) {
+    return <AdminMobileBlock />;
+  }
 
   const isActive = (path: string) => {
     return location.pathname.startsWith(path);
