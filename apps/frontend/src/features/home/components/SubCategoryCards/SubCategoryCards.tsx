@@ -7,19 +7,20 @@ import './SubCategoryCards.css';
 interface SubCategory {
   id: string;
   name: string;
+  slug: string;
   imageUrl?: string;
 }
 
 interface SubCategoryCardsProps {
   categories?: SubCategory[];
-  onCategoryClick?: (categoryId: string) => void;
+  onCategoryClick?: (categorySlug: string) => void;
 }
 
 const DEFAULT_CATEGORIES: SubCategory[] = [
-  { id: '11111111-1111-1111-1111-111111111111', name: '제철 수산물', imageUrl: seasonalSeafood },
-  { id: '33333333-3333-3333-3333-333333333333', name: '손질 수산물', imageUrl: preparedSeafood },
-  { id: '22222222-2222-2222-2222-222222222222', name: '급랭 수산물', imageUrl: expressSeafood },
-  { id: '55555555-5555-5555-5555-555555555555', name: '바담은 절임류', imageUrl: pickledSeafood },
+  { id: '11111111-1111-1111-1111-111111111111', name: '제철 수산물', slug: '제철수산', imageUrl: seasonalSeafood },
+  { id: '33333333-3333-3333-3333-333333333333', name: '손질 수산물', slug: '손질수산', imageUrl: preparedSeafood },
+  { id: '22222222-2222-2222-2222-222222222222', name: '급랭 수산물', slug: '당일수산', imageUrl: expressSeafood },
+  { id: '55555555-5555-5555-5555-555555555555', name: '바담은 절임류', slug: '젓갈-액젓', imageUrl: pickledSeafood },
 ];
 
 export default function SubCategoryCards({ 
@@ -34,7 +35,7 @@ export default function SubCategoryCards({
             key={category.id}
             type="button"
             className="sub-category-card"
-            onClick={() => onCategoryClick?.(category.id)}
+            onClick={() => onCategoryClick?.(category.slug)}
           >
             <div className="sub-category-card__image">
               {category.imageUrl && (

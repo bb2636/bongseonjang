@@ -1,8 +1,21 @@
 import { useState, useCallback, useEffect } from 'react';
 import { BannerPosition, Banner } from './useBannerManagement';
 import { API_BASE_URL } from '@/shared/config/apiConfig';
+import { toCategorySlug } from '@/shared/utils/categorySlug';
 
-export type LinkType = 'internal' | 'external' | 'none';
+export type LinkType = 'internal' | 'external' | 'category' | 'none';
+
+const CATEGORY_LINK_PREFIX = '/category/';
+
+interface CategoryOption {
+  value: string;
+  label: string;
+}
+
+interface ApiCategory {
+  id: string;
+  name: string;
+}
 
 export interface BannerFormData {
   title: string;
@@ -19,6 +32,7 @@ export interface BannerFormData {
 function determineLinkType(linkUrl: string | null): LinkType {
   if (!linkUrl) return 'none';
   if (linkUrl.startsWith('http://') || linkUrl.startsWith('https://')) return 'external';
+  if (linkUrl.startsWith(CATEGORY_LINK_PREFIX)) return 'category';
   return 'internal';
 }
 
@@ -52,6 +66,26 @@ export function useBannerForm(
   const [error, setError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/products/categories`);
+        if (!response.ok) return;
+        const categories: ApiCategory[] = await response.json();
+        setCategoryOptions(
+          categories.map((category) => ({
+            value: toCategorySlug(category.name),
+            label: category.name,
+          }))
+        );
+      } catch (err) {
+        console.error('Failed to fetch categories for banner link:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (editingBanner) {
@@ -87,12 +121,16 @@ export function useBannerForm(
     setFormData(prev => ({ 
       ...prev, 
       linkType,
-      linkUrl: linkType === 'none' ? '' : prev.linkUrl 
+      linkUrl: linkType === 'none' || linkType === 'category' ? '' : prev.linkUrl 
     }));
   }, []);
 
   const handleLinkUrlChange = useCallback((value: string) => {
     setFormData(prev => ({ ...prev, linkUrl: value }));
+  }, []);
+
+  const handleCategorySelect = useCallback((categorySlug: string) => {
+    setFormData(prev => ({ ...prev, linkUrl: `${CATEGORY_LINK_PREFIX}${categorySlug}` }));
   }, []);
 
   const handleDescriptionChange = useCallback((value: string) => {
@@ -135,6 +173,10 @@ export function useBannerForm(
     }
     if (!selectedFile && !formData.imageUrl) {
       setError('배너 이미지를 업로드해주세요');
+      return false;
+    }
+    if (formData.linkType === 'category' && !formData.linkUrl.startsWith(CATEGORY_LINK_PREFIX)) {
+      setError('연결할 카테고리를 선택해주세요');
       return false;
     }
     setError(null);
@@ -216,16 +258,23 @@ export function useBannerForm(
     }
   }, [formData, selectedFile, positions, validateForm, resetForm, editingBanner]);
 
+  const selectedCategorySlug = formData.linkUrl.startsWith(CATEGORY_LINK_PREFIX)
+    ? formData.linkUrl.slice(CATEGORY_LINK_PREFIX.length)
+    : '';
+
   return {
     formData,
     isSubmitting,
     error,
     selectedFile,
     previewUrl,
+    categoryOptions,
+    selectedCategorySlug,
     handleTitleChange,
     handlePositionChange,
     handleLinkTypeChange,
     handleLinkUrlChange,
+    handleCategorySelect,
     handleDescriptionChange,
     handleStartDateChange,
     handleEndDateChange,

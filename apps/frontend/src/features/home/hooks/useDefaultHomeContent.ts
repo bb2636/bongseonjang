@@ -44,8 +44,8 @@ export function useDefaultHomeContent() {
     isLoading: isBelowFoldLoading,
   } = useBelowFoldData(shouldLoadBelowFold);
 
-  const onSubCategoryClick = useCallback((categoryId: string) => {
-    navigate(`/category/${categoryId}`);
+  const onSubCategoryClick = useCallback((categorySlug: string) => {
+    navigate(`/category/${categorySlug}`);
   }, [navigate]);
 
   const onHeartClick = useCallback((productId: string) => {

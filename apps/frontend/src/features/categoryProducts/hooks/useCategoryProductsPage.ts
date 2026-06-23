@@ -26,7 +26,7 @@ export function useCategoryProductsPage() {
   const { primeProductDetailCache } = useProductListCache();
   
   const isDbCategory = !isStaticCategory(activeSlug);
-  const categoryId = isDbCategory ? activeSlug : null;
+  const categorySlug = isDbCategory ? activeSlug : null;
 
   const { data, isLoading, error } = useQuery<ProductCardData[]>({
     queryKey: ['categoryProducts', activeSlug],
@@ -40,8 +40,8 @@ export function useCategoryProductsPage() {
       if (activeSlug === 'new') {
         return fetchNewProducts();
       }
-      if (isDbCategory && categoryId) {
-        const result = await fetchProductsByCategoryId(categoryId);
+      if (isDbCategory && categorySlug) {
+        const result = await fetchProductsByCategoryId(categorySlug);
         return result.products;
       }
       return [];

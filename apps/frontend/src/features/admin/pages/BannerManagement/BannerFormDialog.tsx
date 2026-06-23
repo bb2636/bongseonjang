@@ -1,7 +1,7 @@
 import { useRef, useState, ChangeEvent, useEffect } from 'react';
 import { BannerPosition, Banner } from './useBannerManagement';
-import { useBannerForm, LinkType } from './useBannerForm';
-import { ConfirmModal } from '../../../../components';
+import { useBannerForm } from './useBannerForm';
+import { ConfirmModal, Select } from '../../../../components';
 import { useToast } from '../../../../contexts/ToastContext';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import './BannerFormDialog.css';
@@ -43,10 +43,13 @@ export function BannerFormDialog({
     error,
     selectedFile,
     previewUrl,
+    categoryOptions,
+    selectedCategorySlug,
     handleTitleChange,
     handlePositionChange,
     handleLinkTypeChange,
     handleLinkUrlChange,
+    handleCategorySelect,
     handleDescriptionChange,
     handleStartDateChange,
     handleEndDateChange,
@@ -212,6 +215,17 @@ export function BannerFormDialog({
                     type="radio"
                     name="linkType"
                     className="banner-form-dialog__radio"
+                    checked={formData.linkType === 'category'}
+                    onChange={() => handleLinkTypeChange('category')}
+                  />
+                  <span className="banner-form-dialog__radio-custom" />
+                  <span className="banner-form-dialog__radio-text">카테고리 연결</span>
+                </label>
+                <label className="banner-form-dialog__radio-label">
+                  <input
+                    type="radio"
+                    name="linkType"
+                    className="banner-form-dialog__radio"
                     checked={formData.linkType === 'external'}
                     onChange={() => handleLinkTypeChange('external')}
                   />
@@ -231,7 +245,22 @@ export function BannerFormDialog({
                 </label>
               </div>
             </div>
-            {formData.linkType !== 'none' && (
+            {formData.linkType === 'category' && (
+              <div className="banner-form-dialog__form-field">
+                <label className="banner-form-dialog__label">연결할 카테고리</label>
+                <Select
+                  options={categoryOptions}
+                  value={selectedCategorySlug}
+                  onChange={handleCategorySelect}
+                  placeholder="카테고리를 선택하세요"
+                  width="100%"
+                />
+                <p className="banner-form-dialog__hint">
+                  선택한 카테고리 상품 목록으로 이동합니다
+                </p>
+              </div>
+            )}
+            {(formData.linkType === 'internal' || formData.linkType === 'external') && (
               <div className="banner-form-dialog__form-field">
                 <label className="banner-form-dialog__label">링크 경로 / URL</label>
                 <input

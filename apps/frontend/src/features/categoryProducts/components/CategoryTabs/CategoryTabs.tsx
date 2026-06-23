@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useState, useRef, useCallback } from 'react';
 import { apiClient } from '../../../../services/apiClient';
+import { toCategorySlug } from '@/shared/utils/categorySlug';
 import './CategoryTabs.css';
 
 interface CategoryTab {
@@ -46,7 +47,7 @@ export default function CategoryTabs({ activeSlug, onTabChange }: CategoryTabsPr
           .filter((cat) => !brandCategoryNames.includes(cat.name))
           .map((cat) => ({
             id: cat.id,
-            slug: cat.id,
+            slug: toCategorySlug(cat.name),
             name: cat.name,
           }));
         setDynamicCategories(mapped);

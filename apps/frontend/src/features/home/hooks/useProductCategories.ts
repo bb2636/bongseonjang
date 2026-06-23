@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/services/apiClient';
+import { toCategorySlug } from '@/shared/utils/categorySlug';
 
 interface ApiCategory {
   id: string;
@@ -10,9 +11,10 @@ interface ApiCategory {
 interface ProductCategory {
   id: string;
   label: string;
+  slug: string;
 }
 
-const ALL_CATEGORY: ProductCategory = { id: 'all', label: '전체' };
+const ALL_CATEGORY: ProductCategory = { id: 'all', label: '전체', slug: 'all' };
 
 export function useProductCategories() {
   const [categories, setCategories] = useState<ProductCategory[]>([ALL_CATEGORY]);
@@ -30,6 +32,7 @@ export function useProductCategories() {
           .map((cat) => ({
             id: cat.id,
             label: cat.name,
+            slug: toCategorySlug(cat.name),
           }));
         setCategories([ALL_CATEGORY, ...mappedCategories]);
         setError(null);

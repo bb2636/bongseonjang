@@ -157,12 +157,31 @@ router.get('/categories', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/by-category/:categoryId', async (req: Request, res: Response) => {
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+router.get('/by-category/:categoryIdOrSlug', async (req: Request, res: Response) => {
   try {
-    const { categoryId } = req.params;
+    const { categoryIdOrSlug } = req.params;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
-    
+
+    let categoryId = categoryIdOrSlug;
+    if (!UUID_PATTERN.test(categoryIdOrSlug)) {
+      const category = await AppDataSource.getRepository(ProductCategory)
+        .createQueryBuilder('category')
+        .where("REPLACE(category.name, :nameSeparator, :slugSeparator) = :slug", {
+          nameSeparator: '/',
+          slugSeparator: '-',
+          slug: categoryIdOrSlug,
+        })
+        .getOne();
+
+      if (!category) {
+        return res.json({ products: [], total: 0, page, limit });
+      }
+      categoryId = category.id;
+    }
+
     const products = await productService.getProductsByCategory(categoryId, page, limit);
     res.json(products);
   } catch (error) {
