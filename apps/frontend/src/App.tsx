@@ -260,6 +260,12 @@ function AppContent() {
       console.log('[DeepLink] Received URL:', url);
       
       try {
+        const oauthClosePrefix = `${CAPACITOR_APP_SCHEME}://oauth/close`;
+        if (url.startsWith(oauthClosePrefix)) {
+          console.log('[DeepLink] OAuth close deep link received, foregrounding app only');
+          return;
+        }
+
         const googleOAuthPrefix = `${CAPACITOR_APP_SCHEME}://oauth/google/callback`;
         if (url.startsWith(googleOAuthPrefix)) {
           console.log('[DeepLink] Google OAuth callback detected');

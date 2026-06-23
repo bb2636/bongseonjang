@@ -871,6 +871,7 @@ export class AuthController {
     };
 
     const sendPollingCompletePage = (success: boolean, message: string): void => {
+      const returnToAppUrl = `${APP_SCHEME}://oauth/close`;
       const html = `
 <!DOCTYPE html>
 <html lang="ko">
@@ -907,14 +908,53 @@ export class AuthController {
       font-size: 14px;
       margin: 0;
     }
+    .return-app-btn {
+      display: none;
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 16px 48px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 24px;
+    }
+    .return-app-btn:active {
+      background: #1d4ed8;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="icon">${success ? '✓' : '✕'}</div>
     <p class="message">${message}</p>
-    <p class="hint">${success ? '이 창은 자동으로 닫힙니다' : '앱으로 돌아가서 다시 시도해주세요'}</p>
+    <p class="hint">${success ? '잠시 후 앱으로 돌아갑니다' : '앱으로 돌아가서 다시 시도해주세요'}</p>
+    <a href="${returnToAppUrl}" class="return-app-btn" id="returnAppBtn">앱으로 돌아가기</a>
   </div>
+  <script>
+    (function() {
+      var returnToAppUrl = "${returnToAppUrl}";
+      var redirectAttempted = false;
+
+      function tryReturnToApp() {
+        if (redirectAttempted) return;
+        redirectAttempted = true;
+        try {
+          window.location.href = returnToAppUrl;
+        } catch (e) {
+          console.log('[OAuth PollingComplete] return to app failed:', e);
+        }
+      }
+
+      tryReturnToApp();
+
+      setTimeout(function() {
+        document.getElementById('returnAppBtn').style.display = 'inline-block';
+      }, 1500);
+    })();
+  </script>
 </body>
 </html>`;
       res.status(200).type('html').send(html);
