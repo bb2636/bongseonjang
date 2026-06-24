@@ -150,6 +150,42 @@ export async function preparePayment(data: PreparePaymentRequest): Promise<Prepa
   return response.json();
 }
 
+interface DeletePreparedOrderParams {
+  orderId: string;
+  method: 'card' | 'bank' | 'vbank';
+  deletionToken: string;
+  errorMsg: string;
+  errorCode?: string;
+  fullResult?: unknown;
+}
+
+export async function deletePreparedOrder(params: DeletePreparedOrderParams): Promise<void> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/payment/log-error`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderId: params.orderId,
+        method: params.method,
+        errorCode: params.errorCode,
+        errorMsg: params.errorMsg,
+        fullResult: params.fullResult,
+        deleteOrder: true,
+        deletionToken: params.deletionToken,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('[Payment] Prepared order deletion failed with status:', response.status);
+      return;
+    }
+
+    console.log('[Payment] Prepared order deletion requested');
+  } catch (error) {
+    console.error('[Payment] Failed to delete prepared order:', error);
+  }
+}
+
 export async function getPaymentResult(orderId: string): Promise<{ success: boolean; order?: { orderNumber: string; status: string } }> {
   const token = localStorage.getItem('user_token');
   

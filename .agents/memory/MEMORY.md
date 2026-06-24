@@ -10,3 +10,4 @@
 - [cap:build quirks](cap-build-quirks.md) — run long builds via temp workflow (bash kills bg procs); cap:build's final "assets" step fails on broken sharp but android project is already done — verify by grepping baked URL
 - [Social signup completion](social-signup-completion.md) — finish profile/address save + login synchronously in the profile submit handler, not via an auto-effect on the complete page; deferred sessionStorage handoff loses address + breaks login persistence
 - [Kakao OAuth scope](kakao-oauth-scope.md) — request only profile scopes (no account_email until 비즈앱) or Kakao returns KOE205; the no-email→requiresEmail gate must exempt kakao like apple
+- [NicePay prepare/pending cleanup](nicepay-prepare-pending-cleanup.md) — prepare creates pending order before payment window; cleanup must cover !AUTHNICE + sync throw + fnError; clientId alert errors leak (covered by history filter)

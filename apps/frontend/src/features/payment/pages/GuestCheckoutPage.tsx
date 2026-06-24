@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useQuery } from '@tanstack/react-query';
-import { prepareGuestPayment, GuestCartItem, fetchGuestOrderDetail } from '../api/paymentApi';
+import { prepareGuestPayment, GuestCartItem, fetchGuestOrderDetail, deletePreparedOrder } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
 import { guestCartStorage, guestShippingStorage, guestOrdererStorage } from '../../../utils/guestStorage';
 import { useToast } from '../../../contexts/ToastContext';
@@ -573,52 +573,58 @@ export function GuestCheckoutPage() {
         return;
       }
 
+      const currentOrderId = paymentData.orderId;
+
       if (!window.AUTHNICE) {
         showToast('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.', 'error');
         setIsProcessing(false);
+        await deletePreparedOrder({
+          orderId: currentOrderId,
+          method: paymentMethod,
+          errorMsg: '결제 모듈을 불러오지 못했습니다',
+          deletionToken: paymentData.deletionToken,
+        });
         return;
       }
 
       setPaymentStep('waiting');
 
-      const currentOrderId = paymentData.orderId;
-      
-      window.AUTHNICE.requestPay({
-        clientId: paymentData.clientKey,
-        method: paymentMethod,
-        orderId: currentOrderId,
-        amount: paymentData.amount,
-        goodsName: paymentData.goodsName,
-        returnUrl: paymentData.returnUrl,
-        ...(paymentMethod === 'vbank' ? { vbankHolder: guestName } : {}),
-        fnError: async (result) => {
-          console.error('[Payment] fnError:', result);
-          showToast(`결제 오류: ${result.errorMsg}`, 'error');
-          setPaymentStep('preparing');
-          setIsProcessing(false);
-          
-          if (currentOrderId) {
-            try {
-              await fetch(`${API_BASE_URL}/payment/log-error`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  orderId: currentOrderId,
-                  method: paymentMethod,
-                  errorCode: result.errorCode,
-                  errorMsg: result.errorMsg,
-                  fullResult: result,
-                  deleteOrder: true,
-                  deletionToken: paymentData.deletionToken,
-                }),
-              });
-              console.log('[Payment] Pending order deletion requested');
-            } catch (err) {
-              console.error('[Payment] Failed to delete pending order:', err);
-            }
-          }
-        },
-      });
+      try {
+        window.AUTHNICE.requestPay({
+          clientId: paymentData.clientKey,
+          method: paymentMethod,
+          orderId: currentOrderId,
+          amount: paymentData.amount,
+          goodsName: paymentData.goodsName,
+          returnUrl: paymentData.returnUrl,
+          ...(paymentMethod === 'vbank' ? { vbankHolder: guestName } : {}),
+          fnError: async (result) => {
+            console.error('[Payment] fnError:', result);
+            showToast(`결제 오류: ${result.errorMsg}`, 'error');
+            setPaymentStep('preparing');
+            setIsProcessing(false);
+            await deletePreparedOrder({
+              orderId: currentOrderId,
+              method: paymentMethod,
+              errorCode: result.errorCode,
+              errorMsg: result.errorMsg,
+              fullResult: result,
+              deletionToken: paymentData.deletionToken,
+            });
+          },
+        });
+      } catch (requestError) {
+        console.error('[Payment] requestPay failed to open:', requestError);
+        showToast('결제창을 열 수 없습니다', 'error');
+        setPaymentStep('preparing');
+        setIsProcessing(false);
+        await deletePreparedOrder({
+          orderId: currentOrderId,
+          method: paymentMethod,
+          errorMsg: '결제창을 열 수 없습니다',
+          deletionToken: paymentData.deletionToken,
+        });
+      }
     } catch (error) {
       console.error('Payment preparation failed:', error);
       const errorMessage = error instanceof Error ? error.message : '결제 준비 중 오류가 발생했습니다';
