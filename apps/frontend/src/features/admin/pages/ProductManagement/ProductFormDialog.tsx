@@ -1,6 +1,6 @@
 import { useRef, useEffect, useLayoutEffect, ChangeEvent, useState } from 'react';
 import { useProductForm, ProductOption, ProductInfo, ShippingDetail } from './useProductForm';
-import { ConfirmModal, Select, MultiSelect, DateRangePicker } from '../../../../components';
+import { ConfirmModal, Select, MultiSelect } from '../../../../components';
 import { useToast } from '../../../../contexts/ToastContext';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import './ProductFormDialog.css';
@@ -63,9 +63,6 @@ export function ProductFormDialog({
     handleBasePriceChange,
     handleDiscountEnabledChange,
     handleDiscountRateChange,
-    handleStartDateChange,
-    handleEndDateChange,
-    handleCountdownDaysChange,
     handleDescriptionChange,
     handleCautionChange,
     handleStorageMethodChange,
@@ -446,49 +443,6 @@ export function ProductFormDialog({
               </div>
             )}
 
-            <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
-              <label className="product-form-dialog__label">
-                판매 기간 <span className="product-form-dialog__required">*</span>
-              </label>
-              <DateRangePicker
-                startDate={formData.startDate}
-                endDate={formData.endDate}
-                onStartDateChange={(val) => {
-                  handleStartDateChange(val);
-                  clearFieldError('startDate');
-                }}
-                onEndDateChange={(val) => {
-                  handleEndDateChange(val);
-                  clearFieldError('endDate');
-                }}
-                hasError={!!hasError('startDate') || !!hasError('endDate')}
-              />
-              {(hasError('startDate') || hasError('endDate')) && (
-                <span className="product-form-dialog__error-message">
-                  {getErrorMessage('startDate') || getErrorMessage('endDate')}
-                </span>
-              )}
-            </div>
-
-            <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
-              <label className="product-form-dialog__label">카운트다운</label>
-              <Select
-                options={[
-                  { value: '', label: '선택 안 함' },
-                  { value: '1', label: '1일 전' },
-                  { value: '2', label: '2일 전' },
-                  { value: '3', label: '3일 전' },
-                  { value: '4', label: '4일 전' },
-                  { value: '5', label: '5일 전' },
-                  { value: '6', label: '6일 전' },
-                  { value: '7', label: '7일 전' },
-                ]}
-                value={formData.countdownDays?.toString() ?? ''}
-                onChange={(val) => handleCountdownDaysChange(val ? Number(val) : null)}
-                placeholder="선택 안 함"
-                width={150}
-              />
-            </div>
 
             <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
               <label className="product-form-dialog__label">

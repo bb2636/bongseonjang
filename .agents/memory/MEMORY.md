@@ -11,3 +11,4 @@
 - [Social signup completion](social-signup-completion.md) — finish profile/address save + login synchronously in the profile submit handler, not via an auto-effect on the complete page; deferred sessionStorage handoff loses address + breaks login persistence
 - [Kakao OAuth scope](kakao-oauth-scope.md) — request only profile scopes (no account_email until 비즈앱) or Kakao returns KOE205; the no-email→requiresEmail gate must exempt kakao like apple
 - [NicePay prepare/pending cleanup](nicepay-prepare-pending-cleanup.md) — prepare creates pending order before payment window; cleanup must cover !AUTHNICE + sync throw + fnError; clientId alert errors leak (covered by history filter)
+- [Production DB writes](prod-db-writes.md) — prod DB tooling is read-only; provision/seed prod data via idempotent app-startup code + republish, outside runProductionSeed product-count guard
