@@ -47,6 +47,7 @@ export function ProductFormDialog({
   const initializedRef = useRef(false);
   const lastProductIdRef = useRef<string | undefined>(undefined);
   const hasSubmittedRef = useRef(false);
+  const overlayMouseDownRef = useRef(false);
   const { showToast } = useToast();
   useBodyScrollLock(isOpen);
 
@@ -135,8 +136,12 @@ export function ProductFormDialog({
 
   if (!isOpen) return null;
 
+  const handleOverlayMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    overlayMouseDownRef.current = e.target === e.currentTarget;
+  };
+
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && overlayMouseDownRef.current) {
       onClose();
     }
   };
@@ -177,7 +182,11 @@ export function ProductFormDialog({
   };
 
   return (
-    <div className="product-form-dialog__overlay" onClick={handleOverlayClick}>
+    <div
+      className="product-form-dialog__overlay"
+      onMouseDown={handleOverlayMouseDown}
+      onClick={handleOverlayClick}
+    >
       <div className="product-form-dialog">
         <header className="product-form-dialog__header">
           <div className="product-form-dialog__header-spacer" />
