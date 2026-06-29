@@ -1,49 +1,29 @@
 import { ShippingRegion, ShippingSurchargeDto } from './product.js';
+import {
+  ISLAND_POSTAL_RANGES,
+  JEJU_POSTAL_RANGE,
+  isPostalCodeInRange,
+} from './remoteAreaPostalCodes.js';
 
 export type DeliveryRegion = 'MAINLAND' | 'JEJU' | 'ISLAND';
 
-export const JEJU_POSTAL_PREFIXES = ['63'];
-
-export const ISLAND_POSTAL_PREFIXES = [
-  '402',
-  '223',
-  '230',
-  '231',
-  '525',
-  '530',
-  '531',
-  '588',
-  '589',
-  '590',
-  '591',
-  '597',
-  '598',
-  '546',
-  '547',
-  '568',
-  '339',
-  '326',
-  '336',
-  '540',
-  '544',
-  '579',
-  '580',
-  '582',
-  '169',
-  '549',
-  '559',
-];
+const POSTAL_CODE_LENGTH = 5;
 
 function normalizePostalCode(postalCode: string): string {
-  return postalCode.replace(/-/g, '').trim();
+  return postalCode.replace(/[^0-9]/g, '').trim();
 }
 
 export function detectDeliveryRegion(postalCode: string | null | undefined): DeliveryRegion {
   if (!postalCode) return 'MAINLAND';
 
   const code = normalizePostalCode(postalCode);
-  if (JEJU_POSTAL_PREFIXES.some(prefix => code.startsWith(prefix))) return 'JEJU';
-  if (ISLAND_POSTAL_PREFIXES.some(prefix => code.startsWith(prefix))) return 'ISLAND';
+  if (code.length !== POSTAL_CODE_LENGTH) return 'MAINLAND';
+
+  const numericCode = Number(code);
+  if (!Number.isFinite(numericCode)) return 'MAINLAND';
+
+  if (isPostalCodeInRange(numericCode, JEJU_POSTAL_RANGE)) return 'JEJU';
+  if (ISLAND_POSTAL_RANGES.some(range => isPostalCodeInRange(numericCode, range))) return 'ISLAND';
 
   return 'MAINLAND';
 }
