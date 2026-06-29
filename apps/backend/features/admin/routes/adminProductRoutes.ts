@@ -253,7 +253,7 @@ router.get('/:productId', async (req: Request, res: Response) => {
         detailContent = JSON.parse(product.detailContent);
       }
     } catch {
-      console.error('Failed to parse detailContent');
+      detailContent = { description: product.detailContent };
     }
 
     return res.json({
