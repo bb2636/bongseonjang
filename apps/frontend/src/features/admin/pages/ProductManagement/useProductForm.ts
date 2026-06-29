@@ -21,10 +21,12 @@ export interface ShippingInfo {
   shippingDescription: string;
 }
 
-export interface ShippingDetail {
+export type ShippingRegion = 'JEJU' | 'ISLAND' | 'JEJU_ISLAND';
+
+export interface ShippingSurcharge {
   id: string;
-  label: string;
-  value: string;
+  region: ShippingRegion;
+  amount: number | null;
 }
 
 export interface ImageFile {
@@ -51,7 +53,7 @@ export interface ProductFormData {
   options: ProductOption[];
   productInfos: ProductInfo[];
   shippingInfo: ShippingInfo;
-  shippingDetails: ShippingDetail[];
+  shippingSurcharges: ShippingSurcharge[];
   thumbnailImages: ImageFile[];
   detailImages: ImageFile[];
   weight: string;
@@ -88,11 +90,11 @@ function createEmptyProductInfo(): ProductInfo {
   };
 }
 
-function createEmptyShippingDetail(): ShippingDetail {
+function createEmptyShippingSurcharge(): ShippingSurcharge {
   return {
     id: generateId(),
-    label: '',
-    value: '',
+    region: 'JEJU_ISLAND',
+    amount: null,
   };
 }
 
@@ -126,7 +128,7 @@ function createInitialFormData(): ProductFormData {
       freeShippingThreshold: null,
       shippingDescription: '전국',
     },
-    shippingDetails: [createEmptyShippingDetail()],
+    shippingSurcharges: [createEmptyShippingSurcharge()],
     thumbnailImages: [],
     detailImages: [],
     weight: '',
@@ -332,26 +334,26 @@ export function useProductForm() {
     }));
   }, []);
 
-  const handleShippingDetailChange = useCallback((id: string, field: 'label' | 'value', value: string) => {
+  const handleShippingSurchargeChange = useCallback((id: string, field: 'region' | 'amount', value: ShippingRegion | number | null) => {
     setFormData(prev => ({
       ...prev,
-      shippingDetails: prev.shippingDetails.map(detail =>
-        detail.id === id ? { ...detail, [field]: value } : detail
+      shippingSurcharges: prev.shippingSurcharges.map(surcharge =>
+        surcharge.id === id ? { ...surcharge, [field]: value } : surcharge
       ),
     }));
   }, []);
 
-  const handleAddShippingDetail = useCallback(() => {
+  const handleAddShippingSurcharge = useCallback(() => {
     setFormData(prev => ({
       ...prev,
-      shippingDetails: [...prev.shippingDetails, createEmptyShippingDetail()],
+      shippingSurcharges: [...prev.shippingSurcharges, createEmptyShippingSurcharge()],
     }));
   }, []);
 
-  const handleRemoveShippingDetail = useCallback((id: string) => {
+  const handleRemoveShippingSurcharge = useCallback((id: string) => {
     setFormData(prev => ({
       ...prev,
-      shippingDetails: prev.shippingDetails.filter(detail => detail.id !== id),
+      shippingSurcharges: prev.shippingSurcharges.filter(surcharge => surcharge.id !== id),
     }));
   }, []);
 
@@ -491,13 +493,13 @@ export function useProductForm() {
           }))
         : [createEmptyProductInfo()];
 
-      const shippingDetails: ShippingDetail[] = (data.shippingDetails || []).length > 0
-        ? data.shippingDetails.map((detail: { label: string; value: string }) => ({
+      const shippingSurcharges: ShippingSurcharge[] = (data.shippingSurcharges || []).length > 0
+        ? data.shippingSurcharges.map((surcharge: { region: ShippingRegion; amount: number }) => ({
             id: generateId(),
-            label: detail.label || '',
-            value: detail.value || '',
+            region: surcharge.region,
+            amount: surcharge.amount ?? null,
           }))
-        : [createEmptyShippingDetail()];
+        : [createEmptyShippingSurcharge()];
 
       const hasOptions = data.options && data.options.length > 0;
       const optionGroupName = hasOptions && data.options[0]?.optionName ? data.options[0].optionName : '';
@@ -533,7 +535,7 @@ export function useProductForm() {
           freeShippingThreshold: null,
           shippingDescription: '전국',
         },
-        shippingDetails,
+        shippingSurcharges,
         thumbnailImages,
         detailImages,
         weight: data.weight || '',
@@ -696,11 +698,11 @@ export function useProductForm() {
             label: info.label,
             value: info.value,
           })),
-        shippingDetails: formData.shippingDetails
-          .filter(detail => detail.label.trim() && detail.value.trim())
-          .map(detail => ({
-            label: detail.label,
-            value: detail.value,
+        shippingSurcharges: formData.shippingSurcharges
+          .filter(surcharge => surcharge.amount != null && surcharge.amount > 0)
+          .map(surcharge => ({
+            region: surcharge.region,
+            amount: surcharge.amount as number,
           })),
         shippingInfo: formData.shippingInfo,
         thumbnailUrls,
@@ -780,9 +782,9 @@ export function useProductForm() {
     handleProductInfoChange,
     handleAddProductInfo,
     handleRemoveProductInfo,
-    handleShippingDetailChange,
-    handleAddShippingDetail,
-    handleRemoveShippingDetail,
+    handleShippingSurchargeChange,
+    handleAddShippingSurcharge,
+    handleRemoveShippingSurcharge,
     handleShippingInfoChange,
     handleThumbnailImageAdd,
     handleThumbnailImageRemove,

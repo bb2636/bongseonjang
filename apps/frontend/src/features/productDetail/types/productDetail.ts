@@ -65,6 +65,7 @@ export interface ProductDetail {
   notice?: string;
   productInfos?: Array<{ label: string; value: string }>;
   shippingDetails?: Array<{ label: string; value: string }>;
+  shippingSurcharges?: Array<{ region: 'JEJU' | 'ISLAND' | 'JEJU_ISLAND'; amount: number }>;
   isOptionRequired: boolean;
   saleStartAt?: string;
   saleEndAt?: string;

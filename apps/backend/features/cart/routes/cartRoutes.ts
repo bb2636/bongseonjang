@@ -8,6 +8,7 @@ import { ProductExposureCategory } from '../../../entity/ProductExposureCategory
 import { authMiddleware, AuthenticatedRequest } from '../../../common/middleware/authMiddleware';
 import { In } from 'typeorm';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
+import { normalizeShippingSurcharges, ShippingSurchargeDto } from '@bongkru/contract';
 
 const router = Router();
 
@@ -92,7 +93,8 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         shippingFee: item.product?.shippingPolicy?.shippingFee ?? 0,
         freeShippingThreshold: DEFAULT_FREE_SHIPPING_THRESHOLD as number | null,
       };
-      
+      let shippingSurcharges: ShippingSurchargeDto[] = [];
+
       if (item.product?.detailContent) {
         try {
           const detailContent = JSON.parse(item.product.detailContent);
@@ -100,6 +102,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
             shippingInfo.shippingFee = detailContent.shippingInfo.shippingFee ?? 0;
             shippingInfo.freeShippingThreshold = detailContent.shippingInfo.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD;
           }
+          shippingSurcharges = normalizeShippingSurcharges(detailContent.shippingSurcharges);
         } catch {
         }
       }
@@ -120,6 +123,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         totalPrice,
         shippingFee: shippingInfo.shippingFee,
         freeShippingThreshold: shippingInfo.freeShippingThreshold,
+        shippingSurcharges,
         productCategoryId: item.product?.productCategoryId ?? null,
         exposureCategoryIds: exposureCategoryMap.get(item.productId) || [],
       };

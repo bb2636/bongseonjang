@@ -83,4 +83,6 @@ export interface ProductDetailDto {
   stockQuantity: number;
   productCategoryId?: number | null;
   exposureCategoryIds?: number[];
+  shippingDetails?: Array<{ label: string; value: string }>;
+  shippingSurcharges?: Array<{ region: string; amount: number }>;
 }

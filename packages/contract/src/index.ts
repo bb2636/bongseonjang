@@ -1,5 +1,6 @@
 export * from './auth.js';
 export * from './product.js';
+export * from './shipping.js';
 export * from './order.js';
 export * from './cart.js';
 export * from './review.js';

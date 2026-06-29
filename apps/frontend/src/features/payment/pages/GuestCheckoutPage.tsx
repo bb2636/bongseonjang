@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { prepareGuestPayment, GuestCartItem, fetchGuestOrderDetail, deletePreparedOrder } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
 import { guestCartStorage, guestShippingStorage, guestOrdererStorage } from '../../../utils/guestStorage';
+import { detectDeliveryRegion, resolveOrderSurcharge, type ShippingSurchargeDto } from '@bongkru/contract';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
@@ -24,6 +25,8 @@ interface DirectPurchaseData {
   items: DirectPurchaseItem[];
 }
 
+const DEFAULT_BASE_SHIPPING_FEE = 3500;
+
 interface DisplayItem {
   id: string;
   productId: string;
@@ -34,6 +37,9 @@ interface DisplayItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  shippingFee?: number;
+  freeShippingThreshold?: number | null;
+  shippingSurcharges?: ShippingSurchargeDto[];
 }
 
 interface DaumPostcodeData {
@@ -198,6 +204,9 @@ export function GuestCheckoutPage() {
           quantity: item.quantity,
           unitPrice,
           totalPrice: unitPrice * item.quantity,
+          shippingFee: directProduct.shippingFee,
+          freeShippingThreshold: directProduct.freeShippingThreshold ?? null,
+          shippingSurcharges: directProduct.shippingSurcharges || [],
         };
       });
     }
@@ -214,11 +223,30 @@ export function GuestCheckoutPage() {
       quantity: item.quantity,
       unitPrice: item.unitPrice,
       totalPrice: item.totalPrice,
+      shippingFee: item.shippingFee,
+      freeShippingThreshold: item.freeShippingThreshold ?? null,
+      shippingSurcharges: item.shippingSurcharges || [],
     }));
   }, [isDirectMode, directProduct, directPurchaseData, selectedItemIds]);
 
   const productAmount = displayItems.reduce((sum, item) => sum + item.totalPrice, 0);
-  const finalAmount = productAmount;
+
+  const shippingFeeAmount = useMemo(() => {
+    if (displayItems.length === 0) return 0;
+    const firstItem = displayItems[0];
+    const baseFee = firstItem.shippingFee ?? DEFAULT_BASE_SHIPPING_FEE;
+    const freeThreshold = firstItem.freeShippingThreshold ?? null;
+    const deliveryRegion = detectDeliveryRegion(postalCode);
+    const extraFee = resolveOrderSurcharge(
+      displayItems.map(item => item.shippingSurcharges),
+      deliveryRegion,
+    );
+    const isFreeShipping = freeThreshold !== null && productAmount >= freeThreshold;
+    if (isFreeShipping) return extraFee;
+    return baseFee + extraFee;
+  }, [displayItems, productAmount, postalCode]);
+
+  const finalAmount = productAmount + shippingFeeAmount;
 
   const isLoading = isDirectMode ? isDirectProductLoading : false;
 
@@ -412,7 +440,7 @@ export function GuestCheckoutPage() {
         addressDetail: addressDetail || undefined,
         deliveryRequest: finalDeliveryRequest || undefined,
         paymentMethod,
-        shippingFee: 0,
+        shippingFee: shippingFeeAmount,
       });
 
       setPaymentStep('connecting');
@@ -870,6 +898,15 @@ export function GuestCheckoutPage() {
             <div className="checkout-summary-row">
               <span className="checkout-summary-label">총 상품금액</span>
               <span className="checkout-summary-value">{productAmount.toLocaleString()}원</span>
+            </div>
+            <div className="checkout-summary-row">
+              <span className="checkout-summary-label">
+                배송비
+                {detectDeliveryRegion(postalCode) !== 'MAINLAND' && (
+                  <span className="checkout-summary-label-sub"> (제주/도서산간)</span>
+                )}
+              </span>
+              <span className="checkout-summary-value">{shippingFeeAmount.toLocaleString()}원</span>
             </div>
           </div>
           <div className="checkout-final-amount">

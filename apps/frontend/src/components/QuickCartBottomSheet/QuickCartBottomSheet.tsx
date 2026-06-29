@@ -215,6 +215,9 @@ export default function QuickCartBottomSheet() {
             unitPrice,
             totalPrice: unitPrice * item.quantity,
             thumbnailUrl: product.imageUrl || '',
+            shippingFee: product.shippingFee,
+            freeShippingThreshold: product.freeShippingThreshold ?? null,
+            shippingSurcharges: product.shippingSurcharges || [],
           });
         }
       }

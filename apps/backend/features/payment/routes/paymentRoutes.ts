@@ -19,6 +19,7 @@ import { authMiddleware, optionalAuthMiddleware, AuthenticatedRequest } from '..
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
 import { PointRepository } from '../../point/repository/PointRepository';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl';
+import { computeOrderShippingFee } from '../application/shippingCalculator';
 
 const BRAND_CATEGORY_MAPPING: Record<string, string> = {
   '바담은': '바담은 제품',
@@ -356,6 +357,7 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     const cartItems = await cartItemRepository.find({
       where: { id: In(selectedItemIds), cartId: cart.id },
       relations: ['product', 'productOption'],
+      order: { createdAt: 'DESC' },
     });
 
     if (cartItems.length === 0) {
@@ -412,7 +414,11 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
     }
 
     const orderNumber = generateOrderNumber();
-    const shippingAmount = Number(shippingFee) || 0;
+    const shippingAmount = computeOrderShippingFee(
+      cartItems.map(item => item.product).filter((product): product is Product => !!product),
+      postalCode,
+      totalProductPrice,
+    );
     
     let couponDiscountAmount = 0;
     const appliedUserCouponIds: number[] = [];
@@ -1424,7 +1430,11 @@ router.post('/prepare-direct', authMiddleware, async (req: Request, res: Respons
     }
 
     const orderNumber = generateOrderNumber();
-    const shippingAmount = Number(shippingFee) || 0;
+    const shippingAmount = computeOrderShippingFee(
+      [product],
+      postalCode,
+      totalProductPrice,
+    );
     
     let couponDiscountAmount = 0;
     const appliedUserCouponIds: number[] = [];
@@ -1734,8 +1744,15 @@ router.post('/prepare-guest', async (req: Request, res: Response) => {
       goodsNames.push(item.productName);
     }
 
+    const guestProductIds = (cartItems as GuestCartItem[]).map(item => item.productId);
+    const guestProducts = await productRepository.find({ where: { id: In(guestProductIds) } });
+    const guestProductMap = new Map(guestProducts.map(product => [product.id, product]));
+    const guestShippingProducts = (cartItems as GuestCartItem[])
+      .map(item => guestProductMap.get(item.productId))
+      .filter((product): product is Product => !!product);
+
     const orderNumber = generateOrderNumber();
-    const shippingAmount = Number(shippingFee) || 0;
+    const shippingAmount = computeOrderShippingFee(guestShippingProducts, postalCode, totalProductPrice);
     const finalAmount = totalProductPrice + shippingAmount;
 
     let returnUrlOrigin: string;

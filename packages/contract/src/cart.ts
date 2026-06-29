@@ -1,3 +1,5 @@
+import { ShippingSurchargeDto } from './product.js';
+
 export interface CartItemDto {
   id: string;
   productId: string;
@@ -13,6 +15,7 @@ export interface CartItemDto {
   stockQuantity?: number;
   shippingFee?: number;
   freeShippingThreshold?: number | null;
+  shippingSurcharges?: ShippingSurchargeDto[];
   productCategoryId?: number | null;
   exposureCategoryIds?: number[];
 }

@@ -27,6 +27,13 @@ export interface ProductImageDto {
   sortOrder: number;
 }
 
+export type ShippingRegion = 'JEJU' | 'ISLAND' | 'JEJU_ISLAND';
+
+export interface ShippingSurchargeDto {
+  region: ShippingRegion;
+  amount: number;
+}
+
 export interface ProductDetailDto {
   id: string;
   name: string;
@@ -42,6 +49,7 @@ export interface ProductDetailDto {
   reviewCount: number;
   averageRating: number;
   shippingPolicy: ShippingPolicyDto | null;
+  shippingSurcharges?: ShippingSurchargeDto[];
 }
 
 export interface ShippingPolicyDto {

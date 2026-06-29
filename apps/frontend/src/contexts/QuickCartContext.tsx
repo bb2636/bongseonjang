@@ -11,6 +11,9 @@ interface QuickCartProduct {
   stockQuantity: number;
   saleStartAt?: string;
   saleEndAt?: string;
+  shippingFee?: number;
+  freeShippingThreshold?: number | null;
+  shippingSurcharges?: Array<{ region: 'JEJU' | 'ISLAND' | 'JEJU_ISLAND'; amount: number }>;
   options: QuickCartOption[];
   mainOptions: QuickCartOption[];
 }
@@ -82,6 +85,9 @@ export function QuickCartProvider({ children }: QuickCartProviderProps) {
         stockQuantity: data.stockQuantity ?? 0,
         saleStartAt: data.saleStartAt,
         saleEndAt: data.saleEndAt,
+        shippingFee: data.shippingFee,
+        freeShippingThreshold: data.freeShippingThreshold ?? null,
+        shippingSurcharges: data.shippingSurcharges || [],
         options: (data.options || []).map((opt: any) => ({
           id: opt.id,
           groupName: '옵션 선택',

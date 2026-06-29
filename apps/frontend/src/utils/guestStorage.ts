@@ -12,6 +12,9 @@ export interface GuestCartItem {
   unitPrice: number;
   totalPrice: number;
   thumbnailUrl: string;
+  shippingFee?: number;
+  freeShippingThreshold?: number | null;
+  shippingSurcharges?: Array<{ region: 'JEJU' | 'ISLAND' | 'JEJU_ISLAND'; amount: number }>;
   addedAt: string;
 }
 

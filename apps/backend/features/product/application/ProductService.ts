@@ -2,8 +2,15 @@ import type { Product } from '../../../entity/Product';
 import type { ProductDto, ProductDetailDto, ProductOptionDto, ProductImageDto, TimeDealProductDto, MainOptionDto } from '../domain/Product';
 import type { ProductRepository, ProductFilter } from '../repository/ProductRepository';
 import { toAbsoluteImageUrl } from '../../../common/utils/imageUrl.js';
+import { normalizeShippingSurcharges, ShippingSurchargeDto, ShippingRegion } from '@bongkru/contract';
 import { AppDataSource } from '../../../config/database.js';
 import { ProductExposureCategory } from '../../../entity/ProductExposureCategory.js';
+
+const SHIPPING_REGION_LABELS: Record<ShippingRegion, string> = {
+  JEJU: '제주',
+  ISLAND: '도서산간',
+  JEJU_ISLAND: '제주/도서산간',
+};
 
 export interface ReviewStats {
   reviewCount: number;
@@ -186,6 +193,7 @@ export class ProductService {
     let noticeText: string | undefined = undefined;
     let productInfos: Array<{ label: string; value: string }> = [];
     let shippingDetails: Array<{ label: string; value: string }> = [];
+    let shippingSurcharges: ShippingSurchargeDto[] = [];
     
     if (product.detailContent) {
       try {
@@ -193,7 +201,13 @@ export class ProductService {
         descriptionText = parsedContent.description || undefined;
         noticeText = parsedContent.caution || undefined;
         productInfos = parsedContent.productInfos || [];
-        shippingDetails = parsedContent.shippingDetails || [];
+        shippingSurcharges = normalizeShippingSurcharges(parsedContent.shippingSurcharges);
+        shippingDetails = shippingSurcharges.length > 0
+          ? shippingSurcharges.map(surcharge => ({
+              label: '추가배송비',
+              value: `${SHIPPING_REGION_LABELS[surcharge.region]} ${surcharge.amount.toLocaleString()}원`,
+            }))
+          : (parsedContent.shippingDetails || []);
         if (parsedContent.shippingInfo) {
           shippingInfo.shippingFee = parsedContent.shippingInfo.shippingFee ?? 0;
           shippingInfo.freeShippingThreshold = parsedContent.shippingInfo.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD;
@@ -230,6 +244,7 @@ export class ProductService {
       notice: noticeText,
       productInfos,
       shippingDetails,
+      shippingSurcharges,
       isOptionRequired: options.length > 0,
       saleStartAt: product.saleStartDate ? new Date(product.saleStartDate).toISOString() : undefined,
       saleEndAt: product.saleEndDate ? new Date(product.saleEndDate).toISOString() : undefined,

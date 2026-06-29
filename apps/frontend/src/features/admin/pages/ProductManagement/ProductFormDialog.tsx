@@ -1,5 +1,5 @@
 import { useRef, useEffect, useLayoutEffect, ChangeEvent, useState } from 'react';
-import { useProductForm, ProductOption, ProductInfo, ShippingDetail } from './useProductForm';
+import { useProductForm, ProductOption, ProductInfo, ShippingSurcharge, ShippingRegion } from './useProductForm';
 import { ConfirmModal, Select, MultiSelect } from '../../../../components';
 import { useToast } from '../../../../contexts/ToastContext';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
@@ -11,6 +11,12 @@ interface ProductFormDialogProps {
   onSuccess: () => void;
   productId?: string;
 }
+
+const SHIPPING_REGION_OPTIONS: Array<{ value: ShippingRegion; label: string }> = [
+  { value: 'JEJU_ISLAND', label: '제주/도서산간' },
+  { value: 'JEJU', label: '제주' },
+  { value: 'ISLAND', label: '도서산간' },
+];
 
 function PlusIcon() {
   return (
@@ -76,9 +82,9 @@ export function ProductFormDialog({
     handleOptionChange,
     handleAddOption,
     handleRemoveOption,
-    handleShippingDetailChange,
-    handleAddShippingDetail,
-    handleRemoveShippingDetail,
+    handleShippingSurchargeChange,
+    handleAddShippingSurcharge,
+    handleRemoveShippingSurcharge,
     handleShippingInfoChange,
     handleThumbnailImageAdd,
     handleThumbnailImageRemove,
@@ -670,28 +676,35 @@ export function ProductFormDialog({
               />
             </div>
             <div className="product-form-dialog__form-field" style={{ marginTop: 16 }}>
+              <label className="product-form-dialog__label">추가배송비 (제주/도서산간 자동 합산)</label>
               <div className="product-form-dialog__product-infos">
-                {formData.shippingDetails.map((detail: ShippingDetail) => (
-                  <div key={detail.id} className="product-form-dialog__product-info-row">
-                    <input
-                      type="text"
-                      className="product-form-dialog__input product-form-dialog__input--label"
-                      placeholder="라벨 (예: 추가배송비)"
-                      value={detail.label}
-                      onChange={(e) => handleShippingDetailChange(detail.id, 'label', e.target.value)}
+                {formData.shippingSurcharges.map((surcharge: ShippingSurcharge) => (
+                  <div key={surcharge.id} className="product-form-dialog__product-info-row">
+                    <Select
+                      options={SHIPPING_REGION_OPTIONS}
+                      value={surcharge.region}
+                      onChange={(val) => handleShippingSurchargeChange(surcharge.id, 'region', val as ShippingRegion)}
+                      placeholder="대상 지역"
+                      width={180}
                     />
-                    <input
-                      type="text"
-                      className="product-form-dialog__input"
-                      placeholder="내용 (예: 제주/도서산간 3,000원)"
-                      value={detail.value}
-                      onChange={(e) => handleShippingDetailChange(detail.id, 'value', e.target.value)}
-                    />
-                    {formData.shippingDetails.length > 1 && (
+                    <div className="product-form-dialog__inline-row" style={{ flex: 1 }}>
+                      <input
+                        type="number"
+                        className="product-form-dialog__input"
+                        placeholder="추가 금액 (예: 3000)"
+                        value={surcharge.amount ?? ''}
+                        onChange={(e) => handleShippingSurchargeChange(surcharge.id, 'amount', e.target.value ? Number(e.target.value) : null)}
+                        min="0"
+                        max="9999999"
+                        style={{ flex: 1 }}
+                      />
+                      <span className="product-form-dialog__unit">원</span>
+                    </div>
+                    {formData.shippingSurcharges.length > 1 && (
                       <button
                         type="button"
                         className="product-form-dialog__remove-button"
-                        onClick={() => handleRemoveShippingDetail(detail.id)}
+                        onClick={() => handleRemoveShippingSurcharge(surcharge.id)}
                       >
                         삭제
                       </button>
@@ -702,7 +715,7 @@ export function ProductFormDialog({
               <button
                 type="button"
                 className="product-form-dialog__add-button"
-                onClick={handleAddShippingDetail}
+                onClick={handleAddShippingSurcharge}
                 style={{ marginTop: 12 }}
               >
                 <PlusIcon /> 추가

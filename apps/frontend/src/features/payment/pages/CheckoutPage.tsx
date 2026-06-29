@@ -8,6 +8,7 @@ import { fetchUserProfile } from '../../profile/api/profileApi';
 import { preparePayment, prepareDirectPayment, DirectPurchaseItem, fetchMyCoupons, fetchAvailableCoupons, CouponDto, getPaymentResult, deletePreparedOrder } from '../api/paymentApi';
 import { fetchProductDetail } from '../../productDetail/api/productDetailApi';
 import type { ProductDetail } from '../../productDetail/types/productDetail';
+import { detectDeliveryRegion, resolveOrderSurcharge, type ShippingSurchargeDto } from '@bongkru/contract';
 import { useToast } from '../../../contexts/ToastContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { PaymentLoadingOverlay, PaymentStep } from '../../../components';
@@ -33,6 +34,7 @@ interface DisplayItem {
   productCategoryId?: number | null;
   exposureCategoryIds?: number[];
   couponDiscount?: number;
+  shippingSurcharges?: ShippingSurchargeDto[];
 }
 
 declare global {
@@ -63,45 +65,11 @@ const DELIVERY_REQUEST_OPTIONS = [
 
 const DEFAULT_SHIPPING_CONFIG = {
   BASE_FEE: 3500,
-  EXTRA_FEE: 3500,
   FREE_THRESHOLD: null as number | null,
 };
 
-const REMOTE_AREA_PREFIXES = [
-  '63',     // 제주도 전체 (제주시, 서귀포시)
-  '402',    // 울릉도 전체 (40200~40250)
-  '223',    // 인천 옹진군 (백령도, 대청도, 소청도 등)
-  '230',    // 인천 옹진군 도서 (덕적도, 자월도, 영흥도 등)
-  '231',    // 인천 옹진군 도서 추가
-  '525',    // 여수 거문도, 초도
-  '530',    // 신안군 도서 (흑산도, 홍도 등)
-  '531',    // 신안군 도서 추가
-  '588',    // 통영시 도서 (한산도, 욕지도 등)
-  '589',    // 통영시 도서 추가 (사량도 등)
-  '590',    // 사천시 도서
-  '591',    // 진도군 도서 (조도면 등)
-  '597',    // 완도군 도서 (청산도, 보길도 등)
-  '598',    // 완도군, 해남군 도서
-  '546',    // 고흥군 도서
-  '547',    // 고흥군 도서 추가
-  '568',    // 보령시 도서 (외연도 등)
-  '339',    // 태안군 도서 (안면도 일부)
-  '326',    // 서산시 도서
-  '336',    // 홍성군 도서
-  '540',    // 여수시 도서
-  '544',    // 고흥군 내륙 제외 도서
-  '579',    // 해남군 도서
-  '580',    // 영암군, 강진군 도서
-  '582',    // 장흥군 도서
-  '169',    // 울진군 도서
-  '549',    // 장흥군 도서 추가
-  '559',    // 무안군 도서
-];
-
 function isRemoteArea(postalCode: string): boolean {
-  if (!postalCode) return false;
-  const code = postalCode.replace(/-/g, '');
-  return REMOTE_AREA_PREFIXES.some(prefix => code.startsWith(prefix));
+  return detectDeliveryRegion(postalCode) !== 'MAINLAND';
 }
 
 export function CheckoutPage() {
@@ -252,6 +220,7 @@ export function CheckoutPage() {
           totalPrice: unitPrice * item.quantity,
           productCategoryId: directProduct.productCategoryId,
           exposureCategoryIds: directProduct.exposureCategoryIds || [],
+          shippingSurcharges: directProduct.shippingSurcharges || [],
         };
       });
     } else {
@@ -273,6 +242,7 @@ export function CheckoutPage() {
         totalPrice: item.totalPrice,
         productCategoryId: (item as { productCategoryId?: number | null }).productCategoryId,
         exposureCategoryIds: (item as { exposureCategoryIds?: number[] }).exposureCategoryIds || [],
+        shippingSurcharges: (item as { shippingSurcharges?: ShippingSurchargeDto[] }).shippingSurcharges || [],
       }));
     }
     
@@ -298,11 +268,14 @@ export function CheckoutPage() {
 
   const baseShippingFee = useMemo(() => {
     const freeThreshold = shippingConfig.freeShippingThreshold;
-    if (freeThreshold !== null && productAmount >= freeThreshold) return 0;
-    const baseFee = shippingConfig.shippingFee;
-    const extraFee = currentAddress && isRemoteArea(currentAddress.postalCode) ? DEFAULT_SHIPPING_CONFIG.EXTRA_FEE : 0;
-    return baseFee + extraFee;
-  }, [productAmount, currentAddress, shippingConfig]);
+    const deliveryRegion = detectDeliveryRegion(currentAddress?.postalCode);
+    const extraFee = resolveOrderSurcharge(
+      displayItems.map(item => item.shippingSurcharges),
+      deliveryRegion,
+    );
+    if (freeThreshold !== null && productAmount >= freeThreshold) return extraFee;
+    return shippingConfig.shippingFee + extraFee;
+  }, [productAmount, currentAddress, shippingConfig, displayItems]);
 
   const { couponDiscount, itemDiscounts } = useMemo(() => {
     const discountMap = new Map<string, number>();

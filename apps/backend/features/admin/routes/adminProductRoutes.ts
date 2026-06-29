@@ -8,6 +8,7 @@ import { ExposureCategory } from '../../../entity/ExposureCategory';
 import { ProductExposureCategory } from '../../../entity/ProductExposureCategory';
 import { Review } from '../../../entity/Review';
 import { ProductInquiry } from '../../../entity/ProductInquiry';
+import { normalizeShippingSurcharges, ShippingSurchargeDto } from '@bongkru/contract';
 
 const router = Router();
 
@@ -239,7 +240,7 @@ router.get('/:productId', async (req: Request, res: Response) => {
       description?: string;
       caution?: string;
       productInfos?: Array<{ label: string; value: string }>;
-      shippingDetails?: Array<{ label: string; value: string }>;
+      shippingSurcharges?: ShippingSurchargeDto[];
       shippingInfo?: {
         shippingFee: number | null;
         freeShippingThreshold: number | null;
@@ -276,7 +277,7 @@ router.get('/:productId', async (req: Request, res: Response) => {
       description: detailContent.description || '',
       caution: detailContent.caution || '',
       productInfos: detailContent.productInfos || [],
-      shippingDetails: detailContent.shippingDetails || [],
+      shippingSurcharges: detailContent.shippingSurcharges || [],
       shippingInfo: detailContent.shippingInfo || {
         shippingFee: null,
         freeShippingThreshold: null,
@@ -331,7 +332,7 @@ router.put('/:productId', async (req: Request, res: Response) => {
       caution,
       options,
       productInfos,
-      shippingDetails,
+      shippingSurcharges,
       shippingInfo,
       thumbnailUrls,
       detailUrls,
@@ -374,7 +375,7 @@ router.put('/:productId', async (req: Request, res: Response) => {
       description,
       caution,
       productInfos,
-      shippingDetails,
+      shippingSurcharges: normalizeShippingSurcharges(shippingSurcharges),
       shippingInfo,
     });
 
@@ -490,7 +491,7 @@ router.post('/', async (req: Request, res: Response) => {
       caution,
       options,
       productInfos,
-      shippingDetails,
+      shippingSurcharges,
       shippingInfo,
       thumbnailUrls,
       detailUrls,
@@ -530,7 +531,7 @@ router.post('/', async (req: Request, res: Response) => {
         description,
         caution,
         productInfos,
-        shippingDetails,
+        shippingSurcharges: normalizeShippingSurcharges(shippingSurcharges),
         shippingInfo,
       }),
     });
