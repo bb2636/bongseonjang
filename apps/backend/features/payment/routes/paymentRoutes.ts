@@ -97,6 +97,14 @@ const router = Router();
 const NICEPAY_CLIENT_KEY = process.env.NICEPAY_CLIENT_KEY || '';
 const NICEPAY_SECRET_KEY = process.env.NICEPAY_SECRET_KEY || '';
 
+const NICEPAY_SANDBOX_KEY_PREFIX = 'S';
+const NICEPAY_SANDBOX_API_BASE_URL = 'https://sandbox-api.nicepay.co.kr';
+const NICEPAY_PRODUCTION_API_BASE_URL = 'https://api.nicepay.co.kr';
+const isNicePaySandboxKey = NICEPAY_CLIENT_KEY.startsWith(NICEPAY_SANDBOX_KEY_PREFIX);
+const NICEPAY_API_BASE_URL = isNicePaySandboxKey
+  ? NICEPAY_SANDBOX_API_BASE_URL
+  : NICEPAY_PRODUCTION_API_BASE_URL;
+
 const DEFAULT_PRODUCTION_BACKEND_URL = 'https://bongseonjang.replit.app';
 
 function getBackendBaseUrl(req: Request): string {
@@ -268,7 +276,7 @@ async function verifyPaymentWithNicePay(tid: string, orderId: string): Promise<{
   try {
     const credentials = Buffer.from(`${NICEPAY_CLIENT_KEY}:${NICEPAY_SECRET_KEY}`).toString('base64');
     
-    const response = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}`, {
+    const response = await fetch(`${NICEPAY_API_BASE_URL}/v1/payments/${tid}`, {
       method: 'GET',
       headers: {
         'Authorization': `Basic ${credentials}`,
@@ -988,7 +996,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
       console.log('[NicePay Callback] Proceeding to approval');
       console.log('[NicePay Callback] Calling approval API for tid:', tid, 'amount:', amount);
       
-      const response = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}`, {
+      const response = await fetch(`${NICEPAY_API_BASE_URL}/v1/payments/${tid}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1159,7 +1167,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
       if (!atomicResult.success) {
         console.log('[NicePay Callback] Atomic transaction failed:', atomicResult.errorMessage);
         
-        const cancelResponse = await fetch(`https://api.nicepay.co.kr/v1/payments/${tid}/cancel`, {
+        const cancelResponse = await fetch(`${NICEPAY_API_BASE_URL}/v1/payments/${tid}/cancel`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
