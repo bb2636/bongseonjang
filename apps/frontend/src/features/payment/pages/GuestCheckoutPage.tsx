@@ -586,6 +586,7 @@ export function GuestCheckoutPage() {
             title: '결제',
             isPresentAfterPageLoad: true,
             activeNativeNavigationForWebview: true,
+            enabledSafeBottomMargin: true,
           });
           console.log('[GuestPayment] InAppBrowser opened');
         } catch (err) {

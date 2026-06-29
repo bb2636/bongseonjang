@@ -657,6 +657,7 @@ export function CheckoutPage() {
             title: '결제',
             isPresentAfterPageLoad: true,
             activeNativeNavigationForWebview: true,
+            enabledSafeBottomMargin: true,
           });
           console.log('[Payment] InAppBrowser opened');
         } catch (err) {

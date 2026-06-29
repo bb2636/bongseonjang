@@ -7,6 +7,7 @@
 - [Capacitor cold-start](capacitor-cold-start.md) — backend home is fast; launch lag is render-blocking CDN font + bundle parse. Bundle fonts locally; fetchpriority must be lowercase in React 18.x
 - [Category URL slug](category-url-slug.md) — category URLs use Korean slug (name with '/'→'-'), not UUID; build via toCategorySlug, backend by-category accepts UUID or slug
 - [OAuth Custom Tab close](oauth-customtab-close.md) — Android Browser.close() can't close Chrome Custom Tabs; OAuth completion page must deep-link bongseonjang://oauth/close to foreground app (handler ignores it)
+- [InAppBrowser bottom inset](inappbrowser-bottom-inset.md) — set enabledSafeBottomMargin:true on @capgo/inappbrowser openWebView so NicePay page buttons clear the Android 15 nav bar; native uses real inset, not docs' 20px
 - [cap:build quirks](cap-build-quirks.md) — run long builds via temp workflow (bash kills bg procs); cap:build's final "assets" step fails on broken sharp but android project is already done — verify by grepping baked URL
 - [Social signup completion](social-signup-completion.md) — finish profile/address save + login synchronously in the profile submit handler, not via an auto-effect on the complete page; deferred sessionStorage handoff loses address + breaks login persistence
 - [Kakao OAuth scope](kakao-oauth-scope.md) — request only profile scopes (no account_email until 비즈앱) or Kakao returns KOE205; the no-email→requiresEmail gate must exempt kakao like apple
