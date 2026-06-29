@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useGoBack } from '../../../hooks/useGoBack';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCart } from '../../cart/api/cartApi';
@@ -74,7 +74,11 @@ function isRemoteArea(postalCode: string): boolean {
 
 export function CheckoutPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const goBack = useGoBack();
+  const navigateToAddressForm = (path: string) => {
+    navigate(path, { state: { returnTo: location.pathname + location.search } });
+  };
   const { showToast } = useToast();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -794,7 +798,7 @@ export function CheckoutPage() {
               <button 
                 type="button" 
                 className="checkout-add-address-button"
-                onClick={() => navigate('/address/add')}
+                onClick={() => navigateToAddressForm('/address/add')}
               >
                 배송지 등록
               </button>
@@ -1179,8 +1183,8 @@ export function CheckoutPage() {
           setSelectedAddressId(address.id);
           sessionStorage.setItem('checkout_selected_address_id', address.id);
         }}
-        onEdit={(address) => navigate(`/address/edit/${address.id}`)}
-        onAddNew={() => navigate('/address/add')}
+        onEdit={(address) => navigateToAddressForm(`/address/edit/${address.id}`)}
+        onAddNew={() => navigateToAddressForm('/address/add')}
       />
     </div>
   );
