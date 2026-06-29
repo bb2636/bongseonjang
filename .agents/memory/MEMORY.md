@@ -10,5 +10,6 @@
 - [cap:build quirks](cap-build-quirks.md) — run long builds via temp workflow (bash kills bg procs); cap:build's final "assets" step fails on broken sharp but android project is already done — verify by grepping baked URL
 - [Social signup completion](social-signup-completion.md) — finish profile/address save + login synchronously in the profile submit handler, not via an auto-effect on the complete page; deferred sessionStorage handoff loses address + breaks login persistence
 - [Kakao OAuth scope](kakao-oauth-scope.md) — request only profile scopes (no account_email until 비즈앱) or Kakao returns KOE205; the no-email→requiresEmail gate must exempt kakao like apple
+- [tsx standalone scripts](tsx-script-decorators.md) — run backend one-off scripts via tsx --tsconfig apps/backend/tsconfig.json; without it TypeORM entity decorators crash
 - [NicePay prepare/pending cleanup](nicepay-prepare-pending-cleanup.md) — prepare creates pending order before payment window; cleanup must cover !AUTHNICE + sync throw + fnError; clientId alert errors leak (covered by history filter)
 - [Production DB writes](prod-db-writes.md) — prod DB tooling is read-only; provision/seed prod data via idempotent app-startup code + republish, outside runProductionSeed product-count guard
