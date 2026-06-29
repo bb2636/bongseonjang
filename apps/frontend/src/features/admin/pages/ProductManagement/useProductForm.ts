@@ -574,9 +574,6 @@ export function useProductForm() {
     if (formData.thumbnailImages.length === 0) {
       errors.thumbnailImages = '썸네일 이미지를 최소 1장 업로드해주세요';
     }
-    if (formData.detailImages.length === 0) {
-      errors.detailImages = '상세페이지 이미지를 최소 1장 업로드해주세요';
-    }
 
     setFieldErrors(errors);
     setTouched({
@@ -586,7 +583,6 @@ export function useProductForm() {
       basePrice: true,
       description: true,
       thumbnailImages: true,
-      detailImages: true,
     });
 
     const hasErrors = Object.keys(errors).length > 0;

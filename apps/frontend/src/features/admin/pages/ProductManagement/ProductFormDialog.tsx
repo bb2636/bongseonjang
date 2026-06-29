@@ -246,7 +246,7 @@ export function ProductFormDialog({
 
             <div className="product-form-dialog__form-field" style={{ marginBottom: 16 }}>
               <label className="product-form-dialog__label">
-                상세페이지 이미지 (최대 5장) <span className="product-form-dialog__required">*</span>
+                상세페이지 이미지 (최대 5장, 선택)
               </label>
               <div className={`product-form-dialog__images-container ${hasError('detailImages') ? 'product-form-dialog__images-container--error' : ''}`}>
                 {formData.detailImages.map((img) => (
