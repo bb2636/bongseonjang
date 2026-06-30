@@ -55,6 +55,14 @@ args = "Start application"
 task = "workflow.run"
 args = "Backend server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "cap:build:ios temp"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "cap:build android temp"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -77,6 +85,28 @@ outputType = "console"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev:backend"
+
+[[workflows.workflow]]
+name = "cap:build:ios temp"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run cap:build:ios --workspace=@bongkru/frontend"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "cap:build android temp"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run cap:build --workspace=@bongkru/frontend"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [userenv]
 
