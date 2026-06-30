@@ -24,3 +24,16 @@ complete BEFORE it. A non-zero exit here does NOT mean the android project is un
 **How to apply:** after cap:build, verify success by checking the synced bundle has the
 right baked API URL (grep android/app/src/main/assets/public/assets for the prod domain,
 confirm no stale dev domain) rather than trusting the npm exit code.
+
+## AndroidManifest is NOT regenerated once android/app exists
+`fix-capacitor-paths.js` `ensureAppModule()` early-returns when `app/build.gradle` exists,
+so the template extraction + manifest patch only run on a FRESH create. The committed
+`android/app/src/main/AndroidManifest.xml` then persists across builds untouched.
+
+**Why:** editing only `patchAndroidManifest()` (e.g. to add a `<queries>` block) has NO
+effect on existing android projects — the patch never runs. Editing the synced manifest
+directly works but is fragile.
+
+**How to apply:** make manifest patches idempotent (guard with `content.includes(...)`)
+AND call `patchAndroidManifest()` in the early-return branch too, so existing projects
+self-heal on the next cap:build. Verify with `grep -c '<queries>'` on the synced manifest.
