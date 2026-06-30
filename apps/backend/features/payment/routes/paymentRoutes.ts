@@ -630,7 +630,9 @@ router.post('/prepare', authMiddleware, async (req: Request, res: Response) => {
 router.get('/form/:orderId', async (req: Request, res: Response) => {
   try {
     const { orderId } = req.params;
-    const appScheme = req.query.appScheme as string | undefined;
+    const rawAppScheme = req.query.appScheme as string | undefined;
+    const isValidScheme = !!rawAppScheme && /^[a-zA-Z][a-zA-Z0-9+.-]*$/.test(rawAppScheme);
+    const appScheme = isValidScheme ? rawAppScheme : undefined;
 
     const orderRepository = AppDataSource.getRepository(Order);
     const paymentRepository = AppDataSource.getRepository(Payment);
@@ -774,6 +776,7 @@ router.get('/form/:orderId', async (req: Request, res: Response) => {
         buyerTel: '${buyerTel.replace(/[^0-9-]/g, "")}',
         buyerEmail: '${buyerEmail.replace(/['"\\]/g, "")}',
         ${paymentMethod === 'vbank' ? `vbankHolder: '${buyerName.replace(/['"\\]/g, "")}',` : ''}
+        ${appScheme ? `appScheme: '${appScheme}://',` : ''}
         returnUrl: '${returnUrl}',
         fnError: function(result) {
           console.error('[NicePay Error] Full result:', JSON.stringify(result));
