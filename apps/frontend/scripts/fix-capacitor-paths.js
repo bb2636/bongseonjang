@@ -343,52 +343,106 @@ function patchAndroidManifest() {
     );
   }
 
-  if (!content.includes('<queries>')) {
-    content = content.replace(
-      '<application',
-      `<queries>
+  content = content.replace(/\n[ \t]*<queries>[\s\S]*?<\/queries>\n/, '\n');
+
+  const paymentAppPackages = [
+    'kvp.jjy.MispAndroid320',
+    'com.kftc.kjbcard',
+    'com.kbcard.cxh.appcard',
+    'com.kbcard.kbkookmincard',
+    'com.kbstar.kbbank',
+    'com.kbstar.liivbank',
+    'com.shcard.smartpay',
+    'com.shinhancard.smartshinhan',
+    'com.shinhan.smartcaremgr',
+    'com.hyundaicard.appcard',
+    'com.hyundaicard.cpm',
+    'kr.co.samsungcard.mpocket',
+    'com.samsung.android.spay',
+    'com.samsung.android.spaylite',
+    'com.lcacApp',
+    'com.lotte.lpay',
+    'com.hanaskcard.paycla',
+    'com.hanaskcard.rocomo.potal',
+    'kr.co.hanamembers.hmscustomer',
+    'nh.smart.nhallonepay',
+    'nh.smart.banking',
+    'com.nhnent.payapp',
+    'com.wooricard.wpay',
+    'com.wooricard.smartapp',
+    'com.wooribank.smart.npib',
+    'com.wooribank.pib.smart',
+    'kr.co.citibank.citimobile',
+    'com.kakao.talk',
+    'com.kakaobank.channel',
+    'viva.republica.toss',
+    'com.ahnlab.v3mobileplus',
+    'com.TouchEn.mVaccine.webs',
+    'com.lumensoft.touchenappfree',
+  ];
+
+  const paymentAppSchemes = [
+    'kftc-bankpay',
+    'ispmobile',
+    'shinhan-sr-ansimclick',
+    'kb-acp',
+    'kb-bankpay',
+    'liivbank',
+    'kbstar',
+    'newliiv',
+    'hdcardappcardansimclick',
+    'smhyundaiansimclick',
+    'lotteappcard',
+    'lottesmartpay',
+    'cloudpay',
+    'nhappcardansimclick',
+    'nhallonepayansimclick',
+    'nonghyupcardansimclick',
+    'citimobileapp',
+    'mpocket.online.ansimclick',
+    'ansimclickscard',
+    'ansimclickipcollect',
+    'wooripay',
+    'newsmartpib',
+    'supertoss',
+    'kakaotalk',
+    'payco',
+    'lpayapp',
+    'samsungpay',
+    'scardcertiapp',
+    'vguardstart',
+    'hanawalletmembers',
+    'lguthepay-xpay',
+    'uppay',
+    'nice_payments',
+    'nicepay-auth',
+  ];
+
+  const schemeIntents = paymentAppSchemes
+    .map(scheme => `        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="${scheme}" />
+        </intent>`)
+    .join('\n');
+
+  const packageEntries = paymentAppPackages
+    .map(pkg => `        <package android:name="${pkg}" />`)
+    .join('\n');
+
+  content = content.replace(
+    '    <application',
+    `    <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https" />
         </intent>
-        <package android:name="kvp.jjy.MispAndroid320" />
-        <package android:name="com.kftc.kjbcard" />
-        <package android:name="com.kbcard.cxh.appcard" />
-        <package android:name="com.kbcard.kbkookmincard" />
-        <package android:name="com.kbstar.kbbank" />
-        <package android:name="com.kbstar.liivbank" />
-        <package android:name="com.shcard.smartpay" />
-        <package android:name="com.shinhancard.smartshinhan" />
-        <package android:name="com.shinhan.smartcaremgr" />
-        <package android:name="com.hyundaicard.appcard" />
-        <package android:name="com.hyundaicard.cpm" />
-        <package android:name="kr.co.samsungcard.mpocket" />
-        <package android:name="com.samsung.android.spay" />
-        <package android:name="com.samsung.android.spaylite" />
-        <package android:name="com.lcacApp" />
-        <package android:name="com.lotte.lpay" />
-        <package android:name="com.hanaskcard.paycla" />
-        <package android:name="com.hanaskcard.rocomo.potal" />
-        <package android:name="kr.co.hanamembers.hmscustomer" />
-        <package android:name="nh.smart.nhallonepay" />
-        <package android:name="nh.smart.banking" />
-        <package android:name="com.nhnent.payapp" />
-        <package android:name="com.wooricard.wpay" />
-        <package android:name="com.wooribank.smart.npib" />
-        <package android:name="com.wooribank.pib.smart" />
-        <package android:name="kr.co.citibank.citimobile" />
-        <package android:name="com.kakao.talk" />
-        <package android:name="com.kakaobank.channel" />
-        <package android:name="viva.republica.toss" />
-        <package android:name="com.ahnlab.v3mobileplus" />
-        <package android:name="com.TouchEn.mVaccine.webs" />
-        <package android:name="com.lumensoft.touchenappfree" />
+${schemeIntents}
+${packageEntries}
     </queries>
 
     <application`
-    );
-  }
+  );
 
   writeFileSync(manifestPath, content, 'utf8');
   console.log('  ✔ Patched AndroidManifest.xml');
