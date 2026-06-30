@@ -149,7 +149,19 @@ export interface AdminOrderDetailDto {
   usedPoints: number;
   finalAmount: number;
   paymentMethod: string | null;
+  paymentStatus: string | null;
+  vbankName: string | null;
+  vbankNumber: string | null;
+  vbankHolder: string | null;
+  vbankExpiresAt: string | null;
   adminMemo: string | null;
+}
+
+export interface UpdateVirtualAccountParams {
+  vbankName: string | null;
+  vbankNumber: string | null;
+  vbankHolder: string | null;
+  vbankExpiresAt: string | null;
 }
 
 export async function fetchAdminOrderDetail(orderId: string): Promise<AdminOrderDetailDto> {
@@ -181,5 +193,37 @@ export async function updateAdminOrderMemo(orderId: string, adminMemo: string): 
   if (!response.ok) {
     const data = await response.json();
     throw new Error(data.error || '관리 메모 저장에 실패했습니다');
+  }
+}
+
+export async function updateVirtualAccount(orderId: string, params: UpdateVirtualAccountParams): Promise<void> {
+  const token = sessionStorage.getItem('admin_token');
+  const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/virtual-account`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || '가상계좌 정보 저장에 실패했습니다');
+  }
+}
+
+export async function confirmDeposit(orderId: string): Promise<void> {
+  const token = sessionStorage.getItem('admin_token');
+  const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/confirm-deposit`, {
+    method: 'POST',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || '입금 확인 처리에 실패했습니다');
   }
 }

@@ -36,6 +36,59 @@
   color: #f44336;
 }
 
+.payment-result-icon--pending {
+  background-color: #fff3e0;
+  color: #fb8c00;
+}
+
+.payment-result-vbank {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #f8f9fb;
+  border: 1px solid #e5e8ee;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.payment-result-vbank-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.payment-result-vbank-row + .payment-result-vbank-row {
+  border-top: 1px solid #eef0f4;
+}
+
+.payment-result-vbank-label {
+  font-size: 13px;
+  color: #888;
+}
+
+.payment-result-vbank-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.payment-result-vbank-value--account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payment-result-vbank-copy {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3B9BD5;
+  background-color: #eaf4fb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 .payment-result-lottie {
   display: flex;
   justify-content: center;

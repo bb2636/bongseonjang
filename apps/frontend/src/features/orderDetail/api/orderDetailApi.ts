@@ -17,10 +17,15 @@ export interface OrderDetailItem {
 export interface PaymentInfo {
   method: string;
   methodLabel: string;
+  status: string | null;
   cardCompany: string | null;
   cardNumber: string | null;
   installmentMonths: number | null;
   paidAt: string | null;
+  vbankName: string | null;
+  vbankNumber: string | null;
+  vbankHolder: string | null;
+  vbankExpiresAt: string | null;
 }
 
 export interface ShipmentSummary {

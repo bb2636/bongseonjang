@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
-import { fetchAdminOrderDetail, updateAdminOrderMemo, AdminOrderDetailDto } from '../../api/adminOrderApi';
+import { fetchAdminOrderDetail, updateAdminOrderMemo, updateVirtualAccount, confirmDeposit, AdminOrderDetailDto } from '../../api/adminOrderApi';
 import { useBodyScrollLock } from '../../../../hooks/useBodyScrollLock';
 import './OrderDetailPanel.css';
+
+function toDateTimeLocalValue(raw: string | null): string {
+  if (!raw) {
+    return '';
+  }
+  return raw.replace(' ', 'T').slice(0, 16);
+}
 
 interface OrderDetailPanelProps {
   orderId: string;
@@ -63,6 +70,14 @@ export function OrderDetailPanel({ orderId, isOpen, onClose }: OrderDetailPanelP
   const [isSavingMemo, setIsSavingMemo] = useState(false);
   const [memoSaveSuccess, setMemoSaveSuccess] = useState(false);
 
+  const [vbankName, setVbankName] = useState('');
+  const [vbankNumber, setVbankNumber] = useState('');
+  const [vbankHolder, setVbankHolder] = useState('');
+  const [vbankExpiresAt, setVbankExpiresAt] = useState('');
+  const [isSavingVbank, setIsSavingVbank] = useState(false);
+  const [vbankSaveSuccess, setVbankSaveSuccess] = useState(false);
+  const [isConfirmingDeposit, setIsConfirmingDeposit] = useState(false);
+
   useEffect(() => {
     if (isOpen && orderId) {
       fetchOrderDetail();
@@ -75,10 +90,50 @@ export function OrderDetailPanel({ orderId, isOpen, onClose }: OrderDetailPanelP
       const data = await fetchAdminOrderDetail(orderId);
       setOrder(data);
       setAdminMemo(data.adminMemo || '');
+      setVbankName(data.vbankName || '');
+      setVbankNumber(data.vbankNumber || '');
+      setVbankHolder(data.vbankHolder || '');
+      setVbankExpiresAt(toDateTimeLocalValue(data.vbankExpiresAt));
     } catch (error) {
       console.error('Failed to fetch order detail:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSaveVbank = async () => {
+    setIsSavingVbank(true);
+    setVbankSaveSuccess(false);
+    try {
+      await updateVirtualAccount(orderId, {
+        vbankName: vbankName.trim() || null,
+        vbankNumber: vbankNumber.trim() || null,
+        vbankHolder: vbankHolder.trim() || null,
+        vbankExpiresAt: vbankExpiresAt ? new Date(vbankExpiresAt).toISOString() : null,
+      });
+      setVbankSaveSuccess(true);
+      setTimeout(() => setVbankSaveSuccess(false), 2000);
+    } catch (error) {
+      console.error('Failed to save virtual account:', error);
+      alert(error instanceof Error ? error.message : '가상계좌 정보 저장에 실패했습니다');
+    } finally {
+      setIsSavingVbank(false);
+    }
+  };
+
+  const handleConfirmDeposit = async () => {
+    if (!window.confirm('입금을 확인하고 주문을 완료 처리하시겠습니까?')) {
+      return;
+    }
+    setIsConfirmingDeposit(true);
+    try {
+      await confirmDeposit(orderId);
+      await fetchOrderDetail();
+    } catch (error) {
+      console.error('Failed to confirm deposit:', error);
+      alert(error instanceof Error ? error.message : '입금 확인 처리에 실패했습니다');
+    } finally {
+      setIsConfirmingDeposit(false);
     }
   };
 
@@ -263,6 +318,71 @@ export function OrderDetailPanel({ orderId, isOpen, onClose }: OrderDetailPanelP
                   </div>
                 </div>
               </div>
+
+              {order.paymentMethod === 'ACCOUNT_TRANSFER' && (
+                <div className="order-detail-section">
+                  <div className="order-detail-section-title">가상계좌 정보</div>
+                  {order.paymentStatus !== 'completed' && (
+                    <div className="order-detail-vbank-notice">입금 대기 중인 주문입니다.</div>
+                  )}
+                  <div className="order-detail-vbank-fields">
+                    <div className="order-detail-vbank-field">
+                      <label className="order-detail-vbank-label">입금은행</label>
+                      <input
+                        className="order-detail-vbank-input"
+                        value={vbankName}
+                        onChange={(e) => setVbankName(e.target.value)}
+                        placeholder="은행명"
+                      />
+                    </div>
+                    <div className="order-detail-vbank-field">
+                      <label className="order-detail-vbank-label">계좌번호</label>
+                      <input
+                        className="order-detail-vbank-input"
+                        value={vbankNumber}
+                        onChange={(e) => setVbankNumber(e.target.value)}
+                        placeholder="계좌번호"
+                      />
+                    </div>
+                    <div className="order-detail-vbank-field">
+                      <label className="order-detail-vbank-label">예금주</label>
+                      <input
+                        className="order-detail-vbank-input"
+                        value={vbankHolder}
+                        onChange={(e) => setVbankHolder(e.target.value)}
+                        placeholder="예금주"
+                      />
+                    </div>
+                    <div className="order-detail-vbank-field">
+                      <label className="order-detail-vbank-label">입금기한</label>
+                      <input
+                        type="datetime-local"
+                        className="order-detail-vbank-input"
+                        value={vbankExpiresAt}
+                        onChange={(e) => setVbankExpiresAt(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="order-detail-vbank-actions">
+                    <button
+                      className="order-detail-vbank-save-button"
+                      onClick={handleSaveVbank}
+                      disabled={isSavingVbank}
+                    >
+                      {isSavingVbank ? '저장 중...' : vbankSaveSuccess ? '저장 완료!' : '계좌정보 저장'}
+                    </button>
+                    {order.paymentStatus !== 'completed' && (
+                      <button
+                        className="order-detail-vbank-confirm-button"
+                        onClick={handleConfirmDeposit}
+                        disabled={isConfirmingDeposit}
+                      >
+                        {isConfirmingDeposit ? '처리 중...' : '입금 확인'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="order-detail-section">
                 <div className="order-detail-section-title">관리 메모</div>

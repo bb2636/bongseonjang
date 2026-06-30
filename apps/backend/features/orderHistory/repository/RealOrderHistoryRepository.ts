@@ -273,10 +273,15 @@ export class RealOrderHistoryRepository implements OrderHistoryRepository {
       paymentInfo = {
         method: payment.method,
         methodLabel: paymentMethodLabelMap[payment.method] || payment.method,
+        status: payment.status ?? null,
         cardCompany: payment.cardCompany,
         cardNumber: payment.cardNumber,
         installmentMonths: payment.installmentMonths,
         paidAt: payment.paidAt ? this.formatDateTime(payment.paidAt) : null,
+        vbankName: payment.vbankName ?? null,
+        vbankNumber: payment.vbankNumber ?? null,
+        vbankHolder: payment.vbankHolder ?? null,
+        vbankExpiresAt: payment.vbankExpiresAt ? this.formatDateTime(payment.vbankExpiresAt) : null,
       };
     }
 

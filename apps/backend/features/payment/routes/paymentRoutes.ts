@@ -273,6 +273,7 @@ async function verifyPaymentWithNicePay(tid: string, orderId: string): Promise<{
   resultMsg?: string;
   amount?: number;
   status?: string;
+  orderId?: string;
 }> {
   try {
     const credentials = Buffer.from(`${NICEPAY_CLIENT_KEY}:${NICEPAY_SECRET_KEY}`).toString('base64');
@@ -289,6 +290,7 @@ async function verifyPaymentWithNicePay(tid: string, orderId: string): Promise<{
       resultMsg: string;
       amount?: number;
       status?: string;
+      orderId?: string;
     };
     
     console.log('[NicePay Verify] Payment status check result:', result);
@@ -299,11 +301,273 @@ async function verifyPaymentWithNicePay(tid: string, orderId: string): Promise<{
       resultMsg: result.resultMsg,
       amount: result.amount,
       status: result.status,
+      orderId: result.orderId,
     };
   } catch (error) {
     console.error('[NicePay Verify] Failed to verify payment:', error);
     return { success: false };
   }
+}
+
+function parseVbankExpDate(raw?: string | null): Date | null {
+  if (!raw) {
+    return null;
+  }
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length < 8) {
+    return null;
+  }
+  const year = parseInt(digits.slice(0, 4), 10);
+  const month = parseInt(digits.slice(4, 6), 10) - 1;
+  const day = parseInt(digits.slice(6, 8), 10);
+  const hour = digits.length >= 10 ? parseInt(digits.slice(8, 10), 10) : 23;
+  const minute = digits.length >= 12 ? parseInt(digits.slice(10, 12), 10) : 59;
+  const second = digits.length >= 14 ? parseInt(digits.slice(12, 14), 10) : 59;
+  const parsed = new Date(year, month, day, hour, minute, second);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+interface FinalizePaidOrderResult {
+  success: boolean;
+  errorType?: string | null;
+  errorMessage?: string;
+}
+
+export async function finalizePaidOrder(params: {
+  orderId: string;
+  tid: string;
+  cardCompany?: string | null;
+  cardNumber?: string | null;
+}): Promise<FinalizePaidOrderResult> {
+  const { orderId, tid } = params;
+  const orderRepository = AppDataSource.getRepository(Order);
+  const paymentRepository = AppDataSource.getRepository(Payment);
+  const cartItemRepository = AppDataSource.getRepository(CartItem);
+  const pointRepository = new PointRepository();
+  const couponRepository = new CouponRepository();
+
+  const atomicResult = await AppDataSource.transaction(async (transactionalEntityManager: typeof AppDataSource.manager) => {
+    const order = await transactionalEntityManager
+      .getRepository(Order)
+      .createQueryBuilder('order')
+      .setLock('pessimistic_write')
+      .where('order.id = :id', { id: orderId })
+      .getOne();
+
+    if (!order) {
+      return { success: false as const, errorType: 'order_not_found' as const, errorMessage: '주문을 찾을 수 없습니다' };
+    }
+
+    const payment = await transactionalEntityManager
+      .getRepository(Payment)
+      .createQueryBuilder('payment')
+      .setLock('pessimistic_write')
+      .where('payment.orderId = :orderId', { orderId })
+      .getOne();
+
+    if (order.status === 'paid' || payment?.status === 'completed') {
+      console.log('[finalizePaidOrder] Order already finalized, skipping:', orderId);
+      return { success: true as const, alreadyFinalized: true as const };
+    }
+
+    let userCouponIds: number[] = [];
+    if (order.userCouponIdsJson) {
+      try {
+        userCouponIds = JSON.parse(order.userCouponIdsJson);
+      } catch (e) {
+        console.error('[finalizePaidOrder] Failed to parse userCouponIdsJson:', e);
+      }
+    } else if (order.userCouponId) {
+      userCouponIds = [order.userCouponId];
+    }
+
+    const orderItems = await transactionalEntityManager.getRepository(OrderItem).find({ where: { orderId } });
+
+    const insufficientStockProducts: string[] = [];
+    const productUpdates: Array<{ productId: string; quantityToDeduct: number }> = [];
+    const optionUpdates: Array<{ optionId: number; quantityToDeduct: number }> = [];
+
+    const productQuantityMap = new Map<string, number>();
+    const optionQuantityMap = new Map<number, { quantity: number; productName: string }>();
+
+    for (const item of orderItems) {
+      if (item.productId) {
+        const currentQty = productQuantityMap.get(item.productId) || 0;
+        productQuantityMap.set(item.productId, currentQty + item.quantity);
+      }
+      if (item.productOptionId) {
+        const existing = optionQuantityMap.get(item.productOptionId);
+        if (existing) {
+          existing.quantity += item.quantity;
+        } else {
+          optionQuantityMap.set(item.productOptionId, {
+            quantity: item.quantity,
+            productName: item.productName
+          });
+        }
+      }
+    }
+
+    for (const [productId, totalQuantity] of productQuantityMap) {
+      const product = await transactionalEntityManager
+        .getRepository(Product)
+        .createQueryBuilder('product')
+        .setLock('pessimistic_write')
+        .where('product.id = :id', { id: productId })
+        .getOne();
+
+      if (!product) {
+        insufficientStockProducts.push(`상품을 찾을 수 없음 (ID: ${productId})`);
+        continue;
+      }
+
+      if (product.stockQuantity < totalQuantity) {
+        insufficientStockProducts.push(`${product.name} (재고: ${product.stockQuantity}, 필요: ${totalQuantity})`);
+      } else {
+        productUpdates.push({ productId, quantityToDeduct: totalQuantity });
+      }
+    }
+
+    for (const [optionId, { quantity: totalQuantity, productName }] of optionQuantityMap) {
+      const option = await transactionalEntityManager
+        .getRepository(ProductOption)
+        .createQueryBuilder('option')
+        .setLock('pessimistic_write')
+        .where('option.id = :optionId', { optionId })
+        .getOne();
+
+      if (!option) {
+        insufficientStockProducts.push(`옵션을 찾을 수 없음 (ID: ${optionId})`);
+        continue;
+      }
+
+      if (option.stockQuantity < totalQuantity) {
+        insufficientStockProducts.push(`${productName} - ${option.optionName}: ${option.optionValue} (재고: ${option.stockQuantity}, 필요: ${totalQuantity})`);
+      } else {
+        optionUpdates.push({ optionId, quantityToDeduct: totalQuantity });
+      }
+    }
+
+    if (insufficientStockProducts.length > 0) {
+      return {
+        success: false,
+        errorType: 'stock_insufficient' as const,
+        errorMessage: `재고 부족: ${insufficientStockProducts.join(', ')}`,
+        insufficientProducts: insufficientStockProducts
+      };
+    }
+
+    for (const update of productUpdates) {
+      await transactionalEntityManager
+        .getRepository(Product)
+        .decrement({ id: update.productId }, 'stockQuantity', update.quantityToDeduct);
+    }
+
+    for (const update of optionUpdates) {
+      await transactionalEntityManager
+        .getRepository(ProductOption)
+        .decrement({ id: update.optionId }, 'stockQuantity', update.quantityToDeduct);
+    }
+
+    if (order.userId && order.usedPoints > 0) {
+      const wallet = await pointRepository.getOrCreateWalletWithManager(transactionalEntityManager, order.userId);
+      await pointRepository.usePointsWithManager(
+        transactionalEntityManager,
+        wallet.id,
+        order.usedPoints,
+        `주문 결제 - ${order.orderNumber}`,
+        order.id
+      );
+      console.log('[finalizePaidOrder] Points deducted within transaction:', order.usedPoints);
+    }
+
+    for (const userCouponId of userCouponIds) {
+      await couponRepository.useUserCouponWithManager(
+        transactionalEntityManager,
+        userCouponId,
+        order.id
+      );
+      console.log('[finalizePaidOrder] Coupon used within transaction:', userCouponId);
+    }
+
+    order.status = 'paid';
+    order.paidAt = new Date();
+    await transactionalEntityManager.getRepository(Order).save(order);
+
+    if (payment) {
+      payment.status = 'completed';
+      payment.pgTransactionId = tid;
+      payment.paidAt = new Date();
+      if (params.cardCompany !== undefined) {
+        payment.cardCompany = params.cardCompany || null;
+      }
+      if (params.cardNumber !== undefined) {
+        payment.cardNumber = params.cardNumber || null;
+      }
+      await transactionalEntityManager.getRepository(Payment).save(payment);
+    }
+
+    return {
+      success: true as const,
+      errorType: null,
+      errorMessage: null,
+      cartItemIdsSnapshot: order.cartItemIdsSnapshot ?? [],
+    };
+  });
+
+  if (!atomicResult.success) {
+    if (atomicResult.errorType === 'order_not_found') {
+      return { success: false, errorType: 'order_not_found', errorMessage: atomicResult.errorMessage };
+    }
+
+    console.log('[finalizePaidOrder] Atomic transaction failed:', atomicResult.errorMessage);
+
+    const credentials = Buffer.from(`${NICEPAY_CLIENT_KEY}:${NICEPAY_SECRET_KEY}`).toString('base64');
+    const cancelResponse = await fetch(`${NICEPAY_API_BASE_URL}/v1/payments/${tid}/cancel`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${credentials}`,
+      },
+      body: JSON.stringify({
+        reason: atomicResult.errorMessage || '주문 처리 실패로 인한 결제 취소',
+        orderId,
+      }),
+    });
+
+    const cancelResult = await cancelResponse.json() as { resultCode: string; resultMsg: string };
+    console.log('[finalizePaidOrder] Cancel result:', cancelResult);
+
+    const order = await orderRepository.findOne({ where: { id: orderId } });
+    if (order) {
+      order.status = atomicResult.errorType === 'stock_insufficient' ? 'stock_insufficient' : 'payment_failed';
+      await orderRepository.save(order);
+    }
+
+    const payment = await paymentRepository.findOne({ where: { orderId } });
+    if (payment) {
+      payment.status = 'cancelled';
+      payment.pgTransactionId = tid;
+      payment.failReason = atomicResult.errorMessage || '주문 처리 실패';
+      await paymentRepository.save(payment);
+    }
+
+    return { success: false, errorType: atomicResult.errorType, errorMessage: atomicResult.errorMessage || '주문 처리 실패' };
+  }
+
+  if (atomicResult.alreadyFinalized) {
+    return { success: true };
+  }
+
+  try {
+    if (atomicResult.cartItemIdsSnapshot && atomicResult.cartItemIdsSnapshot.length > 0) {
+      await cartItemRepository.delete({ id: In(atomicResult.cartItemIdsSnapshot) });
+    }
+  } catch (cartError) {
+    console.error('[finalizePaidOrder] Failed to delete cart items:', cartError);
+  }
+
+  return { success: true };
 }
 
 function generateOrderNumber(): string {
@@ -992,8 +1256,19 @@ async function handlePaymentCallback(req: Request, res: Response) {
     let approvalResult: {
       resultCode: string;
       resultMsg: string;
+      status?: string;
       cardName?: string;
       cardNo?: string;
+      vbankName?: string;
+      vbankNumber?: string;
+      vbankHolder?: string;
+      vbankExpDate?: string;
+      vbank?: {
+        vbankName?: string;
+        vbankNumber?: string;
+        vbankHolder?: string;
+        vbankExpDate?: string;
+      };
     } | null = null;
     
     if (parseInt(amount, 10) !== order.finalAmount) {
@@ -1014,12 +1289,7 @@ async function handlePaymentCallback(req: Request, res: Response) {
         body: JSON.stringify({ amount: parseInt(amount, 10) }),
       });
 
-      approvalResult = await response.json() as {
-        resultCode: string;
-        resultMsg: string;
-        cardName?: string;
-        cardNo?: string;
-      };
+      approvalResult = await response.json() as typeof approvalResult;
       console.log('[NicePay Callback] Approval result:', approvalResult);
       
       if (approvalResult.resultCode === '0000' || approvalResult.resultCode === '0') {
@@ -1041,190 +1311,48 @@ async function handlePaymentCallback(req: Request, res: Response) {
     if (approvalSuccess) {
       console.log('[NicePay Callback] Payment approved successfully');
       
-      const orderItemRepository = AppDataSource.getRepository(OrderItem);
-      const productRepository = AppDataSource.getRepository(Product);
-      
-      const orderItems = await orderItemRepository.find({
-        where: { orderId },
-      });
-      
-      const pointRepository = new PointRepository();
-      const couponRepository = new CouponRepository();
-      
-      let userCouponIds: number[] = [];
-      if (order.userCouponIdsJson) {
-        try {
-          userCouponIds = JSON.parse(order.userCouponIdsJson);
-        } catch (e) {
-          console.error('[NicePay Callback] Failed to parse userCouponIdsJson:', e);
-        }
-      } else if (order.userCouponId) {
-        userCouponIds = [order.userCouponId];
-      }
-      
-      const atomicResult = await AppDataSource.transaction(async (transactionalEntityManager: typeof AppDataSource.manager) => {
-        const insufficientStockProducts: string[] = [];
-        const productUpdates: Array<{ productId: string; quantityToDeduct: number }> = [];
-        const optionUpdates: Array<{ optionId: number; quantityToDeduct: number }> = [];
-        
-        const productQuantityMap = new Map<string, number>();
-        const optionQuantityMap = new Map<number, { quantity: number; productName: string }>();
-        
-        for (const item of orderItems) {
-          if (item.productId) {
-            const currentQty = productQuantityMap.get(item.productId) || 0;
-            productQuantityMap.set(item.productId, currentQty + item.quantity);
-          }
-          if (item.productOptionId) {
-            const existing = optionQuantityMap.get(item.productOptionId);
-            if (existing) {
-              existing.quantity += item.quantity;
-            } else {
-              optionQuantityMap.set(item.productOptionId, { 
-                quantity: item.quantity, 
-                productName: item.productName 
-              });
-            }
-          }
-        }
-        
-        for (const [productId, totalQuantity] of productQuantityMap) {
-          const product = await transactionalEntityManager
-            .getRepository(Product)
-            .createQueryBuilder('product')
-            .setLock('pessimistic_write')
-            .where('product.id = :id', { id: productId })
-            .getOne();
-          
-          if (!product) {
-            insufficientStockProducts.push(`상품을 찾을 수 없음 (ID: ${productId})`);
-            continue;
-          }
-          
-          if (product.stockQuantity < totalQuantity) {
-            insufficientStockProducts.push(`${product.name} (재고: ${product.stockQuantity}, 필요: ${totalQuantity})`);
-          } else {
-            productUpdates.push({ productId, quantityToDeduct: totalQuantity });
-          }
-        }
-        
-        for (const [optionId, { quantity: totalQuantity, productName }] of optionQuantityMap) {
-          const option = await transactionalEntityManager
-            .getRepository(ProductOption)
-            .createQueryBuilder('option')
-            .setLock('pessimistic_write')
-            .where('option.id = :optionId', { optionId })
-            .getOne();
-          
-          if (!option) {
-            insufficientStockProducts.push(`옵션을 찾을 수 없음 (ID: ${optionId})`);
-            continue;
-          }
-          
-          if (option.stockQuantity < totalQuantity) {
-            insufficientStockProducts.push(`${productName} - ${option.optionName}: ${option.optionValue} (재고: ${option.stockQuantity}, 필요: ${totalQuantity})`);
-          } else {
-            optionUpdates.push({ optionId, quantityToDeduct: totalQuantity });
-          }
-        }
-        
-        if (insufficientStockProducts.length > 0) {
-          return { 
-            success: false, 
-            errorType: 'stock_insufficient' as const, 
-            errorMessage: `재고 부족: ${insufficientStockProducts.join(', ')}`,
-            insufficientProducts: insufficientStockProducts 
-          };
-        }
-        
-        for (const update of productUpdates) {
-          await transactionalEntityManager
-            .getRepository(Product)
-            .decrement({ id: update.productId }, 'stockQuantity', update.quantityToDeduct);
-        }
-        
-        for (const update of optionUpdates) {
-          await transactionalEntityManager
-            .getRepository(ProductOption)
-            .decrement({ id: update.optionId }, 'stockQuantity', update.quantityToDeduct);
-        }
-        
-        if (order.userId && order.usedPoints > 0) {
-          const wallet = await pointRepository.getOrCreateWalletWithManager(transactionalEntityManager, order.userId);
-          await pointRepository.usePointsWithManager(
-            transactionalEntityManager,
-            wallet.id,
-            order.usedPoints,
-            `주문 결제 - ${order.orderNumber}`,
-            order.id
-          );
-          console.log('[NicePay Callback] Points deducted within transaction:', order.usedPoints);
-        }
-        
-        for (const userCouponId of userCouponIds) {
-          await couponRepository.useUserCouponWithManager(
-            transactionalEntityManager,
-            userCouponId,
-            order.id
-          );
-          console.log('[NicePay Callback] Coupon used within transaction:', userCouponId);
-        }
-        
-        return { success: true, errorType: null, errorMessage: null, insufficientProducts: [] };
-      });
-      
-      if (!atomicResult.success) {
-        console.log('[NicePay Callback] Atomic transaction failed:', atomicResult.errorMessage);
-        
-        const cancelResponse = await fetch(`${NICEPAY_API_BASE_URL}/v1/payments/${tid}/cancel`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Basic ${credentials}`,
-          },
-          body: JSON.stringify({
-            reason: atomicResult.errorMessage || '주문 처리 실패로 인한 결제 취소',
-            orderId: orderId,
-          }),
-        });
-        
-        const cancelResult = await cancelResponse.json() as { resultCode: string; resultMsg: string };
-        console.log('[NicePay Callback] Cancel result:', cancelResult);
-        
-        order.status = atomicResult.errorType === 'stock_insufficient' ? 'stock_insufficient' : 'payment_failed';
-        await orderRepository.save(order);
-        
-        if (payment) {
-          payment.status = 'cancelled';
-          payment.pgTransactionId = tid;
-          payment.failReason = atomicResult.errorMessage || '주문 처리 실패';
-          await paymentRepository.save(payment);
-        }
-        
-        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: atomicResult.errorMessage || '주문 처리 실패' }), appScheme);
-      }
-      
-      order.status = 'paid';
-      order.paidAt = new Date();
-      await orderRepository.save(order);
+      if (payment && payment.method === 'virtual_account') {
+        const vbankSource = approvalResult?.vbank || approvalResult || {};
+        const vbankName = vbankSource.vbankName || null;
+        const vbankNumber = vbankSource.vbankNumber || null;
+        const vbankHolder = vbankSource.vbankHolder || null;
+        const vbankExpiresAt = parseVbankExpDate(vbankSource.vbankExpDate);
 
-      if (payment) {
-        payment.status = 'completed';
+        payment.status = 'pending';
         payment.pgTransactionId = tid;
-        payment.paidAt = new Date();
-        if (approvalResult) {
-          payment.cardCompany = approvalResult.cardName || null;
-          payment.cardNumber = approvalResult.cardNo || null;
-        }
+        payment.vbankName = vbankName;
+        payment.vbankNumber = vbankNumber;
+        payment.vbankHolder = vbankHolder;
+        payment.vbankExpiresAt = vbankExpiresAt;
         await paymentRepository.save(payment);
+
+        order.status = 'payment_pending';
+        await orderRepository.save(order);
+
+        const vbankParams: Record<string, string> = {
+          orderNumber: order.orderNumber,
+          vbank: 'true',
+        };
+        if (vbankName) vbankParams.vbankName = vbankName;
+        if (vbankNumber) vbankParams.vbankNumber = vbankNumber;
+        if (vbankHolder) vbankParams.vbankHolder = vbankHolder;
+        if (vbankExpiresAt) vbankParams.vbankExpiresAt = vbankExpiresAt.toISOString();
+        if (!order.userId) vbankParams.guest = 'true';
+
+        console.log('[NicePay Callback] Virtual account issued, awaiting deposit. order:', order.orderNumber);
+        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/success', vbankParams), appScheme);
       }
 
-      try {
-        if (order.cartItemIdsSnapshot && order.cartItemIdsSnapshot.length > 0) {
-          await cartItemRepository.delete({ id: In(order.cartItemIdsSnapshot) });
-        }
-      } catch (cartError) {
-        console.error('[NicePay Callback] Failed to delete cart items:', cartError);
+      const finalizeResult = await finalizePaidOrder({
+        orderId,
+        tid,
+        cardCompany: approvalResult?.cardName ?? null,
+        cardNumber: approvalResult?.cardNo ?? null,
+      });
+
+      if (!finalizeResult.success) {
+        console.log('[NicePay Callback] Finalization failed:', finalizeResult.errorMessage);
+        return sendRedirectPage(res, buildOrderRedirectUrl('/payment/fail', { orderId: order.id, message: finalizeResult.errorMessage || '주문 처리 실패' }), appScheme);
       }
 
       const isGuestOrder = !order.userId;
@@ -1253,8 +1381,67 @@ async function handlePaymentCallback(req: Request, res: Response) {
   }
 }
 
+async function handleDepositWebhook(req: Request, res: Response) {
+  try {
+    const payload = { ...req.query, ...req.body } as Record<string, unknown>;
+    const tid = (payload.tid || payload.TID) as string | undefined;
+    const orderId = (payload.orderId || payload.MOID || payload.moid) as string | undefined;
+    console.log('[NicePay Webhook] Received deposit notification:', { tid, orderId, status: payload.status });
+
+    if (!tid || !orderId) {
+      console.error('[NicePay Webhook] Missing tid or orderId');
+      return res.status(400).send('Missing tid or orderId');
+    }
+
+    const verifyResult = await verifyPaymentWithNicePay(tid, orderId);
+    if (!verifyResult.success || verifyResult.status !== 'paid') {
+      console.error('[NicePay Webhook] Payment not paid:', verifyResult.status);
+      return res.status(400).send('Payment not paid');
+    }
+
+    if (verifyResult.orderId !== undefined && verifyResult.orderId !== orderId) {
+      console.error('[NicePay Webhook] tid/orderId mismatch:', verifyResult.orderId, 'expected:', orderId);
+      return res.status(400).send('Order mismatch');
+    }
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const order = await orderRepository.findOne({ where: { id: orderId } });
+    if (!order) {
+      console.error('[NicePay Webhook] Order not found:', orderId);
+      return res.status(404).send('Order not found');
+    }
+
+    const paymentRepository = AppDataSource.getRepository(Payment);
+    const payment = await paymentRepository.findOne({ where: { orderId } });
+    if (!payment || payment.method !== 'virtual_account') {
+      console.error('[NicePay Webhook] Not a virtual account payment:', orderId);
+      return res.status(400).send('Not a virtual account payment');
+    }
+
+    if (verifyResult.amount !== undefined && verifyResult.amount !== order.finalAmount) {
+      console.error('[NicePay Webhook] Amount mismatch:', verifyResult.amount, 'expected:', order.finalAmount);
+      return res.status(400).send('Amount mismatch');
+    }
+
+    const finalizeResult = await finalizePaidOrder({ orderId, tid });
+    if (!finalizeResult.success) {
+      console.error('[NicePay Webhook] Finalization failed:', finalizeResult.errorMessage);
+      return res.status(500).send('Finalization failed');
+    }
+
+    console.log('[NicePay Webhook] Deposit confirmed and order finalized:', orderId);
+    return res.status(200).send('OK');
+  } catch (error) {
+    console.error('[NicePay Webhook] Error:', error);
+    return res.status(500).send('Internal error');
+  }
+}
+
 router.get('/callback', handlePaymentCallback);
 router.post('/callback', handlePaymentCallback);
+
+router.get('/webhook', handleDepositWebhook);
+router.post('/webhook', handleDepositWebhook);
 
 // Error logging endpoint for NicePay payment errors (also handles order deletion)
 // Uses optional auth - if token provided, validates ownership
@@ -1625,7 +1812,17 @@ router.get('/order/:orderId', authMiddleware, async (req: Request, res: Response
       return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
     }
 
-    return res.json(order);
+    const payment = await AppDataSource.getRepository(Payment).findOne({ where: { orderId } });
+
+    return res.json({
+      ...order,
+      paymentMethod: payment?.method ?? null,
+      paymentStatus: payment?.status ?? null,
+      vbankName: payment?.vbankName ?? null,
+      vbankNumber: payment?.vbankNumber ?? null,
+      vbankHolder: payment?.vbankHolder ?? null,
+      vbankExpiresAt: payment?.vbankExpiresAt ?? null,
+    });
   } catch (error) {
     console.error('Failed to get order:', error);
     return res.status(500).json({ error: '주문 조회에 실패했습니다' });
@@ -1951,6 +2148,8 @@ router.get('/guest/order/:orderId', async (req: Request, res: Response) => {
       return res.status(403).json({ error: '비회원 주문이 아닙니다' });
     }
 
+    const payment = await AppDataSource.getRepository(Payment).findOne({ where: { orderId } });
+
     return res.json({
       id: order.id,
       orderNumber: order.orderNumber,
@@ -1965,6 +2164,12 @@ router.get('/guest/order/:orderId', async (req: Request, res: Response) => {
       deliveryRequest: order.deliveryRequest,
       createdAt: order.createdAt,
       paidAt: order.paidAt,
+      paymentMethod: payment?.method ?? null,
+      paymentStatus: payment?.status ?? null,
+      vbankName: payment?.vbankName ?? null,
+      vbankNumber: payment?.vbankNumber ?? null,
+      vbankHolder: payment?.vbankHolder ?? null,
+      vbankExpiresAt: payment?.vbankExpiresAt ?? null,
       items: order.items.map(item => ({
         productId: item.productId,
         productName: item.productName,

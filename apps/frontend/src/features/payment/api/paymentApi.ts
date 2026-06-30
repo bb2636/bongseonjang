@@ -319,6 +319,12 @@ export interface GuestOrderDetail {
   deliveryRequest: string | null;
   createdAt: string;
   paidAt: string | null;
+  paymentMethod: string | null;
+  paymentStatus: string | null;
+  vbankName: string | null;
+  vbankNumber: string | null;
+  vbankHolder: string | null;
+  vbankExpiresAt: string | null;
   items: GuestOrderItem[];
 }
 

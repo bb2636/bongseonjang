@@ -167,6 +167,35 @@ export default function GuestOrderDetailView({
             </div>
           )}
         </section>
+
+        {order.paymentMethod === 'virtual_account' && order.vbankNumber && (
+          <section className="guest-order-detail__section">
+            <h2 className="guest-order-detail__section-title">가상계좌 정보</h2>
+            {order.paymentStatus !== 'completed' && (
+              <p className="guest-order-detail__vbank-notice">
+                입금 대기 중입니다. 아래 계좌로 입금해주세요.
+              </p>
+            )}
+            <div className="guest-order-detail__info-row">
+              <span className="guest-order-detail__info-label">입금은행</span>
+              <span className="guest-order-detail__info-value">{order.vbankName || '-'}</span>
+            </div>
+            <div className="guest-order-detail__info-row">
+              <span className="guest-order-detail__info-label">계좌번호</span>
+              <span className="guest-order-detail__info-value">{order.vbankNumber}</span>
+            </div>
+            <div className="guest-order-detail__info-row">
+              <span className="guest-order-detail__info-label">예금주</span>
+              <span className="guest-order-detail__info-value">{order.vbankHolder || '-'}</span>
+            </div>
+            {order.vbankExpiresAt && (
+              <div className="guest-order-detail__info-row">
+                <span className="guest-order-detail__info-label">입금기한</span>
+                <span className="guest-order-detail__info-value">{formatDate(order.vbankExpiresAt)}</span>
+              </div>
+            )}
+          </section>
+        )}
       </div>
     </div>
   );

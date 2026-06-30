@@ -10,6 +10,7 @@ import { ProductOption } from '../../../entity/ProductOption';
 import { GuestOrderDetail } from '../../../entity/GuestOrderDetail';
 import { PointRepository } from '../../point/repository/PointRepository';
 import { CouponRepository } from '../../coupon/repository/CouponRepository';
+import { finalizePaidOrder } from '../../payment/routes/paymentRoutes';
 
 const router = Router();
 
@@ -390,6 +391,11 @@ interface AdminOrderDetailDto {
   usedPoints: number;
   finalAmount: number;
   paymentMethod: string | null;
+  paymentStatus: string | null;
+  vbankName: string | null;
+  vbankNumber: string | null;
+  vbankHolder: string | null;
+  vbankExpiresAt: string | null;
   adminMemo: string | null;
 }
 
@@ -478,6 +484,11 @@ router.get('/:orderId', async (req: Request, res: Response) => {
       usedPoints: order.usedPoints,
       finalAmount: order.finalAmount,
       paymentMethod: frontendPaymentMethod,
+      paymentStatus: payment?.status ?? null,
+      vbankName: payment?.vbankName ?? null,
+      vbankNumber: payment?.vbankNumber ?? null,
+      vbankHolder: payment?.vbankHolder ?? null,
+      vbankExpiresAt: payment?.vbankExpiresAt ? formatDate(payment.vbankExpiresAt) : null,
       adminMemo: order.orderNote,
     };
 
@@ -511,6 +522,88 @@ router.put('/:orderId/memo', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Failed to update admin memo:', error);
     return res.status(500).json({ error: '관리 메모 저장에 실패했습니다' });
+  }
+});
+
+router.patch('/:orderId/virtual-account', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    const { vbankName, vbankNumber, vbankHolder, vbankExpiresAt } = req.body;
+
+    const paymentRepository = AppDataSource.getRepository(Payment);
+    const payment = await paymentRepository.findOne({ where: { orderId } });
+
+    if (!payment) {
+      return res.status(404).json({ error: '결제 정보를 찾을 수 없습니다' });
+    }
+
+    if (payment.method !== 'virtual_account') {
+      return res.status(400).json({ error: '가상계좌 결제가 아닙니다' });
+    }
+
+    if (vbankName !== undefined) payment.vbankName = vbankName || null;
+    if (vbankNumber !== undefined) payment.vbankNumber = vbankNumber || null;
+    if (vbankHolder !== undefined) payment.vbankHolder = vbankHolder || null;
+    if (vbankExpiresAt !== undefined) {
+      const parsed = vbankExpiresAt ? new Date(vbankExpiresAt) : null;
+      payment.vbankExpiresAt = parsed && !Number.isNaN(parsed.getTime()) ? parsed : null;
+    }
+
+    await paymentRepository.save(payment);
+
+    return res.json({
+      success: true,
+      message: '가상계좌 정보가 저장되었습니다',
+      vbankName: payment.vbankName,
+      vbankNumber: payment.vbankNumber,
+      vbankHolder: payment.vbankHolder,
+      vbankExpiresAt: payment.vbankExpiresAt ? formatDate(payment.vbankExpiresAt) : null,
+    });
+  } catch (error) {
+    console.error('Failed to update virtual account:', error);
+    return res.status(500).json({ error: '가상계좌 정보 저장에 실패했습니다' });
+  }
+});
+
+router.post('/:orderId/confirm-deposit', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+
+    const orderRepository = AppDataSource.getRepository(Order);
+    const order = await orderRepository.findOne({ where: { id: orderId } });
+
+    if (!order) {
+      return res.status(404).json({ error: '주문을 찾을 수 없습니다' });
+    }
+
+    const paymentRepository = AppDataSource.getRepository(Payment);
+    const payment = await paymentRepository.findOne({ where: { orderId } });
+
+    if (!payment) {
+      return res.status(404).json({ error: '결제 정보를 찾을 수 없습니다' });
+    }
+
+    if (payment.method !== 'virtual_account') {
+      return res.status(400).json({ error: '가상계좌 결제가 아닙니다' });
+    }
+
+    if (order.status === 'paid' || payment.status === 'completed') {
+      return res.json({ success: true, message: '이미 입금이 확인된 주문입니다' });
+    }
+
+    const finalizeResult = await finalizePaidOrder({
+      orderId,
+      tid: payment.pgTransactionId || '',
+    });
+
+    if (!finalizeResult.success) {
+      return res.status(400).json({ error: finalizeResult.errorMessage || '입금 확인 처리에 실패했습니다' });
+    }
+
+    return res.json({ success: true, message: '입금이 확인되어 주문이 완료되었습니다' });
+  } catch (error) {
+    console.error('Failed to confirm deposit:', error);
+    return res.status(500).json({ error: '입금 확인 처리에 실패했습니다' });
   }
 });
 

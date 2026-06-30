@@ -36,6 +36,18 @@ export class Payment {
   @Column({ type: 'int', nullable: true })
   installmentMonths!: number | null;
 
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  vbankName!: string | null;
+
+  @Column({ type: 'varchar', length: 30, nullable: true })
+  vbankNumber!: string | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  vbankHolder!: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  vbankExpiresAt!: Date | null;
+
   @Column({ type: 'text', nullable: true })
   failReason!: string | null;
 

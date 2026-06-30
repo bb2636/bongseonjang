@@ -181,7 +181,26 @@ async function syncSequences(): Promise<void> {
   console.log('Sequences synced');
 }
 
+async function ensurePaymentSchema(): Promise<void> {
+  const alterStatements = [
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS "vbankName" varchar(50)`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS "vbankNumber" varchar(30)`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS "vbankHolder" varchar(50)`,
+    `ALTER TABLE payments ADD COLUMN IF NOT EXISTS "vbankExpiresAt" timestamp`,
+  ];
+  for (const statement of alterStatements) {
+    try {
+      await AppDataSource.manager.query(statement);
+    } catch (error) {
+      console.error('Failed to ensure payment vbank column:', error);
+    }
+  }
+  console.log('Payment vbank columns ensured');
+}
+
 export async function runProductionSeed(): Promise<void> {
+  await ensurePaymentSchema();
+
   const productCount = await AppDataSource.manager.query('SELECT COUNT(*) as count FROM products');
   if (parseInt(productCount[0].count) > 0) {
     console.log('Database already has data, skipping seed');
