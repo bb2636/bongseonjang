@@ -136,3 +136,7 @@ keystore.properties
 # Attached assets (user uploads, screenshots — not part of source)
 attached_assets/
 BongCaptainKEY
+
+# npm lockfile — regenerated per machine; committed copy pointed at Replit-internal
+# registry URLs and broke external installs. Let each machine generate its own.
+package-lock.json
