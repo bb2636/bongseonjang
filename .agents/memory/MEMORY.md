@@ -14,5 +14,7 @@
 - [tsx standalone scripts](tsx-script-decorators.md) — run backend one-off scripts via tsx --tsconfig apps/backend/tsconfig.json; without it TypeORM entity decorators crash
 - [NicePay prepare/pending cleanup](nicepay-prepare-pending-cleanup.md) — prepare creates pending order before payment window; cleanup must cover !AUTHNICE + sync throw + fnError; clientId alert errors leak (covered by history filter)
 - [Production DB writes](prod-db-writes.md) — prod DB tooling is read-only; provision/seed prod data via idempotent app-startup code + republish, outside runProductionSeed product-count guard
+- [capacitor.plugins.json sync](capacitor-plugins-json-sync.md) — "plugin not implemented on android/ios" comes from cap sync dropping a plugin missing in node_modules; module dirs+gradle can look fine. Verify the JSON after build
+- [Committed generated files conflict](committed-generated-files.md) — package-lock.json (replit-internal URLs), android version.properties, ios/android native dirs are committed but regenerate per machine → recurring git-pull conflicts on Mac/Windows
 - [Shipping region detection](shipping-region-detection.md) — 제주/도서산간 판정은 5자리 우편번호 범위 비교(contract detectDeliveryRegion); 도서산간 목록은 공개 시드라 택배사별 보정 필요
 - [vbank/finalize idempotency](vbank-finalize-idempotency.md) — finalizePaidOrder gate+lock must be INSIDE the txn (webhook + admin confirm race); vbank 0000=issuance not payment; webhook binds tid→orderId
